@@ -1,0 +1,361 @@
+<main class="treatments-category__treatments">
+  <header class="treatments-category__container wrapper wrapper--md">
+    <section class="large-header-section large-header-section--treatments">
+      <div class="large-header-section__inner">
+        <div class="large-header-section__container">
+          {% assign title_without_treatments = page.title | replace: 'Treatments', '' %}
+          <h1 class="large-heading large-heading--treatments">{{ title_without_treatments | strip }}</h1>
+        </div>
+        <div class="large-header-section__container">
+          {{ page.content }}
+        </div>
+      </div>
+    </section>
+    <section class="filter-header">
+      <h2 class="all-caps filter-header__type">Skin Treatments</h2>
+      <form class="filter-header__container">
+        {% assign current_page = page.title | downcase %}
+        <input
+          type="radio"
+          id="treatments-page-filter-face"
+          name="treatments-page-filter"
+          value="face-skin-treatments"
+          class="filter-header__input"
+
+          {% if current_page == 'face treatments' %}
+            checked
+          {% endif %}
+        >
+        <label class="all-caps filter-header__type filter-header__btn" for="treatments-page-filter-face">Face</label>
+
+        <input
+          type="radio"
+          id="treatments-page-filter-body"
+          name="treatments-page-filter"
+          value="body-skin-treatments"
+          class="filter-header__input"
+          {% if current_page == 'body treatments' %}
+            checked
+          {% endif %}
+        >
+        <label class="all-caps filter-header__type filter-header__btn" for="treatments-page-filter-body">Body</label>
+
+        <input
+          type="radio"
+          id="treatments-page-filter-all"
+          name="treatments-page-filter"
+          value="skin-treatments"
+          class="filter-header__input"
+          {% if current_page == 'skin treatments' %}
+            checked
+          {% endif %}
+        >
+        <label class="all-caps filter-header__type filter-header__btn" for="treatments-page-filter-all">All</label>
+      </form>
+      <p class="all-caps filter-header__type" style="display:none;">Sort By</p>
+    </section>
+  </header>
+  <section class="treatments-category__treatment-type wrapper wrapper--md">
+    <div class="treatments-category__container embla">
+      <div class="embla__container">
+        {% assign current_page = page.title | downcase %}
+
+        {% if current_page == 'body treatments' or current_page == 'skin treatments' %}
+          <h3
+            class="scroll-select-type treatments-category__category embla__slide"
+            data-slide-treatment-category="body-contouring"
+          >
+            Body Contouring
+          </h3>
+        {% endif %}
+        {% if current_page == 'face treatments' or current_page == 'skin treatments' %}
+          <h3
+            class="scroll-select-type treatments-category__category embla__slide"
+            data-slide-treatment-category="facials"
+          >
+            Facials
+          </h3>
+        {% endif %}
+        <h3
+          class="scroll-select-type treatments-category__category embla__slide"
+          data-slide-treatment-category="hair-removal"
+        >
+          Hair Removal
+        </h3>
+        {% if current_page == 'face treatments' or current_page == 'skin treatments' %}
+          <h3
+            class="scroll-select-type treatments-category__category embla__slide"
+            data-slide-treatment-category="injectables"
+          >
+            Injectables
+          </h3>
+        {% endif %}
+        <h3
+          class="scroll-select-type treatments-category__category embla__slide"
+          data-slide-treatment-category="skin-improvement"
+        >
+          Skin Improvement
+        </h3>
+        <h3
+          class="scroll-select-type treatments-category__category embla__slide"
+          data-slide-treatment-category="skin-tightening"
+        >
+          Skin Tightening
+        </h3>
+        {% if current_page == 'body treatments' or current_page == 'skin treatments' %}
+          <h3
+            class="scroll-select-type treatments-category__category embla__slide"
+            data-slide-treatment-category="body-contouring"
+          >
+            Body Contouring
+          </h3>
+        {% endif %}
+        {% if current_page == 'face treatments' or current_page == 'skin treatments' %}
+          <h3
+            class="scroll-select-type treatments-category__category embla__slide"
+            data-slide-treatment-category="facials"
+          >
+            Facials
+          </h3>
+        {% endif %}
+        <h3
+          class="scroll-select-type treatments-category__category embla__slide"
+          data-slide-treatment-category="hair-removal"
+        >
+          Hair Removal
+        </h3>
+        {% if current_page == 'face treatments' or current_page == 'skin treatments' %}
+          <h3
+            class="scroll-select-type treatments-category__category embla__slide"
+            data-slide-treatment-category="injectables"
+          >
+            Injectables
+          </h3>
+        {% endif %}
+        <h3
+          class="scroll-select-type treatments-category__category embla__slide"
+          data-slide-treatment-category="skin-improvement"
+        >
+          Skin Improvement
+        </h3>
+        <h3
+          class="scroll-select-type treatments-category__category embla__slide"
+          data-slide-treatment-category="skin-tightening"
+        >
+          Skin Tightening
+        </h3>
+      </div>
+      <div class="treatments-category__gradient"></div>
+    </div>
+    <div class="treatments-category__container embla">
+      <div class="embla__viewport">
+        <div class="embla__container" id="treatments-page-results"></div>
+      </div>
+      <div class="embla__progress">
+        <div class="embla__progress-bar" style="transform: translate3d(0%, 0px, 0px);"></div>
+      </div>
+    </div>
+  </section>
+</main>
+{% section 'skin-analysis' %}
+<section class="treatments-category__faq wrapper wrapper--md">
+  <h3 class="main-heading">Frequently Asked Questions</h3>
+  <div class="faq__container">
+    <ul role="list" class="faq__questions">
+      <li role="listitem" class="faq__question-answer">
+        <div
+          aria-labelledby="question1"
+          role="tab"
+          aria-selected="false"
+          aria-controls="answer1"
+          tabindex="0"
+          class="faq__question-container"
+        >
+          <h4 id="question1" class="faq__question">
+            How often should I undergo non-invasive skincare treatments for optimal results?
+          </h4>
+          <div aria-hidden="true" class="faq__toggle-icon">
+            <svg class="faq__open-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+
+            <svg class="faq__close-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+        </div>
+        <div id="answer1" role="tabpanel" aria-expanded="false" class="faq__answer-container">
+          <p class="faq__answer">
+            Typically, we recommend a course of treatments to bring your skin to a baseline level of health. Usually
+            these are performed at set intervals for a prescribed period of time (e.g. weekly for 6 weeks). From there,
+            we recommend maintaining your results with 2-3 individual treatments per year.
+          </p>
+        </div>
+      </li>
+      <li role="listitem" class="faq__question-answer">
+        <div
+          aria-labelledby="question2"
+          role="tab"
+          aria-selected="false"
+          aria-controls="answer2"
+          tabindex="-1"
+          class="faq__question-container"
+        >
+          <h4 id="question2" class="faq__question">
+            Can non-invasive skincare treatments be combined with other cosmetic procedures?
+          </h4>
+          <div aria-hidden="true" class="faq__toggle-icon">
+            <svg class="faq__open-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+
+            <svg class="faq__close-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+        </div>
+        <div id="answer2" role="tabpanel" aria-expanded="false" class="faq__answer-container">
+          <p class="faq__answer">
+            Yes! With some exceptions, non-invasive skincare treatments work very well when combined with other
+            procedures. For example, we often recommend Skin Tightening treatments as a means of enhancing the results
+            of surgical treatments.
+          </p>
+        </div>
+      </li>
+      <li role="listitem" class="faq__question-answer">
+        <div
+          aria-labelledby="question3"
+          role="tab"
+          aria-selected="false"
+          aria-controls="answer3"
+          tabindex="-1"
+          class="faq__question-container"
+        >
+          <h4 id="question3" class="faq__question">
+            What is the average recovery time after a non-invasive skincare treatment?
+          </h4>
+          <div aria-hidden="true" class="faq__toggle-icon">
+            <svg class="faq__open-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+
+            <svg class="faq__close-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+        </div>
+        <div id="answer3" role="tabpanel" aria-expanded="false" class="faq__answer-container">
+          <p class="faq__answer">
+            Most of the non-invasive skincare treatments we offer result zero downtime. Some of the more intensive
+            treatments (such as Morpheus8) are minimally invasive and do require up to several days of downtime.
+          </p>
+        </div>
+      </li>
+      <li role="listitem" class="faq__question-answer">
+        <div
+          aria-labelledby="question4"
+          role="tab"
+          aria-selected="false"
+          aria-controls="anwser4"
+          tabindex="-1"
+          class="faq__question-container"
+        >
+          <h4 id="question4" class="faq__question">
+            Are non-invasive skincare treatments suitable for all skin types and conditions?
+          </h4>
+          <div aria-hidden="true" class="faq__toggle-icon">
+            <svg class="faq__open-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+
+            <svg class="faq__close-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+        </div>
+        <div id="answer4" role="tabpanel" aria-expanded="false" class="faq__answer-container">
+          <p class="faq__answer">
+            While our treatments are well-tolerated by most skin types and conditions, each client presents unique needs
+            and must be evaluated before we can recommend a specific treatment. To help you with this we recommend
+            booking a Skin Analysis to determine which treatment is best for your skin's unique needs.
+          </p>
+        </div>
+      </li>
+      <li role="listitem" class="faq__question-answer">
+        <div
+          aria-labelledby="question5"
+          role="tab"
+          aria-selected="false"
+          aria-controls="answer5"
+          tabindex="-1"
+          class="faq__question-container"
+        >
+          <h4 id="question5" class="faq__question">
+            How do I choose the best non-invasive skincare treatment for my specific skin concerns?
+          </h4>
+          <div aria-hidden="true" class="faq__toggle-icon">
+            <svg class="faq__open-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+
+            <svg class="faq__close-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+        </div>
+        <div id="answer5" role="tabpanel" aria-expanded="false" class="faq__answer-container">
+          <p class="faq__answer">
+            Our skilled team can help you select which treatment is best suited to your skin. Book your Skin Analysis to
+            get started.
+          </p>
+        </div>
+      </li>
+      <li role="listitem" class="faq__question-answer">
+        <div
+          aria-labelledby="question6"
+          role="tab"
+          aria-selected="false"
+          aria-controls="answer6"
+          tabindex="-1"
+          class="faq__question-container"
+        >
+          <h4 id="question6" class="faq__question">
+            How can I maintain the results of my non-invasive skincare treatment for a longer period of time?
+          </h4>
+          <div aria-hidden="true" class="faq__toggle-icon">
+            <svg class="faq__open-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+
+            <svg class="faq__close-icon" viewBox="0 0 22 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L21 1" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+        </div>
+        <div id="answer6" role="tabpanel" aria-expanded="false" class="faq__answer-container">
+          <p class="faq__answer">
+            We are firm advocates of a proper skincare routine as being the best way to maximize the long-term results
+            of any professional treatments. We will work with you to develop a plan based on your needs and help guide
+            you through selecting the right skincare brands and products.
+          </p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+<section class="treatments-category__cta">
+  <div class="treatments-category__cta-inner wrapper wrapper--lg">
+    <div class="treatments-category__cta-container wrapper--lg">
+      <div class="treatments-category__cta-text-container">
+        <h4 class="treatments-category__cta-text">Skincare</h4>
+        <a class="treatments-category__cta-text" href="/collections/all">Shop Now</a>
+      </div>
+    </div>
+    <div class="treatments-category__cta-container wrapper--lg">
+      <div class="treatments-category__cta-text-container">
+        <h4 class="treatments-category__cta-text">Gifting</h4>
+        <a class="treatments-category__cta-text" href="#">Available Here</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,115 @@
+<main class="wrapper wrapper--sm account account--register">
+  <section class="wrapper account__inner">
+    <div class="account__form-header">
+      <h1 class="main-heading main-heading--account-form">Create an account</h1>
+    </div>
+    {%- form 'create_customer', novalidate: 'novalidate', class: 'account__form' -%}
+      {%- if form.errors -%}
+        <div class="account__form-inner account__form-inner--error">
+          <h2 class="main-heading--form-sub" tabindex="-1" autofocus>Please correct the following:</h2>
+          <div class="errors">
+            <ul>
+              {%- for field in form.errors -%}
+                <li>
+                  {%- if field == 'form' -%}
+                    {{ form.errors.messages[field] }}
+                  {%- else -%}
+                    {{ form.errors.translated_fields[field] | capitalize }}
+                    {{ form.errors.messages[field] }}
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        </div>
+      {%- endif -%}
+      <div class="account__form-inner">
+        <div class="account__field-group">
+          <input
+            type="text"
+            name="customer[first_name]"
+            id="RegisterForm-FirstName"
+            {% if form.first_name %}
+              value="{{ form.first_name }}"
+            {% endif %}
+            autocomplete="given-name"
+            placeholder="{{ 'customer.register.first_name' | t }}"
+            class="main-body account__input-field"
+          >
+          <label for="RegisterForm-FirstName" class="visually-hidden">
+            {{ 'customer.register.first_name' | t }}
+          </label>
+        </div>
+        <div class="account__field-group">
+          <input
+            type="text"
+            name="customer[last_name]"
+            id="RegisterForm-LastName"
+            {% if form.last_name %}
+              value="{{ form.last_name }}"
+            {% endif %}
+            autocomplete="family-name"
+            placeholder="{{ 'customer.register.last_name' | t }}"
+            class="main-body account__input-field"
+          >
+          <label for="RegisterForm-LastName" class="visually-hidden">
+            {{ 'customer.register.last_name' | t }}
+          </label>
+        </div>
+        <div class="account__field-group">
+          <input
+            type="email"
+            name="customer[email]"
+            id="RegisterForm-email"
+            {% if form.email %}
+              value="{{ form.email }}"
+            {% endif %}
+            spellcheck="false"
+            autocapitalize="off"
+            autocomplete="email"
+            aria-required="true"
+            {% if form.errors contains 'email' %}
+              aria-invalid="true"
+              aria-describedby="RegisterForm-email-error"
+            {% endif %}
+            placeholder="{{ 'customer.register.email' | t }}"
+            class="main-body account__input-field"
+          >
+          <label for="RegisterForm-email" class="visually-hidden">
+            {{ 'customer.register.email' | t }}
+          </label>
+        </div>
+        {%- if form.errors contains 'email' -%}
+          <span class="account__form-error-label" id="RegisterForm-email-error">
+            {{ form.errors.translated_fields.email | capitalize }}
+            {{ form.errors.messages.email }}.
+          </span>
+        {%- endif -%}
+        <div class="account__field-group">
+          <input
+            type="password"
+            name="customer[password]"
+            id="RegisterForm-password"
+            aria-required="true"
+            {% if form.errors contains 'password' %}
+              aria-invalid="true"
+              aria-describedby="RegisterForm-password-error"
+            {% endif %}
+            placeholder="{{ 'customer.register.password' | t }}"
+            class="main-body account__input-field"
+          >
+          <label for="RegisterForm-password" class="visually-hidden">
+            {{ 'customer.register.password' | t }}
+          </label>
+        </div>
+        {%- if form.errors contains 'password' -%}
+          <span class="account__form-error-label" id="RegisterForm-password-error">
+            {{ form.errors.translated_fields.password | capitalize }}
+            {{ form.errors.messages.password }}.
+          </span>
+        {%- endif -%}
+        <button class="all-caps btn btn--secondary btn--account">Create Account</button>
+      </div>
+    {%- endform -%}
+  </section>
+</main>

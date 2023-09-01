@@ -1,0 +1,102 @@
+<footer class="main-footer">
+  <div class="main-footer__row wrapper wrapper--lg">
+    <nav class="main-footer__row-container">
+      {% assign footer_menu = linklists.footer %}
+      {% for link in footer_menu.links limit: 4 %}
+        <div class="main-footer__linklist">
+          <h3 class="all-caps alt-nav-heading">{{ link.title }}</h3>
+          {% if link.links.size > 0 %}
+            <ul>
+              {% for child_link in link.links %}
+                <li>
+                  <a class="all-caps link--alt-nav" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </nav>
+  </div>
+  <div class="main-footer__row wrapper wrapper--lg">
+    <div class="main-footer__row-container">
+      <div class="svg-container">
+        <svg
+          version="1.1"
+          viewBox="0 0 131.9 151.6"
+          class="svg-content"
+          fill="currentColor"
+          preserveAspectRatio="xMinYMin meet"
+        >
+          <rect y=".4" width="2.6" height="151" />
+          <path d="m15.3 100.6c-0.1-0.6-0.1-1.3 0-1.9l10.3-48.2c0.2-0.9 0.2-1.8 0-2.7l-10.1-47.4h-2.6l10.2 47.9c0.1 0.6 0.1 1.3 0 1.9l-10.3 48.3c-0.2 0.9-0.2 1.8 0 2.7l10.7 50.2h2.6l-10.8-50.8z" />
+          <path d="m35.1 97.8 24.4-45.6c1.1-2 1.1-4.2 0-6.2l-24.4-45.6h-2.8l24.9 46.6c0.8 1.4 0.8 3 0 4.5l-24.4 45.5c-1.1 2-1.1 4.3 0 6.3l25.8 48.1h2.8l-26.3-49.2c-0.7-1.4-0.7-3 0-4.4z" />
+          <path d="m75.9 96.8 50.2-42.2c3.5-3 3.5-7.7 0-10.7l-51.7-43.5h-3.6l53.4 44.9c2.5 2.1 2.5 5.6 0 7.7l-50.2 42.1c-3.5 3-3.5 7.8 0 10.8l54.2 45.6h3.7l-56.1-47.1c-2.5-2.2-2.5-5.6 0.1-7.6z" />
+          <path d="m28.4 98 19.9-46.4c0.7-1.7 0.7-3.5 0-5.1l-19.7-46.1h-2.7l20.1 47.1c0.5 1.2 0.5 2.5 0 3.7l-19.9 46.3c-0.7 1.7-0.7 3.5 0 5.2l20.8 48.7h2.8l-21.3-49.8c-0.5-1.1-0.5-2.4 0-3.6z" />
+          <path d="m120.2 151.4h-3.5l-49.6-45.9c-3.1-2.9-3.1-7.3 0-10.2l45.9-42.5c2.2-2.1 2.2-5.2 0-7.3l-48.6-45h3.5l47.1 43.5c3.1 2.9 3.1 7.3 0 10.2l-46 42.6c-2.2 2.1-2.2 5.2 0 7.3l51.2 47.3z" />
+          <path d="m14.1 48.4-5.1-48h-2.6l4.9 45.6c0.1 1.2 0.1 5 0 6.2l-5 46.9v1.4l5.4 51h2.6l-5.4-51.5v-1l5.2-49.3c0.1-0.4 0.1-0.8 0-1.3z" />
+          <path d="m21.9 98.5 15.1-47.5c0.4-1.3 0.4-2.6 0-3.9l-15-46.7h-2.7l15.1 47.3c0.3 0.9 0.3 1.9 0 2.8l-15 47.5c-0.4 1.3-0.4 2.7 0 3.9l15.8 49.5h2.7l-16-50.2c-0.3-0.8-0.3-1.8 0-2.7z" />
+          <path d="m41.9 97.5 28.8-44.8c1.4-2.2 1.4-4.9 0-7.2l-29.1-45.1h-3l29.8 46.2c1 1.6 1 3.6 0 5.2l-28.8 44.7c-1.5 2.3-1.5 5 0 7.2l30.7 47.7h2.9l-31.4-48.8c-1-1.6-1-3.5 0.1-5.1z" />
+          <path d="m48.6 97.4 33.2-44.3c1.8-2.5 1.8-5.6 0-8.1l-33.6-44.6h-3.1l34.5 45.8c1.3 1.8 1.3 4 0 5.8l-33.1 44.2c-1.9 2.5-1.9 5.6 0 8.1l35.4 47.1h3.1l-36.4-48.3c-1.3-1.7-1.3-4 0-5.7z" />
+          <path d="m55.4 97.1 37.4-43.6c2.3-2.6 2.3-6.2 0-8.9l-38.1-44.2h-3.2l39.2 45.5c1.6 1.9 1.6 4.5 0 6.4l-37.3 43.5c-2.3 2.7-2.3 6.3 0 8.9l40.1 46.7h3.2l-41.3-48c-1.6-1.8-1.6-4.4 0-6.3z" />
+          <path d="m62.2 103.8 46.2 47.7h-3.3l-44.9-46.3c-2.7-2.8-2.7-6.8 0-9.6l41.7-43c1.9-2 1.9-4.9 0-6.9l-43.9-45.3h3.3l42.6 43.9c2.7 2.8 2.7 6.8 0 9.6l-41.7 43c-1.9 2-1.9 4.9 0 6.9z" />
+        </svg>
+      </div>
+      <p class="all-caps link--alt-nav main-footer__copyright">
+        © <span id="copyright-year-mobile">2023</span> Rewind Skin
+      </p>
+    </div>
+  </div>
+  <div class="main-footer__row">
+    <nav class="main-footer__row-container wrapper wrapper--lg">
+      {% assign footer_menu = linklists.footer %}
+      {% assign last_link_list = footer_menu.links.last %}
+      <ul>
+        {% for link in last_link_list.links limit: 1 %}
+          <li>
+            <a
+              class="all-caps link--alt-nav link--utility"
+              href="
+                {%- if link.title == 'Account' -%}
+                  {% if shop.customer_accounts_enabled %}
+                    {% if customer %}
+                      {{ routes.account_url }}
+                    {% else %}
+                      {{ routes.account_login_url }}
+                    {% endif %}
+                  {% endif %}
+                {%- else -%}
+                  {{ link.url }}
+                {%- endif -%}
+              "
+            >
+              {{- link.title -}}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% assign footer_menu = linklists.footer %}
+      {% assign last_parent_link = footer_menu.links.last %}
+      {% assign num_child_links = last_parent_link.links.size %}
+      {% assign start_index = num_child_links | minus: 2 %}
+      <ul>
+        <li>
+          <p class="all-caps link--alt-nav main-footer__copyright">
+            © <span id="copyright-year-desktop">2023</span> Rewind Skin
+          </p>
+        </li>
+        {% for child_link in last_parent_link.links offset: start_index %}
+          <li>
+            <a class="all-caps link--alt-nav link--utility" href="{{ child_link.url }}">{{ child_link.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <div class="main-footer__row-container">
+      <div class="wrapper wrapper--lg">
+        <p class="all-caps main-footer__made-by">Made By Lifelike</p>
+      </div>
+      <div class="popover"></div>
+    </div>
+  </div>
+</footer>

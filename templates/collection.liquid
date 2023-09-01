@@ -1,0 +1,376 @@
+<section class="large-header-section large-header-section--shop">
+  <div class="large-header-section__inner wrapper wrapper--md">
+    <div class="large-header-section__container">
+      <h1 class="large-heading large-heading--shop">Shop</h1>
+    </div>
+    <div class="large-header-section__container">
+      <p class="all-caps collections__breadcrumbs">Shop / Bath, Body & Hair / Body Wash</p>
+      <p class="header-description--shop">
+        Your gateway to a world of luxurious skin treatments, meticulously curated to rejuvenate, hydrate, and nourish
+        your skin for a healthy, radiant glow. Experience the ultimate skincare indulgence.
+      </p>
+    </div>
+  </div>
+</section>
+<main class="collections__main wrapper wrapper--lg">
+  <div class="collections__container">
+    <form class="collections__filter-form collections__filter-form--desktop">
+      {%- for filter in collection.filters -%}
+        <div class="collections__filter-group">
+          <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
+          <div class="collections__filter-group-options">
+            {%- case filter.type -%}
+              {%- when 'list' -%}
+                <ul class="filter-group-options__list">
+                  {%- for filter_value in filter.values -%}
+                    <li class="all-caps filter-group-options__list-item">
+                      <label for="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}">
+                        <input
+                          type="checkbox"
+                          name="{{ filter_value.param_name }}"
+                          value="{{ filter_value.value }}"
+                          id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
+                          {% if filter_value.active -%}
+                            checked
+                          {%- endif %}
+                          {% if filter_value.count == 0 and filter_value.active == false -%}
+                            disabled
+                          {%- endif %}
+                        >
+                        {% assign label_characters = filter_value.label
+                          | join: ', '
+                          | replace: '_', ', '
+                          | replace: 'plus', '+'
+                        %}
+                        <span class="filter-group-options__label">
+                          {{- label_characters -}}
+                          {{ ' ' }} ({{ filter_value.count }})
+                        </span>
+                      </label>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+            {%- endcase -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </form>
+
+    <button class="all-caps collections__filters-action" id="refine-action">Refine</button>
+    <button class="all-caps collections__filters-action" id="sort-action">Sort</button>
+
+    <div class="drawer drawer--menu drawer--filters" id="mobile-refine">
+      <div class="drawer__header">
+        <h2 class="drawer__top-level-heading">Refine</h2>
+        <button class="all-caps drawer__header-action" id="refine-close">Close</button>
+      </div>
+      <ul class="drawer__container">
+        <li class="drawer__menu">
+          <ul class="drawer__links-list">
+            <li class="drawer__link">
+              <button class="all-caps" id="categories-mobile-action">Categories</button>
+            </li>
+            <li class="drawer__link">
+              <button class="all-caps" id="concerns-mobile-action">Skin Concerns</button>
+            </li>
+            <li class="drawer__link">
+              <button class="all-caps" id="types-mobile-action">Skin Types</button>
+            </li>
+            <li class="drawer__link">
+              <button class="all-caps" id="brands-mobile-action">Brands</button>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <form action="" class="collections__filter-form collections__filter-form--mobile">
+      <div class="drawer drawer--menu" id="filters-categories-menu">
+        <div class="drawer__header">
+          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'categories' -%}
+              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+            {%- endif -%}
+          {%- endfor -%}
+          <button type="button" class="all-caps drawer__header-action" id="categories-close">Close</button>
+        </div>
+        <div class="drawer__container drawer__menu">
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'categories' -%}
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="drawer__links-list">
+                    {%- for filter_value in filter.values -%}
+                      <li class="all-caps drawer__link">
+                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            name="{{ filter_value.param_name }}"
+                            value="{{ filter_value.value }}"
+                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            {% if filter_value.active -%}
+                              checked
+                            {%- endif %}
+                            {% if filter_value.count == 0 and filter_value.active == false -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
+
+                          <span class="filter-group-options__label">
+                            {{- label_with_commas -}}
+                            {{ ' ' }} ({{ filter_value.count }})
+                          </span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="drawer drawer--menu" id="filters-concerns-menu">
+        <div class="drawer__header">
+          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'skin concerns' -%}
+              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+            {%- endif -%}
+          {%- endfor -%}
+          <button type="button" class="all-caps drawer__header-action" id="concerns-close">Close</button>
+        </div>
+        <div class="drawer__container drawer__menu">
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'skin concerns' -%}
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="drawer__links-list">
+                    {%- for filter_value in filter.values -%}
+                      <li class="all-caps drawer__link">
+                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            name="{{ filter_value.param_name }}"
+                            value="{{ filter_value.value }}"
+                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            {% if filter_value.active -%}
+                              checked
+                            {%- endif %}
+                            {% if filter_value.count == 0 and filter_value.active == false -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
+
+                          <span class="filter-group-options__label">
+                            {{- label_with_plus -}}
+                            {{ ' ' }} ({{ filter_value.count }})
+                          </span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="drawer drawer--menu" id="filters-types-menu">
+        <div class="drawer__header">
+          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'skin type' -%}
+              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+            {%- endif -%}
+          {%- endfor -%}
+          <button type="button" class="all-caps drawer__header-action" id="types-close">Close</button>
+        </div>
+        <div class="drawer__container drawer__menu">
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'skin type' -%}
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="drawer__links-list">
+                    {%- for filter_value in filter.values -%}
+                      <li class="all-caps drawer__link">
+                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            name="{{ filter_value.param_name }}"
+                            value="{{ filter_value.value }}"
+                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            {% if filter_value.active -%}
+                              checked
+                            {%- endif %}
+                            {% if filter_value.count == 0 and filter_value.active == false -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
+
+                          <span class="filter-group-options__label">
+                            {{- label_with_plus -}}
+                            {{ ' ' }} ({{ filter_value.count }})
+                          </span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="drawer drawer--menu" id="filters-brands-menu">
+        <div class="drawer__header">
+          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'brands' -%}
+              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+            {%- endif -%}
+          {%- endfor -%}
+          <button type="button" class="all-caps drawer__header-action" id="brands-close">Close</button>
+        </div>
+        <div class="drawer__container drawer__menu">
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'brands' -%}
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="drawer__links-list">
+                    {%- for filter_value in filter.values -%}
+                      <li class="all-caps drawer__link">
+                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            name="{{ filter_value.param_name }}"
+                            value="{{ filter_value.value }}"
+                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            {% if filter_value.active -%}
+                              checked
+                            {%- endif %}
+                            {% if filter_value.count == 0 and filter_value.active == false -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
+
+                          <span class="filter-group-options__label">
+                            {{- label_with_commas -}}
+                            {{ ' ' }} ({{ filter_value.count }})
+                          </span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </form>
+    <div class="drawer-filters__clear-apply" id="filters-clear-apply">
+      <a
+        class="btn btn--primary all-caps drawer-filters__btn drawer-filters__btn--clear"
+        href="{{ collection.url }}?sort_by={{ collection.sort_by }}"
+        >Clear Filters</a
+      >
+      <button
+        class="btn btn--secondary all-caps drawer-filters__btn drawer-filters__btn--apply"
+        id="filters-show-results"
+      >
+        View Results
+      </button>
+    </div>
+  </div>
+  <div class="collections__container">
+    <div
+      class="collections__products"
+      id="collections-products-container"
+      data-collection-handle="{{ collection.handle }}"
+    >
+      {% paginate collection.products by 24 %}
+        {% for product in collection.products %}
+          {% for variant in product.variants %}
+            {% assign variant_url = product.url | append: '?variant=' | append: variant.id %}
+            <a href="{{ variant_url }}" class="product-card">
+              <div class="product-card__info">
+                <p class="all-caps product-card__brand">{{ product.vendor }}</p>
+                <h2 class="product-card__product">
+                  {{ product.title -}}
+                  {%- if variant.title != 'Default Title' %}
+                    / {{ variant.title }}
+                  {% endif %}
+                </h2>
+              </div>
+              {% assign downcased_vendor = product.vendor | strip | downcase %}
+              {% if downcased_vendor == 'biologique recherche' %}
+                <div
+                  class="all-caps btn btn--primary product-card__btn product-card__btn--icon"
+                  data-url="{{ variant_url }}"
+                >
+                  Login to Shop
+                </div>
+              {% else %}
+                {% if variant.available %}
+                  <form action="/cart/add" method="post" class="product-card__form">
+                    <input type="hidden" name="id" value="{{ variant.id }}">
+                    <button class="all-caps btn btn--primary product-card__btn">
+                      {% if product.compare_at_price > variant.price %}
+                        <span>Add to Bag</span>
+                        <span class="product-card__sale-price">
+                          <del>{{ product.compare_at_price | money_with_currency | remove: '.00' }}</del>
+                          <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
+                        </span>
+                      {% else %}
+                        <span>Add to Bag</span><span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
+                      {% endif %}
+                    </button>
+                  </form>
+                {% else %}
+                  <div class="all-caps btn btn--primary product-card__btn product-card__btn--sold-out">
+                    Out of Stock
+                  </div>
+                {% endif %}
+              {% endif %}
+              <img
+                class="product-card__image"
+                src="{{ 'product-cards_placeholder_ar-2-3.jpg' | asset_url }}"
+                width="313"
+                height="468"
+                loading="lazy"
+              >
+            </a>
+          {% endfor %}
+        {% endfor %}
+
+        <div class="pagination">
+          {% if paginate.previous %}
+            <a class="all-caps" href="{{ paginate.previous.url }}">Previous</a>
+          {% endif %}
+          {% for part in paginate.parts %}
+            {% if part.is_link %}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {% else %}
+              <span>{{ part.title }}</span>
+            {% endif %}
+          {% endfor %}
+          {% if paginate.next %}
+            <a class="all-caps" href="{{ paginate.next.url }}">Next</a>
+          {% endif %}
+        </div>
+      {% endpaginate %}
+    </div>
+  </div>
+</main>
+{% section 'skin-analysis' %}
+{% section 'treatments' %}
+{% section 'opt-in' %}

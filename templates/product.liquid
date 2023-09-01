@@ -1,0 +1,131 @@
+<main class="product-page__hero wrapper wrapper--md">
+  <section class="product-page__container">
+    {% assign downcased_vendor = product.vendor | strip | downcase %}
+    {% comment %} revisit the br logic because it should also check if they're logged-in or not and some br has variants {% endcomment %}
+    {% if downcased_vendor == 'biologique recherche' or product.variants.size <= 1 %}
+      <div class="product-page__copy-lockup product-page__copy-lockup--br">
+        <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
+        {{ product.description }}
+      </div>
+    {% else %}
+      <div class="product-page__copy-lockup">
+        <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
+        {{ product.description }}
+      </div>
+    {% endif %}
+  </section>
+  <section class="product-page__container">
+    {% if product.media.size > 1 %}
+      <img
+        src="{{ product.media[1] | image_url: width: 357 }}"
+        alt="{{ product.title | escape }}"
+        width="357"
+        height="713"
+        loading="eager"
+        class="product-page__product-img"
+      >
+    {% endif %}
+  </section>
+  <section class="product-page__container">
+    <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-page__checkout-form">
+      <h1 class="product-page__title is--mobile">{{ product.title }}</h1>
+      <!-- Check if the product has multiple variants -->
+      {% if product.variants.size > 1 %}
+        <!-- If yes, display a dropdown menu for variant selection -->
+        <div class="product-page__variants-group">
+          {% for variant in product.variants %}
+            <div class="product-page__variant">
+              <input
+                type="radio"
+                name="id"
+                value="{{ variant.id }}"
+                id="variant-{{ variant.id }}"
+                {% if forloop.first %}
+                  checked
+                {% endif %}
+              >
+              <label class="all-caps" for="variant-{{ variant.id }}">{{ variant.title }}</label>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- If the product does not have multiple variants, use a hidden input to add the product's variant ID -->
+        <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+      {% endif %}
+      {% assign downcased_vendor = product.vendor | strip | downcase %}
+      {% if downcased_vendor == 'biologique recherche' %}
+        {% for variant in product.variants %}
+          <a
+            class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon is--login variant-section variant-section-{{ variant.id }}"
+            href="/account/login?checkout_url={{ product.url }}&variant={{ variant.id }}"
+            >Login to Shop
+          </a>
+        {% endfor %}
+      {% else %}
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            <div class="product-page__quantity-add-group variant-section variant-section-{{ variant.id }}">
+              <!-- Quantity input field -->
+              <input class="product-page__quantity" type="number" min="1" name="quantity" value="1">
+
+              <!-- Add to Cart button -->
+              <button
+                class="btn btn--secondary all-caps product-page__checkout-btn"
+                type="submit"
+                name="add-to-cart-{{ variant.id }}"
+              >
+                {% if variant.compare_at_price > variant.price %}
+                  <span>Add to Bag</span>
+                  <span class="checkout-btn__sale-price">
+                    <del>{{ variant.compare_at_price | money_with_currency | remove: '.00' }}</del>
+                    <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
+                  </span>
+                {% else %}
+                  <span>Add to Bag</span><span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
+                {% endif %}
+              </button>
+              <p class="product-page__payment-plan">
+                or 4 interest-free payments of $30 with <span class="is--emphasized">Sezzle</span>
+              </p>
+            </div>
+          {% else %}
+            <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
+              <p class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out">
+                Out of Stock
+              </p>
+              <a
+                class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon"
+                href="/collections/all"
+                >Continue Shopping</a
+              >
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </form>
+  </section>
+</main>
+<section class="product-page__more-info wrapper wrapper--md">
+  <div class="product-page__container">
+    <h2 class="product-page__heading">Directions</h2>
+    <p class="product-page__body">{{ product.metafields.custom.directions }}</p>
+  </div>
+  <div class="product-page__container">
+    <h2 class="product-page__heading">INCI Ingredients</h2>
+    <p class="product-page__body">{{ product.metafields.custom.ingredients }}</p>
+  </div>
+</section>
+{% section 'skin-analysis' %}
+<section class="product-page__related">
+  <div class="filter-header wrapper wrapper--md">
+    <h2 class="all-caps filter-header__type">Related</h2>
+    <div class="filter-header__container">
+      <button class="all-caps filter-header__type filter-header__btn">Products</button>
+      <button class="all-caps filter-header__type filter-header__btn">Treatments</button>
+    </div>
+    <a class="all-caps filter-header__type" href="/collections/all">Shop All</a>
+  </div>
+  <div class="product-page__placeholder wrapper wrapper--md">
+    <div class="product-page__placeholder-inner"></div>
+  </div>
+</section>

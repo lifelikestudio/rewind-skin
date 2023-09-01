@@ -1,0 +1,128 @@
+<main class="cart-page">
+  <div class="drawer__header drawer__header--cart-page">
+    <div class="wrapper wrapper--sm"><h1 class="drawer__top-level-heading">Bag</h1></div>
+  </div>
+  {% if cart.item_count == 0 %}
+    <div class="drawer__container drawer__container--cart drawer__container--cart-page">
+      <div class="wrapper wrapper--sm drawer-cart__empty drawer-cart__empty--cart-page">
+        <h3 class="drawer-cart__empty-message">Your bag is empty.</h3>
+        <a href="/collections/all" class="btn btn--secondary all-caps drawer-cart__empty-continue">Continue Shopping</a>
+      </div>
+    </div>
+  {% else %}
+    {% form 'cart', cart %}
+      <div class="drawer__container drawer__container--cart drawer__container--cart-page">
+        <div class="wrapper wrapper--sm drawer-cart__items drawer-cart__items--cart-page">
+          {% for item in cart.items %}
+            <div class="drawer-cart__item drawer-cart__item--cart-page">
+              <div class="cart-item__inner">
+                <div class="item__img item__img--cart-page">
+                  {% assign product = all_products[item.product.handle] %}
+                  {% if product.images.size > 1 %}
+                    <img
+                      src="{{ product.images[1] | image_url: width: 56 }}"
+                      alt="{{ item.title }}"
+                      width="56"
+                      height="128"
+                      loading="eager"
+                    >
+                  {% else %}
+
+                  {% endif %}
+                </div>
+                <div class="item__info item__info--cart-page">
+                  <h2 class="all-caps item__brand">{{ item.product.vendor }}</h2>
+                  <a
+                    href="{{ item.url }}"
+                    class="item__info--cart-page"
+                  >
+                    <p class="item__product">
+                      <span class="product__title">{{ item.product.title }}</span>
+                      {% if item.variant.title != 'Default Title'
+                        and item.variant.compare_at_price > item.variant.price
+                      %}
+                        <span class="item__variant-price">
+                          {{- item.variant.title }} /
+                          <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
+                          <ins>{{ item.variant.price | money_with_currency | remove: '.00' }}</ins>
+                          {% assign discount = item.variant.compare_at_price | minus: item.variant.price %}
+                          {% assign discount_percentage = discount
+                            | times: 100.0
+                            | divided_by: item.variant.compare_at_price
+                          %}
+                          {% assign discount_percentage = discount_percentage | round %}
+                          /
+                          {{ discount_percentage -}}
+                          % Off
+                        </span>
+                      {% elsif item.variant.compare_at_price > item.variant.price %}
+                        <span class="item__variant-price">
+                          <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
+                          <ins>{{ item.variant.price | money_with_currency | remove: '.00' }}</ins>
+                          {% assign discount = item.variant.compare_at_price | minus: item.variant.price %}
+                          {% assign discount_percentage = discount
+                            | times: 100.0
+                            | divided_by: item.variant.compare_at_price
+                          %}
+                          {% assign discount_percentage = discount_percentage | round %}
+                          /
+                          {{ discount_percentage -}}
+                          % Off
+                        </span>
+                      {% elsif item.variant.title != 'Default Title' %}
+                        <span class="item__variant-price">
+                          {{- item.variant.title }} / {{ item.variant.price | money_with_currency | remove: '.00' -}}
+                        </span>
+                      {% else %}
+                        <span class="item__variant-price">
+                          {{ item.variant.price | money_with_currency | remove: '.00' -}}
+                        </span>
+                      {% endif %}
+                    </p>
+                  </a>
+
+                  {% comment %} <button class="item__remove">Remove Item</button> {% endcomment %}
+                  <a href="{{ item.url_to_remove }}" class="item__remove" data-variant-id="{{ item.variant.id }}"
+                    >Remove Item</a
+                  >
+                </div>
+              </div>
+              <div class="item__quantity item__quantity--cart-page">
+                <!-- Quantity input field -->
+                <input
+                  class="cart__quantity"
+                  type="number"
+                  min="1"
+                  name="quantity"
+                  value="{{ item.quantity }}"
+                >
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="drawer-cart__footer drawer-cart__footer--cart-page">
+          <div class="wrapper wrapper--sm">
+            <div class="drawer-cart__subtotal drawer-cart__subtotal--cart-page">
+              <div class="all-caps subtotal__top">
+                <p class="subtotal__titlee">Subtotal</p>
+                <p class="subtotal__total">{{ cart.total_price | money_with_currency }}</p>
+              </div>
+              <p class="subtotal__payment-plan">
+                or 4 interest-free payments of {% assign divided_price = cart.total_price | divided_by: 4 %}
+                {{ divided_price | money }} with <span class="is--emphasized">Sezzle</span>
+              </p>
+              <p class="subtotal__shipping">Shipping Calculated at Checkout</p>
+            </div>
+            <button
+              class="all-caps btn btn--secondary drawer-cart__submit drawer-cart__submit--cart-page"
+              type="submit"
+              name="checkout"
+            >
+              Checkout
+            </button>
+          </div>
+        </div>
+      </div>
+    {% endform %}
+  {% endif %}
+</main>
