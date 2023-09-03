@@ -9232,6 +9232,12 @@ a.item__info--cart-page:visited {
   padding-bottom: var(--base-unit);
 }
 
+@media screen and (max-width: 671px) {
+  .account {
+    padding-top: calc(var(--base-unit) / 2);
+  }
+}
+
 .account__btn-link {
   cursor: pointer;
   outline: inherit;
@@ -9782,38 +9788,46 @@ form.account__form {
 }
 
 /* Account Pages */
-.account--customer {
+.account--customer,
+.account--order {
   display: flex;
   flex-direction: column;
   row-gap: var(--base-unit);
 }
 
 .account__inner--customer-top,
-.account__inner--customer-btm {
+.account__inner--customer-btm,
+.account__inner--order-top,
+.account__inner--order-btm {
   max-width: none;
   row-gap: initial;
 }
 
-.account__inner--customer-top {
+.account__inner--customer-top,
+.account__inner--order-top {
   row-gap: calc(var(--base-unit) / 2);
 }
 
-.account__inner--customer-btm {
+.account__inner--customer-btm,
+.account__inner--order-btm {
   flex-direction: row;
   column-gap: 48px;
 }
 
-.account__inner--customer-btm .customer-btm__half:first-child {
+.account__inner--customer-btm .customer-btm__half:first-child,
+.account__inner--order-btm .order-btm__half:first-child {
   width: 75%;
 }
 
-.account__inner--customer-btm .customer-btm__half:last-child {
+.account__inner--customer-btm .customer-btm__half:last-child,
+.account__inner--order-btm .order-btm__half:last-child {
   width: 25%;
 }
 
 /* Between 1312px and 1583px */
 @media screen and (min-width: 1312px) and (max-width: 1583px) {
-  .account__inner--customer-btm {
+  .account__inner--customer-btm,
+  .account__inner--order-btm {
     flex-direction: row;
     column-gap: 40px;
   }
@@ -9821,7 +9835,8 @@ form.account__form {
 
 /* Between 1056px and 1311px */
 @media screen and (min-width: 1056px) and (max-width: 1311px) {
-  .account__inner--customer-btm {
+  .account__inner--customer-btm,
+  .account__inner--order-btm {
     flex-direction: row;
     column-gap: 32px;
   }
@@ -9829,67 +9844,91 @@ form.account__form {
 
 /* Less than or equal to 1055px */
 @media screen and (max-width: 1055px) {
-  .account--customer {
+  .account--customer,
+  .account--order {
     row-gap: 64px;
   }
 
-  .account__inner--customer-btm {
+  .account__inner--customer-btm,
+  .account__inner--order-btm {
     flex-direction: column;
     column-gap: initial;
   }
 
-  .account__inner--customer-btm .customer-btm__half:first-child {
+  .account__inner--customer-btm .customer-btm__half:first-child,
+  .account__inner--order-btm .order-btm__half:first-child {
     width: 100%;
   }
 
-  .account__inner--customer-btm .customer-btm__half:last-child {
+  .account__inner--customer-btm .customer-btm__half:last-child,
+  .account__inner--order-btm .order-btm__half:last-child {
     width: 100%;
   }
 }
 
 /* Between 672px and 1055px */
 @media screen and (min-width: 672px) and (max-width: 1055px) {
-  .account__inner--customer-btm {
+  .account__inner--customer-btm,
+  .account__inner--order-btm {
     row-gap: calc(var(--base-unit) / 2);
   }
 }
 
 /* Less than or equal to 671px */
 @media screen and (max-width: 671px) {
-  .account__inner--customer-btm {
+  .account__inner--customer-btm,
+  .account__inner--order-btm {
     row-gap: var(--base-unit);
   }
 }
 
-.customer-btm__half {
+.customer-btm__half,
+.order-btm__half {
   display: flex;
   flex-direction: column;
   row-gap: calc(var(--base-unit) / 2);
 }
 
-.customer-btm__half-inner {
+.account__inner--order-btm .order-btm__half:last-child {
+  row-gap: var(--base-unit);
+}
+
+.customer-btm__half-inner,
+.order-btm__half-inner {
   display: flex;
   flex-direction: column;
+}
+
+.account__inner--order-btm .order-btm__half:first-child .order-btm__half-inner {
+  row-gap: initial;
+}
+
+.customer-btm__half-inner,
+.order-btm__half-inner {
   row-gap: calc(var(--base-unit) / 2);
 }
 
-a.account_customer-link {
+a.account__customer-link,
+a.account__order-link {
   margin-left: 0px;
 }
 
 /* Between 672px and 1055px */
 @media screen and (min-width: 672px) and (max-width: 1055px) {
-  .main-heading--account-customer {
+  .main-heading--account-customer,
+  .main-heading--account-order {
     font-size: 3.6rem;
   }
 
-  a.account_customer-link {
+  a.account__customer-link,
+  a.account__order-link {
     font-size: 2rem;
   }
 }
 
 .main-heading--account-sub,
-.main-heading--account-customer {
+.main-heading--account-customer,
+.main-heading--account-order {
   text-transform: initial;
 }
 
@@ -9921,13 +9960,6 @@ a.account_customer-link {
 /* Between 375px and 374px */
 @media screen and (max-width: 374px) {
   .main-heading--account-sub {
-    font-size: 2rem;
-  }
-}
-
-/* Between 428px and 1055px */
-@media screen and (min-width: 428px) and (max-width: 1055px) {
-  .main-body--customer-account {
     font-size: 2rem;
   }
 }
@@ -10103,6 +10135,73 @@ a.order__info--pill {
   .main-body.order__info {
     font-size: 1.4rem;
   }
+}
+
+.order--single .order__cell--heading {
+  display: none;
+}
+
+.order--single:first-child .order__cell--heading {
+  display: flex;
+}
+
+/* Less than or equal to 671px */
+@media screen and (max-width: 671px) {
+  .order--single .order__cell--heading {
+    display: flex;
+  }
+
+  .order--single .order__cell.is--last {
+    justify-content: flex-start;
+  }
+
+  .order--single .order__cell--body {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+.order--single .order__cell--body a {
+  font-weight: var(--regular);
+  line-height: 2em;
+  text-transform: uppercase;
+  letter-spacing: var(--all-caps-letter-spacing);
+  font-size: 1rem;
+  border: none;
+  margin-left: 0px;
+}
+
+/* Between 672px and 833px */
+@media screen and (min-width: 672px) and (max-width: 833px) {
+  .order--single .order__cell--body a {
+    font-size: 0.8rem;
+  }
+}
+
+.single-order__footer {
+  background-color: var(--light-grey);
+}
+
+.order__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.order__row--half {
+  width: 50%;
+  display: flex;
+}
+
+.order__row--half:first-child {
+  justify-content: flex-start;
+}
+
+.order__row--half:last-child {
+  justify-content: flex-end;
+}
+
+.single-order__footer .order__cell:last-child .order__heading {
+  font-weight: var(--regular);
 }
 
 /* Breakpoints Reference */

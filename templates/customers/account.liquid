@@ -1,7 +1,7 @@
 <main class="wrapper wrapper--lg account account--customer">
   <section class="account__inner account__inner--customer-top">
     <h1 class="main-heading main-heading--account-customer">{{ 'customer.account.title' | t }}</h1>
-    <a class="account_customer-link" href="{{ routes.account_logout_url }}">
+    <a class="account__customer-link" href="{{ routes.account_logout_url }}">
       {{ 'customer.log_out' | t }}
     </a>
   </section>
@@ -118,7 +118,7 @@
         <div class="main-body main-body--customer-account">
           {{ customer.default_address | format_address }}
         </div>
-        <a class="account_customer-link" href="{{ routes.account_addresses_url }}">
+        <a class="account__customer-link" href="{{ routes.account_addresses_url }}">
           {{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})
         </a>
       </div>
