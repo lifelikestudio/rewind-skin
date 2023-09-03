@@ -10,6 +10,7 @@ import Products from './components/Shop/Products';
 import SearchForm from './components/Search/SearchForm';
 import SearchResults from './components/Search/SearchResults';
 import CustomerLogin from './components/Customer/CustomerLogin';
+import Addresses from './components/Customer/Addresses';
 
 const GlobalComponents = () => {
   Drawers();
@@ -24,6 +25,7 @@ const GlobalComponents = () => {
   SearchForm();
   SearchResults();
   CustomerLogin();
+  Addresses();
 };
 const init = () => {
   GlobalComponents();

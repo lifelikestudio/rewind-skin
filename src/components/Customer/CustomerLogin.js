@@ -21,15 +21,19 @@ const CustomerLogin = () => {
   // Add event listener for hash change
   window.addEventListener('hashchange', handleVisibility);
 
-  // Add event listener for triggerReset click
-  triggerReset.addEventListener('click', () => {
-    window.location.hash = 'recover'; // Set URL hash to #recover
-  });
+  if (triggerReset) {
+    // Add event listener for triggerReset click
+    triggerReset.addEventListener('click', () => {
+      window.location.hash = 'recover'; // Set URL hash to #recover
+    });
+  }
 
-  // Add event listener for cancelReset click
-  cancelReset.addEventListener('click', () => {
-    window.location.hash = 'login'; // Set URL hash back to #login
-  });
+  if (cancelReset) {
+    // Add event listener for cancelReset click
+    cancelReset.addEventListener('click', () => {
+      window.location.hash = 'login'; // Set URL hash back to #login
+    });
+  }
 };
 
 export default CustomerLogin;

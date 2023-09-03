@@ -11,6 +11,10 @@
     {%- endunless -%}
     <title>Rewind Skin</title>
     {{ content_for_header }}
+    {% if template contains 'customers' %}
+      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+      <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
+    {% endif %}
     {{ 'global.css' | asset_url | stylesheet_tag }}
     <script
       src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"
@@ -84,6 +88,7 @@
       or template contains 'reset_password'
       or template contains 'account'
       or template contains 'order'
+      or template contains 'addresses'
     %}
       <header>
         <nav class="main-nav">

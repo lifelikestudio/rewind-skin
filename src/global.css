@@ -9395,7 +9395,11 @@ form.account__form {
 }
 
 .account__form-header,
-.main-body--account-form {
+.main-body--account-form,
+.account__field-group--checkbox,
+#AddressNewHeading,
+.main-heading--account-sub.is--edit-address,
+.main-body.is--indent {
   padding-left: 14px;
 }
 
@@ -9407,7 +9411,11 @@ form.account__form {
 /* Less than or equal to 671px */
 @media screen and (max-width: 671px) {
   .account__form-header,
-  .main-body--account-form {
+  .main-body--account-form,
+  .account__field-group--checkbox,
+  #AddressNewHeading,
+  .main-heading--account-sub.is--edit-address,
+  .main-body.is--indent {
     padding-left: 10px;
   }
 
@@ -10202,6 +10210,163 @@ a.order__info--pill {
 
 .single-order__footer .order__cell:last-child .order__heading {
   font-weight: var(--regular);
+}
+
+.account--addresses .account__form-header {
+  display: flex;
+  flex-direction: column;
+  row-gap: 56px;
+}
+
+.account--addresses .account__form-header a {
+  margin-left: 0px;
+}
+
+.account-inner__top-half {
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
+}
+
+#AddAddress,
+.account__edit-address-group {
+  flex-direction: column;
+  row-gap: calc(var(--base-unit) / 2);
+  margin-top: calc(var(--base-unit) / 2);
+}
+
+.addresses__add-group [aria-expanded='false'] ~ #AddAddress,
+.addresses__edit-group [aria-expanded='false'] ~ .account__edit-address-group {
+  display: none;
+}
+
+.addresses__add-group [aria-expanded='true'] ~ #AddAddress,
+.addresses__edit-group [aria-expanded='true'] ~ .account__edit-address-group {
+  display: flex;
+}
+
+.account__field-group--half {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 32px;
+}
+
+@media screen and (min-width: 672px) and (max-width: 1311px) {
+  .account__field-group--half {
+    column-gap: 24px;
+  }
+}
+
+.account__field-group--half .account__field-group {
+  width: 50%;
+}
+
+@media screen and (max-width: 671px) {
+  .account__field-group--half {
+    flex-direction: column;
+    row-gap: 12px;
+    column-gap: initial;
+  }
+
+  .account__field-group--half .account__field-group {
+    width: 100%;
+  }
+}
+
+.account__field-group--checkbox {
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  height: 72px;
+}
+
+.account__field-group--checkbox input[type='checkbox'] {
+  transform: scale(1.5);
+}
+
+.btn--primary.btn--account {
+  border: var(--divider-width) solid var(--black);
+  color: var(--black);
+}
+
+.btn--primary.btn--account::after {
+  content: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 34 32" xmlns="http://www.w3.org/2000/svg"> <path d="m1 15.6c-0.22091 0-0.4 0.1791-0.4 0.4s0.17909 0.4 0.4 0.4v-0.8zm32.283 0.6828c0.1563-0.1562 0.1563-0.4094 0-0.5656l-2.5455-2.5456c-0.1563-0.1562-0.4095-0.1562-0.5657 0s-0.1562 0.4094 0 0.5657l2.2627 2.2627-2.2627 2.2627c-0.1562 0.1563-0.1562 0.4095 0 0.5657s0.4094 0.1562 0.5657 0l2.5455-2.5456zm-32.283 0.1172h32v-0.8h-32v0.8z" fill="%23000000" stroke-linecap="round" stroke-width="1.2" vector-effect="non-scaling-stroke" /> </svg>');
+}
+
+.account__form-inner.account__form-inner--btns.is--outside-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.account__form-inner.account__form-inner--btns {
+  row-gap: 16px;
+}
+
+/* Between 1056px and 1311px */
+@media screen and (min-width: 1056px) and (max-width: 1311px) {
+  .account--addresses .account__form-header {
+    row-gap: 40px;
+  }
+}
+
+/* Between 672px and 1311px */
+@media screen and (min-width: 672px) and (max-width: 1311px) {
+  .account-inner__top-half {
+    row-gap: 24px;
+  }
+}
+
+/* Between 672px and 1055px */
+@media screen and (min-width: 672px) and (max-width: 1055px) {
+  .account--addresses .account__form-header {
+    row-gap: 48px;
+  }
+}
+
+/* Less than or equal to 671px */
+@media screen and (max-width: 671px) {
+  .account-inner__top-half {
+    row-gap: 16px;
+  }
+}
+
+/* Between 428px and 671px */
+@media screen and (min-width: 428px) and (max-width: 671px) {
+  .account--addresses .account__form-header {
+    row-gap: 32px;
+  }
+}
+
+/* Between 375px and 427px */
+@media screen and (min-width: 375px) and (max-width: 427px) {
+  .account--addresses .account__form-header {
+    row-gap: 28px;
+  }
+}
+
+/* Less than or equal to 374px */
+@media screen and (max-width: 374px) {
+  .account--addresses .account__form-header {
+    row-gap: 24px;
+  }
+}
+
+.account__edit-address-header-group {
+  display: flex;
+  flex-direction: column;
+  row-gap: calc(var(--base-unit) / 2);
+}
+
+.account__address-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--base-unit);
+}
+
+.account__address-list-item {
+  display: flex;
+  flex-direction: column;
+  row-gap: calc(var(--base-unit) / 2);
 }
 
 /* Breakpoints Reference */
