@@ -11,6 +11,7 @@ import SearchForm from './components/Search/SearchForm';
 import SearchResults from './components/Search/SearchResults';
 import CustomerLogin from './components/Customer/CustomerLogin';
 import Addresses from './components/Customer/Addresses';
+import QuantityField from './components/Shop/QuantityField';
 
 const GlobalComponents = () => {
   Drawers();
@@ -26,6 +27,7 @@ const GlobalComponents = () => {
   SearchResults();
   CustomerLogin();
   Addresses();
+  QuantityField();
 };
 const init = () => {
   GlobalComponents();
