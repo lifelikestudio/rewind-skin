@@ -3178,6 +3178,10 @@ a.drawer-cart__empty-continue::after {
   color: var(--white);
 }
 
+.template-product .skin-analysis-section {
+  padding-bottom: var(--base-unit);
+}
+
 /* Between 672px and 1583px */
 @media screen and (min-width: 672px) and (max-width: 1583px) {
   .skin-analysis-section {
