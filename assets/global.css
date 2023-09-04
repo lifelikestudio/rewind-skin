@@ -4469,7 +4469,7 @@ a.drawer-cart__empty-continue::after {
 
 /* Concerns Section */
 .concerns-section {
-  padding-bottom: calc(var(--base-unit) * 4);
+  padding-bottom: calc(var(--base-unit) * 2);
   background-color: var(--light-grey);
 }
 
@@ -4569,7 +4569,7 @@ a.drawer-cart__empty-continue::after {
 /* Less than or equal to 671px */
 @media screen and (max-width: 671px) {
   .concerns-section {
-    padding-bottom: calc(var(--base-unit) * 2);
+    padding-bottom: calc(var(--base-unit) * 1);
   }
 
   .concerns-section__container {
