@@ -569,6 +569,37 @@ const Drawers = () => {
       });
     });
   }
+
+  // Get the 'skin-concerns-mobile-action' element
+  const skinConcernsAction = document.getElementById(
+    'skin-concerns-mobile-action'
+  );
+
+  // Add a click event listener to the 'skin-concerns-mobile-action' element
+  if (skinConcernsAction) {
+    skinConcernsAction.addEventListener('click', () => {
+      // List of all possible open menus
+      const menus = [
+        refineMenu,
+        filtersCategoriesMobileMenu,
+        filtersConcernsMobileMenu,
+        filtersTypesMobileMenu,
+        filtersBrandsMobileMenu,
+        treatmentsMenu,
+        shopMenu,
+        drawerCart,
+        mobileMenu,
+        searchDrawer,
+      ];
+
+      // Close each menu if it's open
+      menus.forEach((menu) => {
+        if (menu && menu.classList.contains('drawer--active')) {
+          closeDrawer(menu);
+        }
+      });
+    });
+  }
 };
 
 export default Drawers;
@@ -611,23 +642,3 @@ export default Drawers;
 //     }, 1000);
 //   }
 // };
-
-// // Get the 'skin-concerns-mobile-action' element
-// const skinConcernsAction = document.getElementById(
-//   'skin-concerns-mobile-action'
-// );
-
-// // Add a click event listener to the 'skin-concerns-mobile-action' element
-// skinConcernsAction.addEventListener('click', () => {
-//   menus.forEach((menu) => {
-//     if (menu.style.display !== 'none') {
-//       closeMenu(menu);
-//     }
-//   });
-
-//   if (popover.style.display !== 'none') {
-//     gsap.to(popover, { opacity: 0, duration: 0.25 }).then(() => {
-//       popover.style.display = 'none';
-//     });
-//   }
-// });
