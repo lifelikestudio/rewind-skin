@@ -56,6 +56,33 @@ function removeItems() {
   });
 }
 
+function updateQuantity() {
+  // Update quantity with btns
+  const quantityBtns = document.querySelectorAll('.cart__quantity button');
+  quantityBtns.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const rootItem = btn.parentElement.parentElement.parentElement;
+      const key = rootItem.getAttribute('data-line-item-key');
+      const currentQuantity = Number(
+        btn.parentElement.querySelector('input').value
+      );
+      const isUp = btn.classList.contains('quantity__increment');
+      const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
+      const res = await fetch('/cart/update.js', {
+        method: 'post',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ updates: { [key]: newQuantity } }),
+      });
+      const json = await res.json();
+      updateCart();
+      updateCartItemCount(json.item_count);
+    });
+  });
+}
+
 export async function updateCart() {
   const res = await fetch('/?section_id=cart-drawer');
   const text = await res.text();
@@ -70,6 +97,8 @@ export async function updateCart() {
     closeDrawer(drawerCart, '100%');
     e.stopPropagation();
   });
+
+  updateQuantity();
 
   // Wait until the new HTML has been rendered
   setTimeout(() => {
@@ -152,6 +181,7 @@ const CartDrawer = () => {
   });
   attachEventListeners();
   updateCartLinks();
+  updateQuantity();
 };
 
 export default CartDrawer;

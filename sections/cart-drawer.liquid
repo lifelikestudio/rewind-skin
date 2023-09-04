@@ -15,7 +15,7 @@
       <div class="drawer__container drawer__container--cart">
         <div class="drawer-cart__items">
           {% for item in cart.items %}
-            <div class="drawer-cart__item">
+            <div class="drawer-cart__item" data-line-item-key="{{ item.key }}">
               <div class="item__img">
                 {% assign product = all_products[item.product.handle] %}
                 {% if product.images.size > 1 %}
