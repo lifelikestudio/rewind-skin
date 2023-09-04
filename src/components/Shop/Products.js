@@ -1,9 +1,10 @@
-// Get the variant ID from the URL
 let url = window.location.href;
 let variantIdUrl = null;
 let match = url.match(/variant=([^&]*)/);
 if (match) {
   variantIdUrl = match[1];
+  // Remove trailing hash symbols from variantIdUrl
+  variantIdUrl = variantIdUrl.replace(/#*$/, '');
 } else {
   // Default behavior when no variant parameter is present
   // Select the first radio button

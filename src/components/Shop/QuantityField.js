@@ -1,6 +1,10 @@
 let quantityInput = document.querySelector('.product-page__quantity-input');
-let decrementButton = document.querySelector('.quantity__decrement');
-let incrementButton = document.querySelector('.quantity__increment');
+let decrementButton = document.querySelector(
+  '.product-page__quantity .quantity__decrement'
+);
+let incrementButton = document.querySelector(
+  '.product-page__quantity .quantity__increment'
+);
 
 const QuantityField = () => {
   if (decrementButton) {

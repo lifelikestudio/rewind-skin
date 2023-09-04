@@ -1527,11 +1527,11 @@ button.drawer__header-action {
   font-family: var(--font-stack); /* Inherit the font from the parent element */
   font-weight: var(--medium);
   font-size: 1.6rem; /* Inherit the font size from the parent element */
-  line-height: 11.104px;
+  line-height: 1em;
   color: var(--black); /* Inherit the color from the parent element */
   background-color: var(--light-grey);
   border-radius: var(--form-ui-radius);
-  padding: 24px;
+  /* padding: 24px; */
   text-align: center;
   height: 72px;
   width: 100%;
@@ -7802,7 +7802,19 @@ a.drawer-cart__empty-continue::after {
   padding: 0px 8px;
 }
 
-.product-page__quantity-input {
+.cart__quantity {
+  display: flex;
+  background-color: var(--light-grey);
+  border-radius: var(--form-ui-radius);
+  overflow: hidden;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 24px;
+  height: 72px;
+}
+
+.product-page__quantity-input,
+.cart__quantity-input {
   padding: 0px;
   width: calc(100% / 3);
 }
@@ -7825,6 +7837,7 @@ a.drawer-cart__empty-continue::after {
   padding: 0;
   height: 100%;
   width: calc(100% / 3);
+  height: 100%;
 }
 
 /* Between 672px and 1311px */

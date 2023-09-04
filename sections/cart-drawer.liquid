@@ -87,7 +87,11 @@
               </div>
               <div class="item__quantity">
                 <!-- Quantity input field -->
-                <input class="cart__quantity" type="number" min="1" name="quantity" value="{{ item.quantity }}">
+                <div class="cart__quantity">
+                  <button type="button" class="quantity__decrement">-</button>
+                  <input class="cart__quantity-input" type="number" min="1" name="quantity" value="{{ item.quantity }}">
+                  <button type="button" class="quantity__increment">+</button>
+                </div>
               </div>
             </div>
           {% endfor %}
