@@ -3628,6 +3628,17 @@ a.drawer-cart__empty-continue::after {
   }
 }
 
+/* Between 428px and 1055px */
+@media screen and (min-width: 428px) and (max-width: 1055px) {
+  .treatments-section__card.embla__slide {
+    width: 312px;
+  }
+
+  .treatments-section__column:last-child {
+    height: 468px;
+  }
+}
+
 /* Between 375px and 427px */
 @media screen and (min-width: 375px) and (max-width: 427px) {
   .treatments-section__card.embla__slide {
@@ -3670,12 +3681,12 @@ a.drawer-cart__empty-continue::after {
 /* Between 390px and 427px */
 @media screen and (min-width: 390px) and (max-width: 427px) {
   .treatments-section__column:last-child {
-    height: 512px;
+    height: 444px;
   }
 
   .treatments-section__card.embla__slide {
     /* min-width: 342px; */
-    width: 342px;
+    width: 296px;
   }
 
   .treatments-section__card .treatment-card__btn::after {
@@ -3688,12 +3699,12 @@ a.drawer-cart__empty-continue::after {
 /* Between 375px and 389px */
 @media screen and (min-width: 375px) and (max-width: 389px) {
   .treatments-section__column:last-child {
-    height: 495px;
+    height: 408px;
   }
 
   .treatments-section__card.embla__slide {
     /* min-width: 330px; */
-    width: 330px;
+    width: 272px;
   }
 
   .treatments-section__card .treatment-card__btn::after {
@@ -3706,12 +3717,12 @@ a.drawer-cart__empty-continue::after {
 /* Less than or equal to 374px */
 @media screen and (max-width: 374px) {
   .treatments-section__column:last-child {
-    height: 408px;
+    height: 360px;
   }
 
   .treatments-section__card.embla__slide {
     /* min-width: 272px; */
-    width: 272px;
+    width: 240px;
     margin-left: 6px;
     margin-right: 6px;
     padding: 14px;
