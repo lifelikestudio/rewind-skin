@@ -2,7 +2,7 @@
   <section class="product-page__container">
     {% assign downcased_vendor = product.vendor | strip | downcase %}
     {% comment %} revisit the br logic because it should also check if they're logged-in or not and some br has variants {% endcomment %}
-    {% if downcased_vendor == 'biologique recherche' or product.variants.size <= 1 %}
+    {% if downcased_vendor == 'biologique recherche' and customer == null or product.variants.size <= 1 %}
       <div class="product-page__copy-lockup product-page__copy-lockup--br">
         <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
         {{ product.description }}
@@ -53,7 +53,7 @@
         <input type="hidden" name="id" value="{{ product.variants.first.id }}">
       {% endif %}
       {% assign downcased_vendor = product.vendor | strip | downcase %}
-      {% if downcased_vendor == 'biologique recherche' %}
+      {% if downcased_vendor == 'biologique recherche' and customer == null %}
         {% for variant in product.variants %}
           <a
             class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon is--login variant-section variant-section-{{ variant.id }}"

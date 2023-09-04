@@ -4403,12 +4403,17 @@ a.drawer-cart__empty-continue::after {
 
 .brand-section__video-mask {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
+  /* aspect-ratio: 16 / 9; */
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   overflow: hidden;
+}
+
+.brand-section__video-mask.wrapper--lg {
+  max-width: none;
 }
 
 .brand-section__video-mask-half {
@@ -4432,14 +4437,14 @@ a.drawer-cart__empty-continue::after {
 /* Between 1056px and 1583px */
 @media screen and (min-width: 1056px) and (max-width: 1583px) {
   .brand-section__video-mask {
-    aspect-ratio: 2 / 1;
+    /* aspect-ratio: 2 / 1; */
   }
 }
 
 /* Less than or equal to 1055px */
 @media screen and (max-width: 1055px) {
   .brand-section__video-mask {
-    aspect-ratio: 4 / 3;
+    /* aspect-ratio: 4 / 3; */
   }
 }
 

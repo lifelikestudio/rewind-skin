@@ -78,7 +78,7 @@
     endif
   %}
 
-  <body class="{{ bodyClass }}">
+  <body data-customer-logged-in="{% if customer %}true{% else %}false{% endif %}" class="{{ bodyClass }}">
     {% if template contains 'product'
       or template contains 'cart'
       or template contains 'search'

@@ -32,6 +32,8 @@ if (document.querySelector('.concerns-section__inner:last-child.embla')) {
   }
 }
 
+const isCustomerLoggedIn = document.body.dataset.customerLoggedIn === 'true';
+
 // Get the radio buttons
 const productsRadio = document.querySelector('#skin-concerns-filter-products');
 const treatmentsRadio = document.querySelector(
@@ -323,12 +325,17 @@ function displayProducts(selectedConcern) {
 
           info.append(brand, title);
 
-          if (product.vendor.toLowerCase() === 'biologique recherche') {
+          if (
+            product.vendor.toLowerCase() === 'biologique recherche' &&
+            !isCustomerLoggedIn
+          ) {
             const buttonDiv = document.createElement('div');
             buttonDiv.className =
               'all-caps btn btn--primary product-card__btn product-card__btn--icon';
             buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
             buttonDiv.textContent = 'Login to Shop';
+            // Set the href attribute of the parent anchor to the URL in the data-url attribute
+            card.href = buttonDiv.dataset.url;
             card.append(info, buttonDiv);
           } else {
             const form = document.createElement('form');
@@ -394,12 +401,17 @@ function displayProducts(selectedConcern) {
 
             info.append(brand, title);
 
-            if (product.vendor.toLowerCase() === 'biologique recherche') {
+            if (
+              product.vendor.toLowerCase() === 'biologique recherche' &&
+              !isCustomerLoggedIn
+            ) {
               const buttonDiv = document.createElement('div');
               buttonDiv.className =
                 'all-caps btn btn--primary product-card__btn product-card__btn--icon';
               buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
               buttonDiv.textContent = 'Login to Shop';
+              // Set the href attribute of the parent anchor to the URL in the data-url attribute
+              card.href = buttonDiv.dataset.url;
               card.append(info, buttonDiv);
             } else {
               const form = document.createElement('form');
