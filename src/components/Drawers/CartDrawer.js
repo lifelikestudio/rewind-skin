@@ -24,6 +24,19 @@ export function updateCartItemCount(count) {
   });
 }
 
+function showLoadingInCart() {
+  const cartItemsContainer = document.querySelector('.drawer__container--cart');
+  cartItemsContainer.innerHTML = `
+  <div class="fill-loader fill-loader--v1" role="alert">
+    <p class="fill-loader__label">Content is loading...</p>
+    <div aria-hidden="true">
+      <div class="fill-loader__base"></div>
+      <div class="fill-loader__fill"></div>
+    </div>
+  </div>
+  `;
+}
+
 function removeItems() {
   const removeItemButtons = document.querySelectorAll('.item__remove');
   removeItemButtons.forEach((btn) => {
@@ -132,6 +145,10 @@ export const attachEventListeners = () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Optimistically update UI
+      openDrawer(drawerCart);
+      showLoadingInCart();
+
       // Submit form with AJAX
       await fetch('/cart/add', {
         method: 'post',
@@ -139,8 +156,8 @@ export const attachEventListeners = () => {
       });
 
       // Get cart count
-      const res = await fetch('/cart.js');
-      const cartCount = await res.json();
+      const resCart = await fetch('/cart.js');
+      const cartCount = await resCart.json();
       updateCartItemCount(cartCount.item_count);
 
       // Update cart without page reload
@@ -155,6 +172,10 @@ export const attachEventListenersToProduct = (productForm) => {
   productForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Optimistically update UI
+    openDrawer(drawerCart);
+    showLoadingInCart();
+
     // Submit form with AJAX
     await fetch('/cart/add', {
       method: 'post',
@@ -162,8 +183,8 @@ export const attachEventListenersToProduct = (productForm) => {
     });
 
     // Get cart count
-    const res = await fetch('/cart.js');
-    const cartCount = await res.json();
+    const resCart = await fetch('/cart.js');
+    const cartCount = await resCart.json();
     updateCartItemCount(cartCount.item_count);
 
     // Update cart without page reload
@@ -181,6 +202,10 @@ const CartDrawer = () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Optimistically update UI
+      openDrawer(drawerCart);
+      showLoadingInCart();
+
       // Submit form with AJAX
       await fetch('/cart/add', {
         method: 'post',
@@ -188,8 +213,8 @@ const CartDrawer = () => {
       });
 
       // Get cart count
-      const res = await fetch('/cart.js');
-      const cartCount = await res.json();
+      const resCart = await fetch('/cart.js');
+      const cartCount = await resCart.json();
       updateCartItemCount(cartCount.item_count);
 
       // Update cart without page reload

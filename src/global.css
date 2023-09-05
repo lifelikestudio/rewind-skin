@@ -10483,6 +10483,70 @@ a.order__info--pill {
   row-gap: calc(var(--base-unit) / 2);
 }
 
+/* Loader */
+.fill-loader {
+  position: absolute;
+  overflow: hidden;
+  display: inline-block;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+}
+
+.fill-loader__fill {
+  position: absolute;
+}
+
+.fill-loader__label {
+  position: absolute;
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+}
+
+.fill-loader--v1 .fill-loader__base {
+  width: 100%;
+  height: 2px;
+  background-color: var(--regular-grey);
+}
+
+.fill-loader--v1 .fill-loader__fill {
+  background-color: var(--black);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  will-change: transform;
+}
+
+.fill-loader--v1 .fill-loader__fill {
+  animation: fill-loader-1 0.8s infinite cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+@keyframes fill-loader-1 {
+  0% {
+    transform-origin: 0 0;
+    transform: scaleX(0);
+  }
+  49% {
+    transform-origin: 0 0;
+    transform: scaleX(1);
+  }
+  51% {
+    transform: scaleX(1);
+    transform-origin: 100% 0;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: 100% 0;
+  }
+}
+
+.drawer__container--cart.fade-in {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
 /* Breakpoints Reference */
 /* Greater than or equal to 1784px */
 @media screen and (min-width: 1784px) {
