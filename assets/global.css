@@ -5634,6 +5634,7 @@ a.drawer-cart__empty-continue::after {
   font-size: 1.4rem;
   line-height: 20px;
   text-align: left;
+  display: none;
 }
 
 .collections__breadcrumbs::before {
@@ -6718,6 +6719,14 @@ a.drawer-cart__empty-continue::after {
 .collections__container > .collections__filters-action:nth-child(3),
 .search-results__container > .collections__filters-action:nth-child(3) {
   border-left: var(--divider-width) solid var(--divider-colour);
+}
+
+#sort-action {
+  display: none;
+}
+
+#refine-action {
+  width: 100%;
 }
 
 /* Greater than or equal to 1056px */
