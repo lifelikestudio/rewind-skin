@@ -449,7 +449,7 @@ template {
   font-size: 4.2rem;
   line-height: 52px;
   letter-spacing: var(--base-letter-spacing);
-  text-transform: capitalize;
+  /* text-transform: capitalize; */
   text-align: left;
 }
 
@@ -2606,34 +2606,41 @@ a.drawer-cart__empty-continue::after {
 }
 
 .main-lockup__heading {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 /* Between 1056px and 1311px */
 @media screen and (min-width: 1056px) and (max-width: 1311px) {
   .main-lockup__heading {
-    margin-bottom: 20px;
+    margin-bottom: 32px;
+  }
+}
+
+/* Between 672px and 1055px */
+@media screen and (min-width: 672px) and (max-width: 1055px) {
+  .main-lockup__heading {
+    margin-bottom: 40px;
   }
 }
 
 /* Between 428px and 671px */
 @media screen and (min-width: 428px) and (max-width: 671px) {
   .main-lockup__heading {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 }
 
 /* Between 375px and 427px */
 @media screen and (min-width: 375px) and (max-width: 427px) {
   .main-lockup__heading {
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 }
 
 /* Less than or equal to 374px */
 @media screen and (max-width: 374px) {
   .main-lockup__heading {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 }
 
@@ -10554,6 +10561,78 @@ a.order__info--pill {
 .drawer__container--cart.fade-in {
   opacity: 0;
   transition: opacity 200ms ease-in-out;
+}
+
+.announcement-bar {
+  min-height: calc(var(--base-unit) / 2);
+  background-color: var(--light-grey);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.announcement-bar__container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.announcement-bar__type {
+  font-family: var(--font-stack);
+  color: var(--black);
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.3em;
+  letter-spacing: var(--base-letter-spacing);
+  text-align: center;
+}
+
+.announcement-bar__type:visited {
+  color: var(--black);
+}
+
+/* Between 1312px and 1583px */
+@media screen and (min-width: 1312px) and (max-width: 1583px) {
+  .announcement-bar {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+/* Between 1056px and 1311px */
+@media screen and (min-width: 1056px) and (max-width: 1311px) {
+  .announcement-bar {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .announcement-bar__type {
+    font-size: 1.2rem;
+  }
+}
+
+/* Between 672px and 1055px */
+@media screen and (min-width: 672px) and (max-width: 1055px) {
+  .announcement-bar {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+/* Less than or equal to 671px */
+@media screen and (max-width: 671px) {
+  .announcement-bar {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .announcement-bar__type {
+    font-size: 1.2rem;
+  }
 }
 
 /* Breakpoints Reference */
