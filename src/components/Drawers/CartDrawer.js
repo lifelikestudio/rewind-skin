@@ -18,7 +18,7 @@ const updateCartLinks = () => {
   });
 };
 
-function updateCartItemCount(count) {
+export function updateCartItemCount(count) {
   cartItemCount.forEach((el) => {
     el.textContent = `(${count})`;
   });
@@ -56,9 +56,26 @@ function removeItems() {
   });
 }
 
+function updateCartPageQuantity(key, quantity) {
+  // Find the corresponding item in the CartPage
+  const cartPageItem = document.querySelector(
+    `.drawer-cart__item--cart-page[data-key="${key}"]`
+  );
+
+  // Update its quantity value
+  if (cartPageItem) {
+    const quantityInput = cartPageItem.querySelector('.cart__quantity input');
+    if (quantityInput) {
+      quantityInput.value = quantity;
+    }
+  }
+}
+
 function updateQuantity() {
   // Update quantity with btns
-  const quantityBtns = document.querySelectorAll('.cart__quantity button');
+  const quantityBtns = document.querySelectorAll(
+    '#shopify-section-cart-drawer .cart__quantity button'
+  );
   quantityBtns.forEach((btn) => {
     btn.addEventListener('click', async () => {
       const rootItem = btn.parentElement.parentElement.parentElement;
@@ -66,6 +83,7 @@ function updateQuantity() {
       const currentQuantity = Number(
         btn.parentElement.querySelector('input').value
       );
+      // Update the quantity value in the CartPage
       const isUp = btn.classList.contains('quantity__increment');
       const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
       const res = await fetch('/cart/update.js', {
@@ -78,6 +96,7 @@ function updateQuantity() {
       });
       const json = await res.json();
       updateCart();
+      updateCartPageQuantity(key, newQuantity);
       updateCartItemCount(json.item_count);
     });
   });

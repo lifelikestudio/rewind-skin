@@ -12,6 +12,7 @@ import SearchResults from './components/Search/SearchResults';
 import CustomerLogin from './components/Customer/CustomerLogin';
 import Addresses from './components/Customer/Addresses';
 import QuantityField from './components/Shop/QuantityField';
+import CartPage from './components/Shop/CartPage';
 
 const GlobalComponents = () => {
   Drawers();
@@ -19,7 +20,6 @@ const GlobalComponents = () => {
   SkinConcernsSection();
   TreatmentsSection();
   Shop();
-  CartDrawer();
   TreatmentsPage();
   Questions();
   Products();
@@ -28,6 +28,8 @@ const GlobalComponents = () => {
   CustomerLogin();
   Addresses();
   QuantityField();
+  CartPage();
+  CartDrawer();
 };
 const init = () => {
   GlobalComponents();
