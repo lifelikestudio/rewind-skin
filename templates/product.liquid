@@ -15,15 +15,34 @@
     {% endif %}
   </section>
   <section class="product-page__container">
-    {% if product.media.size > 1 %}
-      <img
-        src="{{ product.media[1] | image_url: width: 357 }}"
-        alt="{{ product.title | escape }}"
-        width="357"
-        height="713"
-        loading="eager"
-        class="product-page__product-img"
-      >
+    {% if product.variants.size > 1 %}
+      {% assign featured_image = product.selected_or_first_available_variant.featured_image %}
+    {% else %}
+      {% assign featured_image = product.featured_image %}
+    {% endif %}
+
+    {% if featured_image != null %}
+      {% assign featured_image_alt = featured_image.alt | escape %}
+      {% assign modified_alt = featured_image_alt | replace: '-product-card-image', '' %}
+      {% assign matching_image = null %}
+
+      {% for media in product.media %}
+        {% if media.alt contains modified_alt and media.alt contains '-product-page-image-a' %}
+          {% assign matching_image = media %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+
+      {% if matching_image != null %}
+        <img
+          src="{{ matching_image | img_url: '357x' }}"
+          alt="{{ matching_image.alt }}"
+          width="357"
+          height="713"
+          loading="eager"
+          class="product-page__product-img"
+        >
+      {% endif %}
     {% endif %}
   </section>
   <section class="product-page__container">
