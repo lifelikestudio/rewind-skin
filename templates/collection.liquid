@@ -341,13 +341,23 @@
                   </div>
                 {% endif %}
               {% endif %}
-              <img
-                class="product-card__image"
-                src="{{ 'product-cards_placeholder_ar-2-3.jpg' | asset_url }}"
-                width="313"
-                height="468"
-                loading="lazy"
-              >
+              {% if variant.image != blank %}
+                <img
+                  class="product-card__image"
+                  src="{{ variant.image | image_url: width: 313, height: 468 }}"
+                  width="313"
+                  height="468"
+                  loading="lazy"
+                >
+              {% else %}
+                <img
+                  class="product-card__image"
+                  src="{{ product.featured_image | image_url: width: 313, height: 468 }}"
+                  width="313"
+                  height="468"
+                  loading="lazy"
+                >
+              {% endif %}
             </a>
           {% endfor %}
         {% endfor %}

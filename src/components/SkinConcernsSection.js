@@ -205,6 +205,9 @@ const fetchProducts = () => {
                 id
                 title
                 availableForSale
+                image {
+                  originalSrc
+                }
                 priceV2 {
                   amount
                   currencyCode
@@ -371,8 +374,12 @@ function displayProducts(selectedConcern) {
 
           const image = document.createElement('img');
           image.className = 'product-card__image';
-          image.src =
-            'https://cdn.shopify.com/s/files/1/0725/5811/7174/files/product-cards_placeholder_ar-2-3.jpg?v=1690061301';
+          if (variant && variant.image) {
+            image.src = variant.image.originalSrc;
+          } else if (product.images.edges.length > 0) {
+            // Use the product's first image
+            image.src = product.images.edges[0].node.originalSrc;
+          }
           image.width = '292';
           image.height = '438';
           image.loading = 'lazy';
@@ -447,8 +454,12 @@ function displayProducts(selectedConcern) {
 
             const image = document.createElement('img');
             image.className = 'product-card__image';
-            image.src =
-              'https://cdn.shopify.com/s/files/1/0725/5811/7174/files/product-cards_placeholder_ar-2-3.jpg?v=1690061301';
+            if (variant && variant.image) {
+              image.src = variant.image.originalSrc;
+            } else if (product.images.edges.length > 0) {
+              // Use the product's first image
+              image.src = product.images.edges[0].node.originalSrc;
+            }
             image.width = '292';
             image.height = '438';
             image.loading = 'lazy';
