@@ -27,7 +27,7 @@
       {% assign matching_image = null %}
 
       {% for media in product.media %}
-        {% if media.alt contains modified_alt and media.alt contains '-product-page-image-a' %}
+        {% if media.alt contains modified_alt and media.alt contains '-product-page-image' %}
           {% assign matching_image = media %}
           {% break %}
         {% endif %}
