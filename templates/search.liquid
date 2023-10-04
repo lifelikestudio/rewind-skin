@@ -385,17 +385,17 @@
                   {% if variant.image != blank %}
                     <img
                       class="product-card__image"
-                      src="{{ variant.image | image_url: width: 313, height: 468 }}"
-                      width="313"
-                      height="468"
+                      src="{{ variant.image | image_url: width: 780 }}"
+                      width="780"
+                      height="1170"
                       loading="lazy"
                     >
                   {% else %}
                     <img
                       class="product-card__image"
-                      src="{{ item.featured_image | image_url: width: 313, height: 468 }}"
-                      width="313"
-                      height="468"
+                      src="{{ item.featured_image | image_url: width: 780 }}"
+                      width="780"
+                      height="1170"
                       loading="lazy"
                     >
                   {% endif %}
