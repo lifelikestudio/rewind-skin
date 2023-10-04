@@ -380,8 +380,8 @@ function displayProducts(selectedConcern) {
             // Use the product's first image
             image.src = product.images.edges[0].node.originalSrc;
           }
-          image.width = '292';
-          image.height = '438';
+          image.width = '780';
+          image.height = '1170';
           image.loading = 'lazy';
 
           card.append(image);
@@ -460,8 +460,8 @@ function displayProducts(selectedConcern) {
               // Use the product's first image
               image.src = product.images.edges[0].node.originalSrc;
             }
-            image.width = '292';
-            image.height = '438';
+            image.width = '780';
+            image.height = '1170';
             image.loading = 'lazy';
 
             card.append(image);
