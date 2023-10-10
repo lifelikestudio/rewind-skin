@@ -30,8 +30,16 @@ const Products = () => {
     );
     if (loginToShopButton) {
       const url = new URL(loginToShopButton.href);
-      url.searchParams.set('variant', variantIdUrl);
-      loginToShopButton.href = url.toString();
+
+      // Get the current checkout_url value
+      let checkoutUrl = url.searchParams.get('checkout_url');
+
+      // Append the variant parameter to the checkout_url
+      checkoutUrl = checkoutUrl + '?variant=' + variantIdUrl;
+
+      // Manually construct the entire URL
+      loginToShopButton.href =
+        url.origin + url.pathname + '?checkout_url=' + checkoutUrl;
     }
   } else {
     // Select the corresponding radio button
@@ -39,6 +47,14 @@ const Products = () => {
       const selectedRadio = document.querySelector(`#variant-${variantIdUrl}`);
       if (selectedRadio) {
         selectedRadio.checked = true;
+      }
+
+      // Show the image related to the selected variant
+      const selectedImage = document.querySelector(
+        `img[data-variant-id="${variantIdUrl}"]`
+      );
+      if (selectedImage) {
+        selectedImage.style.display = 'block';
       }
     }
 
@@ -67,6 +83,20 @@ const Products = () => {
         );
         if (selectedVariantSection) {
           selectedVariantSection.style.display = 'flex';
+        }
+
+        // Hide all images
+        const images = document.querySelectorAll('.product-page__product-img');
+        images.forEach((img) => {
+          img.style.display = 'none';
+        });
+
+        // Show only the image related to the selected variant
+        const selectedImage = document.querySelector(
+          `img[data-variant-id="${variantId}"]`
+        );
+        if (selectedImage) {
+          selectedImage.style.display = 'block';
         }
 
         // Update the URL's query string to reflect the selected variant

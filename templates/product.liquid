@@ -15,35 +15,34 @@
     {% endif %}
   </section>
   <section class="product-page__container">
-    {% if product.variants.size > 1 %}
-      {% assign featured_image = product.selected_or_first_available_variant.featured_image %}
-    {% else %}
-      {% assign featured_image = product.featured_image %}
-    {% endif %}
+    {% for variant in product.variants %}
+      {% assign featured_image = variant.featured_image | default: product.featured_image %}
+      {% if featured_image != null %}
+        {% assign featured_image_alt = featured_image.alt | escape %}
+        {% assign modified_alt = featured_image_alt | replace: '-product-card-image', '' %}
+        {% assign matching_image = null %}
 
-    {% if featured_image != null %}
-      {% assign featured_image_alt = featured_image.alt | escape %}
-      {% assign modified_alt = featured_image_alt | replace: '-product-card-image', '' %}
-      {% assign matching_image = null %}
+        {% for media in product.media %}
+          {% if media.alt contains modified_alt and media.alt contains '-product-page-image' %}
+            {% assign matching_image = media %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
 
-      {% for media in product.media %}
-        {% if media.alt contains modified_alt and media.alt contains '-product-page-image' %}
-          {% assign matching_image = media %}
-          {% break %}
+        {% if matching_image != null %}
+          <img
+            src="{{ matching_image | image_url: width: 893 }}"
+            alt="{{ matching_image.alt }}"
+            width="893"
+            height="auto"
+            loading="eager"
+            class="product-page__product-img"
+            data-variant-id="{{ variant.id }}"
+            style="{% if product.variants.size > 1 %}display: none;{% endif %}"
+          >
         {% endif %}
-      {% endfor %}
-
-      {% if matching_image != null %}
-        <img
-          src="{{ matching_image | image_url: width: 893 }}"
-          alt="{{ matching_image.alt }}"
-          width="893"
-          height="893"
-          loading="eager"
-          class="product-page__product-img"
-        >
       {% endif %}
-    {% endif %}
+    {% endfor %}
   </section>
   <section class="product-page__container">
     <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-page__checkout-form">
@@ -76,7 +75,7 @@
         {% for variant in product.variants %}
           <a
             class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon is--login variant-section variant-section-{{ variant.id }}"
-            href="/account/login?checkout_url={{ product.url }}&variant={{ variant.id }}"
+            href="/account/login?checkout_url={{ product.url }}?variant={{ variant.id }}"
             >Login to Shop
           </a>
         {% endfor %}
@@ -108,7 +107,8 @@
                 {% endif %}
               </button>
               <p class="product-page__payment-plan">
-                or 4 interest-free payments of $30 with <span class="is--emphasized">Sezzle</span>
+                or 4 interest-free payments of {% assign divided_price = variant.price | divided_by: 4 %}
+                {{ divided_price | money_with_currency }} with <span class="is--emphasized">Sezzle</span>
               </p>
             </div>
           {% else %}

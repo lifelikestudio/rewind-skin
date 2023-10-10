@@ -1,24 +1,25 @@
-let quantityInput = document.querySelector('.product-page__quantity-input');
-let decrementButton = document.querySelector(
+let quantityInputs = document.querySelectorAll('.product-page__quantity-input');
+let decrementButtons = document.querySelectorAll(
   '.product-page__quantity .quantity__decrement'
 );
-let incrementButton = document.querySelector(
+let incrementButtons = document.querySelectorAll(
   '.product-page__quantity .quantity__increment'
 );
 
 const QuantityField = () => {
-  if (decrementButton) {
+  decrementButtons.forEach((decrementButton, index) => {
     decrementButton.addEventListener('click', function () {
-      if (quantityInput.value > 1) {
-        quantityInput.value = parseInt(quantityInput.value) - 1;
+      if (quantityInputs[index].value > 1) {
+        quantityInputs[index].value = parseInt(quantityInputs[index].value) - 1;
       }
     });
-  }
-  if (incrementButton) {
+  });
+
+  incrementButtons.forEach((incrementButton, index) => {
     incrementButton.addEventListener('click', function () {
-      quantityInput.value = parseInt(quantityInput.value) + 1;
+      quantityInputs[index].value = parseInt(quantityInputs[index].value) + 1;
     });
-  }
+  });
 };
 
 export default QuantityField;
