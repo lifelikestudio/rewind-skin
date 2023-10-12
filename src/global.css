@@ -7292,6 +7292,8 @@ a.drawer-cart__empty-continue::after {
   .product-page__hero .product-page__container:nth-child(2) {
     order: 1; /* Second box becomes the first box */
     grid-row: 1; /* Keep it on the first row */
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
 
   .product-page__hero .product-page__container:last-child {
