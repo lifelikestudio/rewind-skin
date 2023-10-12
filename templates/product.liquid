@@ -128,16 +128,22 @@
     </form>
   </section>
 </main>
-<section class="product-page__more-info wrapper wrapper--md">
-  <div class="product-page__container">
-    <h2 class="product-page__heading">Directions</h2>
-    <p class="product-page__body">{{ product.metafields.custom.directions }}</p>
-  </div>
-  <div class="product-page__container">
-    <h2 class="product-page__heading">INCI Ingredients</h2>
-    <p class="product-page__body">{{ product.metafields.custom.ingredients }}</p>
-  </div>
-</section>
+{% if product.metafields.custom.directions != blank or product.metafields.custom.ingredients != blank %}
+  <section class="product-page__more-info wrapper wrapper--md">
+    {% if product.metafields.custom.directions != blank %}
+      <div class="product-page__container">
+        <h2 class="product-page__heading">Directions</h2>
+        <p class="product-page__body">{{ product.metafields.custom.directions }}</p>
+      </div>
+    {% endif %}
+    {% if product.metafields.custom.ingredients != blank %}
+      <div class="product-page__container">
+        <h2 class="product-page__heading">INCI Ingredients</h2>
+        <p class="product-page__body">{{ product.metafields.custom.ingredients }}</p>
+      </div>
+    {% endif %}
+  </section>
+{% endif %}
 {% section 'skin-analysis' %}
 {% comment %}
   <section class="product-page__related">
