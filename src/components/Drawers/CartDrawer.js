@@ -140,7 +140,6 @@ export async function updateCart() {
 }
 
 export const attachEventListeners = () => {
-  const addToCart = document.querySelectorAll('form[action="/cart/add"]');
   addToCart.forEach((form) => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -149,21 +148,52 @@ export const attachEventListeners = () => {
       openDrawer(drawerCart);
       showLoadingInCart();
 
-      // Submit form with AJAX
-      await fetch('/cart/add', {
-        method: 'post',
-        body: new FormData(form),
-      });
+      // Delay form submission until after any pending updates to the DOM
+      setTimeout(async () => {
+        // Create a new FormData object
+        const formData = new FormData();
 
-      // Get cart count
-      const resCart = await fetch('/cart.js');
-      const cartCount = await resCart.json();
-      updateCartItemCount(cartCount.item_count);
+        // Try to select a checked radio button first
+        let variantIdInput = form.querySelector(
+          'input[type=radio][name=id]:checked'
+        );
 
-      // Update cart without page reload
-      await updateCart();
-      // Open cart drawer
-      openDrawer(drawerCart);
+        // If there's no checked radio button, select the hidden input field
+        if (!variantIdInput) {
+          variantIdInput = form.querySelector('input[type=hidden][name=id]');
+        }
+
+        // Make sure the input field exists before trying to read its value
+        if (variantIdInput) {
+          const variantId = variantIdInput.value;
+          formData.append('id', variantId);
+
+          // Append the quantity
+          const quantityInput = form.querySelector(
+            `input[data-variant-id="${variantId}"]`
+          );
+          const quantity = quantityInput ? quantityInput.value : '0';
+          formData.append('quantity', quantity);
+
+          // Submit form with AJAX
+          await fetch('/cart/add', {
+            method: 'post',
+            body: formData,
+          });
+
+          // Get cart count
+          const resCart = await fetch('/cart.js');
+          const cartCount = await resCart.json();
+          updateCartItemCount(cartCount.item_count);
+
+          // Update cart without page reload
+          await updateCart();
+          // Open cart drawer
+          openDrawer(drawerCart);
+        } else {
+          console.error('No variant ID input field found');
+        }
+      }, 0);
     });
   });
 };
@@ -176,21 +206,54 @@ export const attachEventListenersToProduct = (productForm) => {
     openDrawer(drawerCart);
     showLoadingInCart();
 
-    // Submit form with AJAX
-    await fetch('/cart/add', {
-      method: 'post',
-      body: new FormData(productForm),
-    });
+    // Delay form submission until after any pending updates to the DOM
+    setTimeout(async () => {
+      // Create a new FormData object
+      const formData = new FormData();
 
-    // Get cart count
-    const resCart = await fetch('/cart.js');
-    const cartCount = await resCart.json();
-    updateCartItemCount(cartCount.item_count);
+      // Try to select a checked radio button first
+      let variantIdInput = productForm.querySelector(
+        'input[type=radio][name=id]:checked'
+      );
 
-    // Update cart without page reload
-    await updateCart();
-    // Open cart drawer
-    openDrawer(drawerCart);
+      // If there's no checked radio button, select the hidden input field
+      if (!variantIdInput) {
+        variantIdInput = productForm.querySelector(
+          'input[type=hidden][name=id]'
+        );
+      }
+
+      // Make sure theinput field exists before trying to undefinedread its value
+      if (variantIdInput) {
+        const variantId = variantIdInput.value;
+        formData.append('id', variantId);
+
+        // Append the quantity
+        const quantityInput = productForm.querySelector(
+          `input[data-variant-id="${variantId}"]`
+        );
+        const quantity = quantityInput ? quantityInput.value : '0';
+        formData.append('quantity', quantity);
+
+        // Submit form with AJAX
+        await fetch('/cart/add', {
+          method: 'post',
+          body: formData,
+        });
+
+        // Get cart count
+        const resCart = await fetch('/cart.js');
+        const cartCount = await resCart.json();
+        updateCartItemCount(cartCount.item_count);
+
+        // Update cart without page reload
+        await updateCart();
+        // Open cart drawer
+        openDrawer(drawerCart);
+      } else {
+        console.error('No variant ID input field found');
+      }
+    }, 0);
   });
 };
 
@@ -206,22 +269,57 @@ const CartDrawer = () => {
       openDrawer(drawerCart);
       showLoadingInCart();
 
-      // Submit form with AJAX
-      await fetch('/cart/add', {
-        method: 'post',
-        body: new FormData(form),
-      });
+      // Delay form submission until after any pending updates to the DOM
+      setTimeout(async () => {
+        // Create a new FormData object
+        const formData = new FormData();
 
-      // Get cart count
-      const resCart = await fetch('/cart.js');
-      const cartCount = await resCart.json();
-      updateCartItemCount(cartCount.item_count);
+        // Try to select a checked radio button first
+        let variantIdInput = form.querySelector(
+          'input[type=radio][name=id]:checked'
+        );
 
-      // Update cart without page reload
-      await updateCart();
-      // Open cart drawer
-      openDrawer(drawerCart);
+        // If there's no checked radio button, select the hidden input field
+        if (!variantIdInput) {
+          variantIdInput = form.querySelector('input[type=hidden][name=id]');
+        }
+
+        // Make sure the input field exists before trying to read its value
+        if (variantIdInput) {
+          const variantId = variantIdInput.value;
+          formData.append('id', variantId);
+
+          // Append the quantity
+          const quantityInput = form.querySelector(
+            `input[data-variant-id="${variantId}"]`
+          );
+          const quantity = quantityInput ? quantityInput.value : '0';
+          formData.append('quantity', quantity);
+
+          // Submit form with AJAX
+          await fetch('/cart/add', {
+            method: 'post',
+            body: formData,
+          });
+
+          // Get cart count
+          const resCart = await fetch('/cart.js');
+          const cartCount = await resCart.json();
+          updateCartItemCount(cartCount.item_count);
+
+          // Update cart without page reload
+          await updateCart();
+          // Open cart drawer
+          openDrawer(drawerCart);
+        } else {
+          console.error('No variant ID input field found');
+        }
+      }, 0);
     });
+  });
+
+  addToCart.forEach((form) => {
+    attachEventListenersToProduct(form);
   });
   attachEventListeners();
   updateCartLinks();

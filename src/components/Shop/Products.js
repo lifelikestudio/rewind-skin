@@ -99,12 +99,19 @@ const Products = () => {
           selectedImage.style.display = 'block';
         }
 
+        // Update the quantity field's name attribute to match the selected variant
+        const quantityInput = document.querySelector(
+          '.product-page__quantity-input'
+        );
+        if (quantityInput) {
+          quantityInput.name = 'quantity-' + variantId;
+        }
+
         // Update the URL's query string to reflect the selected variant
         let url = new URL(window.location.href);
         let params = url.search + url.hash; // Combine search and hash
         params = params.replace('?', ''); // Remove the first question mark
         params = new URLSearchParams(params); // Create a new URLSearchParams object
-        console.log('Before update:', params.toString()); // Debug line
 
         // Get the _ss parameter's value
         let ssValue = params.get('_ss');
@@ -126,7 +133,7 @@ const Products = () => {
           window.history.replaceState(
             {},
             '',
-            url.pathname + '?' + params.toString()
+            url.origin + url.pathname + '?' + params.toString()
           );
         }
       });

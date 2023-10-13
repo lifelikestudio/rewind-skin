@@ -86,7 +86,14 @@
               <!-- Quantity input field -->
               <div class="product-page__quantity">
                 <button type="button" class="quantity__decrement">-</button>
-                <input class="product-page__quantity-input" type="number" min="1" name="quantity" value="1">
+                <input
+                  class="product-page__quantity-input"
+                  type="number"
+                  min="1"
+                  name="quantity-{{ variant.id }}"
+                  value="1"
+                  data-variant-id="{{ variant.id }}"
+                >
                 <button type="button" class="quantity__increment">+</button>
               </div>
 
