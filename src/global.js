@@ -13,7 +13,7 @@ import CustomerLogin from './components/Customer/CustomerLogin';
 import Addresses from './components/Customer/Addresses';
 import QuantityField from './components/Shop/QuantityField';
 import CartPage from './components/Shop/CartPage';
-import Announcements from './components/Automations/Announcements';
+// import Announcements from './components/Automations/Announcements';
 
 const GlobalComponents = () => {
   Drawers();
@@ -31,7 +31,7 @@ const GlobalComponents = () => {
   QuantityField();
   CartPage();
   CartDrawer();
-  Announcements();
+  // Announcements();
 };
 const init = () => {
   GlobalComponents();
