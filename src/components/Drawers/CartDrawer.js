@@ -143,7 +143,7 @@ export const attachEventListeners = () => {
   addToCart.forEach((form) => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
+      console.log('Add to cart button clicked'); // Add this line
       // Optimistically update UI
       openDrawer(drawerCart);
       showLoadingInCart();
@@ -166,13 +166,15 @@ export const attachEventListeners = () => {
         // Make sure the input field exists before trying to read its value
         if (variantIdInput) {
           const variantId = variantIdInput.value;
+          console.log('Variant ID:', variantId); // Add this line
           formData.append('id', variantId);
 
           // Append the quantity
           const quantityInput = form.querySelector(
             `input[data-variant-id="${variantId}"]`
           );
-          const quantity = quantityInput ? quantityInput.value : '0';
+          const quantity = quantityInput ? quantityInput.value : '1';
+          console.log('Quantity:', quantity);
           formData.append('quantity', quantity);
 
           // Submit form with AJAX
@@ -226,13 +228,15 @@ export const attachEventListenersToProduct = (productForm) => {
       // Make sure theinput field exists before trying to undefinedread its value
       if (variantIdInput) {
         const variantId = variantIdInput.value;
+        console.log('Variant ID:', variantId);
         formData.append('id', variantId);
 
         // Append the quantity
         const quantityInput = productForm.querySelector(
           `input[data-variant-id="${variantId}"]`
         );
-        const quantity = quantityInput ? quantityInput.value : '0';
+        const quantity = quantityInput ? quantityInput.value : '1';
+        console.log('Quantity:', quantity);
         formData.append('quantity', quantity);
 
         // Submit form with AJAX
@@ -264,7 +268,7 @@ const CartDrawer = () => {
   addToCart.forEach((form) => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
+      console.log('Add to cart button clicked'); // Add this line
       // Optimistically update UI
       openDrawer(drawerCart);
       showLoadingInCart();
@@ -287,13 +291,15 @@ const CartDrawer = () => {
         // Make sure the input field exists before trying to read its value
         if (variantIdInput) {
           const variantId = variantIdInput.value;
+          console.log('Variant ID:', variantId);
           formData.append('id', variantId);
 
           // Append the quantity
           const quantityInput = form.querySelector(
             `input[data-variant-id="${variantId}"]`
           );
-          const quantity = quantityInput ? quantityInput.value : '0';
+          const quantity = quantityInput ? quantityInput.value : '1';
+          console.log('Quantity:', quantity);
           formData.append('quantity', quantity);
 
           // Submit form with AJAX
