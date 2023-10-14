@@ -9212,6 +9212,8 @@ a.item__info--cart-page:visited {
   width: 56px;
   min-width: 56px;
   height: 128px;
+  display: flex;
+  align-items: center;
 }
 
 .drawer-cart__item .item__info.item__info--cart-page {
