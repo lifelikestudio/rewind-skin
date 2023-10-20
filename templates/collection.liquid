@@ -15,6 +15,41 @@
 <main class="collections__main wrapper wrapper--lg">
   <div class="collections__container">
     <form class="collections__filter-form collections__filter-form--desktop">
+      <div class="collections__filter-group">
+        <h2 class="all-caps collections__filter-group-title">Featured</h2>
+        <div class="collections__filter-group-options">
+          <ul class="filter-group-options__list">
+            <li class="all-caps filter-group-options__list-item">
+              <a href="/collections/biologique-recherche">Biologique Recherche</a>
+            </li>
+            <li class="all-caps filter-group-options__list-item">
+              <a href="#">Gifting</a>
+            </li>
+            <li class="all-caps filter-group-options__list-item">
+              <a href="/collections/bestsellers">Bestsellers</a>
+            </li>
+            <li class="all-caps filter-group-options__list-item">
+              <a href="/collections/sales-offers">Sales & Offers</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="collections__filter-group">
+        <h2 class="all-caps collections__filter-group-title">Areas</h2>
+        <div class="collections__filter-group-options">
+          <ul class="filter-group-options__list">
+            <li class="all-caps filter-group-options__list-item">
+              <a href="/collections/face">Face</a>
+            </li>
+            <li class="all-caps filter-group-options__list-item">
+              <a href="/collections/bath-body-hair">Bath, Body & Hair</a>
+            </li>
+            <li class="all-caps filter-group-options__list-item">
+              <a href="/collections/all">Shop All</a>
+            </li>
+          </ul>
+        </div>
+      </div>
       {%- for filter in collection.filters -%}
         <div class="collections__filter-group">
           <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
@@ -185,7 +220,7 @@
           <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
-            {%- if downcased_label == 'skin type' -%}
+            {%- if downcased_label == 'skin types' -%}
               <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
@@ -194,7 +229,7 @@
         <div class="drawer__container drawer__menu">
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
-            {%- if downcased_label == 'skin type' -%}
+            {%- if downcased_label == 'skin types' -%}
               {%- case filter.type -%}
                 {%- when 'list' -%}
                   <ul class="drawer__links-list">

@@ -6517,7 +6517,13 @@ a.drawer-cart__empty-continue::after {
   cursor: pointer;
 }
 
-.filter-group-options__list-item label {
+.filter-group-options__list-item a,
+.filter-group-options__list-item a:visited {
+  color: var(--black);
+}
+
+.filter-group-options__list-item label,
+.filter-group-options__list-item a {
   cursor: pointer;
   font-weight: var(--regular);
   font-size: 1.4rem;
@@ -6525,15 +6531,18 @@ a.drawer-cart__empty-continue::after {
   line-height: 1em;
   text-align: left;
   display: inline-block;
+  white-space: nowrap;
 }
 
-.filter-group-options__list-item label::before {
+.filter-group-options__list-item label::before,
+.filter-group-options__list-item a::before {
   content: '';
   margin-bottom: 0.047em;
   display: table;
 }
 
-.filter-group-options__list-item label::after {
+.filter-group-options__list-item label::after,
+.filter-group-options__list-item a::after {
   content: '';
   margin-top: -0.047em;
   display: table;
@@ -6664,7 +6673,8 @@ a.drawer-cart__empty-continue::after {
     line-height: 8.328px;
   }
 
-  .filter-group-options__list-item label {
+  .filter-group-options__list-item label,
+  .filter-group-options__list-item a {
     font-size: 1.2rem;
     line-height: 8.328px;
   }
@@ -6677,7 +6687,8 @@ a.drawer-cart__empty-continue::after {
     line-height: 6.94px;
   }
 
-  .filter-group-options__list-item label {
+  .filter-group-options__list-item label,
+  .filter-group-options__list-item a {
     font-size: 1rem;
     line-height: 6.94px;
   }
@@ -6690,7 +6701,8 @@ a.drawer-cart__empty-continue::after {
     line-height: 9.716px;
   }
 
-  .filter-group-options__list-item label {
+  .filter-group-options__list-item label,
+  .filter-group-options__list-item a {
     font-size: 1.4rem;
     line-height: 9.716px;
   }
