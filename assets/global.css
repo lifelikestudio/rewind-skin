@@ -1364,7 +1364,9 @@ a:visited {
   #filters-categories-menu .drawer__top-level-heading,
   #filters-concerns-menu .drawer__top-level-heading,
   #filters-types-menu .drawer__top-level-heading,
-  #filters-brands-menu .drawer__top-level-heading {
+  #filters-brands-menu .drawer__top-level-heading,
+  #filters-featured-menu .drawer__top-level-heading,
+  #filters-areas-menu .drawer__top-level-heading {
     font-weight: var(--medium);
     font-size: 1.4rem;
     line-height: 9.716px;
@@ -6784,7 +6786,9 @@ a.drawer-cart__empty-continue::after {
 #filters-categories-menu .drawer__menu,
 #filters-concerns-menu .drawer__menu,
 #filters-types-menu .drawer__menu,
-#filters-brands-menu .drawer__menu {
+#filters-brands-menu .drawer__menu,
+#filters-featured-menu .drawer__menu,
+#filters-areas-menu .drawer__menu {
   padding-bottom: calc(32px + 168px + 32px);
 }
 
@@ -6846,7 +6850,9 @@ a.drawer-cart__empty-continue::after {
   #filters-categories-menu .drawer__menu,
   #filters-concerns-menu .drawer__menu,
   #filters-types-menu .drawer__menu,
-  #filters-brands-menu .drawer__menu {
+  #filters-brands-menu .drawer__menu,
+  #filters-featured-menu .drawer__menu,
+  #filters-areas-menu .drawer__menu {
     padding-bottom: calc(24px + 160px + 24px);
   }
 }
@@ -6862,7 +6868,9 @@ a.drawer-cart__empty-continue::after {
   #filters-categories-menu .drawer__menu,
   #filters-concerns-menu .drawer__menu,
   #filters-types-menu .drawer__menu,
-  #filters-brands-menu .drawer__menu {
+  #filters-brands-menu .drawer__menu,
+  #filters-featured-menu .drawer__menu,
+  #filters-areas-menu .drawer__menu {
     padding-bottom: calc(24px + 144px + 24px);
   }
 }
@@ -6889,7 +6897,9 @@ a.drawer-cart__empty-continue::after {
   #filters-categories-menu .drawer__menu,
   #filters-concerns-menu .drawer__menu,
   #filters-types-menu .drawer__menu,
-  #filters-brands-menu .drawer__menu {
+  #filters-brands-menu .drawer__menu,
+  #filters-featured-menu .drawer__menu,
+  #filters-areas-menu .drawer__menu {
     padding-bottom: calc(16px + 124px + 16px);
   }
 }

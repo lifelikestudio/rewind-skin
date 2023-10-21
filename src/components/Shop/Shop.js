@@ -10,10 +10,14 @@ import {
   setupFiltersConcernsMobileDrawer,
   setupFiltersTypesMobileDrawer,
   setupFiltersBrandsMobileDrawer,
+  setupFiltersFeaturedMobileDrawer,
+  setupFiltersAreasMobileDrawer,
   setupCategoriesDrawerElements,
   setupConcernsDrawerElements,
   setupTypesDrawerElements,
   setupBrandsDrawerElements,
+  setupFeaturedDrawerElements,
+  setupAreasDrawerElements,
 } from '../Drawers/Drawers.js';
 import { updateCart } from '../Drawers/CartDrawer.js';
 import { attachEventListeners } from '../Drawers/CartDrawer';
@@ -110,6 +114,14 @@ const Shop = () => {
                 .find('#filters-brands-menu .drawer__menu')
                 .html();
 
+              const newFeaturedMenuHTML = $(parsedData)
+                .find('#filters-featured-menu .drawer__menu')
+                .html();
+
+              const newAreasMenuHTML = $(parsedData)
+                .find('#filters-areas-menu .drawer__menu')
+                .html();
+
               const productGridElement = $('.collections__products');
               productGridElement.html(newProductGrid);
 
@@ -131,6 +143,14 @@ const Shop = () => {
 
               $('#filters-brands-menu .drawer__menu').html(newBrandsMenuHTML);
               setupBrandsDrawerElements(); // Call the setup function for elements within the drawer
+
+              $('#filters-featured-menu .drawer__menu').html(
+                newFeaturedMenuHTML
+              );
+              setupFeaturedDrawerElements(); // Call the setup function for elements within the drawer
+
+              $('#filters-areas-menu .drawer__menu').html(newAreasMenuHTML);
+              setupAreasDrawerElements(); // Call the setup function for elements within the drawer
 
               // Start the animation with opacity 0
               gsap.set(productGridElement, { opacity: 0 });
@@ -169,6 +189,8 @@ const Shop = () => {
               setupFiltersConcernsMobileDrawer();
               setupFiltersTypesMobileDrawer();
               setupFiltersBrandsMobileDrawer();
+              setupFiltersFeaturedMobileDrawer();
+              setupFiltersAreasMobileDrawer();
             },
             error: function () {
               // Handle error here

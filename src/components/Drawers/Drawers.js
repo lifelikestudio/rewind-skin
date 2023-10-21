@@ -44,6 +44,10 @@ const filtersTypesMobileAction = document.getElementById('types-mobile-action');
 const filtersBrandsMobileAction = document.getElementById(
   'brands-mobile-action'
 );
+const filtersFeaturedMobileAction = document.getElementById(
+  'featured-mobile-action'
+);
+const filtersAreasMobileAction = document.getElementById('areas-mobile-action');
 const searchAction = document.getElementById('search-action');
 const searchMobileAction = document.getElementById('search-mobile-action');
 
@@ -62,6 +66,10 @@ const filtersConcernsMobileMenu = document.getElementById(
 );
 const filtersTypesMobileMenu = document.getElementById('filters-types-menu');
 const filtersBrandsMobileMenu = document.getElementById('filters-brands-menu');
+const filtersFeaturedMobileMenu = document.getElementById(
+  'filters-featured-menu'
+);
+const filtersAreasMobileMenu = document.getElementById('filters-areas-menu');
 const searchDrawer = document.getElementById('search-drawer');
 
 // Close Buttons
@@ -84,11 +92,19 @@ const filtersTypesMobileBack = filtersTypesMobileMenu
 const filtersBrandsMobileBack = filtersBrandsMobileMenu
   ? filtersBrandsMobileMenu.querySelector('.menu-back')
   : null;
+const filtersFeaturedMobileBack = filtersFeaturedMobileMenu
+  ? filtersFeaturedMobileMenu.querySelector('.menu-back')
+  : null;
+const filtersAreasMobileBack = filtersAreasMobileMenu
+  ? filtersAreasMobileMenu.querySelector('.menu-back')
+  : null;
 const filtersCategoriesMobileClose =
   document.getElementById('categories-close');
 const filtersConcernsMobileClose = document.getElementById('concerns-close');
 const filtersTypesMobileClose = document.getElementById('types-close');
 const filtersBrandsMobileClose = document.getElementById('brands-close');
+const filtersFeaturedMobileClose = document.getElementById('featured-close');
+const filtersAreasMobileClose = document.getElementById('areas-close');
 // Get the 'filters-show-results' button
 const showResultsButton = document.getElementById('filters-show-results');
 
@@ -261,7 +277,9 @@ const dismissDrawer = (drawer, closeButton) => {
         drawer === filtersCategoriesMobileMenu ||
         drawer === filtersConcernsMobileMenu ||
         drawer === filtersTypesMobileMenu ||
-        drawer === filtersBrandsMobileMenu
+        drawer === filtersBrandsMobileMenu ||
+        drawer === filtersFeaturedMobileMenu ||
+        drawer === filtersAreasMobileMenu
       ) {
         closeDrawer(drawer, undefined, false);
       } else {
@@ -301,7 +319,11 @@ const dismissDrawer = (drawer, closeButton) => {
           (filtersTypesMobileMenu &&
             filtersTypesMobileMenu.contains(event.target)) ||
           (filtersBrandsMobileMenu &&
-            filtersBrandsMobileMenu.contains(event.target))
+            filtersBrandsMobileMenu.contains(event.target)) ||
+          (filtersFeaturedMobileMenu &&
+            filtersFeaturedMobileMenu.contains(event.target)) ||
+          (filtersAreasMobileMenu &&
+            filtersAreasMobileMenu.contains(event.target))
         ) {
           return;
         }
@@ -349,6 +371,8 @@ const resizeEvents = () => {
           filtersConcernsMobileMenu,
           filtersTypesMobileMenu,
           filtersBrandsMobileMenu,
+          filtersFeaturedMobileMenu,
+          filtersAreasMobileMenu,
           searchDrawer,
         ].forEach((menu) => {
           if (menu && menu.classList.contains('drawer--active')) {
@@ -379,6 +403,8 @@ const resizeEvents = () => {
         triggerDrawer(filtersConcernsMobileAction, filtersConcernsMobileMenu);
         triggerDrawer(filtersTypesMobileAction, filtersTypesMobileMenu);
         triggerDrawer(filtersBrandsMobileAction, filtersBrandsMobileMenu);
+        triggerDrawer(filtersFeaturedMobileAction, filtersFeaturedMobileMenu);
+        triggerDrawer(filtersAreasMobileAction, filtersAreasMobileMenu);
         triggerDrawer(searchAction, searchDrawer, '0%', 'y');
         searchMobileAction.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -477,6 +503,46 @@ export const setupFiltersBrandsMobileDrawer = () => {
   }
 };
 
+export const setupFiltersFeaturedMobileDrawer = () => {
+  if (filtersFeaturedMobileAction && filtersFeaturedMobileMenu) {
+    triggerDrawer(filtersFeaturedMobileAction, filtersFeaturedMobileMenu);
+    if (filtersFeaturedMobileBack) {
+      dismissDrawer(filtersFeaturedMobileMenu, filtersFeaturedMobileBack);
+    }
+    if (filtersFeaturedMobileClose) {
+      filtersFeaturedMobileClose.addEventListener('click', () => {
+        if (filtersClearApply) {
+          const y = filtersClearApply.offsetHeight + 32; // This assumes that 100% corresponds
+          fadeOutAndSlideDown(filtersClearApply, y);
+        }
+        closeDrawer(filtersFeaturedMobileMenu);
+        closeDrawer(refineMenu);
+      });
+    }
+    setupFeaturedDrawerElements(); // Call the setup function for elements within the drawer
+  }
+};
+
+export const setupFiltersAreasMobileDrawer = () => {
+  if (filtersAreasMobileAction && filtersAreasMobileMenu) {
+    triggerDrawer(filtersAreasMobileAction, filtersAreasMobileMenu);
+    if (filtersAreasMobileBack) {
+      dismissDrawer(filtersAreasMobileMenu, filtersAreasMobileBack);
+    }
+    if (filtersAreasMobileClose) {
+      filtersAreasMobileClose.addEventListener('click', () => {
+        if (filtersClearApply) {
+          const y = filtersClearApply.offsetHeight + 32; // This assumes that 100% corresponds
+          fadeOutAndSlideDown(filtersClearApply, y);
+        }
+        closeDrawer(filtersAreasMobileMenu);
+        closeDrawer(refineMenu);
+      });
+    }
+    setupAreasDrawerElements(); // Call the setup function for elements within the drawer
+  }
+};
+
 // Add setup functions for elements within each drawer here
 export const setupCategoriesDrawerElements = () => {
   document.addEventListener('click', (event) => {
@@ -506,6 +572,22 @@ export const setupBrandsDrawerElements = () => {
   document.addEventListener('click', (event) => {
     if (event.target.matches('#filters-brands-menu .menu-back')) {
       dismissDrawer(filtersBrandsMobileMenu, filtersBrandsMobileBack);
+    }
+  });
+};
+
+export const setupFeaturedDrawerElements = () => {
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('#filters-featured-menu .menu-back')) {
+      dismissDrawer(filtersFeaturedMobileMenu, filtersFeaturedMobileBack);
+    }
+  });
+};
+
+export const setupAreasDrawerElements = () => {
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('#filters-areas-menu .menu-back')) {
+      dismissDrawer(filtersAreasMobileMenu, filtersAreasMobileBack);
     }
   });
 };
@@ -541,6 +623,8 @@ const Drawers = () => {
   setupFiltersConcernsMobileDrawer();
   setupFiltersTypesMobileDrawer();
   setupFiltersBrandsMobileDrawer();
+  setupFiltersFeaturedMobileDrawer();
+  setupFiltersAreasMobileDrawer();
 
   resizeEvents();
   modifyHeaderText();
@@ -555,6 +639,8 @@ const Drawers = () => {
         filtersConcernsMobileMenu,
         filtersTypesMobileMenu,
         filtersBrandsMobileMenu,
+        filtersFeaturedMobileMenu,
+        filtersAreasMobileMenu,
       ];
 
       // Close each menu if it's open
@@ -585,6 +671,8 @@ const Drawers = () => {
         filtersConcernsMobileMenu,
         filtersTypesMobileMenu,
         filtersBrandsMobileMenu,
+        filtersFeaturedMobileMenu,
+        filtersAreasMobileMenu,
         treatmentsMenu,
         shopMenu,
         drawerCart,
