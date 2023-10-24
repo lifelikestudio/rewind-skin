@@ -581,16 +581,21 @@ function displayPages(selectedConcern) {
 
           const link = document.createElement('a');
           link.href = page.metafields.booking_link_treatments;
-          link.className = 'all-caps btn btn--primary treatment-card__btn';
+          link.className = page.metafields.starting_rate_treatments
+            ? 'all-caps btn btn--primary treatment-card__btn'
+            : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
+          if (!page.metafields.starting_rate_treatments) {
+            link.textContent = 'Book Now';
+          }
           link.target = '_blank'; // This line makes the link open in a new window
 
-          const bookNow = document.createElement('span');
-          bookNow.textContent = 'Book Now';
-
-          const price = document.createElement('span');
-          price.textContent = `$${page.metafields.starting_rate_treatments}`;
-
-          link.append(bookNow, price);
+          if (page.metafields.starting_rate_treatments) {
+            const bookNow = document.createElement('span');
+            bookNow.textContent = 'Book Now';
+            const price = document.createElement('span');
+            price.textContent = `$${page.metafields.starting_rate_treatments}`;
+            link.append(bookNow, price);
+          }
 
           const image = document.createElement('img');
           image.className = 'treatment-card__image';

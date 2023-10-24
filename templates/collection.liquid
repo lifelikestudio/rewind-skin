@@ -4,7 +4,25 @@
       <h1 class="large-heading large-heading--shop">Shop</h1>
     </div>
     <div class="large-header-section__container">
-      <p class="all-caps collections__breadcrumbs">Shop / Bath, Body & Hair / Body Wash</p>
+      {%- if collection.handle != 'all' -%}
+        {%- if collection.handle == 'biologique-recherche'
+          or collection.handle == 'gifting'
+          or collection.handle == 'bestsellers'
+          or collection.handle == 'sales-offers'
+        -%}
+          <p class="all-caps collections__breadcrumbs">
+            <a href="/collections/all">Shop</a> / Featured / {{ collection.title }}
+          </p>
+        {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
+          <p class="all-caps collections__breadcrumbs">
+            <a href="/collections/all">Shop</a> / Areas / {{ collection.title }}
+          </p>
+        {%- else -%}
+          <p class="all-caps collections__breadcrumbs"><a href="/collections/all">Shop</a> / {{ collection.title }}</p>
+        {%- endif -%}
+      {%- else -%}
+        <p class="all-caps collections__breadcrumbs">Shop / All</p>
+      {%- endif -%}
       <p class="header-description--shop">
         Your gateway to a world of luxurious skin treatments, meticulously curated to rejuvenate, hydrate, and nourish
         your skin for a healthy, radiant glow. Experience the ultimate skincare indulgence.

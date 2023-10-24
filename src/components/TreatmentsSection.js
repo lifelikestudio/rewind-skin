@@ -165,9 +165,12 @@ function displayPages() {
         title.className = 'treatment-card__treatment';
         title.textContent = page.title;
 
-        const price = document.createElement('span');
-        price.className = 'all-caps treatment-card__rate';
-        price.textContent = `$${page.metafields.starting_rate_treatments}`;
+        let price; // Define price here
+        if (page.metafields.starting_rate_treatments) {
+          price = document.createElement('span');
+          price.className = 'all-caps treatment-card__rate';
+          price.textContent = `$${page.metafields.starting_rate_treatments}`;
+        }
 
         const description = document.createElement('p');
         description.className = 'treatment-card__description';
@@ -191,7 +194,11 @@ function displayPages() {
         image.height = '555';
         image.loading = 'lazy';
 
-        infoInner.append(title, price);
+        if (page.metafields.starting_rate_treatments) {
+          infoInner.append(title, price);
+        } else {
+          infoInner.append(title);
+        }
         info.append(infoInner, description);
         cardInner.append(info, link);
         card.append(cardInner, image);

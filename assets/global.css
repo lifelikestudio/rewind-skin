@@ -3531,6 +3531,24 @@ a.drawer-cart__empty-continue::after {
   appearance: none; /* CSS3 standard, currently not fully supported in all browsers */
 }
 
+.concerns-section__card--treatment .treatment-card__btn--icon::after,
+.treatments-category__card .treatment-card__btn--icon::after {
+  content: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 34 32" xmlns="http://www.w3.org/2000/svg"> <path d="m1 15.6c-0.22091 0-0.4 0.1791-0.4 0.4s0.17909 0.4 0.4 0.4v-0.8zm32.283 0.6828c0.1563-0.1562 0.1563-0.4094 0-0.5656l-2.5455-2.5456c-0.1563-0.1562-0.4095-0.1562-0.5657 0s-0.1562 0.4094 0 0.5657l2.2627 2.2627-2.2627 2.2627c-0.1562 0.1563-0.1562 0.4095 0 0.5657s0.4094 0.1562 0.5657 0l2.5455-2.5456zm-32.283 0.1172h32v-0.8h-32v0.8z" fill="%23FFFFFF" stroke-linecap="round" stroke-width="1.2" vector-effect="non-scaling-stroke" /> </svg>');
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+@media screen and (max-width: 374px) {
+  .concerns-section__card--treatment .treatment-card__btn--icon::after,
+  .treatments-category__card .treatment-card__btn--icon::after {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+}
+
 .treatments-section__card .treatment-card__btn::after {
   content: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 34 32" xmlns="http://www.w3.org/2000/svg"> <path d="m1 15.6c-0.22091 0-0.4 0.1791-0.4 0.4s0.17909 0.4 0.4 0.4v-0.8zm32.283 0.6828c0.1563-0.1562 0.1563-0.4094 0-0.5656l-2.5455-2.5456c-0.1563-0.1562-0.4095-0.1562-0.5657 0s-0.1562 0.4094 0 0.5657l2.2627 2.2627-2.2627 2.2627c-0.1562 0.1563-0.1562 0.4095 0 0.5657s0.4094 0.1562 0.5657 0l2.5455-2.5456zm-32.283 0.1172h32v-0.8h-32v0.8z" fill="%23FFFFFF" stroke-linecap="round" stroke-width="1.2" vector-effect="non-scaling-stroke" /> </svg>');
   display: inline-block;
@@ -5643,7 +5661,14 @@ a.drawer-cart__empty-continue::after {
   font-size: 1.4rem;
   line-height: 20px;
   text-align: left;
-  display: none;
+}
+
+.collections__breadcrumbs a {
+  color: var(--black);
+}
+
+.collections__breadcrumbs a:visited {
+  color: var(--black);
 }
 
 .collections__breadcrumbs::before {
