@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import ScrollSelect from './ScrollSelect';
 import SwiperEmbla from './Swiper/SwiperEmbla';
 import { attachEventListenersToProduct } from './Drawers/CartDrawer.js';
+import { createPopup, nurseLedId } from './Utility/Forms';
 
 // Selectors
 let scrollSelectNode,
@@ -580,21 +581,22 @@ function displayPages(selectedConcern) {
           title.textContent = page.title;
 
           const link = document.createElement('a');
+          link.target = '_blank'; // This line makes the link open in a new window
           link.href = page.metafields.booking_link_treatments;
           link.className = page.metafields.starting_rate_treatments
             ? 'all-caps btn btn--primary treatment-card__btn'
             : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
           if (!page.metafields.starting_rate_treatments) {
-            link.textContent = 'Book Now';
-          }
-          link.target = '_blank'; // This line makes the link open in a new window
-
-          if (page.metafields.starting_rate_treatments) {
-            const bookNow = document.createElement('span');
-            bookNow.textContent = 'Book Now';
-            const price = document.createElement('span');
-            price.textContent = `$${page.metafields.starting_rate_treatments}`;
-            link.append(bookNow, price);
+            link.textContent = !page.metafields.booking_link_treatments
+              ? 'Inquire Now'
+              : 'Book Now';
+            if (!page.metafields.booking_link_treatments) {
+              link.href = '#';
+              link.target = '';
+              link.classList.add('nurse-led-inquiry-trigger');
+              const { open } = createPopup(nurseLedId);
+              link.onclick = open;
+            }
           }
 
           const image = document.createElement('img');

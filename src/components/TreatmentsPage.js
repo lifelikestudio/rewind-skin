@@ -1,6 +1,7 @@
 import ScrollSelect from './ScrollSelect';
 import SwiperEmbla from './Swiper/SwiperEmbla';
 import { gsap } from 'gsap';
+import { createPopup, nurseLedId } from './Utility/Forms';
 
 // Selectors
 let scrollSelectNode,
@@ -315,9 +316,19 @@ function displayPages(selectedType) {
             ? 'all-caps btn btn--primary treatment-card__btn'
             : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
           if (!page.metafields.starting_rate_treatments) {
-            link.textContent = 'Book Now';
+            link.textContent = !page.metafields.booking_link_treatments
+              ? 'Inquire Now'
+              : 'Book Now';
           }
           link.target = '_blank'; // This line makes the link open in a new window
+
+          if (!page.metafields.booking_link_treatments) {
+            link.target = '';
+            link.href = '#';
+            link.classList.add('nurse-led-inquiry-trigger');
+            const { open } = createPopup(nurseLedId);
+            link.onclick = open;
+          }
 
           if (page.metafields.starting_rate_treatments) {
             const bookNow = document.createElement('span');

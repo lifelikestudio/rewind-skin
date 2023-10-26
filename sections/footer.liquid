@@ -9,7 +9,13 @@
             <ul>
               {% for child_link in link.links %}
                 <li>
-                  <a class="all-caps link--alt-nav" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                  {% if child_link.title == 'Contact' %}
+                    <a id="contact-trigger" class="all-caps link--alt-nav" href="{{ child_link.url }}">
+                      {{- child_link.title -}}
+                    </a>
+                  {% else %}
+                    <a class="all-caps link--alt-nav" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                  {% endif %}
                 </li>
               {% endfor %}
             </ul>

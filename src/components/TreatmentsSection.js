@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import SwiperEmbla from './Swiper/SwiperEmbla';
+import { createPopup, nurseLedId } from './Utility/Forms';
 
 // Selectors
 const treatmentsSectionViewportNode = document.querySelector(
@@ -178,14 +179,29 @@ function displayPages() {
           page.metafields.treatment_description_treatments;
 
         const link = document.createElement('a');
-        link.href = page.metafields.booking_link_treatments;
+        link.href = page.metafields.booking_link_treatments
+          ? page.metafields.booking_link_treatments
+          : '#';
         link.className = 'all-caps btn btn--primary treatment-card__btn';
         link.target = '_blank'; // This line makes the link open in a new window
 
-        const bookNow = document.createElement('span');
-        bookNow.textContent = 'Book Now';
+        // if (!page.metafields.booking_link_treatments) {
+        //   link.id = page.title.toLowerCase().replace(/\s/g, '-') + '-trigger';
+        // }
 
-        link.append(bookNow);
+        const btnCta = document.createElement('span');
+        btnCta.textContent = !page.metafields.booking_link_treatments
+          ? 'Inquire Now'
+          : 'Book Now';
+
+        link.append(btnCta);
+
+        if (!page.metafields.booking_link_treatments) {
+          link.target = '';
+          link.classList.add('nurse-led-inquiry-trigger');
+          const { open } = createPopup(nurseLedId);
+          link.onclick = open;
+        }
 
         const image = document.createElement('img');
         image.className = 'treatment-card__image';
