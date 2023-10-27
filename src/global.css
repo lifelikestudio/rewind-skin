@@ -537,6 +537,17 @@ template {
   text-align: left;
 }
 
+.main-body--line-break {
+  display: block;
+}
+
+/* Less than or equal to 1023px */
+@media screen and (max-width: 1023px) {
+  .main-body--line-break {
+    display: inline;
+  }
+}
+
 .main-body::before {
   content: '';
   margin-bottom: -0.356em;
@@ -2608,41 +2619,41 @@ a.drawer-cart__empty-continue::after {
 }
 
 .main-lockup__heading {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 /* Between 1056px and 1311px */
 @media screen and (min-width: 1056px) and (max-width: 1311px) {
   .main-lockup__heading {
-    margin-bottom: 32px;
+    margin-bottom: 20px;
   }
 }
 
 /* Between 672px and 1055px */
 @media screen and (min-width: 672px) and (max-width: 1055px) {
   .main-lockup__heading {
-    margin-bottom: 40px;
+    margin-bottom: 24px;
   }
 }
 
 /* Between 428px and 671px */
 @media screen and (min-width: 428px) and (max-width: 671px) {
   .main-lockup__heading {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 }
 
 /* Between 375px and 427px */
 @media screen and (min-width: 375px) and (max-width: 427px) {
   .main-lockup__heading {
-    margin-bottom: 22px;
+    margin-bottom: 18px;
   }
 }
 
 /* Less than or equal to 374px */
 @media screen and (max-width: 374px) {
   .main-lockup__heading {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 }
 
@@ -3226,7 +3237,7 @@ a.drawer-cart__empty-continue::after {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  padding: 0 0 var(--base-unit) calc(var(--base-unit) / 2);
+  padding: 0 calc(var(--base-unit) / 2) var(--base-unit);
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
@@ -4247,20 +4258,20 @@ a.drawer-cart__empty-continue::after {
   color: var(--white);
 }
 
-.main-lockup--home-hero,
+/* .main-lockup--home-hero,
 .main-lockup--skin-analysis,
 .main-lockup--opt-in {
   max-width: 498px;
-}
+} */
 
 /* Between 1056px and 1311px */
 @media screen and (min-width: 1056px) and (max-width: 1311px) {
-  .main-lockup--home-hero {
+  /* .main-lockup--home-hero {
     max-width: 440px;
-  }
-  .main-lockup--skin-analysis {
+  } */
+  /* .main-lockup--skin-analysis {
     max-width: 377px;
-  }
+  } */
 }
 
 /* Brand Section */

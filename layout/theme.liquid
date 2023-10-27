@@ -5,9 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="{{ canonical_url }}">
-    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link
+      rel="preconnect"
+      href="https://cdn.shopify.com"
+      crossorigin>
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+      <link
+        rel="preconnect"
+        href="https://fonts.shopifycdn.com"
+        crossorigin>
     {%- endunless -%}
     <title>Rewind Skin</title>
     {{ content_for_header }}
@@ -16,10 +22,7 @@
       <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
     {% endif %}
     {{ 'global.css' | asset_url | stylesheet_tag }}
-    <script
-      src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"
-      defer
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js" defer></script>
 
     <script src="//embed.typeform.com/next/embed.js" defer></script>
     <script src="{{ 'global.js' | asset_url }}" defer></script>
@@ -79,34 +82,23 @@
   %}
 
   <body data-customer-logged-in="{% if customer %}true{% else %}false{% endif %}" class="{{ bodyClass }}">
-    {% if template contains 'product'
-      or template contains 'cart'
-      or template contains 'search'
-      or template contains 'login'
-      or template contains 'register'
-      or template contains 'activate_account'
-      or template contains 'reset_password'
-      or template contains 'account'
-      or template contains 'order'
-      or template contains 'addresses'
+    {% if template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses'
     %}
       <section class="announcement-bar">
         <div class="wrapper wrapper--lg announcement-bar__container">
           {% comment %}
             <a
-              class="announcement-bar__type"
-              href="https://app.acuityscheduling.com/catalog.php?owner=18442968&category=PROMO+FACIALS"
-              target="_blank"
-              id="annual-facials-sale"
-              >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
+            class="announcement-bar__type"
+            href="https://app.acuityscheduling.com/catalog.php?owner=18442968&category=PROMO+FACIALS"
+            target="_blank"
+            id="annual-facials-sale"
+            >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
             >
           {% endcomment %}
           <a
             class="announcement-bar__type"
             href="/collections/all"
-            id="evergreen-announcement"
-            >Free Shipping on Orders Over $149 CAD. Start Here.</a
-          >
+            id="evergreen-announcement">Free Shipping on Orders Over $149 CAD. Start Here.</a>
         </div>
       </section>
       <header>
@@ -116,7 +108,10 @@
               {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
               {% for link in linklists['main-menu'].links limit: half_count %}
                 <li class="main-nav__link-item">
-                  <a class="main-nav__link all-caps link--main-nav" id="{{ link.handle }}-action" href="{{ link.url }}">
+                  <a
+                    class="main-nav__link all-caps link--main-nav"
+                    id="{{ link.handle }}-action"
+                    href="{{ link.url }}">
                     {{- link.title -}}
                   </a>
                 </li>
@@ -134,8 +129,7 @@
                   fill="currentColor"
                   preserveAspectRatio="xMinYMin meet"
                   version="1.1"
-                  viewBox="0 0 358.8 26.5"
-                >
+                  viewBox="0 0 358.8 26.5">
                   <path d="m32.6 25.6-0.1 0.1h-4l-10.5-10.8h-14.9v10.9h-3.1v-25.2h20.3c2 0 3.8 0.1 5.2 0.4s2.7 0.7 3.7 1.4c1.9 1.2 2.9 2.9 2.9 5.3 0 2.3-0.9 4-2.6 5.2s-4.3 1.9-7.7 2l10.8 10.7zm-29.5-22.3v8.9h16.3c2.1 0 3.7-0.1 4.9-0.3 1.1-0.2 2-0.5 2.7-0.8 1.3-0.7 1.9-1.8 1.9-3.4s-0.6-2.7-1.9-3.4c-0.6-0.4-1.5-0.6-2.7-0.8-1.1-0.2-2.7-0.2-4.9-0.2h-16.3z" />
                   <path d="M71,3.3H43.6v8.5h25.9v2.7H43.6v8.6H71v2.7H40.4V0.6H71V3.3z" />
                   <path d="m121.4 0.6 0.1 0.1-11 25h-3l-9-21.2-9 21.2h-3l-11-25h3.4l8.9 21.2 9-21.2h3.4l8.9 21.2 9-21.2c0-0.1 3.4-0.1 3.3-0.1z" />
@@ -174,8 +168,7 @@
                       {%- else -%}
                         {{ link.url }}
                       {%- endif -%}
-                    "
-                  >
+                    ">
                     {% if link.title == 'Shopping Bag' %}
                       {{ link.title }}
                       <span class="cart-action__count">({{ cart.item_count }})</span>
@@ -188,7 +181,8 @@
               <li class="main-nav__trigger">
                 <button id="mobile-cart-action">
                   <span class="all-caps">
-                    Bag <span class="cart-action__count">({{ cart.item_count }})</span>
+                    Bag
+                    <span class="cart-action__count">({{ cart.item_count }})</span>
                   </span>
                 </button>
               </li>
@@ -199,7 +193,10 @@
           <div class="drawer__header">
             <button class="all-caps drawer__header-action menu-back">Back</button>
             <h2 class="drawer__top-level-heading">Treatments</h2>
-            <a href="/pages/skin-treatments/" class="all-caps drawer__header-action" id="treatments-all">View All</a>
+            <a
+              href="/pages/skin-treatments/"
+              class="all-caps drawer__header-action"
+              id="treatments-all">View All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -224,7 +221,10 @@
           <div class="drawer__header">
             <button class="all-caps drawer__header-action menu-back">Back</button>
             <h2 class="drawer__top-level-heading">Shop</h2>
-            <a href="/collections/all" class="all-caps drawer__header-action" id="shop-all">Shop All</a>
+            <a
+              href="/collections/all"
+              class="all-caps drawer__header-action"
+              id="shop-all">Shop All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -278,9 +278,7 @@
                 {% for link in linklists['main-menu'].links offset: half_count %}
                   {% unless forloop.last %}
                     <li class="all-caps drawer__link">
-                      <a
-                        id="{{ link.handle }}-mobile-action"
-                        href="
+                      <a id="{{ link.handle }}-mobile-action" href="
                             {%- if link.title == 'Account' -%}
                             {% if shop.customer_accounts_enabled %}
                               {% if customer %}
@@ -292,8 +290,7 @@
                           {%- else -%}
                             {{ link.url }}
                           {%- endif -%}
-                        "
-                      >
+                        ">
                         {{ link.title }}
                       </a>
                     </li>
@@ -305,7 +302,11 @@
         </div>
         <div class="drawer drawer--search" id="search-drawer">
           <div class="search__container">
-            <form id="search-in-drawer" class="search__form" action="{{ routes.search_url }}" role="search">
+            <form
+              id="search-in-drawer"
+              class="search__form"
+              action="{{ routes.search_url }}"
+              role="search">
               <div class="search__field">
                 <div class="search__inputs">
                   <input
@@ -314,25 +315,52 @@
                     name="q"
                     value="{{ search.terms | escape }}"
                     placeholder="{{ 'general.search.search' | t }}"
-                    class="field__inner"
-                  >
+                    class="field__inner">
                   <label for="search-input-drawer" class="visually-hidden">{{ 'general.search.search' | t }}</label>
 
-                  <input type="hidden" name="type" value="product,page">
-                  <input type="hidden" name="options[unavailable_products]" value="hide">
-                  <input type="hidden" name="options[prefix]" value="last">
+                  <input
+                    type="hidden"
+                    name="type"
+                    value="product,page">
+                  <input
+                    type="hidden"
+                    name="options[unavailable_products]"
+                    value="hide">
+                  <input
+                    type="hidden"
+                    name="options[prefix]"
+                    value="last">
                 </div>
                 <div class="search__btns">
-                  <button id="search-clear-drawer" type="reset" aria-label="Clear search term">
-                    <svg fill="none" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 1L9 9M1 9L9 1" stroke="currentColor" stroke-linecap="round" vector-effect="non-scaling-stroke"
-                      stroke-width="1"
-                      focusable="false"/>
+                  <button
+                    id="search-clear-drawer"
+                    type="reset"
+                    aria-label="Clear search term">
+                    <svg
+                      fill="none"
+                      viewBox="0 0 10 10"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1 1L9 9M1 9L9 1"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        vector-effect="non-scaling-stroke"
+                        stroke-width="1"
+                        focusable="false" />
                     </svg>
                   </button>
                   <button type="submit" aria-label="{{ 'general.search.search' | t }}">
-                    <svg fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
-                      <path d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392" stroke="currentColor" stroke-linecap="round" stroke-width=".8" vector-effect="non-scaling-stroke" focusable="false"/>
+                    <svg
+                      fill="none"
+                      viewBox="0 0 26 26"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-width=".8"
+                        vector-effect="non-scaling-stroke"
+                        focusable="false" />
                     </svg>
                   </button>
                 </div>
@@ -348,19 +376,17 @@
         <div class="wrapper wrapper--lg announcement-bar__container">
           {% comment %}
             <a
-              class="announcement-bar__type"
-              href="https://app.acuityscheduling.com/catalog.php?owner=18442968&category=PROMO+FACIALS"
-              target="_blank"
-              id="annual-facials-sale"
-              >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
+            class="announcement-bar__type"
+            href="https://app.acuityscheduling.com/catalog.php?owner=18442968&category=PROMO+FACIALS"
+            target="_blank"
+            id="annual-facials-sale"
+            >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
             >
           {% endcomment %}
           <a
             class="announcement-bar__type"
             href="/collections/all"
-            id="evergreen-announcement"
-            >Free Shipping on Orders Over $149 CAD. Start Here.</a
-          >
+            id="evergreen-announcement">Free Shipping on Orders Over $149 CAD. Start Here.</a>
         </div>
       </section>
       <header class="hero">
@@ -370,7 +396,10 @@
               {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
               {% for link in linklists['main-menu'].links limit: half_count %}
                 <li class="main-nav__link-item">
-                  <a class="main-nav__link all-caps link--main-nav" id="{{ link.handle }}-action" href="{{ link.url }}">
+                  <a
+                    class="main-nav__link all-caps link--main-nav"
+                    id="{{ link.handle }}-action"
+                    href="{{ link.url }}">
                     {{- link.title -}}
                   </a>
                 </li>
@@ -388,8 +417,7 @@
                   fill="currentColor"
                   preserveAspectRatio="xMinYMin meet"
                   version="1.1"
-                  viewBox="0 0 358.8 26.5"
-                >
+                  viewBox="0 0 358.8 26.5">
                   <path d="m32.6 25.6-0.1 0.1h-4l-10.5-10.8h-14.9v10.9h-3.1v-25.2h20.3c2 0 3.8 0.1 5.2 0.4s2.7 0.7 3.7 1.4c1.9 1.2 2.9 2.9 2.9 5.3 0 2.3-0.9 4-2.6 5.2s-4.3 1.9-7.7 2l10.8 10.7zm-29.5-22.3v8.9h16.3c2.1 0 3.7-0.1 4.9-0.3 1.1-0.2 2-0.5 2.7-0.8 1.3-0.7 1.9-1.8 1.9-3.4s-0.6-2.7-1.9-3.4c-0.6-0.4-1.5-0.6-2.7-0.8-1.1-0.2-2.7-0.2-4.9-0.2h-16.3z" />
                   <path d="M71,3.3H43.6v8.5h25.9v2.7H43.6v8.6H71v2.7H40.4V0.6H71V3.3z" />
                   <path d="m121.4 0.6 0.1 0.1-11 25h-3l-9-21.2-9 21.2h-3l-11-25h3.4l8.9 21.2 9-21.2h3.4l8.9 21.2 9-21.2c0-0.1 3.4-0.1 3.3-0.1z" />
@@ -428,8 +456,7 @@
                       {%- else -%}
                         {{ link.url }}
                       {%- endif -%}
-                    "
-                  >
+                    ">
                     {% if link.title == 'Shopping Bag' %}
                       {{ link.title }}
                       <span class="cart-action__count">({{ cart.item_count }})</span>
@@ -454,7 +481,10 @@
           <div class="drawer__header">
             <button class="all-caps drawer__header-action menu-back">Back</button>
             <h2 class="drawer__top-level-heading">Treatments</h2>
-            <a href="/pages/skin-treatments/" class="all-caps drawer__header-action" id="treatments-all">View All</a>
+            <a
+              href="/pages/skin-treatments/"
+              class="all-caps drawer__header-action"
+              id="treatments-all">View All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -479,7 +509,10 @@
           <div class="drawer__header">
             <button class="all-caps drawer__header-action menu-back">Back</button>
             <h2 class="drawer__top-level-heading">Shop</h2>
-            <a href="/collections/all" class="all-caps drawer__header-action" id="shop-all">Shop All</a>
+            <a
+              href="/collections/all"
+              class="all-caps drawer__header-action"
+              id="shop-all">Shop All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -533,9 +566,7 @@
                 {% for link in linklists['main-menu'].links offset: half_count %}
                   {% unless forloop.last %}
                     <li class="all-caps drawer__link">
-                      <a
-                        id="{{ link.handle }}-mobile-action"
-                        href="
+                      <a id="{{ link.handle }}-mobile-action" href="
                             {%- if link.title == 'Account' -%}
                             {% if shop.customer_accounts_enabled %}
                               {% if customer %}
@@ -547,8 +578,7 @@
                           {%- else -%}
                             {{ link.url }}
                           {%- endif -%}
-                        "
-                      >
+                        ">
                         {{ link.title }}
                       </a>
                     </li>
@@ -560,7 +590,11 @@
         </div>
         <div class="drawer drawer--search" id="search-drawer">
           <div class="search__container">
-            <form id="search-in-drawer" class="search__form" action="{{ routes.search_url }}" role="search">
+            <form
+              id="search-in-drawer"
+              class="search__form"
+              action="{{ routes.search_url }}"
+              role="search">
               <div class="search__field">
                 <div class="search__inputs">
                   <input
@@ -570,25 +604,52 @@
                     value="{{ search.terms | escape }}"
                     placeholder="{{ 'general.search.search' | t }}"
                     class="field__inner"
-                    required
-                  >
+                    required>
                   <label for="search-input" class="visually-hidden">{{ 'general.search.search' | t }}</label>
 
-                  <input type="hidden" name="type" value="product,page">
-                  <input type="hidden" name="options[unavailable_products]" value="hide">
-                  <input type="hidden" name="options[prefix]" value="last">
+                  <input
+                    type="hidden"
+                    name="type"
+                    value="product,page">
+                  <input
+                    type="hidden"
+                    name="options[unavailable_products]"
+                    value="hide">
+                  <input
+                    type="hidden"
+                    name="options[prefix]"
+                    value="last">
                 </div>
                 <div class="search__btns">
-                  <button id="search-clear" type="reset" aria-label="Clear search term">
-                    <svg fill="none" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 1L9 9M1 9L9 1" stroke="currentColor" stroke-linecap="round" vector-effect="non-scaling-stroke"
-                      stroke-width="1"
-                      focusable="false"/>
+                  <button
+                    id="search-clear"
+                    type="reset"
+                    aria-label="Clear search term">
+                    <svg
+                      fill="none"
+                      viewBox="0 0 10 10"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1 1L9 9M1 9L9 1"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        vector-effect="non-scaling-stroke"
+                        stroke-width="1"
+                        focusable="false" />
                     </svg>
                   </button>
                   <button type="submit" aria-label="{{ 'general.search.search' | t }}">
-                    <svg fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
-                      <path d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392" stroke="currentColor" stroke-linecap="round" stroke-width=".8" vector-effect="non-scaling-stroke" focusable="false"/>
+                    <svg
+                      fill="none"
+                      viewBox="0 0 26 26"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-width=".8"
+                        vector-effect="non-scaling-stroke"
+                        focusable="false" />
                     </svg>
                   </button>
                 </div>
@@ -602,13 +663,12 @@
           <div class="wrapper wrapper--md">
             <div class="main-lockup main-lockup--home-hero">
               <div class="main-lockup__copy">
-                <h1 class="main-heading main-lockup__heading">Pause and rewind</h1>
-                <p class="main-body main-lockup__body" style="display:none;">
-                  Real results with science-backed ingredients. This is the only skincare you'll need for a healthier,
-                  more radiant complexion.
+                <h1 class="main-heading main-lockup__heading">We’re glad you’re here. So is your skin.</h1>
+                <p class="main-body main-lockup__body">
+                  Experience our range of carefully curated luxury skincare.
                 </p>
               </div>
-              <a class="btn btn--primary all-caps main-lockup__btn" href="/collections/all">Shop Now</a>
+              <a class="btn btn--primary all-caps main-lockup__btn" href="/collections/all">Shop</a>
             </div>
           </div>
         {% endif %}

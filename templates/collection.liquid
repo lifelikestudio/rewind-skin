@@ -5,27 +5,27 @@
     </div>
     <div class="large-header-section__container">
       {%- if collection.handle != 'all' -%}
-        {%- if collection.handle == 'biologique-recherche'
-          or collection.handle == 'gifting'
-          or collection.handle == 'bestsellers'
-          or collection.handle == 'sales-offers'
+        {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers'
         -%}
           <p class="all-caps collections__breadcrumbs">
-            <a href="/collections/all">Shop</a> / Featured / {{ collection.title }}
+            <a href="/collections/all">Shop</a>
+            / Featured / {{ collection.title }}
           </p>
         {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
           <p class="all-caps collections__breadcrumbs">
-            <a href="/collections/all">Shop</a> / Areas / {{ collection.title }}
+            <a href="/collections/all">Shop</a>
+            / Areas / {{ collection.title }}
           </p>
         {%- else -%}
-          <p class="all-caps collections__breadcrumbs"><a href="/collections/all">Shop</a> / {{ collection.title }}</p>
+          <p class="all-caps collections__breadcrumbs">
+            <a href="/collections/all">Shop</a>
+            / {{ collection.title }}</p>
         {%- endif -%}
       {%- else -%}
         <p class="all-caps collections__breadcrumbs">Shop / All</p>
       {%- endif -%}
       <p class="header-description--shop">
-        Your gateway to a world of luxurious skincare, meticulously curated to rejuvenate, hydrate, and nourish your
-        skin for a healthy, radiant glow. Experience the ultimate skincare indulgence.
+        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating to correcting, we’ve got you covered.
       </p>
     </div>
   </div>
@@ -84,16 +84,12 @@
                           value="{{ filter_value.value }}"
                           id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
                           {% if filter_value.active -%}
-                            checked
+                          checked
                           {%- endif %}
                           {% if filter_value.count == 0 and filter_value.active == false -%}
-                            disabled
-                          {%- endif %}
-                        >
-                        {% assign label_characters = filter_value.label
-                          | join: ', '
-                          | replace: '_', ', '
-                          | replace: 'plus', '+'
+                          disabled
+                          {%- endif %}>
+                        {% assign label_characters = filter_value.label | join: ', ' | replace: '_', ', ' | replace: 'plus', '+'
                         %}
                         <span class="filter-group-options__label">
                           {{- label_characters -}}
@@ -147,7 +143,10 @@
         <div class="drawer__header">
           <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
           <h2 class="drawer__top-level-heading">Featured</h2>
-          <button type="button" class="all-caps drawer__header-action" id="featured-close">Close</button>
+          <button
+            type="button"
+            class="all-caps drawer__header-action"
+            id="featured-close">Close</button>
         </div>
         <div class="drawer__container drawer__menu">
           <ul class="drawer__links-list">
@@ -170,7 +169,10 @@
         <div class="drawer__header">
           <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
           <h2 class="drawer__top-level-heading">Areas</h2>
-          <button type="button" class="all-caps drawer__header-action" id="areas-close">Close</button>
+          <button
+            type="button"
+            class="all-caps drawer__header-action"
+            id="areas-close">Close</button>
         </div>
         <div class="drawer__container drawer__menu">
           <ul class="drawer__links-list">
@@ -195,7 +197,10 @@
               <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
-          <button type="button" class="all-caps drawer__header-action" id="categories-close">Close</button>
+          <button
+            type="button"
+            class="all-caps drawer__header-action"
+            id="categories-close">Close</button>
         </div>
         <div class="drawer__container drawer__menu">
           {%- for filter in collection.filters -%}
@@ -213,12 +218,11 @@
                             value="{{ filter_value.value }}"
                             id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                             {% if filter_value.active -%}
-                              checked
+                            checked
                             {%- endif %}
                             {% if filter_value.count == 0 and filter_value.active == false -%}
-                              disabled
-                            {%- endif %}
-                          >
+                            disabled
+                            {%- endif %}>
                           {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
 
                           <span class="filter-group-options__label">
@@ -243,7 +247,10 @@
               <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
-          <button type="button" class="all-caps drawer__header-action" id="concerns-close">Close</button>
+          <button
+            type="button"
+            class="all-caps drawer__header-action"
+            id="concerns-close">Close</button>
         </div>
         <div class="drawer__container drawer__menu">
           {%- for filter in collection.filters -%}
@@ -261,12 +268,11 @@
                             value="{{ filter_value.value }}"
                             id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                             {% if filter_value.active -%}
-                              checked
+                            checked
                             {%- endif %}
                             {% if filter_value.count == 0 and filter_value.active == false -%}
-                              disabled
-                            {%- endif %}
-                          >
+                            disabled
+                            {%- endif %}>
                           {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
 
                           <span class="filter-group-options__label">
@@ -291,7 +297,10 @@
               <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
-          <button type="button" class="all-caps drawer__header-action" id="types-close">Close</button>
+          <button
+            type="button"
+            class="all-caps drawer__header-action"
+            id="types-close">Close</button>
         </div>
         <div class="drawer__container drawer__menu">
           {%- for filter in collection.filters -%}
@@ -309,12 +318,11 @@
                             value="{{ filter_value.value }}"
                             id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                             {% if filter_value.active -%}
-                              checked
+                            checked
                             {%- endif %}
                             {% if filter_value.count == 0 and filter_value.active == false -%}
-                              disabled
-                            {%- endif %}
-                          >
+                            disabled
+                            {%- endif %}>
                           {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
 
                           <span class="filter-group-options__label">
@@ -339,7 +347,10 @@
               <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
-          <button type="button" class="all-caps drawer__header-action" id="brands-close">Close</button>
+          <button
+            type="button"
+            class="all-caps drawer__header-action"
+            id="brands-close">Close</button>
         </div>
         <div class="drawer__container drawer__menu">
           {%- for filter in collection.filters -%}
@@ -357,12 +368,11 @@
                             value="{{ filter_value.value }}"
                             id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                             {% if filter_value.active -%}
-                              checked
+                            checked
                             {%- endif %}
                             {% if filter_value.count == 0 and filter_value.active == false -%}
-                              disabled
-                            {%- endif %}
-                          >
+                            disabled
+                            {%- endif %}>
                           {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
 
                           <span class="filter-group-options__label">
@@ -380,15 +390,8 @@
       </div>
     </form>
     <div class="drawer-filters__clear-apply" id="filters-clear-apply">
-      <a
-        class="btn btn--primary all-caps drawer-filters__btn drawer-filters__btn--clear"
-        href="{{ collection.url }}?sort_by={{ collection.sort_by }}"
-        >Clear Filters</a
-      >
-      <button
-        class="btn btn--secondary all-caps drawer-filters__btn drawer-filters__btn--apply"
-        id="filters-show-results"
-      >
+      <a class="btn btn--primary all-caps drawer-filters__btn drawer-filters__btn--clear" href="{{ collection.url }}?sort_by={{ collection.sort_by }}">Clear Filters</a>
+      <button class="btn btn--secondary all-caps drawer-filters__btn drawer-filters__btn--apply" id="filters-show-results">
         View Results
       </button>
     </div>
@@ -397,8 +400,7 @@
     <div
       class="collections__products"
       id="collections-products-container"
-      data-collection-handle="{{ collection.handle }}"
-    >
+      data-collection-handle="{{ collection.handle }}">
       {% paginate collection.products by 24 %}
         {% for product in collection.products %}
           {% for variant in product.variants %}
@@ -415,16 +417,19 @@
               </div>
               {% assign downcased_vendor = product.vendor | strip | downcase %}
               {% if downcased_vendor == 'biologique recherche' and customer == null %}
-                <div
-                  class="all-caps btn btn--primary product-card__btn product-card__btn--icon"
-                  data-url="{{ variant_url }}"
-                >
+                <div class="all-caps btn btn--primary product-card__btn product-card__btn--icon" data-url="{{ variant_url }}">
                   Login to Shop
                 </div>
               {% else %}
                 {% if variant.available %}
-                  <form action="/cart/add" method="post" class="product-card__form">
-                    <input type="hidden" name="id" value="{{ variant.id }}">
+                  <form
+                    action="/cart/add"
+                    method="post"
+                    class="product-card__form">
+                    <input
+                      type="hidden"
+                      name="id"
+                      value="{{ variant.id }}">
                     <button class="all-caps btn btn--primary product-card__btn">
                       {% if product.compare_at_price > variant.price %}
                         <span>Add to Bag</span>
@@ -433,7 +438,8 @@
                           <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
                         </span>
                       {% else %}
-                        <span>Add to Bag</span><span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
+                        <span>Add to Bag</span>
+                        <span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
                       {% endif %}
                     </button>
                   </form>
@@ -449,16 +455,14 @@
                   src="{{ variant.image | image_url: width: 780 }}"
                   width="780"
                   height="1170"
-                  loading="lazy"
-                >
+                  loading="lazy">
               {% else %}
                 <img
                   class="product-card__image"
                   src="{{ product.featured_image | image_url: width: 780 }}"
                   width="780"
                   height="1170"
-                  loading="lazy"
-                >
+                  loading="lazy">
               {% endif %}
             </a>
           {% endfor %}
