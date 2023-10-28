@@ -29,12 +29,16 @@
     <link rel="dns-prefetch" href="//typeform.com">
     <style>
       .template-index .hero {
-        background-image: url('{{ 'home_hero_LNK7977_01_1784-greater_low-res_compressed.jpg' | asset_url }}');
+        background-image: url('{{ 'home_hero_desktop_LNK7977_hi-res_compressed.jpg' | asset_url }}');
       }
-
-      @media screen and (max-width: 1055px) {
+      @media (max-width: 1055px) {
         .template-index .hero {
-          background-image: url('{{ 'home_hero_LNK7977_05_1024-1055_low-res_compressed.jpg' | asset_url }}');
+          background-image: url('{{ 'home_hero_tablet_LNK7977_hi-res_compressed.jpg' | asset_url }}');
+        }
+      }
+      @media (max-width: 671px) {
+        .template-index .hero {
+          background-image: url('{{ 'home_hero_mobile_LNK7977_hi-res_compressed.jpg' | asset_url }}');
         }
       }
       .template-collection .hero {

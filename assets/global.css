@@ -4223,6 +4223,13 @@ a.drawer-cart__empty-continue::after {
   color: var(--white);
 }
 
+/* Less than or equal to 671px */
+@media screen and (max-width: 671px) {
+  .template-index .hero {
+    background-position: 40% center;
+  }
+}
+
 .template-index .main-nav__trigger button {
   color: var(--white);
 }
