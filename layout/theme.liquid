@@ -60,7 +60,19 @@
         background-image: url('{{ 'collections_opt-in_LNK8624_01_ar-2-1_1784-greater_low-res_compressed.jpg' | asset_url }}');
       }
       .template-index #shopify-section-opt-in {
-        background-image: url('{{ 'home_opt-in_LNK7072_01_ar-2-1_1024-greater_low-res_compressed.jpg' | asset_url }}');
+        background-image: url('{{ 'global_opt-in_desktop_22_1004_RewindSkin6570_hi-res_compressed.jpg' | asset_url }}');
+      }
+
+      @media (max-width: 1055px) {
+        .template-index #shopify-section-opt-in {
+          background-image: url('{{ 'global_opt-in_tablet_22_1004_RewindSkin6570_hi-res_compressed.jpg' | asset_url }}');
+        }
+      }
+
+      @media (max-width: 671px) {
+        .template-index #shopify-section-opt-in {
+          background-image: url('{{ 'global_opt-in_mobile_22_1004_RewindSkin6570_hi-res_compressed.jpg' | asset_url }}');
+        }
       }
       .treatments-category__cta .treatments-category__cta-container:first-child {
         background-image: url('{{ 'treatments_shop-skincare_LNK39_01_low-res_compressed.jpg' | asset_url }}');

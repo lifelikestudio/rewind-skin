@@ -1056,7 +1056,7 @@ a:visited {
 /* Less than or equal to 389px */
 @media screen and (max-width: 389px) {
   .hero {
-    height: calc(100vh- 64px);
+    height: calc(100vh - 64px);
   }
 }
 
@@ -4223,28 +4223,21 @@ a.drawer-cart__empty-continue::after {
   color: var(--white);
 }
 
-/* Less than or equal to 671px */
-@media screen and (max-width: 671px) {
-  .template-index .hero {
-    background-position: 40% center;
-  }
-}
-
 .template-index .main-nav__trigger button {
   color: var(--white);
 }
 
-/* Between 834px and 1023px */
-@media screen and (min-width: 834px) and (max-width: 1023px) {
+/* From 1023px down */
+@media screen and (max-width: 1023px) {
   .template-index #shopify-section-opt-in {
-    background-position: 24%;
+    background-position: 66%;
   }
 }
 
-/* Less than or equal to 833px */
-@media screen and (max-width: 833px) {
+/* From 671px down */
+@media screen and (max-width: 671px) {
   .template-index #shopify-section-opt-in {
-    background-position: 28%; /* <833 down */
+    background-position: 64%;
   }
 }
 
