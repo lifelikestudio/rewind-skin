@@ -65,13 +65,37 @@
         }
       }
       .skin-treatments .hero {
-        background-image: url('{{ 'treatments_skin_hero_LNK7841_01_1784-greater_low-res_compressed.jpg' | asset_url }}');
+        background-image: url('{{ 'treatments_all_hero_desktop_LNK7841_hi-res_compressed.jpg' | asset_url }}');
       }
       .face-treatments .hero {
-        background-image: url('{{ 'treatments_face_hero_LNK7825_01_low-res_compressed.jpg' | asset_url }}');
+        background-image: url('{{ 'treatments_face_hero_desktop_22_1004_RewindSkin6814_hi-res_compressed.jpg' | asset_url }}');
       }
       .body-treatments .hero {
-        background-image: url('{{ 'treatments_body_hero_dts_01_low-res_compressed.jpg' | asset_url }}');
+        background-image: url('{{ 'treatments_body_hero_desktop_dts_hi-res_compressed.jpg' | asset_url }}');
+      }
+
+      @media (max-width: 1055px) {
+        .skin-treatments .hero {
+          background-image: url('{{ 'treatments_all_hero_tablet_LNK7841_hi-res_compressed.jpg' | asset_url }}');
+        }
+        .face-treatments .hero {
+          background-image: url('{{ 'treatments_face_hero_tablet_22_1004_RewindSkin6814_hi-res_compressed.jpg' | asset_url }}');
+        }
+        .body-treatments .hero {
+          background-image: url('{{ 'treatments_body_hero_tablet_dts_hi-res_compressed.jpg' | asset_url }}');
+        }
+      }
+
+      @media (max-width: 671px) {
+        .skin-treatments .hero {
+          background-image: url('{{ 'treatments_all_hero_mobile_LNK7841_hi-res_compressed.jpg' | asset_url }}');
+        }
+        .face-treatments .hero {
+          background-image: url('{{ 'treatments_face_hero_mobile_22_1004_RewindSkin6814_hi-res_compressed.jpg' | asset_url }}');
+        }
+        .body-treatments .hero {
+          background-image: url('{{ 'treatments_body_hero_mobile_dts_hi-res_compressed.jpg' | asset_url }}');
+        }
       }
       #shopify-section-opt-in {
         background-image: url('{{ 'global_opt-in_desktop_22_1004_RewindSkin6570_hi-res_compressed.jpg' | asset_url }}');
