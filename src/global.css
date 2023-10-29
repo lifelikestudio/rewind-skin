@@ -5642,8 +5642,6 @@ a.drawer-cart__empty-continue::after {
 /* Between 672px and 1055px */
 @media screen and (min-width: 672px) and (max-width: 1055px) {
   /* Styles go here */
-  .template-collection .hero,
-  .template-list-collections .hero,
   .skin-treatments .hero {
     background-position: 45%;
   }
@@ -5656,8 +5654,6 @@ a.drawer-cart__empty-continue::after {
 /* Between 390px and 671px */
 @media screen and (min-width: 390px) and (max-width: 671px) {
   /* Styles go here */
-  .template-collection .hero,
-  .template-list-collections .hero,
   .skin-treatments .hero {
     background-position: 42%;
   }
@@ -5670,8 +5666,6 @@ a.drawer-cart__empty-continue::after {
 /* Less than or equal to 389px */
 @media screen and (max-width: 389px) {
   /* Styles go here */
-  .template-collection .hero,
-  .template-list-collections .hero,
   .skin-treatments .hero {
     background-position: 40%;
   }

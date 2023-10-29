@@ -42,10 +42,27 @@
         }
       }
       .template-collection .hero {
-        background-image: url('{{ 'treatments_skin_hero_LNK7841_01_1784-greater_low-res_compressed.jpg' | asset_url }}');
+        background-image: url('{{ 'shop_hero_desktop_22_1004_RewindSkin6973_hi-res_compressed.jpg' | asset_url }}');
       }
       .template-list-collections .hero {
-        background-image: url('{{ 'treatments_skin_hero_LNK7841_01_1784-greater_low-res_compressed.jpg' | asset_url }}');
+        background-image: url('{{ 'shop_hero_desktop_22_1004_RewindSkin6973_hi-res_compressed.jpg' | asset_url }}');
+      }
+
+      @media (max-width: 1055px) {
+        .template-collection .hero {
+          background-image: url('{{ 'shop_hero_tablet_22_1004_RewindSkin6973_hi-res_compressed.jpg' | asset_url }}');
+        }
+        .template-list-collections .hero {
+          background-image: url('{{ 'shop_hero_tablet_22_1004_RewindSkin6973_hi-res_compressed.jpg' | asset_url }}');
+        }
+      }
+      @media (max-width: 671px) {
+        .template-collection .hero {
+          background-image: url('{{ 'shop_hero_mobile_22_1004_RewindSkin6973_hi-res_compressed.jpg' | asset_url }}');
+        }
+        .template-list-collections .hero {
+          background-image: url('{{ 'shop_hero_mobile_22_1004_RewindSkin6973_hi-res_compressed.jpg' | asset_url }}');
+        }
       }
       .skin-treatments .hero {
         background-image: url('{{ 'treatments_skin_hero_LNK7841_01_1784-greater_low-res_compressed.jpg' | asset_url }}');
@@ -57,20 +74,17 @@
         background-image: url('{{ 'treatments_body_hero_dts_01_low-res_compressed.jpg' | asset_url }}');
       }
       #shopify-section-opt-in {
-        background-image: url('{{ 'collections_opt-in_LNK8624_01_ar-2-1_1784-greater_low-res_compressed.jpg' | asset_url }}');
-      }
-      .template-index #shopify-section-opt-in {
         background-image: url('{{ 'global_opt-in_desktop_22_1004_RewindSkin6570_hi-res_compressed.jpg' | asset_url }}');
       }
 
       @media (max-width: 1055px) {
-        .template-index #shopify-section-opt-in {
+        #shopify-section-opt-in {
           background-image: url('{{ 'global_opt-in_tablet_22_1004_RewindSkin6570_hi-res_compressed.jpg' | asset_url }}');
         }
       }
 
       @media (max-width: 671px) {
-        .template-index #shopify-section-opt-in {
+        #shopify-section-opt-in {
           background-image: url('{{ 'global_opt-in_mobile_22_1004_RewindSkin6570_hi-res_compressed.jpg' | asset_url }}');
         }
       }
@@ -79,10 +93,6 @@
       }
       .treatments-category__cta .treatments-category__cta-container:last-child {
         background-image: url('{{ 'treatments_shop-gifts_LNK7709_01_low-res_compressed.jpg' | asset_url }}');
-      }
-
-      .skin-analysis-section__container {
-        background-image: url('{{'' | asset_url}}')
       }
     </style>
   </head>
