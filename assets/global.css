@@ -3272,10 +3272,24 @@ a.drawer-cart__empty-continue::after {
   }
 }
 
+/* From 1023px down */
+@media screen and (max-width: 1023px) {
+  .skin-analysis-section__container {
+    background-position: 80% center;
+  }
+}
+
 /* Between 672px and 833px */
 @media screen and (min-width: 672px) and (max-width: 833px) {
   .skin-analysis-section__container {
     height: 509.56px;
+  }
+}
+
+/* From 671px down */
+@media screen and (max-width: 671px) {
+  .skin-analysis-section__container {
+    background-position: center;
   }
 }
 
