@@ -4230,14 +4230,14 @@ a.drawer-cart__empty-continue::after {
 /* From 1023px down */
 @media screen and (max-width: 1023px) {
   .template-index #shopify-section-opt-in {
-    background-position: 66%;
+    background-position: 88%;
   }
 }
 
 /* From 671px down */
 @media screen and (max-width: 671px) {
   .template-index #shopify-section-opt-in {
-    background-position: 64%;
+    background-position: center;
   }
 }
 
