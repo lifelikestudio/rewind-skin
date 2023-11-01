@@ -10,7 +10,10 @@
               {% for child_link in link.links %}
                 <li>
                   {% if child_link.title == 'Contact' %}
-                    <a id="contact-trigger" class="all-caps link--alt-nav" href="{{ child_link.url }}">
+                    <a
+                      id="contact-trigger"
+                      class="all-caps link--alt-nav"
+                      href="{{ child_link.url }}">
                       {{- child_link.title -}}
                     </a>
                   {% else %}
@@ -32,9 +35,11 @@
           viewBox="0 0 131.9 151.6"
           class="svg-content"
           fill="currentColor"
-          preserveAspectRatio="xMinYMin meet"
-        >
-          <rect y=".4" width="2.6" height="151" />
+          preserveAspectRatio="xMinYMin meet">
+          <rect
+            y=".4"
+            width="2.6"
+            height="151" />
           <path d="m15.3 100.6c-0.1-0.6-0.1-1.3 0-1.9l10.3-48.2c0.2-0.9 0.2-1.8 0-2.7l-10.1-47.4h-2.6l10.2 47.9c0.1 0.6 0.1 1.3 0 1.9l-10.3 48.3c-0.2 0.9-0.2 1.8 0 2.7l10.7 50.2h2.6l-10.8-50.8z" />
           <path d="m35.1 97.8 24.4-45.6c1.1-2 1.1-4.2 0-6.2l-24.4-45.6h-2.8l24.9 46.6c0.8 1.4 0.8 3 0 4.5l-24.4 45.5c-1.1 2-1.1 4.3 0 6.3l25.8 48.1h2.8l-26.3-49.2c-0.7-1.4-0.7-3 0-4.4z" />
           <path d="m75.9 96.8 50.2-42.2c3.5-3 3.5-7.7 0-10.7l-51.7-43.5h-3.6l53.4 44.9c2.5 2.1 2.5 5.6 0 7.7l-50.2 42.1c-3.5 3-3.5 7.8 0 10.8l54.2 45.6h3.7l-56.1-47.1c-2.5-2.2-2.5-5.6 0.1-7.6z" />
@@ -49,7 +54,9 @@
         </svg>
       </div>
       <p class="all-caps link--alt-nav main-footer__copyright">
-        © <span id="copyright-year-mobile">2023</span> Rewind Skin
+        ©
+        <span id="copyright-year-mobile">2023</span>
+        Rewind Skin
       </p>
     </div>
   </div>
@@ -60,9 +67,7 @@
       <ul>
         {% for link in last_link_list.links limit: 1 %}
           <li>
-            <a
-              class="all-caps link--alt-nav link--utility"
-              href="
+            <a class="all-caps link--alt-nav link--utility" href="
                 {%- if link.title == 'Account' -%}
                   {% if shop.customer_accounts_enabled %}
                     {% if customer %}
@@ -74,8 +79,7 @@
                 {%- else -%}
                   {{ link.url }}
                 {%- endif -%}
-              "
-            >
+              ">
               {{- link.title -}}
             </a>
           </li>
@@ -88,7 +92,9 @@
       <ul>
         <li>
           <p class="all-caps link--alt-nav main-footer__copyright">
-            © <span id="copyright-year-desktop">2023</span> Rewind Skin
+            ©
+            <span id="copyright-year-desktop">2023</span>
+            Rewind Skin
           </p>
         </li>
         {% for child_link in last_parent_link.links offset: start_index %}
@@ -100,7 +106,10 @@
     </nav>
     <div class="main-footer__row-container">
       <div class="wrapper wrapper--lg">
-        <p class="all-caps main-footer__made-by">Made By Lifelike</p>
+        <a
+          href="mailto:projects@lifelike.digital"
+          rel="noopener noreferrer"
+          class="all-caps main-footer__made-by">Made by Lifelike</a>
       </div>
       <div class="popover"></div>
     </div>

@@ -15,6 +15,7 @@ import QuantityField from './components/Shop/QuantityField';
 import CartPage from './components/Shop/CartPage';
 // import Announcements from './components/Utility/Automations/Announcements';
 import Forms from './components/Utility/Forms';
+import CollectionsRedirect from './components/Utility/Automations/CollectionsRedirect';
 
 const GlobalComponents = () => {
   Drawers();
@@ -34,6 +35,7 @@ const GlobalComponents = () => {
   CartDrawer();
   // Announcements();
   Forms();
+  CollectionsRedirect();
 };
 const init = () => {
   GlobalComponents();
