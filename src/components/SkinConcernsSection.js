@@ -138,7 +138,7 @@ const shopifyStoreUrl = 'https://rewind-skin-v2.myshopify.com';
 const metafields = [
   'featured_image_treatments',
   'treatment_area_treatments',
-  'skin_concerns_treatments_',
+  'skin_concerns_treatments_', // remove final underscore
   'starting_rate_treatments',
   'booking_link_treatments',
   'related_treatment_types_treatments',
@@ -548,7 +548,7 @@ function displayPages(selectedConcern) {
       // Normalize and filter the pages based on the selected skin concern
       const relatedPages = pages.filter((page) => {
         const normalizedConcerns =
-          page.metafields.skin_concerns_treatments_.map(normalize);
+          page.metafields.skin_concerns_treatments_.map(normalize); // remove final underscore from treatments
         return normalizedConcerns.includes(selectedConcern);
       });
 
@@ -566,7 +566,7 @@ function displayPages(selectedConcern) {
       relatedPages.forEach((page) => {
         // Normalize the skin concerns before comparing
         const normalizedConcerns =
-          page.metafields.skin_concerns_treatments_.map(normalize);
+          page.metafields.skin_concerns_treatments_.map(normalize); //remove final underscore from treatments
         // Check if the page's skin concerns include the selected concern
         if (normalizedConcerns.includes(selectedConcern)) {
           const card = document.createElement('div');
