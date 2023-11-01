@@ -1,6 +1,8 @@
 <main class="cart-page" data-money-format="{{ shop.money_format }}">
   <div class="drawer__header drawer__header--cart-page">
-    <div class="wrapper wrapper--sm"><h1 class="drawer__top-level-heading">Bag</h1></div>
+    <div class="wrapper wrapper--sm">
+      <h1 class="drawer__top-level-heading">Bag</h1>
+    </div>
   </div>
   {% if cart.item_count == 0 %}
     <div class="drawer__container drawer__container--cart drawer__container--cart-page">
@@ -10,7 +12,8 @@
       </div>
     </div>
   {% else %}
-    {% form 'cart', cart %}
+    {% form 'cart'
+      , cart %}
       <div class="drawer__container drawer__container--cart drawer__container--cart-page">
         <div class="wrapper wrapper--sm drawer-cart__items drawer-cart__items--cart-page">
           {% for item in cart.items %}
@@ -36,30 +39,23 @@
                         alt="{{ matching_image.alt }}"
                         width="893"
                         height="auto"
-                        loading="eager"
-                      >
+                        loading="eager">
                     {% endif %}
                   {% endif %}
                 </div>
                 <div class="item__info item__info--cart-page">
                   <h2 class="all-caps item__brand">{{ item.product.vendor }}</h2>
-                  <a
-                    href="{{ item.url }}"
-                    class="item__info--cart-page"
-                  >
+                  <a href="{{ item.url }}" class="item__info--cart-page">
                     <p class="item__product">
                       <span class="product__title">{{ item.product.title }}</span>
-                      {% if item.variant.title != 'Default Title'
-                        and item.variant.compare_at_price > item.variant.price
+                      {% if item.variant.title != 'Default Title' and item.variant.compare_at_price > item.variant.price
                       %}
                         <span class="item__variant-price">
                           {{- item.variant.title }} /
                           <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
                           <ins>{{ item.variant.price | money_with_currency | remove: '.00' }}</ins>
                           {% assign discount = item.variant.compare_at_price | minus: item.variant.price %}
-                          {% assign discount_percentage = discount
-                            | times: 100.0
-                            | divided_by: item.variant.compare_at_price
+                          {% assign discount_percentage = discount | times: 100.0 | divided_by: item.variant.compare_at_price
                           %}
                           {% assign discount_percentage = discount_percentage | round %}
                           /
@@ -71,9 +67,7 @@
                           <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
                           <ins>{{ item.variant.price | money_with_currency | remove: '.00' }}</ins>
                           {% assign discount = item.variant.compare_at_price | minus: item.variant.price %}
-                          {% assign discount_percentage = discount
-                            | times: 100.0
-                            | divided_by: item.variant.compare_at_price
+                          {% assign discount_percentage = discount | times: 100.0 | divided_by: item.variant.compare_at_price
                           %}
                           {% assign discount_percentage = discount_percentage | round %}
                           /
@@ -92,15 +86,21 @@
                     </p>
                   </a>
 
-                  <a href="{{ item.url_to_remove }}" class="item__remove" data-variant-id="{{ item.variant.id }}"
-                    >Remove Item</a
-                  >
+                  <a
+                    href="{{ item.url_to_remove }}"
+                    class="item__remove"
+                    data-variant-id="{{ item.variant.id }}">Remove Item</a>
                 </div>
               </div>
               <div class="item__quantity item__quantity--cart-page">
                 <div class="cart__quantity">
                   <button type="button" class="quantity__decrement">-</button>
-                  <input class="cart__quantity-input" type="number" min="0" name="quantity" value="{{ item.quantity }}">
+                  <input
+                    class="cart__quantity-input"
+                    type="number"
+                    min="0"
+                    name="quantity"
+                    value="{{ item.quantity }}">
                   <button type="button" class="quantity__increment">+</button>
                 </div>
               </div>
@@ -116,15 +116,15 @@
               </div>
               <p class="subtotal__payment-plan">
                 or 4 interest-free payments of {% assign divided_price = cart.total_price | divided_by: 4 %}
-                {{ divided_price | money }} with <span class="is--emphasized">Sezzle</span>
+                {{ divided_price | money }} with
+                <span class="is--emphasized">Sezzle</span>
               </p>
-              <p class="subtotal__shipping">Shipping Calculated at Checkout</p>
+              <p class="subtotal__shipping">Shipping and Taxes Calculated at Checkout</p>
             </div>
             <button
               class="all-caps btn btn--secondary drawer-cart__submit drawer-cart__submit--cart-page"
               type="submit"
-              name="checkout"
-            >
+              name="checkout">
               Checkout
             </button>
           </div>
