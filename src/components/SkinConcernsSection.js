@@ -580,23 +580,24 @@ function displayPages(selectedConcern) {
           title.className = 'treatment-card__treatment';
           title.textContent = page.title;
 
-          const link = document.createElement('a');
-          link.target = '_blank'; // This line makes the link open in a new window
-          link.href = page.metafields.booking_link_treatments;
-          link.className = page.metafields.starting_rate_treatments
-            ? 'all-caps btn btn--primary treatment-card__btn'
-            : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
-          if (!page.metafields.starting_rate_treatments) {
-            link.textContent = !page.metafields.booking_link_treatments
-              ? 'Inquire Now'
-              : 'Book Now';
-            if (!page.metafields.booking_link_treatments) {
-              link.href = '#';
-              link.target = '';
-              link.classList.add('nurse-led-inquiry-trigger');
-              const { open } = createPopup(nurseLedId);
-              link.onclick = open;
-            }
+          let link;
+          if (!page.metafields.booking_link_treatments) {
+            link = document.createElement('p');
+            link.textContent = 'Inquire Now';
+            link.classList.add('nurse-led-inquiry-trigger');
+            link.className = page.metafields.starting_rate_treatments
+              ? 'all-caps btn btn--primary treatment-card__btn'
+              : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
+            const { open } = createPopup(nurseLedId);
+            link.onclick = open;
+          } else {
+            link = document.createElement('a');
+            link.target = '_blank'; // This line makes the link open in a new window
+            link.href = page.metafields.booking_link_treatments;
+            link.className = page.metafields.starting_rate_treatments
+              ? 'all-caps btn btn--primary treatment-card__btn'
+              : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
+            link.textContent = 'Book Now';
           }
 
           const image = document.createElement('img');

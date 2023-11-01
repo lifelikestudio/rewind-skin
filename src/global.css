@@ -1118,6 +1118,11 @@ a:visited {
   }
 }
 
+.main-nav__link,
+.link--alt-nav {
+  cursor: pointer;
+}
+
 .main-nav__linklist {
   display: flex;
   align-items: center;

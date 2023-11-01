@@ -178,30 +178,30 @@ function displayPages() {
         description.textContent =
           page.metafields.treatment_description_treatments;
 
-        const link = document.createElement('a');
-        link.href = page.metafields.booking_link_treatments
-          ? page.metafields.booking_link_treatments
-          : '#';
-        link.className = 'all-caps btn btn--primary treatment-card__btn';
-        link.target = '_blank'; // This line makes the link open in a new window
-
-        // if (!page.metafields.booking_link_treatments) {
-        //   link.id = page.title.toLowerCase().replace(/\s/g, '-') + '-trigger';
-        // }
-
-        const btnCta = document.createElement('span');
-        btnCta.textContent = !page.metafields.booking_link_treatments
-          ? 'Inquire Now'
-          : 'Book Now';
-
-        link.append(btnCta);
+        let link;
+        let btnCta = document.createElement('span');
 
         if (!page.metafields.booking_link_treatments) {
-          link.target = '';
-          link.classList.add('nurse-led-inquiry-trigger');
+          link = document.createElement('p');
+          link.classList.add(
+            'all-caps',
+            'btn',
+            'btn--primary',
+            'treatment-card__btn',
+            'nurse-led-inquiry-trigger'
+          );
           const { open } = createPopup(nurseLedId);
           link.onclick = open;
+          btnCta.textContent = 'Inquire Now';
+        } else {
+          link = document.createElement('a');
+          link.href = page.metafields.booking_link_treatments;
+          link.className = 'all-caps btn btn--primary treatment-card__btn';
+          link.target = '_blank'; // This line makes the link open in a new window
+          btnCta.textContent = 'Book Now';
         }
+
+        link.append(btnCta);
 
         const image = document.createElement('img');
         image.className = 'treatment-card__image';

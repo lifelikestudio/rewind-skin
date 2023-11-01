@@ -162,12 +162,18 @@
               {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
               {% for link in linklists['main-menu'].links limit: half_count %}
                 <li class="main-nav__link-item">
-                  <a
-                    class="main-nav__link all-caps link--main-nav"
-                    id="{{ link.handle }}-action"
-                    href="{{ link.url }}">
-                    {{- link.title -}}
-                  </a>
+                  {% if link.url == '#' %}
+                    <p class="main-nav__link all-caps link--main-nav" id="{{ link.handle }}-action">
+                      {{- link.title -}}
+                    </p>
+                  {% else %}
+                    <a
+                      class="main-nav__link all-caps link--main-nav"
+                      id="{{ link.handle }}-action"
+                      href="{{ link.url }}">
+                      {{- link.title -}}
+                    </a>
+                  {% endif %}
                 </li>
               {% endfor %}
               <li class="main-nav__trigger">
@@ -201,35 +207,52 @@
               {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
               {% for link in linklists['main-menu'].links offset: half_count %}
                 <li class="main-nav__link-item">
-                  <a
-                    class="main-nav__link all-caps link--main-nav"
-                    id="
-                      {%- if link.title == 'Shopping Bag' -%}
-                        cart-action
-                      {%- else -%}
-                        {{ link.handle }}-action
-                      {%- endif -%}
-                    "
-                    href="
+                  {% if link.url == '#' and link.title != 'Account' %}
+                    <p class="main-nav__link all-caps link--main-nav" id="
+                        {%- if link.title == 'Shopping Bag' -%}
+                          cart-action
+                        {%- else -%}
+                          {{ link.handle }}-action
+                        {%- endif -%}
+                      ">
+                      {% if link.title == 'Shopping Bag' %}
+                        {{ link.title }}
+                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                      {% else %}
+                        {{ link.title }}
+                      {% endif %}
+                    </p>
+                  {% else %}
+                    <a
+                      class="main-nav__link all-caps link--main-nav"
+                      id="
+                        {%- if link.title == 'Shopping Bag' -%}
+                          cart-action
+                        {%- else -%}
+                          {{ link.handle }}-action
+                        {%- endif -%}
+                      "
+                      href="
                         {%- if link.title == 'Account' -%}
-                        {% if shop.customer_accounts_enabled %}
-                          {% if customer %}
-                            {{ routes.account_url }}
-                          {% else %}
-                            {{ routes.account_login_url }}
+                          {% if shop.customer_accounts_enabled %}
+                            {% if customer %}
+                              {{ routes.account_url }}
+                            {% else %}
+                              {{ routes.account_login_url }}
+                            {% endif %}
                           {% endif %}
-                        {% endif %}
-                      {%- else -%}
-                        {{ link.url }}
-                      {%- endif -%}
-                    ">
-                    {% if link.title == 'Shopping Bag' %}
-                      {{ link.title }}
-                      <span class="cart-action__count">({{ cart.item_count }})</span>
-                    {% else %}
-                      {{ link.title }}
-                    {% endif %}
-                  </a>
+                        {%- else -%}
+                          {{ link.url }}
+                        {%- endif -%}
+                      ">
+                      {% if link.title == 'Shopping Bag' %}
+                        {{ link.title }}
+                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                      {% else %}
+                        {{ link.title }}
+                      {% endif %}
+                    </a>
+                  {% endif %}
                 </li>
               {% endfor %}
               <li class="main-nav__trigger">
@@ -450,12 +473,18 @@
               {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
               {% for link in linklists['main-menu'].links limit: half_count %}
                 <li class="main-nav__link-item">
-                  <a
-                    class="main-nav__link all-caps link--main-nav"
-                    id="{{ link.handle }}-action"
-                    href="{{ link.url }}">
-                    {{- link.title -}}
-                  </a>
+                  {% if link.url == '#' %}
+                    <p class="main-nav__link all-caps link--main-nav" id="{{ link.handle }}-action">
+                      {{- link.title -}}
+                    </p>
+                  {% else %}
+                    <a
+                      class="main-nav__link all-caps link--main-nav"
+                      id="{{ link.handle }}-action"
+                      href="{{ link.url }}">
+                      {{- link.title -}}
+                    </a>
+                  {% endif %}
                 </li>
               {% endfor %}
               <li class="main-nav__trigger">
@@ -489,35 +518,52 @@
               {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
               {% for link in linklists['main-menu'].links offset: half_count %}
                 <li class="main-nav__link-item">
-                  <a
-                    class="main-nav__link all-caps link--main-nav"
-                    id="
-                      {%- if link.title == 'Shopping Bag' -%}
-                        cart-action
-                      {%- else -%}
-                        {{ link.handle }}-action
-                      {%- endif -%}
-                    "
-                    href="
+                  {% if link.url == '#' and link.title != 'Account' %}
+                    <p class="main-nav__link all-caps link--main-nav" id="
+                        {%- if link.title == 'Shopping Bag' -%}
+                          cart-action
+                        {%- else -%}
+                          {{ link.handle }}-action
+                        {%- endif -%}
+                      ">
+                      {% if link.title == 'Shopping Bag' %}
+                        {{ link.title }}
+                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                      {% else %}
+                        {{ link.title }}
+                      {% endif %}
+                    </p>
+                  {% else %}
+                    <a
+                      class="main-nav__link all-caps link--main-nav"
+                      id="
+                        {%- if link.title == 'Shopping Bag' -%}
+                          cart-action
+                        {%- else -%}
+                          {{ link.handle }}-action
+                        {%- endif -%}
+                      "
+                      href="
                         {%- if link.title == 'Account' -%}
-                        {% if shop.customer_accounts_enabled %}
-                          {% if customer %}
-                            {{ routes.account_url }}
-                          {% else %}
-                            {{ routes.account_login_url }}
+                          {% if shop.customer_accounts_enabled %}
+                            {% if customer %}
+                              {{ routes.account_url }}
+                            {% else %}
+                              {{ routes.account_login_url }}
+                            {% endif %}
                           {% endif %}
-                        {% endif %}
-                      {%- else -%}
-                        {{ link.url }}
-                      {%- endif -%}
-                    ">
-                    {% if link.title == 'Shopping Bag' %}
-                      {{ link.title }}
-                      <span class="cart-action__count">({{ cart.item_count }})</span>
-                    {% else %}
-                      {{ link.title }}
-                    {% endif %}
-                  </a>
+                        {%- else -%}
+                          {{ link.url }}
+                        {%- endif -%}
+                      ">
+                      {% if link.title == 'Shopping Bag' %}
+                        {{ link.title }}
+                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                      {% else %}
+                        {{ link.title }}
+                      {% endif %}
+                    </a>
+                  {% endif %}
                 </li>
               {% endfor %}
               <li class="main-nav__trigger">

@@ -310,33 +310,60 @@ function displayPages(selectedType) {
           title.className = 'treatment-card__treatment';
           title.textContent = page.title;
 
-          const link = document.createElement('a');
-          link.href = page.metafields.booking_link_treatments;
-          link.className = page.metafields.starting_rate_treatments
-            ? 'all-caps btn btn--primary treatment-card__btn'
-            : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
-          if (!page.metafields.starting_rate_treatments) {
-            link.textContent = !page.metafields.booking_link_treatments
-              ? 'Inquire Now'
-              : 'Book Now';
-          }
-          link.target = '_blank'; // This line makes the link open in a new window
+          // const link = document.createElement('a');
+          // link.href = page.metafields.booking_link_treatments;
+          // link.className = page.metafields.starting_rate_treatments
+          //   ? 'all-caps btn btn--primary treatment-card__btn'
+          //   : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
+          // if (!page.metafields.starting_rate_treatments) {
+          //   link.textContent = !page.metafields.booking_link_treatments
+          //     ? 'Inquire Now'
+          //     : 'Book Now';
+          // }
+          // link.target = '_blank'; // This line makes the link open in a new window
+
+          // if (!page.metafields.booking_link_treatments) {
+          //   link.target = '';
+          //   link.href = '#';
+          //   link.classList.add('nurse-led-inquiry-trigger');
+          //   const { open } = createPopup(nurseLedId);
+          //   link.onclick = open;
+          // }
+
+          // if (page.metafields.starting_rate_treatments) {
+          //   const bookNow = document.createElement('span');
+          //   bookNow.textContent = 'Book Now';
+          //   const price = document.createElement('span');
+          //   price.textContent = `$${page.metafields.starting_rate_treatments}`;
+          //   link.append(bookNow, price);
+          // }
+
+          let link;
+          let btnCta = document.createElement('span');
 
           if (!page.metafields.booking_link_treatments) {
-            link.target = '';
-            link.href = '#';
-            link.classList.add('nurse-led-inquiry-trigger');
+            link = document.createElement('p');
+            link.classList.add(
+              'all-caps',
+              'btn',
+              'btn--primary',
+              'treatment-card__btn',
+              'nurse-led-inquiry-trigger'
+            );
             const { open } = createPopup(nurseLedId);
             link.onclick = open;
+            btnCta.textContent = 'Inquire Now';
+          } else {
+            link = document.createElement('a');
+            link.href = page.metafields.booking_link_treatments;
+            link.className = page.metafields.starting_rate_treatments
+              ? 'all-caps btn btn--primary treatment-card__btn'
+              : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
+            link.target = '_blank'; // This line makes the link open in a new window
+            btnCta.textContent = 'Book Now';
           }
 
-          if (page.metafields.starting_rate_treatments) {
-            const bookNow = document.createElement('span');
-            bookNow.textContent = 'Book Now';
-            const price = document.createElement('span');
-            price.textContent = `$${page.metafields.starting_rate_treatments}`;
-            link.append(bookNow, price);
-          }
+          link.append(btnCta);
 
           const image = document.createElement('img');
           image.className = 'treatment-card__image';
