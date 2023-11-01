@@ -2954,7 +2954,7 @@ a.drawer-cart__empty-continue::after {
   width: 8px;
   border-radius: 2.25px;
   background-color: var(--dark-grey);
-  margin: 0 10px 0 0;
+  margin: 2.5px 10px 0 0;
 }
 
 .filter-header__input {
@@ -2989,6 +2989,7 @@ a.drawer-cart__empty-continue::after {
     width: 4px;
     border-radius: 1.25px;
     margin-right: 6px;
+    margin-top: 1.5px;
   }
 }
 
@@ -10715,6 +10716,92 @@ a.order__info--pill {
 
   .announcement-bar__type {
     font-size: 1.2rem;
+  }
+}
+
+.our-founder-main {
+  padding-top: calc(var(--base-unit) * 2);
+  padding-bottom: calc(var(--base-unit) * 2);
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--base-unit);
+}
+
+/* Less than or equal to 671px */
+@media screen and (max-width: 671px) {
+  .our-founder-main {
+    row-gap: calc(var(--base-unit) / 2);
+    padding-top: var(--base-unit);
+    padding-bottom: var(--base-unit);
+  }
+}
+
+.our-founder-main p {
+  letter-spacing: var(--brand-body-letter-spacing);
+  font-size: 5.6rem;
+  line-height: 1.2em;
+}
+
+/* Between 1312px and 1583px */
+@media screen and (min-width: 1312px) and (max-width: 1583px) {
+  .our-founder-main p {
+    font-size: 4.8rem;
+  }
+}
+
+/* Between 1024px and 1311px */
+@media screen and (min-width: 1024px) and (max-width: 1311px) {
+  .our-founder-main p {
+    font-size: 4rem;
+  }
+}
+
+/* Between 672px and 1023px */
+@media screen and (min-width: 672px) and (max-width: 1023px) {
+  .our-founder-main p {
+    font-size: 3.2rem;
+  }
+}
+
+/* Between 428px and 671px */
+@media screen and (min-width: 428px) and (max-width: 671px) {
+  .our-founder-main p {
+    font-size: 2.4rem;
+  }
+}
+
+/* Between 390px and 427px */
+@media screen and (min-width: 390px) and (max-width: 427px) {
+  .our-founder-main p {
+    font-size: 2rem;
+  }
+}
+
+/* Less than or equal to 389px */
+@media screen and (max-width: 389px) {
+  .our-founder-main p {
+    font-size: 1.6rem;
+  }
+}
+
+.our-founder-main__row--photos {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: calc(var(--base-unit) / 2);
+}
+
+/* Less than or equal to 671px */
+@media screen and (max-width: 671px) {
+  .our-founder-main__row--photos {
+    column-gap: calc(var(--base-unit) / 4);
+    row-gap: calc(var(--base-unit) / 4);
+    justify-content: center;
+  }
+
+  .our-founder-main__row--photos img {
+    height: calc((100% / 3) - calc(var(--base-unit) / 4));
+    width: calc((100% / 3) - calc(var(--base-unit) / 4));
   }
 }
 
