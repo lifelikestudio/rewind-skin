@@ -18,8 +18,8 @@ const faceRadio = document.querySelector('#treatments-section-filter-face');
 const bodyRadio = document.querySelector('#treatments-section-filter-body');
 
 // Shopify API call
-const shopifyStorefrontAccessToken = 'f0802d0c9602af67c9785320bf29348f';
-const shopifyStoreUrl = 'https://rewind-skin-v2.myshopify.com';
+const shopifyStorefrontAccessToken = 'd20d0cde1f02fc638e0611331c45a289';
+const shopifyStoreUrl = 'https://rewind-skin-co.myshopify.com';
 
 function normalize(str) {
   return str.toLowerCase();
