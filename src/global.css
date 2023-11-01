@@ -2082,13 +2082,15 @@ a.drawer-cart__empty-continue::after {
 
 .drawer__link a,
 .drawer__link button,
-.drawer__link label {
+.drawer__link label,
+.drawer__link p {
   font-weight: var(--regular);
   font-size: 1.6rem;
   /* line-height: 11.104px; */
   line-height: 1em;
   text-align: left;
   display: inline-block;
+  cursor: pointer;
 }
 
 .drawer__link button {
@@ -2104,13 +2106,15 @@ a.drawer-cart__empty-continue::after {
   color: var(--black);
 }
 
-.drawer__link a::before {
+.drawer__link a::before,
+.drawer__link p::before {
   content: '';
   margin-bottom: 0.047em;
   display: table;
 }
 
-.drawer__link a::after {
+.drawer__link a::after,
+.drawer__link p::after {
   content: '';
   margin-top: -0.047em;
   display: table;

@@ -344,7 +344,11 @@
                 {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
                 {% for link in linklists['main-menu'].links limit: half_count %}
                   <li class="all-caps drawer__link">
-                    <a id="{{  link.handle }}-mobile-action" href="{{ link.url }}">{{ link.title }}</a>
+                    {% if link.url == '#' %}
+                      <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                    {% else %}
+                      <a id="{{ link.handle }}-mobile-action" href="{{ link.url }}">{{ link.title }}</a>
+                    {% endif %}
                   </li>
                 {% endfor %}
               </ul>
@@ -355,8 +359,11 @@
                 {% for link in linklists['main-menu'].links offset: half_count %}
                   {% unless forloop.last %}
                     <li class="all-caps drawer__link">
-                      <a id="{{ link.handle }}-mobile-action" href="
-                            {%- if link.title == 'Account' -%}
+                      {% if link.title != 'Account' and link.url == '#' %}
+                        <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                      {% else %}
+                        <a id="{{ link.handle }}-mobile-action" href="
+                          {%- if link.title == 'Account' -%}
                             {% if shop.customer_accounts_enabled %}
                               {% if customer %}
                                 {{ routes.account_url }}
@@ -369,6 +376,8 @@
                           {%- endif -%}
                         ">
                         {{ link.title }}
+                        </a>
+                      {% endif %}
                       </a>
                     </li>
                   {% endunless %}
@@ -655,7 +664,11 @@
                 {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
                 {% for link in linklists['main-menu'].links limit: half_count %}
                   <li class="all-caps drawer__link">
-                    <a id="{{ link.handle }}-mobile-action" href="{{ link.url }}">{{ link.title }}</a>
+                    {% if link.url == '#' %}
+                      <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                    {% else %}
+                      <a id="{{ link.handle }}-mobile-action" href="{{ link.url }}">{{ link.title }}</a>
+                    {% endif %}
                   </li>
                 {% endfor %}
               </ul>
@@ -666,8 +679,11 @@
                 {% for link in linklists['main-menu'].links offset: half_count %}
                   {% unless forloop.last %}
                     <li class="all-caps drawer__link">
-                      <a id="{{ link.handle }}-mobile-action" href="
-                            {%- if link.title == 'Account' -%}
+                      {% if link.title != 'Account' and link.url == '#' %}
+                        <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                      {% else %}
+                        <a id="{{ link.handle }}-mobile-action" href="
+                          {%- if link.title == 'Account' -%}
                             {% if shop.customer_accounts_enabled %}
                               {% if customer %}
                                 {{ routes.account_url }}
@@ -679,8 +695,9 @@
                             {{ link.url }}
                           {%- endif -%}
                         ">
-                        {{ link.title }}
-                      </a>
+                          {{ link.title }}
+                        </a>
+                      {% endif %}
                     </li>
                   {% endunless %}
                 {% endfor %}
