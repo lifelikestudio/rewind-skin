@@ -509,9 +509,20 @@
             >
           {% endcomment %}
           <a
-            class="announcement-bar__type"
-            href="/collections/all"
-            id="evergreen-announcement">Free Shipping on Orders Over $149 CAD. Start Here.</a>
+          class="announcement-bar__type"
+          href="/collections/all"
+          id="evergreen-announcement">
+          {% comment %}
+            Free Shipping on Orders Over $149 CAD. Start Here.
+          {% endcomment %}
+          {% if template contains 'product' and product.vendor == 'Biologique Recherche' %}
+            This weekend, spend $500 or more on BR products and receive a custom, hand-painted Skincare Vanity travel bag. After you've purchased, we'll follow-up with you over email if your order has qualified.
+          {% elsif template contains 'product' and product.vendor == 'Future 5 Elements' %}
+            Spend $250 on Future 5 products and receive an 8ml bottle of Beauty Drops 1 or 2, your choice. After you've purchased, we'll follow-up with you over email if your order has qualified.
+          {% else %}
+            Black Friday exclusives from our most coveted brands. Start Here.
+          {% endif %}
+        </a>
         </div>
       </section>
       <header class="hero">
