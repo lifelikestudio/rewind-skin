@@ -1,0 +1,7 @@
+[environments.live]
+store = "rewind-skin-co"
+password  = "shptka_995b3145cfe629e49c7ffea3e1dae0c2"
+
+[environments.experiments]
+store = "rewind-skin-v2"
+password = "shptka_409227ed443dec7c40c28c45d75112e3"
