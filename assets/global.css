@@ -7451,6 +7451,10 @@ a.drawer-cart__empty-continue::after {
     margin-bottom: 20px;
   }
 
+  .product-page__rating {
+    margin-bottom: 20px;
+  }
+
   .product-page__title::before {
     margin-bottom: -0.306em;
   }
@@ -7463,6 +7467,10 @@ a.drawer-cart__empty-continue::after {
 /* Less than or equal to 671px */
 @media screen and (max-width: 671px) {
   .product-page__title.is--desktop {
+    display: none;
+  }
+
+  .product-page__rating.is--desktop {
     display: none;
   }
 
