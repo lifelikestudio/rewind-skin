@@ -5,6 +5,10 @@
     {% if downcased_vendor == 'biologique recherche' and customer == null or product.variants.size <= 1 %}
       <div class="product-page__copy-lockup product-page__copy-lockup--br">
         <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
+        <div class="product-page__rating is--desktop">
+          {% render 'okendo-reviews-product-rating-summary'
+            , product: product %}
+        </div>
         {{ product.description }}
       </div>
     {% else %}
