@@ -7423,6 +7423,10 @@ a.drawer-cart__empty-continue::after {
   margin-bottom: 24px;
 }
 
+.product-page__rating {
+  margin-bottom: 24px;
+}
+
 .product-page__title::before {
   content: '';
   margin-bottom: -0.356em;
@@ -8168,7 +8172,8 @@ input[type='number']::-webkit-outer-spin-button {
 
 /* Less than or equal to 427px */
 @media screen and (max-width: 427px) {
-  .product-page__more-info.wrapper--md {
+  .product-page__more-info.wrapper--md,
+  .product-page__reviews.wrapper--md {
     padding-left: 16px;
     padding-right: 16px;
   }
