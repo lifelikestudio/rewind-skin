@@ -8143,6 +8143,13 @@ input[type='number']::-webkit-outer-spin-button {
   padding-bottom: var(--base-unit);
 }
 
+/* Less than or equal to 671px */
+@media screen and (max-width: 671px) {
+  .product-page__reviews {
+    padding-top: 0px;
+  }
+}
+
 .product-page__more-info {
   padding-top: var(--base-unit);
   padding-bottom: var(--base-unit);
