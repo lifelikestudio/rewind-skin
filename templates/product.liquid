@@ -10,6 +10,8 @@
     {% else %}
       <div class="product-page__copy-lockup">
         <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
+        {% render 'okendo-reviews-product-rating-summary'
+          , product: product %}
         {{ product.description }}
       </div>
     {% endif %}
@@ -149,6 +151,10 @@
     {% endif %}
   </section>
 {% endif %}
+<section class="product-page__reviews wrapper wrapper--md">
+  {% render 'okendo-reviews-widget'
+    , product: product %}
+</section>
 {% section 'skin-analysis' %}
 {% comment %}
   <section class="product-page__related">
