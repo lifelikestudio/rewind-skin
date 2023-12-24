@@ -8252,13 +8252,19 @@ input[type='number']::-webkit-outer-spin-button {
   }
 }
 
-.product-page__more-info .product-page__heading {
+.product-page__heading {
   font-weight: var(--regular);
   font-size: 2rem;
   line-height: 28px;
   letter-spacing: var(--base-letter-spacing);
   text-transform: capitalize;
   text-align: left;
+}
+
+.product-page__reviews .product-page__heading {
+}
+
+.product-page__more-info .product-page__heading {
   /* margin-right: var(--base-unit); */
   width: 25%;
 }
