@@ -54,6 +54,10 @@
       enctype="multipart/form-data"
       class="product-page__checkout-form">
       <h1 class="product-page__title is--mobile">{{ product.title }}</h1>
+      <div class="product-page__rating is--mobile">
+        {% render 'okendo-reviews-product-rating-summary'
+          , product: product %}
+      </div>
       <!-- Check if the product has multiple variants -->
       {% if product.variants.size > 1 %}
         <!-- If yes, display a dropdown menu for variant selection -->
