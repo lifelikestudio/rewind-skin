@@ -8,11 +8,7 @@
           Search
         {%- endif -%}
       </h1>
-      <form
-        id="search-in-theme"
-        class="search__form"
-        action="{{ routes.search_url }}"
-        role="search">
+      <form id="search-in-theme" class="search__form" action="{{ routes.search_url }}" role="search">
         <div class="search__field">
           <div class="search__inputs">
             <input
@@ -21,52 +17,25 @@
               name="q"
               value="{{ search.terms | escape }}"
               placeholder="{{ 'general.search.search' | t }}"
-              class="field__inner">
+              class="field__inner"
+            >
             <label for="search-input-theme" class="visually-hidden">{{ 'general.search.search' | t }}</label>
 
-            <input
-              type="hidden"
-              name="type"
-              value="product,page">
-            <input
-              type="hidden"
-              name="options[unavailable_products]"
-              value="hide">
-            <input
-              type="hidden"
-              name="options[prefix]"
-              value="last">
+            <input type="hidden" name="type" value="product,page">
+            <input type="hidden" name="options[unavailable_products]" value="hide">
+            <input type="hidden" name="options[prefix]" value="last">
           </div>
           <div class="search__btns">
-            <button
-              id="search-clear-theme"
-              type="reset"
-              aria-label="Clear search term">
-              <svg
-                fill="none"
-                viewBox="0 0 10 10"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M1 1L9 9M1 9L9 1"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  vector-effect="non-scaling-stroke"
-                  stroke-width="1"
-                  focusable="false" />
+            <button id="search-clear-theme" type="reset" aria-label="Clear search term">
+              <svg fill="none" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L9 9M1 9L9 1" stroke="currentColor" stroke-linecap="round" vector-effect="non-scaling-stroke"
+                stroke-width="1"
+                focusable="false"/>
               </svg>
             </button>
             <button type="submit" aria-label="{{ 'general.search.search' | t }}">
-              <svg
-                fill="none"
-                viewBox="0 0 26 26"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-width=".8"
-                  vector-effect="non-scaling-stroke"
-                  focusable="false" />
+              <svg fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+                <path d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392" stroke="currentColor" stroke-linecap="round" stroke-width=".8" vector-effect="non-scaling-stroke" focusable="false"/>
               </svg>
             </button>
           </div>
@@ -94,12 +63,16 @@
                               value="{{ filter_value.value }}"
                               id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
                               {% if filter_value.active -%}
-                              checked
+                                checked
                               {%- endif %}
                               {% if filter_value.count == 0 and filter_value.active == false -%}
-                              disabled
-                              {%- endif %}>
-                            {% assign label_characters = filter_value.label | join: ', ' | replace: '_', ', ' | replace: 'plus', '+'
+                                disabled
+                              {%- endif %}
+                            >
+                            {% assign label_characters = filter_value.label
+                              | join: ', '
+                              | replace: '_', ', '
+                              | replace: 'plus', '+'
                             %}
                             <span class="filter-group-options__label">
                               {{- label_characters -}}
@@ -160,10 +133,7 @@
                   <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
                 {%- endif -%}
               {%- endfor -%}
-              <button
-                type="button"
-                class="all-caps drawer__header-action"
-                id="categories-close">Close</button>
+              <button type="button" class="all-caps drawer__header-action" id="categories-close">Close</button>
             </div>
             <div class="drawer__container drawer__menu">
               {%- for filter in search.filters -%}
@@ -181,11 +151,12 @@
                                 value="{{ filter_value.value }}"
                                 id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                                 {% if filter_value.active -%}
-                                checked
+                                  checked
                                 {%- endif %}
                                 {% if filter_value.count == 0 and filter_value.active == false -%}
-                                disabled
-                                {%- endif %}>
+                                  disabled
+                                {%- endif %}
+                              >
                               {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
 
                               <span class="filter-group-options__label">
@@ -210,10 +181,7 @@
                   <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
                 {%- endif -%}
               {%- endfor -%}
-              <button
-                type="button"
-                class="all-caps drawer__header-action"
-                id="concerns-close">Close</button>
+              <button type="button" class="all-caps drawer__header-action" id="concerns-close">Close</button>
             </div>
             <div class="drawer__container drawer__menu">
               {%- for filter in search.filters -%}
@@ -231,11 +199,12 @@
                                 value="{{ filter_value.value }}"
                                 id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                                 {% if filter_value.active -%}
-                                checked
+                                  checked
                                 {%- endif %}
                                 {% if filter_value.count == 0 and filter_value.active == false -%}
-                                disabled
-                                {%- endif %}>
+                                  disabled
+                                {%- endif %}
+                              >
                               {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
 
                               <span class="filter-group-options__label">
@@ -260,10 +229,7 @@
                   <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
                 {%- endif -%}
               {%- endfor -%}
-              <button
-                type="button"
-                class="all-caps drawer__header-action"
-                id="types-close">Close</button>
+              <button type="button" class="all-caps drawer__header-action" id="types-close">Close</button>
             </div>
             <div class="drawer__container drawer__menu">
               {%- for filter in search.filters -%}
@@ -281,11 +247,12 @@
                                 value="{{ filter_value.value }}"
                                 id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                                 {% if filter_value.active -%}
-                                checked
+                                  checked
                                 {%- endif %}
                                 {% if filter_value.count == 0 and filter_value.active == false -%}
-                                disabled
-                                {%- endif %}>
+                                  disabled
+                                {%- endif %}
+                              >
                               {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
 
                               <span class="filter-group-options__label">
@@ -310,10 +277,7 @@
                   <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
                 {%- endif -%}
               {%- endfor -%}
-              <button
-                type="button"
-                class="all-caps drawer__header-action"
-                id="brands-close">Close</button>
+              <button type="button" class="all-caps drawer__header-action" id="brands-close">Close</button>
             </div>
             <div class="drawer__container drawer__menu">
               {%- for filter in search.filters -%}
@@ -331,11 +295,12 @@
                                 value="{{ filter_value.value }}"
                                 id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
                                 {% if filter_value.active -%}
-                                checked
+                                  checked
                                 {%- endif %}
                                 {% if filter_value.count == 0 and filter_value.active == false -%}
-                                disabled
-                                {%- endif %}>
+                                  disabled
+                                {%- endif %}
+                              >
                               {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
 
                               <span class="filter-group-options__label">
@@ -353,8 +318,15 @@
           </div>
         </form>
         <div class="drawer-filters__clear-apply" id="filters-clear-apply">
-          <a class="btn btn--primary all-caps drawer-filters__btn drawer-filters__btn--clear" href="{{ routes.search_url }}?sort_by={{ search.sort_by }}&q={{ search.terms }}">Clear Filters</a>
-          <button class="btn btn--secondary all-caps drawer-filters__btn drawer-filters__btn--apply" id="filters-show-results">
+          <a
+            class="btn btn--primary all-caps drawer-filters__btn drawer-filters__btn--clear"
+            href="{{ routes.search_url }}?sort_by={{ search.sort_by }}&q={{ search.terms }}"
+            >Clear Filters</a
+          >
+          <button
+            class="btn btn--secondary all-caps drawer-filters__btn drawer-filters__btn--apply"
+            id="filters-show-results"
+          >
             View Results
           </button>
         </div>
@@ -363,7 +335,8 @@
         <div
           class="search-results__products"
           id="collections-products-container"
-          data-search-handle="{{ search.terms | replace: ' ', '+' }}">
+          data-search-handle="{{ search.terms | replace: ' ', '+' }}"
+        >
           {% paginate search.results by 24 %}
             {% for item in search.results %}
               {% for variant in item.variants %}
@@ -379,20 +352,17 @@
                     </h2>
                   </div>
                   {% assign downcased_vendor = item.vendor | strip | downcase %}
-                  {% if downcased_vendor == 'biologique recherche' and customer == null %}
-                    <div class="all-caps btn btn--primary product-card__btn product-card__btn--icon" data-url="{{ variant_url }}">
+                  {% if downcased_vendor == 'biologique recherche' %}
+                    <div
+                      class="all-caps btn btn--primary product-card__btn product-card__btn--icon"
+                      data-url="{{ variant_url }}"
+                    >
                       Login to Shop
                     </div>
                   {% else %}
                     {% if variant.available %}
-                      <form
-                        action="/cart/add"
-                        method="post"
-                        class="product-card__form">
-                        <input
-                          type="hidden"
-                          name="id"
-                          value="{{ variant.id }}">
+                      <form action="/cart/add" method="post" class="product-card__form">
+                        <input type="hidden" name="id" value="{{ variant.id }}">
                         <button class="all-caps btn btn--primary product-card__btn">
                           {% if product.compare_at_price > variant.price %}
                             <span>Add to Bag</span>
@@ -401,8 +371,8 @@
                               <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
                             </span>
                           {% else %}
-                            <span>Add to Bag</span>
-                            <span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
+                            <span>Add to Bag</span
+                            ><span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
                           {% endif %}
                         </button>
                       </form>
@@ -418,14 +388,16 @@
                       src="{{ variant.image | image_url: width: 780 }}"
                       width="780"
                       height="1170"
-                      loading="lazy">
+                      loading="lazy"
+                    >
                   {% else %}
                     <img
                       class="product-card__image"
                       src="{{ item.featured_image | image_url: width: 780 }}"
                       width="780"
                       height="1170"
-                      loading="lazy">
+                      loading="lazy"
+                    >
                   {% endif %}
                 </a>
               {% endfor %}
