@@ -450,27 +450,27 @@
                 {% endif %}
             {% endif %}
               {% comment %}  
-                                                                      <!-- Original Code -->
-                                                                    {% if variant.image != blank %}
-                                                                      <img
-                                                                        class="product-card__image"
-                                                                        src="{{ variant.image | image_url: width: 780 }}"
-                                                                        width="780"
-                                                                        height="1170"
-                                                                        loading="lazy">
-                                                                    {% else %}
-                                                                      <img
-                                                                        class="product-card__image"
-                                                                        src="{{ product.featured_image | image_url: width: 780 }}"
-                                                                        width="780"
-                                                                        height="1170"
-                                                                        loading="lazy">
-                                                                    {% endif %}
-                                                        {% endcomment %}
+                                                                                                      <!-- Original Code -->
+                                                                                                    {% if variant.image != blank %}
+                                                                                                      <img
+                                                                                                        class="product-card__image"
+                                                                                                        src="{{ variant.image | image_url: width: 780 }}"
+                                                                                                        width="780"
+                                                                                                        height="1170"
+                                                                                                        loading="lazy">
+                                                                                                    {% else %}
+                                                                                                      <img
+                                                                                                        class="product-card__image"
+                                                                                                        src="{{ product.featured_image | image_url: width: 780 }}"
+                                                                                                        width="780"
+                                                                                                        height="1170"
+                                                                                                        loading="lazy">
+                                                                                                    {% endif %}
+                                                                                    {% endcomment %}
 
             {% assign size_value = variant.option1 %}
               <!-- Adjust based on the actual position of "size" in your variant options -->
-              {% assign normalized_size_value = size_value | downcase | replace: ' ', '-' | replace: 'ml', 'ml' %}
+              {% assign normalized_size_value = size_value | downcase | replace: ' ', '-' %}
               <!-- Normalize as needed to match your URL structure -->
               {% for image in product.images %}
                 {% if image.src contains 'product-card' and image.src contains normalized_size_value %}
