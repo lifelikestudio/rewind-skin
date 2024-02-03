@@ -190,7 +190,7 @@ const fetchProducts = () => {
           handle
           vendor
           description
-          images(first: 1) {
+          images(first: 10) {
             edges {
               node {
                 originalSrc
@@ -213,6 +213,10 @@ const fetchProducts = () => {
                   amount
                   currencyCode
                 }
+                selectedOptions {
+                  name
+                  value
+                }
               }
             }
           }
@@ -232,7 +236,11 @@ const fetchProducts = () => {
   })
     .then((response) => response.json())
     .then((data) => {
-      const products = data.data.products.edges.map((edge) => edge.node);
+      const products = data.data.products.edges.map((edge) => {
+        const product = edge.node;
+        // Include logic here to process each product's variants to extract the size option
+        return product;
+      });
       return products;
     });
 };
@@ -373,18 +381,43 @@ function displayProducts(selectedConcern) {
             card.append(info, form);
           }
 
+          // Assuming 'product' is already defined and contains the product information
+          // Assuming 'variant' is defined and represents the currently processed variant
+
+          // Extract sizeValue from the variant's selectedOptions
+          // This assumes there's a 'Size' option; adjust if your structure is different
+          const sizeValue = variant.selectedOptions
+            .find((option) => option.name === 'Size')
+            ?.value.trim()
+            .toLowerCase()
+            .replace(/\s+/g, '-'); // Normalize the sizeValue by making it lowercase and replacing spaces with '-'
+
+          // Filter product images to find one that matches the criteria
+          const matchingImage = product.images.edges.find((edge) => {
+            const imageUrl = edge.node.originalSrc;
+            return (
+              imageUrl.includes('product-card') && imageUrl.includes(sizeValue)
+            );
+          });
+
+          // Determine the fallback image source: variant's image, or the product's first image if the variant has no image
+          const fallbackImageSrc = variant.image
+            ? variant.image.originalSrc
+            : product.images.edges[0]?.node.originalSrc;
+
+          // Use the matching image if found; otherwise, use the fallback image source
+          const selectedImageSrc = matchingImage
+            ? matchingImage.node.originalSrc
+            : fallbackImageSrc;
+
           const image = document.createElement('img');
           image.className = 'product-card__image';
-          if (variant && variant.image) {
-            image.src = variant.image.originalSrc;
-          } else if (product.images.edges.length > 0) {
-            // Use the product's first image
-            image.src = product.images.edges[0].node.originalSrc;
-          }
+          image.src = selectedImageSrc;
           image.width = '780';
           image.height = '1170';
           image.loading = 'lazy';
 
+          // Append the image to the card and the card to the results container
           card.append(image);
           skinConcernsResults.append(card);
         } else {
@@ -453,18 +486,44 @@ function displayProducts(selectedConcern) {
               card.append(info, form);
             }
 
+            // Assuming 'product' is already defined and contains the product information
+            // Assuming 'variant' is defined and represents the currently processed variant
+
+            // Extract sizeValue from the variant's selectedOptions
+            // This assumes there's a 'Size' option; adjust if your structure is different
+            const sizeValue = variant.selectedOptions
+              .find((option) => option.name === 'Size')
+              ?.value.trim()
+              .toLowerCase()
+              .replace(/\s+/g, '-'); // Normalize the sizeValue by making it lowercase and replacing spaces with '-'
+
+            // Filter product images to find one that matches the criteria
+            const matchingImage = product.images.edges.find((edge) => {
+              const imageUrl = edge.node.originalSrc;
+              return (
+                imageUrl.includes('product-card') &&
+                imageUrl.includes(sizeValue)
+              );
+            });
+
+            // Determine the fallback image source: variant's image, or the product's first image if the variant has no image
+            const fallbackImageSrc = variant.image
+              ? variant.image.originalSrc
+              : product.images.edges[0]?.node.originalSrc;
+
+            // Use the matching image if found; otherwise, use the fallback image source
+            const selectedImageSrc = matchingImage
+              ? matchingImage.node.originalSrc
+              : fallbackImageSrc;
+
             const image = document.createElement('img');
             image.className = 'product-card__image';
-            if (variant && variant.image) {
-              image.src = variant.image.originalSrc;
-            } else if (product.images.edges.length > 0) {
-              // Use the product's first image
-              image.src = product.images.edges[0].node.originalSrc;
-            }
+            image.src = selectedImageSrc;
             image.width = '780';
             image.height = '1170';
             image.loading = 'lazy';
 
+            // Append the image to the card and the card to the results container
             card.append(image);
             skinConcernsResults.append(card);
           });
