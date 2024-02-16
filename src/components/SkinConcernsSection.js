@@ -384,19 +384,18 @@ function displayProducts(selectedConcern) {
           // Assuming 'product' is already defined and contains the product information
           // Assuming 'variant' is defined and represents the currently processed variant
 
-          // Extract sizeValue from the variant's selectedOptions
-          // This assumes there's a 'Size' option; adjust if your structure is different
-          const sizeValue = variant.selectedOptions
-            .find((option) => option.name === 'Size')
-            ?.value.trim()
+          // Select the first variant's value
+          const firstVariantValue = variant.selectedOptions[0]?.value
+            .trim()
             .toLowerCase()
-            .replace(/\s+/g, '-'); // Normalize the sizeValue by making it lowercase and replacing spaces with '-'
+            .replace(/\s+/g, '-'); // Normalize the value by making it lowercase and replacing spaces with '-'
 
           // Filter product images to find one that matches the criteria
           const matchingImage = product.images.edges.find((edge) => {
             const imageUrl = edge.node.originalSrc;
             return (
-              imageUrl.includes('product-card') && imageUrl.includes(sizeValue)
+              imageUrl.includes('product-card') &&
+              imageUrl.includes(firstVariantValue)
             );
           });
 
@@ -489,20 +488,18 @@ function displayProducts(selectedConcern) {
             // Assuming 'product' is already defined and contains the product information
             // Assuming 'variant' is defined and represents the currently processed variant
 
-            // Extract sizeValue from the variant's selectedOptions
-            // This assumes there's a 'Size' option; adjust if your structure is different
-            const sizeValue = variant.selectedOptions
-              .find((option) => option.name === 'Size')
-              ?.value.trim()
+            // Select the first variant's value
+            const firstVariantValue = variant.selectedOptions[0]?.value
+              .trim()
               .toLowerCase()
-              .replace(/\s+/g, '-'); // Normalize the sizeValue by making it lowercase and replacing spaces with '-'
+              .replace(/\s+/g, '-'); // Normalize the value by making it lowercase and replacing spaces with '-'
 
             // Filter product images to find one that matches the criteria
             const matchingImage = product.images.edges.find((edge) => {
               const imageUrl = edge.node.originalSrc;
               return (
                 imageUrl.includes('product-card') &&
-                imageUrl.includes(sizeValue)
+                imageUrl.includes(firstVariantValue)
               );
             });
 
