@@ -6,8 +6,7 @@
       <div class="product-page__copy-lockup product-page__copy-lockup--br">
         <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
         <div class="product-page__rating is--desktop">
-          {% render 'okendo-reviews-product-rating-summary'
-            , product: product %}
+          {% render 'okendo-reviews-product-rating-summary', product: product %}
         </div>
         {{ product.description }}
       </div>
@@ -15,8 +14,7 @@
       <div class="product-page__copy-lockup">
         <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
         <div class="product-page__rating is--desktop">
-          {% render 'okendo-reviews-product-rating-summary'
-            , product: product %}
+          {% render 'okendo-reviews-product-rating-summary', product: product %}
         </div>
         {{ product.description }}
       </div>
@@ -24,30 +22,27 @@
   </section>
   <section class="product-page__container">
     {% for variant in product.variants %}
-      {% assign featured_image = variant.featured_image | default: product.featured_image %}
-      {% if featured_image != null %}
-        {% assign featured_image_alt = featured_image.alt | escape %}
-        {% assign modified_alt = featured_image_alt | replace: '-product-card-image', '' %}
-        {% assign matching_image = null %}
+      {% assign variant_value = variant.options.first | downcase | replace: ' ', '-' %}
+      {% assign matching_image = null %}
 
-        {% for media in product.media %}
-          {% if media.alt contains modified_alt and media.alt contains '-product-page-image' %}
-            {% assign matching_image = media %}
-            {% break %}
-          {% endif %}
-        {% endfor %}
-
-        {% if matching_image != null %}
-          <img
-            src="{{ matching_image | image_url: width: 893 }}"
-            alt="{{ matching_image.alt }}"
-            width="893"
-            height="auto"
-            loading="eager"
-            class="product-page__product-img"
-            data-variant-id="{{ variant.id }}"
-            style="{% if product.variants.size > 1 %}display: none;{% endif %}">
+      {% for image in product.images %}
+        {% if image.src contains variant_value and image.src contains 'product-page' %}
+          {% assign matching_image = image %}
+          {% break %}
         {% endif %}
+      {% endfor %}
+
+      {% if matching_image != null %}
+        <img
+          src="{{ matching_image.src | img_url: '893x' }}"
+          alt="{{ matching_image.alt | escape }}"
+          width="893"
+          height="auto"
+          loading="eager"
+          class="product-page__product-img"
+          data-variant-id="{{ variant.id }}"
+          style="{% if product.variants.size > 1 %}display: none;{% endif %}"
+        >
       {% endif %}
     {% endfor %}
   </section>
@@ -56,11 +51,11 @@
       action="/cart/add"
       method="post"
       enctype="multipart/form-data"
-      class="product-page__checkout-form">
+      class="product-page__checkout-form"
+    >
       <h1 class="product-page__title is--mobile">{{ product.title }}</h1>
       <div class="product-page__rating is--mobile">
-        {% render 'okendo-reviews-product-rating-summary'
-          , product: product %}
+        {% render 'okendo-reviews-product-rating-summary', product: product %}
       </div>
       <!-- Check if the product has multiple variants -->
       {% if product.variants.size > 1 %}
@@ -74,8 +69,9 @@
                 value="{{ variant.id }}"
                 id="variant-{{ variant.id }}"
                 {% if forloop.first %}
-                checked
-                {% endif %}>
+                  checked
+                {% endif %}
+              >
               <label class="all-caps" for="variant-{{ variant.id }}">{{ variant.title }}</label>
             </div>
           {% endfor %}
@@ -85,12 +81,16 @@
         <input
           type="hidden"
           name="id"
-          value="{{ product.variants.first.id }}">
+          value="{{ product.variants.first.id }}"
+        >
       {% endif %}
       {% assign downcased_vendor = product.vendor | strip | downcase %}
       {% if downcased_vendor == 'biologique recherche' and customer == null %}
         {% for variant in product.variants %}
-          <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon is--login variant-section variant-section-{{ variant.id }}" href="/account/login?checkout_url={{ product.url }}?variant={{ variant.id }}">Login to Shop
+          <a
+            class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon is--login variant-section variant-section-{{ variant.id }}"
+            href="/account/login?checkout_url={{ product.url }}?variant={{ variant.id }}"
+            >Login to Shop
           </a>
         {% endfor %}
       {% else %}
@@ -106,7 +106,8 @@
                   min="1"
                   name="quantity-{{ variant.id }}"
                   value="1"
-                  data-variant-id="{{ variant.id }}">
+                  data-variant-id="{{ variant.id }}"
+                >
                 <button type="button" class="quantity__increment">+</button>
               </div>
 
@@ -114,7 +115,8 @@
               <button
                 class="btn btn--secondary all-caps product-page__checkout-btn"
                 type="submit"
-                name="add-to-cart-{{ variant.id }}">
+                name="add-to-cart-{{ variant.id }}"
+              >
                 {% if variant.compare_at_price > variant.price %}
                   <span>Add to Bag</span>
                   <span class="checkout-btn__sale-price">
@@ -137,7 +139,11 @@
               <p class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out">
                 Out of Stock
               </p>
-              <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="/collections/all">Continue Shopping</a>
+              <a
+                class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon"
+                href="/collections/all"
+                >Continue Shopping</a
+              >
             </div>
           {% endif %}
         {% endfor %}
@@ -163,8 +169,7 @@
 {% endif %}
 <section class="product-page__reviews wrapper wrapper--md">
   <h2 class="product-page__heading">Reviews</h2>
-  {% render 'okendo-reviews-widget'
-    , product: product %}
+  {% render 'okendo-reviews-widget', product: product %}
 </section>
 {% section 'skin-analysis' %}
 {% comment %}
