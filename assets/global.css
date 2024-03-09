@@ -10848,6 +10848,17 @@ a.order__info--pill {
   }
 }
 
+.keen-slider {
+  display: flex;
+  overflow: hidden;
+}
+
+.keen-slider .keen-slider__slide {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
 /* Breakpoints Reference */
 /* Greater than or equal to 1784px */
 @media screen and (min-width: 1784px) {

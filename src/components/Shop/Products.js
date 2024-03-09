@@ -1,22 +1,69 @@
+import 'keen-slider/keen-slider.min.css';
+import KeenSlider from 'keen-slider';
+
 let url = window.location.href;
 let variantIdUrl = null;
 let match = url.match(/variant=([^&]*)/);
 if (match) {
   variantIdUrl = match[1];
-  // Remove trailing hash symbols from variantIdUrl
-  variantIdUrl = variantIdUrl.replace(/#*$/, '');
+  variantIdUrl = variantIdUrl.replace(/#*$/, ''); // Remove trailing hash symbols
 } else {
-  // Default behavior when no variant parameter is present
-  // Select the first radio button
   const firstRadio = document.querySelector('input[type=radio][name=id]');
   if (firstRadio) {
     variantIdUrl = firstRadio.value;
     firstRadio.checked = true;
   }
 }
+
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
+const showVariantImages = (variantId) => {
+  // Hide all parent divs of images
+  document
+    .querySelectorAll('.product-page__product-img-container')
+    .forEach((div) => {
+      div.style.display = 'none';
+    });
+
+  // Show all parent divs related to the selected variant
+  document
+    .querySelectorAll(`div[data-variant-id="${variantId}"]`)
+    .forEach((div) => {
+      div.style.display = 'flex';
+    });
+};
+
+let slider = null; // Holds the current slider instance
+
+const initializeSlider = () => {
+  // Check if there's an existing slider instance and destroy it
+  if (slider !== null) {
+    slider.destroy();
+  }
+
+  // Select all slides within the slider container
+  const allSlides = document.querySelectorAll('.keen-slider > *'); // Adjust the selector as needed
+
+  // Filter slides to include only those that are visible
+  const visibleSlidesCount = Array.from(allSlides).filter((slide) => {
+    // Get the inline style for 'display' and check if it is not 'none'
+    return slide.style.display !== 'none';
+  }).length;
+
+  // Initialize a new slider instance with the count of visible slides
+  slider = new KeenSlider('.keen-slider', {
+    loop: true,
+    created: () => {
+      console.log('Slider created');
+    },
+    slides: visibleSlidesCount > 0 ? visibleSlidesCount : 3, // Use visible slides count or fallback to a default
+    // You can add more options here
+  });
+};
+
 const Products = () => {
+  // Call initializeSlider initially to setup the slider for the first time
+  initializeSlider();
   // If there are no radio buttons, assume the product has only one variant
   if (variantRadios.length === 0) {
     const singleVariantSection = document.querySelector('.variant-section');
@@ -42,19 +89,14 @@ const Products = () => {
         url.origin + url.pathname + '?checkout_url=' + checkoutUrl;
     }
   } else {
-    // Select the corresponding radio button
+    // Initially show images for the variantIdUrl or the first variant
+    showVariantImages(variantIdUrl);
+
+    // Select the corresponding radio button if variantIdUrl is present
     if (variantIdUrl) {
       const selectedRadio = document.querySelector(`#variant-${variantIdUrl}`);
       if (selectedRadio) {
         selectedRadio.checked = true;
-      }
-
-      // Show the image related to the selected variant
-      const selectedImage = document.querySelector(
-        `img[data-variant-id="${variantIdUrl}"]`
-      );
-      if (selectedImage) {
-        selectedImage.style.display = 'block';
       }
     }
 
@@ -85,19 +127,8 @@ const Products = () => {
           selectedVariantSection.style.display = 'flex';
         }
 
-        // Hide all images
-        const images = document.querySelectorAll('.product-page__product-img');
-        images.forEach((img) => {
-          img.style.display = 'none';
-        });
-
-        // Show only the image related to the selected variant
-        const selectedImage = document.querySelector(
-          `img[data-variant-id="${variantId}"]`
-        );
-        if (selectedImage) {
-          selectedImage.style.display = 'block';
-        }
+        // Update UI for the selected variant
+        showVariantImages(variantId);
 
         // Update the quantity field's name attribute to match the selected variant
         const quantityInput = document.querySelector(
@@ -128,7 +159,7 @@ const Products = () => {
           params.set('variant', variantId);
         }
 
-        console.log('After update:', params.toString()); // Debug line
+        console.log('After update:', params.toString()); // Debug
         if (window.history && window.history.replaceState) {
           window.history.replaceState(
             {},
@@ -136,6 +167,9 @@ const Products = () => {
             url.origin + url.pathname + '?' + params.toString()
           );
         }
+
+        // After updating the UI, re-initialize the slider for the new variant images
+        initializeSlider();
       });
     });
   }

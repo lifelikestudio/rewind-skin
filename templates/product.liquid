@@ -21,30 +21,54 @@
     {% endif %}
   </section>
   <section class="product-page__container">
-    {% for variant in product.variants %}
-      {% assign variant_value = variant.options.first | downcase | replace: ' ', '-' %}
-      {% assign matching_image = null %}
+    <div class="keen-slider">
+      {% assign current_variant_id = product.selected_or_first_available_variant.id %}
 
-      {% for image in product.images %}
-        {% if image.src contains variant_value and image.src contains 'product-page' %}
-          {% assign matching_image = image %}
-          {% break %}
+      {% for variant in product.variants %}
+        {% assign variant_value = variant.options.first | downcase | replace: ' ', '-' %}
+        {% assign images_found = false %}
+
+        {% for image in product.images %}
+          {% if image.src contains variant_value and image.src contains 'product-page' %}
+            {% assign images_found = true %}
+            <div
+              class="keen-slider__slide product-page__product-img-container"
+              data-variant-id="{{ variant.id }}"
+              style="{% if variant.id != current_variant_id %}display: none;{% endif %}"
+            >
+              <img
+                src="{{ image.src | img_url: '893x' }}"
+                alt="{{ image.alt | escape }}"
+                width="893"
+                height="auto"
+                loading="eager"
+                class="product-page__product-img"
+                data-variant-id="{{ variant.id }}"
+              >
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {% if images_found == false %}
+          <!-- Fallback to the product's featured image or a default image -->
+          <div
+            class="keen-slider__slide product-page__product-img-container"
+            data-variant-id="{{ variant.id }}"
+            style="{% if variant.id != current_variant_id %}display: none;{% endif %}"
+          >
+            <img
+              src="{{ product.featured_image.src | img_url: '893x' }}"
+              alt="{{ product.featured_image.alt | escape }}"
+              width="893"
+              height="auto"
+              loading="eager"
+              class="product-page__product-img"
+              data-variant-id="{{ variant.id }}"
+            >
+          </div>
         {% endif %}
       {% endfor %}
-
-      {% if matching_image != null %}
-        <img
-          src="{{ matching_image.src | img_url: '893x' }}"
-          alt="{{ matching_image.alt | escape }}"
-          width="893"
-          height="auto"
-          loading="eager"
-          class="product-page__product-img"
-          data-variant-id="{{ variant.id }}"
-          style="{% if product.variants.size > 1 %}display: none;{% endif %}"
-        >
-      {% endif %}
-    {% endfor %}
+    </div>
   </section>
   <section class="product-page__container">
     <form
