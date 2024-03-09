@@ -56,7 +56,7 @@ const initializeSlider = () => {
     created: () => {
       console.log('Slider created');
     },
-    slides: visibleSlidesCount > 0 ? visibleSlidesCount : 3, // Use visible slides count or fallback to a default
+    slides: visibleSlidesCount > 0 ? visibleSlidesCount : 1, // Use visible slides count or fallback to a default
     // You can add more options here
   });
 };
