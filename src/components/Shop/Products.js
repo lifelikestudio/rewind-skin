@@ -46,12 +46,27 @@ const initializeSlider = () => {
     (slide) => slide.style.display !== 'none'
   ).length;
 
+  // Check if there's only one slide
+  if (visibleSlidesCount <= 1) {
+    // Directly set the opacity of the single slide to 1
+    allSlides.forEach((slide) => {
+      slide.style.opacity = 1;
+    });
+    // Skip initializing the slider if it's not needed
+    return;
+  }
+
+  // Initialize Keen Slider if there are multiple slides
   slider = new KeenSlider('.keen-slider', {
     loop: true,
     created: () => {
       console.log('Slider created');
+      // Ensure all slides are visible after the slider is initialized
+      // allSlides.forEach((slide) => {
+      //   slide.style.opacity = 1;
+      // });
     },
-    slides: visibleSlidesCount > 0 ? visibleSlidesCount : 1,
+    slides: visibleSlidesCount,
     defaultAnimation: {
       duration: 3000,
     },
