@@ -36,28 +36,34 @@ const showVariantImages = (variantId) => {
 let slider = null; // Holds the current slider instance
 
 const initializeSlider = () => {
-  // Check if there's an existing slider instance and destroy it
-  if (slider !== null) {
+  // Check if there's an existing slider instance and destroy it if possible
+  if (slider !== null && typeof slider.destroy === 'function') {
     slider.destroy();
   }
 
-  // Select all slides within the slider container
-  const allSlides = document.querySelectorAll('.keen-slider > *'); // Adjust the selector as needed
+  const allSlides = document.querySelectorAll('.keen-slider > *');
+  const visibleSlidesCount = Array.from(allSlides).filter(
+    (slide) => slide.style.display !== 'none'
+  ).length;
 
-  // Filter slides to include only those that are visible
-  const visibleSlidesCount = Array.from(allSlides).filter((slide) => {
-    // Get the inline style for 'display' and check if it is not 'none'
-    return slide.style.display !== 'none';
-  }).length;
-
-  // Initialize a new slider instance with the count of visible slides
   slider = new KeenSlider('.keen-slider', {
     loop: true,
     created: () => {
       console.log('Slider created');
     },
-    slides: visibleSlidesCount > 0 ? visibleSlidesCount : 1, // Use visible slides count or fallback to a default
-    // You can add more options here
+    slides: visibleSlidesCount > 0 ? visibleSlidesCount : 1,
+    defaultAnimation: {
+      duration: 3000,
+    },
+    detailsChanged: (s) => {
+      s.slides.forEach((element, idx) => {
+        const slideDetail = s.track.details.slides[idx];
+        if (slideDetail) {
+          element.style.opacity = slideDetail.portion.toString();
+        }
+      });
+    },
+    renderMode: 'custom',
   });
 };
 

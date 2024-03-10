@@ -10851,12 +10851,18 @@ a.order__info--pill {
 .keen-slider {
   display: flex;
   overflow: hidden;
+  height: 100%;
 }
 
 .keen-slider__slide {
   display: flex;
   align-items: stretch;
   justify-content: center;
+  width: 100% !important;
+  height: 100%;
+  position: absolute !important;
+  top: 0;
+  /* opacity: 0; */
 }
 
 /* Breakpoints Reference */
