@@ -10852,6 +10852,7 @@ a.order__info--pill {
   display: flex;
   overflow: hidden;
   height: 100%;
+  position: relative;
 }
 
 .keen-slider__slide {
@@ -10862,7 +10863,14 @@ a.order__info--pill {
   height: 100%;
   position: absolute !important;
   top: 0;
-  /* opacity: 0; */
+  overflow: hidden;
+  opacity: 0;
+}
+
+.keen-slider__slide img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Prevents images from taking up more space than their intrinsic size */
 }
 
 /* Breakpoints Reference */
