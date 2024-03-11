@@ -8,17 +8,15 @@
           {% if link.links.size > 0 %}
             <ul>
               {% for child_link in link.links %}
-                {% if child_link.title != 'Shipping & Returns' %}
-                  <li>
-                    {% if child_link.title == 'Contact' %}
-                      <p id="contact-trigger" class="all-caps link--alt-nav">
-                        {{- child_link.title -}}
-                      </p>
-                    {% else %}
-                      <a class="all-caps link--alt-nav" href="{{ child_link.url }}">{{ child_link.title }}</a>
-                    {% endif %}
-                  </li>
-                {% endif %}
+                <li>
+                  {% if child_link.title == 'Contact' %}
+                    <p id="contact-trigger" class="all-caps link--alt-nav">
+                      {{- child_link.title -}}
+                    </p>
+                  {% else %}
+                    <a class="all-caps link--alt-nav" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                  {% endif %}
+                </li>
               {% endfor %}
             </ul>
           {% endif %}
@@ -34,7 +32,8 @@
           viewBox="0 0 131.9 151.6"
           class="svg-content"
           fill="currentColor"
-          preserveAspectRatio="xMinYMin meet">
+          preserveAspectRatio="xMinYMin meet"
+        >
           <rect
             y=".4"
             width="2.6"
@@ -64,9 +63,11 @@
       {% assign footer_menu = linklists.footer %}
       {% assign last_link_list = footer_menu.links.last %}
       <ul>
-        {% for link in last_link_list.links limit: 1 %}
+        {% for link in last_link_list.links %}
           <li>
-            <a class="all-caps link--alt-nav link--utility" href="
+            <a
+              class="all-caps link--alt-nav link--utility"
+              href="
                 {%- if link.title == 'Account' -%}
                   {% if shop.customer_accounts_enabled %}
                     {% if customer %}
@@ -78,7 +79,8 @@
                 {%- else -%}
                   {{ link.url }}
                 {%- endif -%}
-              ">
+              "
+            >
               {{- link.title -}}
             </a>
           </li>
@@ -96,11 +98,13 @@
             Rewind Skin
           </p>
         </li>
-      {% comment %} {% for child_link in last_parent_link.links offset: start_index %}
-                                          <li>
-                                            <a class="all-caps link--alt-nav link--utility" href="{{ child_link.url }}">{{ child_link.title }}</a>
-                                          </li>
-                                {% endfor %} {% endcomment %}
+        {% comment %}
+          {% for child_link in last_parent_link.links offset: start_index %}
+                    <li>
+                      <a class="all-caps link--alt-nav link--utility" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                    </li>
+          {% endfor %}
+        {% endcomment %}
       </ul>
     </nav>
     <div class="main-footer__row-container">
@@ -108,7 +112,9 @@
         <a
           href="mailto:projects@lifelike.digital"
           rel="noopener noreferrer"
-          class="all-caps main-footer__made-by">Made by Lifelike</a>
+          class="all-caps main-footer__made-by"
+          >Made by Lifelike</a
+        >
       </div>
       <div class="popover"></div>
     </div>
