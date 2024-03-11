@@ -10873,6 +10873,37 @@ a.order__info--pill {
   display: block; /* Prevents images from taking up more space than their intrinsic size */
 }
 
+.product-page__slider-nav-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.product-page__slider-nav-container .dots {
+  display: flex;
+  padding: 8px 0;
+  justify-content: center;
+}
+
+.product-page__slider-nav-container .dot {
+  border: none;
+  width: 10px;
+  height: 10px;
+  background: #c5c5c5;
+  border-radius: 50%;
+  margin: 0 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.product-page__slider-nav-container .dot:focus {
+  outline: none;
+}
+
+.product-page__slider-nav-container .dot--active {
+  background: #000;
+}
+
 /* Breakpoints Reference */
 /* Greater than or equal to 1784px */
 @media screen and (min-width: 1784px) {
