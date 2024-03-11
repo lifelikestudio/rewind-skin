@@ -10891,7 +10891,7 @@ a.order__info--pill {
 
 .keen-slider__slide {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   width: 100% !important;
   height: 100%;
