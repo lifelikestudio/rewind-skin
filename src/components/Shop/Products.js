@@ -161,31 +161,12 @@ const initializeSlider = () => {
 };
 
 const Products = () => {
-  // Call initializeSlider initially to setup the slider for the first time
-  initializeSlider();
-  // If there are no radio buttons, assume the product has only one variant
+  // Determine and show images for the initial variant
   if (variantRadios.length === 0) {
+    // If there are no radio buttons, assume the product has only one variant
     const singleVariantSection = document.querySelector('.variant-section');
     if (singleVariantSection) {
       singleVariantSection.style.display = 'flex';
-    }
-
-    // Update the checkout button URL for single variant
-    const loginToShopButton = document.querySelector(
-      '.product-page__checkout-btn--icon.is--login'
-    );
-    if (loginToShopButton) {
-      const url = new URL(loginToShopButton.href);
-
-      // Get the current checkout_url value
-      let checkoutUrl = url.searchParams.get('checkout_url');
-
-      // Append the variant parameter to the checkout_url
-      checkoutUrl = checkoutUrl + '?variant=' + variantIdUrl;
-
-      // Manually construct the entire URL
-      loginToShopButton.href =
-        url.origin + url.pathname + '?checkout_url=' + checkoutUrl;
     }
   } else {
     // Initially show images for the variantIdUrl or the first variant
@@ -206,72 +187,76 @@ const Products = () => {
     if (selectedVariantSection) {
       selectedVariantSection.style.display = 'flex';
     }
-
-    // Add a change event listener to each radio button
-    variantRadios.forEach((radio) => {
-      radio.addEventListener('change', function () {
-        const variantId = this.value;
-
-        // Hide all variant-specific sections
-        const variantSections = document.querySelectorAll('.variant-section');
-        variantSections.forEach((section) => {
-          section.style.display = 'none';
-        });
-
-        // Show only the section related to the selected variant
-        const selectedVariantSection = document.querySelector(
-          `.variant-section-${variantId}`
-        );
-        if (selectedVariantSection) {
-          selectedVariantSection.style.display = 'flex';
-        }
-
-        // Update UI for the selected variant
-        showVariantImages(variantId);
-
-        // Update the quantity field's name attribute to match the selected variant
-        const quantityInput = document.querySelector(
-          '.product-page__quantity-input'
-        );
-        if (quantityInput) {
-          quantityInput.name = 'quantity-' + variantId;
-        }
-
-        // Update the URL's query string to reflect the selected variant
-        let url = new URL(window.location.href);
-        let params = url.search + url.hash; // Combine search and hash
-        params = params.replace('?', ''); // Remove the first question mark
-        params = new URLSearchParams(params); // Create a new URLSearchParams object
-
-        // Get the _ss parameter's value
-        let ssValue = params.get('_ss');
-        if (ssValue) {
-          // Use a regular expression to replace the variant parameter
-          ssValue = ssValue.replace(/variant=[^&]*/, 'variant=' + variantId);
-
-          // Update the _ss parameter's value
-          params.set('_ss', ssValue);
-        }
-
-        // Check for a top-level variant parameter
-        if (params.has('variant')) {
-          params.set('variant', variantId);
-        }
-
-        console.log('After update:', params.toString()); // Debug
-        if (window.history && window.history.replaceState) {
-          window.history.replaceState(
-            {},
-            '',
-            url.origin + url.pathname + '?' + params.toString()
-          );
-        }
-
-        // After updating the UI, re-initialize the slider for the new variant images
-        initializeSlider();
-      });
-    });
   }
+
+  // Call initializeSlider after setting up the initial variant display
+  // This ensures the slider is only initialized if necessary based on the visible images
+  initializeSlider();
+
+  // Add a change event listener to each radio button for variants with multiple images
+  variantRadios.forEach((radio) => {
+    radio.addEventListener('change', function () {
+      const variantId = this.value;
+
+      // Hide all variant-specific sections
+      const variantSections = document.querySelectorAll('.variant-section');
+      variantSections.forEach((section) => {
+        section.style.display = 'none';
+      });
+
+      // Show only the section related to the selected variant
+      const selectedVariantSection = document.querySelector(
+        `.variant-section-${variantId}`
+      );
+      if (selectedVariantSection) {
+        selectedVariantSection.style.display = 'flex';
+      }
+
+      // Update UI for the selected variant
+      showVariantImages(variantId);
+
+      // Update the quantity field's name attribute to match the selected variant
+      const quantityInput = document.querySelector(
+        '.product-page__quantity-input'
+      );
+      if (quantityInput) {
+        quantityInput.name = 'quantity-' + variantId;
+      }
+
+      // Update the URL's query string to reflect the selected variant
+      let url = new URL(window.location.href);
+      let params = url.search + url.hash; // Combine search and hash
+      params = params.replace('?', ''); // Remove the first question mark
+      params = new URLSearchParams(params); // Create a new URLSearchParams object
+
+      // Get the _ss parameter's value
+      let ssValue = params.get('_ss');
+      if (ssValue) {
+        // Use a regular expression to replace the variant parameter
+        ssValue = ssValue.replace(/variant=[^&]*/, 'variant=' + variantId);
+
+        // Update the _ss parameter's value
+        params.set('_ss', ssValue);
+      }
+
+      // Check for a top-level variant parameter
+      if (params.has('variant')) {
+        params.set('variant', variantId);
+      }
+
+      console.log('After update:', params.toString()); // Debug
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(
+          {},
+          '',
+          url.origin + url.pathname + '?' + params.toString()
+        );
+      }
+
+      // After updating the UI for the selected variant, re-initialize the slider
+      initializeSlider();
+    });
+  });
 };
 
 export default Products;
