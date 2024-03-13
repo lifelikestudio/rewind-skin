@@ -352,7 +352,7 @@
                     </h2>
                   </div>
                   {% assign downcased_vendor = item.vendor | strip | downcase %}
-                  {% if downcased_vendor == 'biologique recherche' %}
+                  {% if downcased_vendor == 'biologique recherche' and customer == null %}
                     <div
                       class="all-caps btn btn--primary product-card__btn product-card__btn--icon"
                       data-url="{{ variant_url }}"
