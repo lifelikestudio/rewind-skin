@@ -12,9 +12,19 @@ if (match) {
   if (firstRadio) {
     variantIdUrl = firstRadio.value;
     firstRadio.checked = true;
+    // Update the URL to include the default variant ID
+    updateUrlWithVariant(variantIdUrl);
   }
 }
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
+
+function updateUrlWithVariant(variantId) {
+  if (window.history && window.history.pushState) {
+    let newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('variant', variantId);
+    window.history.pushState({ path: newUrl.href }, '', newUrl.href);
+  }
+}
 
 const Products = () => {
   // If there are no radio buttons, assume the product has only one variant
