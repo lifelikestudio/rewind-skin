@@ -7632,6 +7632,8 @@ a.drawer-cart__empty-continue::after {
   column-gap: 32px;
   margin-bottom: 32px;
   padding-left: 10px;
+  flex-wrap: wrap;
+  row-gap: 16px;
 }
 
 /* Between 672px and 1311px */
@@ -7646,6 +7648,13 @@ a.drawer-cart__empty-continue::after {
   .product-page__variants-group {
     column-gap: 24px;
     margin-bottom: 24px;
+  }
+}
+
+/* Less than or equal to 374px */
+@media screen and (max-width: 375px) {
+  .product-page__variant {
+    width: 100%;
   }
 }
 
