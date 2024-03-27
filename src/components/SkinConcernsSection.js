@@ -479,7 +479,7 @@ function displayProducts(selectedConcern) {
 const fetchPages = () => {
   const query = `
     {
-      pages(first: 14) {
+      pages(first: 50) {
         edges {
           node {
             id
