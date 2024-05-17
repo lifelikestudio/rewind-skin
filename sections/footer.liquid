@@ -2,23 +2,21 @@
   <div class="main-footer__row wrapper wrapper--lg">
     <nav class="main-footer__row-container">
       {% assign footer_menu = linklists.footer %}
-      {% for link in footer_menu.links limit: 4 %}
+      {% for link in footer_menu.links limit: 5 %}
         <div class="main-footer__linklist">
           <h3 class="all-caps alt-nav-heading">{{ link.title }}</h3>
           {% if link.links.size > 0 %}
             <ul>
               {% for child_link in link.links %}
-                {% if child_link.title != 'Shipping & Returns' %}
-                  <li>
-                    {% if child_link.title == 'Contact' %}
-                      <p id="contact-trigger" class="all-caps link--alt-nav">
-                        {{- child_link.title -}}
-                      </p>
-                    {% else %}
-                      <a class="all-caps link--alt-nav" href="{{ child_link.url }}">{{ child_link.title }}</a>
-                    {% endif %}
-                  </li>
-                {% endif %}
+                <li>
+                  {% if child_link.title == 'Contact' %}
+                    <p id="contact-trigger" class="all-caps link--alt-nav">
+                      {{- child_link.title -}}
+                    </p>
+                  {% else %}
+                    <a class="all-caps link--alt-nav" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                  {% endif %}
+                </li>
               {% endfor %}
             </ul>
           {% endif %}
@@ -64,7 +62,7 @@
       {% assign footer_menu = linklists.footer %}
       {% assign last_link_list = footer_menu.links.last %}
       <ul>
-        {% for link in last_link_list.links limit: 1 %}
+        {% for link in last_link_list.links %}
           <li>
             <a class="all-caps link--alt-nav link--utility" href="
                 {%- if link.title == 'Account' -%}
@@ -96,11 +94,13 @@
             Rewind Skin
           </p>
         </li>
-      {% comment %} {% for child_link in last_parent_link.links offset: start_index %}
-                                          <li>
-                                            <a class="all-caps link--alt-nav link--utility" href="{{ child_link.url }}">{{ child_link.title }}</a>
-                                          </li>
-                                {% endfor %} {% endcomment %}
+      {% comment %}
+        {% for child_link in last_parent_link.links offset: start_index %}
+        <li>
+        <a class="all-caps link--alt-nav link--utility" href="{{ child_link.url }}">{{ child_link.title }}</a>
+        </li>
+        {% endfor %}
+      {% endcomment %}
       </ul>
     </nav>
     <div class="main-footer__row-container">

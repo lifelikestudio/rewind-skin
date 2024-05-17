@@ -160,7 +160,7 @@
   %}
 
   <body data-customer-logged-in="{% if customer %}true{% else %}false{% endif %}" class="{{ bodyClass }}">
-    {% if template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder'
+    {% if template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder' or template == 'page.terms' or template == 'page.privacy' or template == 'page.shipping-returns'
     %}
       <section class="announcement-bar">
         <div class="wrapper wrapper--lg announcement-bar__container">
