@@ -10975,6 +10975,7 @@ a.order__info--pill {
   }
 }
 
+.legal-main a,
 .legal-main a:visited {
   color: var(--black);
 }
