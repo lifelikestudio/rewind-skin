@@ -18,23 +18,26 @@ if (match) {
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
 const showVariantImages = (variantId) => {
-  // Hide all parent divs of images and set opacity of slides to 0
+  // First, hide all slides and set their opacity to 0
   document
     .querySelectorAll('.product-page__product-img-container')
     .forEach((div) => {
       div.style.display = 'none';
       div.querySelectorAll('.keen-slider > *').forEach((slide) => {
-        slide.style.opacity = 0; // Set opacity to 0 for hidden slides
+        slide.style.opacity = 0;
       });
     });
 
-  // Show all parent divs related to the selected variant and set opacity of slides to 1
+  // Then, show the slides for the selected variant and set their opacity to 1
   document
     .querySelectorAll(`div[data-variant-id="${variantId}"]`)
     .forEach((div) => {
       div.style.display = 'flex';
-      div.querySelectorAll('.keen-slider > *').forEach((slide) => {
-        slide.style.opacity = 1; // Set opacity to 1 for visible slides
+      // Use requestAnimationFrame to ensure the display change has taken effect
+      requestAnimationFrame(() => {
+        div.querySelectorAll('.keen-slider > *').forEach((slide) => {
+          slide.style.opacity = 1;
+        });
       });
     });
 };
