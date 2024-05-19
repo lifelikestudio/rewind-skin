@@ -18,7 +18,7 @@ if (match) {
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
 const showVariantImages = (variantId) => {
-  // First, set all slides' opacity to 0 and hide them
+  // Hide all slides first
   document
     .querySelectorAll('.product-page__product-img-container')
     .forEach((div) => {
@@ -28,14 +28,18 @@ const showVariantImages = (variantId) => {
       });
     });
 
-  // Then, for the selected variant, set display to flex and opacity to 1
+  // Then, make the selected variant's slides visible
   document
     .querySelectorAll(`div[data-variant-id="${variantId}"]`)
     .forEach((div) => {
       div.style.display = 'flex';
+      // Ensure all slides are visible before setting opacity
+      div.querySelectorAll('.keen-slider > *').forEach((slide) => {
+        slide.style.opacity = 0; // Reset opacity to 0
+      });
       requestAnimationFrame(() => {
         div.querySelectorAll('.keen-slider > *').forEach((slide) => {
-          slide.style.opacity = 1;
+          slide.style.opacity = 1; // Then set to 1
         });
       });
     });
@@ -120,20 +124,18 @@ let slider = null; // Holds the current slider instance
 const initializeSlider = () => {
   if (slider !== null && typeof slider.destroy === 'function') {
     slider.destroy();
+    slider = null;
   }
 
+  // Ensure all intended slides are visible
   const allSlides = document.querySelectorAll('.keen-slider > *');
-  allSlides.forEach((slide) => {
-    slide.style.opacity = 0; // Ensure all slides are initially hidden
-  });
+  const visibleSlides = Array.from(allSlides).filter(
+    (slide) => slide.parentNode.style.display !== 'none'
+  );
 
-  const visibleSlidesCount = Array.from(allSlides).filter(
-    (slide) => slide.style.display !== 'none'
-  ).length;
-
-  if (visibleSlidesCount <= 1) {
-    allSlides.forEach((slide) => {
-      slide.style.opacity = 1; // Directly set the opacity of the single slide to 1
+  if (visibleSlides.length <= 1) {
+    visibleSlides.forEach((slide) => {
+      slide.style.opacity = 1;
     });
     return;
   }
@@ -142,10 +144,7 @@ const initializeSlider = () => {
     '.keen-slider',
     {
       loop: true,
-      created: () => {
-        console.log('Slider created');
-      },
-      slides: visibleSlidesCount,
+      slides: visibleSlides.length,
       defaultAnimation: {
         duration: 3000,
       },
