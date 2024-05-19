@@ -18,7 +18,7 @@ if (match) {
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
 const showVariantImages = (variantId) => {
-  // First, hide all slides and set their opacity to 0
+  // First, set all slides' opacity to 0 and hide them
   document
     .querySelectorAll('.product-page__product-img-container')
     .forEach((div) => {
@@ -28,12 +28,11 @@ const showVariantImages = (variantId) => {
       });
     });
 
-  // Then, show the slides for the selected variant and set their opacity to 1
+  // Then, for the selected variant, set display to flex and opacity to 1
   document
     .querySelectorAll(`div[data-variant-id="${variantId}"]`)
     .forEach((div) => {
       div.style.display = 'flex';
-      // Use requestAnimationFrame to ensure the display change has taken effect
       requestAnimationFrame(() => {
         div.querySelectorAll('.keen-slider > *').forEach((slide) => {
           slide.style.opacity = 1;
@@ -203,8 +202,7 @@ const Products = () => {
       const variantId = this.value;
 
       // Hide all variant-specific sections
-      const variantSections = document.querySelectorAll('.variant-section');
-      variantSections.forEach((section) => {
+      document.querySelectorAll('.variant-section').forEach((section) => {
         section.style.display = 'none';
       });
 
