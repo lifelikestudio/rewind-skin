@@ -18,25 +18,27 @@ if (match) {
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
 const showVariantImages = (variantId) => {
-  // First, set all slides' opacity to 0 and hide them
   document
     .querySelectorAll('.product-page__product-img-container')
-    .forEach((div) => {
+    .forEach((div, index) => {
       div.style.display = 'none';
-      div.querySelectorAll('.keen-slider > *').forEach((slide) => {
+      div.querySelectorAll('.keen-slider > *').forEach((slide, slideIndex) => {
         slide.style.opacity = 0;
+        console.log(`Div ${index}, Slide ${slideIndex} set to opacity 0`);
       });
     });
 
-  // Then, for the selected variant, set display to flex and opacity to 1
   document
     .querySelectorAll(`div[data-variant-id="${variantId}"]`)
-    .forEach((div) => {
+    .forEach((div, index) => {
       div.style.display = 'flex';
       requestAnimationFrame(() => {
-        div.querySelectorAll('.keen-slider > *').forEach((slide) => {
-          slide.style.opacity = 1;
-        });
+        div
+          .querySelectorAll('.keen-slider > *')
+          .forEach((slide, slideIndex) => {
+            slide.style.opacity = 1;
+            console.log(`Div ${index}, Slide ${slideIndex} set to opacity 1`);
+          });
       });
     });
 };
@@ -120,21 +122,29 @@ let slider = null; // Holds the current slider instance
 const initializeSlider = () => {
   if (slider !== null && typeof slider.destroy === 'function') {
     slider.destroy();
+    console.log('Slider destroyed');
   }
 
   const allSlides = document.querySelectorAll('.keen-slider > *');
-  allSlides.forEach((slide) => {
-    slide.style.opacity = 0; // Ensure all slides are initially hidden
+  console.log('All slides count:', allSlides.length);
+
+  allSlides.forEach((slide, index) => {
+    console.log(
+      `Slide ${index} initial display: ${slide.style.display}, opacity: ${slide.style.opacity}`
+    );
   });
 
   const visibleSlidesCount = Array.from(allSlides).filter(
     (slide) => slide.style.display !== 'none'
   ).length;
 
+  console.log('Visible slides count:', visibleSlidesCount);
+
   if (visibleSlidesCount <= 1) {
     allSlides.forEach((slide) => {
-      slide.style.opacity = 1; // Directly set the opacity of the single slide to 1
+      slide.style.opacity = 1;
     });
+    console.log('Not enough slides to initialize slider');
     return;
   }
 
@@ -200,6 +210,7 @@ const Products = () => {
   variantRadios.forEach((radio) => {
     radio.addEventListener('change', function () {
       const variantId = this.value;
+      console.log('Variant changed to:', variantId);
 
       // Hide all variant-specific sections
       document.querySelectorAll('.variant-section').forEach((section) => {
