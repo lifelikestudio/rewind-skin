@@ -18,27 +18,25 @@ if (match) {
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
 const showVariantImages = (variantId) => {
+  // First, set all slides' opacity to 0 and hide them
   document
     .querySelectorAll('.product-page__product-img-container')
-    .forEach((div, index) => {
+    .forEach((div) => {
       div.style.display = 'none';
-      div.querySelectorAll('.keen-slider > *').forEach((slide, slideIndex) => {
+      div.querySelectorAll('.keen-slider > *').forEach((slide) => {
         slide.style.opacity = 0;
-        console.log(`Div ${index}, Slide ${slideIndex} set to opacity 0`);
       });
     });
 
+  // Then, for the selected variant, set display to flex and opacity to 1
   document
     .querySelectorAll(`div[data-variant-id="${variantId}"]`)
-    .forEach((div, index) => {
+    .forEach((div) => {
       div.style.display = 'flex';
       requestAnimationFrame(() => {
-        div
-          .querySelectorAll('.keen-slider > *')
-          .forEach((slide, slideIndex) => {
-            slide.style.opacity = 1;
-            console.log(`Div ${index}, Slide ${slideIndex} set to opacity 1`);
-          });
+        div.querySelectorAll('.keen-slider > *').forEach((slide) => {
+          slide.style.opacity = 1;
+        });
       });
     });
 };
@@ -122,35 +120,32 @@ let slider = null; // Holds the current slider instance
 const initializeSlider = () => {
   if (slider !== null && typeof slider.destroy === 'function') {
     slider.destroy();
-    console.log('Slider destroyed');
   }
 
-  // Select only slides that are visible and belong to the active variant
-  const activeVariantDiv = document.querySelector(
-    `div[data-variant-id="${variantIdUrl}"]`
-  );
-  const allSlides = activeVariantDiv
-    ? activeVariantDiv.querySelectorAll('.keen-slider > *')
-    : [];
+  const allSlides = document.querySelectorAll('.keen-slider > *');
+  allSlides.forEach((slide) => {
+    slide.style.opacity = 0; // Ensure all slides are initially hidden
+  });
 
-  console.log('All slides count:', allSlides.length);
+  const visibleSlidesCount = Array.from(allSlides).filter(
+    (slide) => slide.style.display !== 'none'
+  ).length;
 
-  if (allSlides.length <= 1) {
+  if (visibleSlidesCount <= 1) {
     allSlides.forEach((slide) => {
-      slide.style.opacity = 1;
+      slide.style.opacity = 1; // Directly set the opacity of the single slide to 1
     });
-    console.log('Not enough slides to initialize slider');
     return;
   }
 
   slider = new KeenSlider(
-    activeVariantDiv.querySelector('.keen-slider'),
+    '.keen-slider',
     {
       loop: true,
       created: () => {
         console.log('Slider created');
       },
-      slides: allSlides.length,
+      slides: visibleSlidesCount,
       defaultAnimation: {
         duration: 3000,
       },
@@ -205,7 +200,6 @@ const Products = () => {
   variantRadios.forEach((radio) => {
     radio.addEventListener('change', function () {
       const variantId = this.value;
-      console.log('Variant changed to:', variantId);
 
       // Hide all variant-specific sections
       document.querySelectorAll('.variant-section').forEach((section) => {
@@ -261,9 +255,8 @@ const Products = () => {
         );
       }
 
-      // Update the slider to show only images from the active variant
-      variantIdUrl = variantId; // Update the global variantIdUrl to the new variant
-      initializeSlider(); // Re-initialize the slider with the new variant's images
+      // After updating the UI for the selected variant, re-initialize the slider
+      initializeSlider();
     });
   });
 };
