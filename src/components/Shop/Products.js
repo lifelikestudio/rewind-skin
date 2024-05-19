@@ -125,22 +125,17 @@ const initializeSlider = () => {
     console.log('Slider destroyed');
   }
 
-  const allSlides = document.querySelectorAll('.keen-slider > *');
+  // Select only slides that are visible and belong to the active variant
+  const activeVariantDiv = document.querySelector(
+    `div[data-variant-id="${variantIdUrl}"]`
+  );
+  const allSlides = activeVariantDiv
+    ? activeVariantDiv.querySelectorAll('.keen-slider > *')
+    : [];
+
   console.log('All slides count:', allSlides.length);
 
-  allSlides.forEach((slide, index) => {
-    console.log(
-      `Slide ${index} initial display: ${slide.style.display}, opacity: ${slide.style.opacity}`
-    );
-  });
-
-  const visibleSlidesCount = Array.from(allSlides).filter(
-    (slide) => slide.style.display !== 'none'
-  ).length;
-
-  console.log('Visible slides count:', visibleSlidesCount);
-
-  if (visibleSlidesCount <= 1) {
+  if (allSlides.length <= 1) {
     allSlides.forEach((slide) => {
       slide.style.opacity = 1;
     });
@@ -149,13 +144,13 @@ const initializeSlider = () => {
   }
 
   slider = new KeenSlider(
-    '.keen-slider',
+    activeVariantDiv.querySelector('.keen-slider'),
     {
       loop: true,
       created: () => {
         console.log('Slider created');
       },
-      slides: visibleSlidesCount,
+      slides: allSlides.length,
       defaultAnimation: {
         duration: 3000,
       },
@@ -266,8 +261,9 @@ const Products = () => {
         );
       }
 
-      // After updating the UI for the selected variant, re-initialize the slider
-      initializeSlider();
+      // Update the slider to show only images from the active variant
+      variantIdUrl = variantId; // Update the global variantIdUrl to the new variant
+      initializeSlider(); // Re-initialize the slider with the new variant's images
     });
   });
 };
