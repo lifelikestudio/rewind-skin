@@ -119,37 +119,32 @@ function navigation(slider) {
 let slider = null; // Holds the current slider instance
 
 const initializeSlider = () => {
-  // Check if there's an existing slider instance and destroy it if possible
   if (slider !== null && typeof slider.destroy === 'function') {
     slider.destroy();
   }
 
   const allSlides = document.querySelectorAll('.keen-slider > *');
+  allSlides.forEach((slide) => {
+    slide.style.opacity = 0; // Ensure all slides are initially hidden
+  });
+
   const visibleSlidesCount = Array.from(allSlides).filter(
     (slide) => slide.style.display !== 'none'
   ).length;
 
-  // Check if there's only one slide
   if (visibleSlidesCount <= 1) {
-    // Directly set the opacity of the single slide to 1
     allSlides.forEach((slide) => {
-      slide.style.opacity = 1;
+      slide.style.opacity = 1; // Directly set the opacity of the single slide to 1
     });
-    // Skip initializing the slider if it's not needed
     return;
   }
 
-  // Initialize Keen Slider if there are multiple slides
   slider = new KeenSlider(
     '.keen-slider',
     {
       loop: true,
       created: () => {
         console.log('Slider created');
-        // Ensure all slides are visible after the slider is initialized
-        // allSlides.forEach((slide) => {
-        //   slide.style.opacity = 1;
-        // });
       },
       slides: visibleSlidesCount,
       defaultAnimation: {
