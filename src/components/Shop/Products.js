@@ -33,16 +33,13 @@ const showVariantImages = (variantId) => {
     .querySelectorAll(`div[data-variant-id="${variantId}"]`)
     .forEach((div) => {
       div.style.display = 'flex';
-      // Ensure all slides are visible before setting opacity
       div.querySelectorAll('.keen-slider > *').forEach((slide) => {
-        slide.style.opacity = 0; // Reset opacity to 0
-      });
-      requestAnimationFrame(() => {
-        div.querySelectorAll('.keen-slider > *').forEach((slide) => {
-          slide.style.opacity = 1; // Then set to 1
-        });
+        slide.style.opacity = 1; // Set opacity to 1
       });
     });
+
+  // Initialize the slider for the current variant
+  initializeSlider(variantId);
 };
 
 function navigation(slider) {
@@ -67,25 +64,30 @@ function navigation(slider) {
   }
 
   function wrapperMarkup(remove) {
-    if (remove) {
-      var parent = wrapper.parentNode;
-      while (wrapper.firstChild)
-        parent.insertBefore(wrapper.firstChild, wrapper);
-      removeElement(wrapper);
+    if (remove && wrapper) {
+      wrapper.parentNode.removeChild(wrapper);
+      wrapper = null;
       return;
     }
     wrapper = createDiv('product-page__slider-nav-container');
-    slider.container.parentNode.appendChild(wrapper);
+    slider.container.parentNode.insertBefore(
+      wrapper,
+      slider.container.nextSibling
+    );
     wrapper.appendChild(slider.container);
   }
 
   function dotMarkup(remove) {
-    if (remove) {
-      removeElement(dots);
+    if (remove && dots) {
+      dots.parentNode.removeChild(dots);
+      dots = null;
       return;
     }
     dots = createDiv('dots');
-    slider.track.details.slides.forEach((_e, idx) => {
+    const visibleSlides = document.querySelectorAll(
+      `.product-page__product-img-container[data-variant-id="${variantIdUrl}"] .keen-slider > *`
+    );
+    visibleSlides.forEach((_e, idx) => {
       var dot = createDiv('dot');
       dot.addEventListener('click', () => slider.moveToIdx(idx));
       dots.appendChild(dot);
@@ -121,21 +123,20 @@ function navigation(slider) {
 
 let slider = null; // Holds the current slider instance
 
-const initializeSlider = () => {
+const initializeSlider = (variantId) => {
   if (slider !== null && typeof slider.destroy === 'function') {
     slider.destroy();
     slider = null;
   }
 
-  // Ensure all intended slides are visible
-  const allSlides = document.querySelectorAll('.keen-slider > *');
-  const visibleSlides = Array.from(allSlides).filter(
-    (slide) => slide.parentNode.style.display !== 'none'
+  // Select only the slides that are visible and belong to the current variant
+  const visibleSlides = document.querySelectorAll(
+    `.product-page__product-img-container[data-variant-id="${variantId}"] .keen-slider > *`
   );
 
   if (visibleSlides.length <= 1) {
     visibleSlides.forEach((slide) => {
-      slide.style.opacity = 1;
+      slide.style.opacity = 1; // Directly set the opacity of the single slide to 1
     });
     return;
   }
@@ -190,10 +191,6 @@ const Products = () => {
       selectedVariantSection.style.display = 'flex';
     }
   }
-
-  // Call initializeSlider after setting up the initial variant display
-  // This ensures the slider is only initialized if necessary based on the visible images
-  initializeSlider();
 
   // Add a change event listener to each radio button for variants with multiple images
   variantRadios.forEach((radio) => {
@@ -255,7 +252,7 @@ const Products = () => {
       }
 
       // After updating the UI for the selected variant, re-initialize the slider
-      initializeSlider();
+      initializeSlider(variantId);
     });
   });
 };
