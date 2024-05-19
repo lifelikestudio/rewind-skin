@@ -127,15 +127,14 @@ const initializeSlider = () => {
     slider = null;
   }
 
-  // Ensure all intended slides are visible
-  const allSlides = document.querySelectorAll('.keen-slider > *');
-  const visibleSlides = Array.from(allSlides).filter(
-    (slide) => slide.parentNode.style.display !== 'none'
+  // Select only slides that are visible (i.e., their parent container has 'display: flex')
+  const visibleSlides = document.querySelectorAll(
+    '.product-page__product-img-container[style*="display: flex"] .keen-slider > *'
   );
 
   if (visibleSlides.length <= 1) {
     visibleSlides.forEach((slide) => {
-      slide.style.opacity = 1;
+      slide.style.opacity = 1; // Directly set the opacity of the single slide to 1
     });
     return;
   }
