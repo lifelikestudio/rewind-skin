@@ -128,12 +128,6 @@ const initializeSlider = () => {
   const allSlides = document.querySelectorAll('.keen-slider > *');
   console.log('All slides count:', allSlides.length);
 
-  allSlides.forEach((slide, index) => {
-    console.log(
-      `Slide ${index} initial display: ${slide.style.display}, opacity: ${slide.style.opacity}`
-    );
-  });
-
   const visibleSlidesCount = Array.from(allSlides).filter(
     (slide) => slide.style.display !== 'none'
   ).length;
@@ -154,6 +148,16 @@ const initializeSlider = () => {
       loop: true,
       created: () => {
         console.log('Slider created');
+        // Set opacity for all slides to 0 initially
+        allSlides.forEach((slide) => {
+          slide.style.opacity = 0;
+        });
+        // Then set opacity for visible slides to 1
+        document.querySelectorAll('.keen-slider > *').forEach((slide) => {
+          if (slide.style.display !== 'none') {
+            slide.style.opacity = 1;
+          }
+        });
       },
       slides: visibleSlidesCount,
       defaultAnimation: {
