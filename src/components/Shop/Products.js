@@ -46,13 +46,6 @@ async function showVariantImages(variantId) {
       return;
     }
 
-    // Dynamically log all options
-    Object.keys(variant).forEach((key) => {
-      if (key.startsWith('option') && variant[key]) {
-        console.log(`${key}:`, variant[key]);
-      }
-    });
-
     const sliderElement = document.getElementById('keen-slider');
     if (!sliderElement) {
       console.error('Slider element not found.');
@@ -61,153 +54,55 @@ async function showVariantImages(variantId) {
 
     sliderElement.innerHTML = ''; // Clear previous slides
 
-    productData.variants.forEach((variant) => {
-      if (variant.id.toString() === variantId) {
-        const variantImage = variant.featured_image || productData.images[0]; // Use the variant's featured image or the first product image as a fallback
-
+    productData.images.forEach((image) => {
+      if (
+        image.includes('product-page') &&
+        variant.options.some(
+          (option) =>
+            image.includes(`_${option}_`) || image.endsWith(`_${option}`)
+        )
+      ) {
         const slide = document.createElement('div');
         slide.className =
           'keen-slider__slide product-page__product-img-container';
-        slide.setAttribute('data-variant-id', variant.id);
         slide.style.display = 'block'; // Always show the slide as this function is called for the active variant
 
         const img = document.createElement('img');
-        img.src = variantImage.src;
-        img.alt = variantImage.alt || 'Variant image';
-        img.width = 893; // Set width as specified
+        img.src = image.startsWith('//') ? 'https:' + image : image;
+        img.alt = 'Product image';
+        img.width = 893;
         img.loading = 'eager';
         img.className = 'product-page__product-img';
-        img.setAttribute('data-variant-id', variant.id);
 
         slide.appendChild(img);
         sliderElement.appendChild(slide);
       }
     });
 
-    if (window.KeenSlider) {
-      initializeSlider();
-    }
+    // Reinitialize the slider after updating slides
+    initializeSlider();
   } catch (error) {
     console.error('Error fetching product data:', error);
   }
 }
 
-// function navigation(slider) {
-//   let wrapper, dots;
+const initializeSlider = () => {
+  if (window.slider) {
+    window.slider.destroy();
+  }
+  const sliderElement = document.getElementById('keen-slider');
+  if (sliderElement && sliderElement.children.length > 0) {
+    window.slider = new KeenSlider('#keen-slider', {
+      loop: true,
+      slidesPerView: 1,
+      spacing: 10,
+    });
+  } else {
+    console.error('No slides to initialize the slider with.');
+  }
+};
 
-//   function markup(remove) {
-//     wrapperMarkup(remove);
-//     dotMarkup(remove);
-//   }
-
-//   function removeElement(element) {
-//     if (element && element.parentNode) {
-//       element.parentNode.removeChild(element);
-//     }
-//   }
-
-//   function createDiv(className) {
-//     var div = document.createElement('div');
-//     var classNames = className.split(' ');
-//     classNames.forEach((name) => div.classList.add(name));
-//     return div;
-//   }
-
-//   function wrapperMarkup(remove) {
-//     if (remove) {
-//       var parent = wrapper.parentNode;
-//       while (wrapper.firstChild)
-//         parent.insertBefore(wrapper.firstChild, wrapper);
-//       removeElement(wrapper);
-//       return;
-//     }
-//     wrapper = createDiv('product-page__slider-nav-container');
-//     slider.container.parentNode.appendChild(wrapper);
-//     wrapper.appendChild(slider.container);
-//   }
-
-//   function dotMarkup(remove) {
-//     if (remove) {
-//       removeElement(dots);
-//       return;
-//     }
-//     dots = createDiv('dots');
-//     slider.track.details.slides.forEach((_e, idx) => {
-//       var dot = createDiv('dot');
-//       dot.addEventListener('click', () => slider.moveToIdx(idx));
-//       dots.appendChild(dot);
-//     });
-//     wrapper.appendChild(dots);
-//   }
-
-//   function updateClasses() {
-//     var slide = slider.track.details.rel;
-//     Array.from(dots.children).forEach(function (dot, idx) {
-//       idx === slide
-//         ? dot.classList.add('dot--active')
-//         : dot.classList.remove('dot--active');
-//     });
-//   }
-
-//   slider.on('created', () => {
-//     markup();
-//     updateClasses();
-//   });
-//   slider.on('optionsChanged', () => {
-//     markup(true);
-//     markup();
-//     updateClasses();
-//   });
-//   slider.on('slideChanged', () => {
-//     updateClasses();
-//   });
-//   slider.on('destroyed', () => {
-//     markup(true);
-//   });
-// }
-
-// let slider = null; // Holds the current slider instance
-
-// const initializeSlider = () => {
-//   if (slider !== null && typeof slider.destroy === 'function') {
-//     slider.destroy();
-//     slider = null;
-//   }
-
-//   // Ensure all intended slides are visible
-//   const allSlides = document.querySelectorAll('.keen-slider > *');
-//   const visibleSlides = Array.from(allSlides).filter(
-//     (slide) => slide.parentNode.style.display !== 'none'
-//   );
-
-//   if (visibleSlides.length <= 1) {
-//     visibleSlides.forEach((slide) => {
-//       slide.style.opacity = 1;
-//     });
-//     return;
-//   }
-
-//   slider = new KeenSlider(
-//     '.keen-slider',
-//     {
-//       loop: true,
-//       slides: visibleSlides.length,
-//       defaultAnimation: {
-//         duration: 3000,
-//       },
-//       detailsChanged: (s) => {
-//         s.slides.forEach((element, idx) => {
-//           const slideDetail = s.track.details.slides[idx];
-//           if (slideDetail) {
-//             element.style.opacity = slideDetail.portion.toString();
-//           }
-//         });
-//       },
-//       renderMode: 'custom',
-//     },
-//     [navigation]
-//   );
-// };
+let slider = null; // Holds the current slider instance
 
 const Products = () => {
   // Determine and show images for the initial variant
@@ -237,10 +132,6 @@ const Products = () => {
       selectedVariantSection.style.display = 'flex';
     }
   }
-
-  // Call initializeSlider after setting up the initial variant display
-  // This ensures the slider is only initialized if necessary based on the visible images
-  // initializeSlider();
 
   // Add a change event listener to each radio button for variants with multiple images
   variantRadios.forEach((radio) => {
@@ -300,9 +191,6 @@ const Products = () => {
           url.origin + url.pathname + '?' + params.toString()
         );
       }
-
-      // After updating the UI for the selected variant, re-initialize the slider
-      // initializeSlider();
     });
   });
 };

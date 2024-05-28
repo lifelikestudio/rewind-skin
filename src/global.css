@@ -10897,7 +10897,7 @@ a.order__info--pill {
   justify-content: center;
   width: 100% !important;
   height: 100%;
-  position: absolute !important;
+  /* position: absolute !important; */
   top: 0;
   overflow: hidden;
   /* opacity: 0; */
