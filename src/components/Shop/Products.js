@@ -164,15 +164,25 @@ const initializeSlider = () => {
   }
   const sliderElement = document.getElementById('keen-slider');
   if (sliderElement && sliderElement.children.length > 0) {
+    const plugins = sliderElement.children.length > 1 ? [navigation] : []; // Only include navigation if more than one slide
     window.slider = new KeenSlider(
       '#keen-slider',
       {
         loop: true,
         slidesPerView: 1,
         spacing: 10,
+        defaultAnimation: {
+          duration: 3000,
+        },
+        detailsChanged: (s) => {
+          s.slides.forEach((element, idx) => {
+            element.style.opacity = s.track.details.slides[idx].portion;
+          });
+        },
+        renderMode: 'custom',
       },
-      [navigation]
-    ); // Include the navigation plugin here
+      plugins // Use the conditional plugins array
+    );
   } else {
     console.error('No slides to initialize the slider with.');
   }
