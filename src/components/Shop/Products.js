@@ -33,8 +33,8 @@ async function showVariantImages(variantId) {
     const response = await fetch(`/products/${productHandle}.js`);
     const productData = await response.json();
 
-    if (!productData || !productData.variants) {
-      console.error('Product data is not available.');
+    if (!productData || !productData.variants || !productData.media) {
+      console.error('Product data is not available or media array is missing.');
       return;
     }
 
@@ -53,14 +53,16 @@ async function showVariantImages(variantId) {
     }
 
     sliderElement.innerHTML = ''; // Clear previous slides
-
-    productData.images.forEach((image) => {
+    productData.media.forEach((mediaItem) => {
       if (
-        image.includes('product-page') &&
-        variant.options.some(
-          (option) =>
-            image.includes(`_${option}_`) || image.endsWith(`_${option}`)
-        )
+        mediaItem.src.includes('product-page') &&
+        variant.options.some((option) => {
+          const normalizedOption = option.replace(/[\s-]+/g, '-').toLowerCase();
+          return (
+            mediaItem.src.includes(`_${normalizedOption}_`) ||
+            mediaItem.src.endsWith(`_${normalizedOption}`)
+          );
+        })
       ) {
         const slide = document.createElement('div');
         slide.className =
@@ -68,8 +70,8 @@ async function showVariantImages(variantId) {
         slide.style.display = 'block'; // Always show the slide as this function is called for the active variant
 
         const img = document.createElement('img');
-        img.src = image.startsWith('//') ? 'https:' + image : image;
-        img.alt = 'Product image';
+        img.src = mediaItem.src;
+        img.alt = mediaItem.alt || 'product image';
         img.width = 893;
         img.loading = 'eager';
         img.className = 'product-page__product-img';
