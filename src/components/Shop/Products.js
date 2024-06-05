@@ -53,11 +53,12 @@ async function showVariantImages(variantId) {
     }
 
     sliderElement.innerHTML = ''; // Clear previous slides
+    console.log(productData);
     productData.media.forEach((mediaItem) => {
       if (
         mediaItem.src.includes('product-page') &&
         variant.options.some((option) => {
-          const normalizedOption = option.replace(/[\s-]+/g, '-').toLowerCase();
+          const normalizedOption = normalizeOption(option);
           return (
             mediaItem.src.includes(`_${normalizedOption}_`) ||
             mediaItem.src.endsWith(`_${normalizedOption}`)
@@ -86,6 +87,15 @@ async function showVariantImages(variantId) {
   } catch (error) {
     console.error('Error fetching product data:', error);
   }
+}
+
+function normalizeOption(option) {
+  return option
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/['’]/g, '-') // Replace apostrophes with dashes
+    .replace(/[\s-]+/g, '-') // Replace spaces and multiple dashes with a single dash
+    .toLowerCase(); // Convert to lower case
 }
 
 function navigation(slider) {
