@@ -384,11 +384,21 @@ function displayProducts(selectedConcern) {
           // Assuming 'product' is already defined and contains the product information
           // Assuming 'variant' is defined and represents the currently processed variant
 
-          // Select the first variant's value
-          const firstVariantValue = variant.selectedOptions[0]?.value
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, '-'); // Normalize the value by making it lowercase and replacing spaces with '-'
+          // Function to normalize option values
+          function normalizeOption(option) {
+            return option
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+              .replace(/['’]/g, '-') // Replace apostrophes with dashes
+              .replace(/[\s-]+/g, '-') // Replace spaces and multiple dashes with a single dash
+              .toLowerCase(); // Convert to lower case
+          }
+
+          // Assuming 'variant' is defined and represents the currently processed variant
+          // Select the first variant's value using the newly defined normalizeOption
+          const firstVariantValue = normalizeOption(
+            variant.selectedOptions[0]?.value
+          );
 
           // Filter product images to find one that matches the criteria
           const matchingImage = product.images.edges.find((edge) => {
