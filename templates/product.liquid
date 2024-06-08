@@ -23,33 +23,51 @@
     {% endif %}
   </section>
   <section class="product-page__container">
-    {% for variant in product.variants %}
-      {% assign featured_image = variant.featured_image | default: product.featured_image %}
-      {% if featured_image != null %}
-        {% assign featured_image_alt = featured_image.alt | escape %}
-        {% assign modified_alt = featured_image_alt | replace: '-product-card-image', '' %}
-        {% assign matching_image = null %}
+    {% comment %} <div class="keen-slider">
+            {% assign current_variant_id = product.selected_or_first_available_variant.id %}
 
-        {% for media in product.media %}
-          {% if media.alt contains modified_alt and media.alt contains '-product-page-image' %}
-            {% assign matching_image = media %}
-            {% break %}
-          {% endif %}
-        {% endfor %}
+            {% for variant in product.variants %}
+              {% assign variant_value = variant.options.first | downcase | replace: ' ', '-' %}
+              {% assign images_found = false %}
 
-        {% if matching_image != null %}
-          <img
-            src="{{ matching_image | image_url: width: 893 }}"
-            alt="{{ matching_image.alt }}"
-            width="893"
-            height="auto"
-            loading="eager"
-            class="product-page__product-img"
-            data-variant-id="{{ variant.id }}"
-            style="{% if product.variants.size > 1 %}display: none;{% endif %}">
-        {% endif %}
-      {% endif %}
-    {% endfor %}
+              {% for image in product.images %}
+                {% if image.src contains variant_value and image.src contains 'product-page' %}
+                  {% assign images_found = true %}
+                  <div
+                    class="keen-slider__slide product-page__product-img-container"
+                    data-variant-id="{{ variant.id }}"
+                    style="{% if variant.id != current_variant_id %}display: none;{% endif %}">
+                    <img
+                      src="{{ image.src | img_url: '893x' }}"
+                      alt="{{ image.alt | escape }}"
+                      width="893"
+                      height="auto"
+                      loading="eager"
+                      class="product-page__product-img"
+                      data-variant-id="{{ variant.id }}">
+                  </div>
+                {% endif %}
+              {% endfor %}
+
+              {% if images_found == false %}
+                <!-- Fallback to the product's featured image or a default image -->
+                <div
+                  class="keen-slider__slide product-page__product-img-container"
+                  data-variant-id="{{ variant.id }}"
+                  style="{% if variant.id != current_variant_id %}display: none;{% endif %}">
+                  <img
+                    src="{{ product.featured_image.src | img_url: '893x' }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    width="893"
+                    height="auto"
+                    loading="eager"
+                    class="product-page__product-img"
+                    data-variant-id="{{ variant.id }}">
+                </div>
+              {% endif %}
+            {% endfor %}
+        </div> {% endcomment %}
+    <div class="keen-slider" id="keen-slider"></div>
   </section>
   <section class="product-page__container">
     <form

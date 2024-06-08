@@ -20,27 +20,27 @@
             <div class="drawer-cart__item drawer-cart__item--cart-page" data-key="{{ item.key }}">
               <div class="cart-item__inner">
                 <div class="item__img item__img--cart-page">
-                  {% assign featured_image = item.variant.featured_image | default: item.product.featured_image %}
-                  {% if featured_image != null %}
-                    {% assign featured_image_alt = featured_image.alt | escape %}
-                    {% assign modified_alt = featured_image_alt | replace: '-product-card-image', '' %}
-                    {% assign matching_image = null %}
+                {% assign variant_value = item.variant.option1 %}
+                  <!-- Adjust based on the actual position of "variant" in your variant options -->
+                {% assign normalized_variant_value = variant_value | downcase | replace: ' ', '-' %}
+                  <!-- Normalize as needed to match your URL structure -->
+                  {% assign matching_image = null %}
 
-                    {% for media in item.product.media %}
-                      {% if media.alt contains modified_alt and media.alt contains '-product-page-image' %}
-                        {% assign matching_image = media %}
-                        {% break %}
-                      {% endif %}
-                    {% endfor %}
-
-                    {% if matching_image != null %}
-                      <img
-                        src="{{ matching_image | image_url: width: 893 }}"
-                        alt="{{ matching_image.alt }}"
-                        width="893"
-                        height="auto"
-                        loading="eager">
+                  {% for media in item.product.media %}
+                    {% if media.src contains 'product-page' and media.src contains normalized_variant_value %}
+                      {% assign matching_image = media %}
+                      {% break %}
+                      <!-- Use break to stop after the first match if only one image per variant is expected -->
                     {% endif %}
+                  {% endfor %}
+
+                  {% if matching_image != null %}
+                    <img
+                      src="{{ matching_image | image_url: width: 893 }}"
+                      alt="{{ matching_image.alt | escape }}"
+                      width="893"
+                      height="auto"
+                      loading="eager">
                   {% endif %}
                 </div>
                 <div class="item__info item__info--cart-page">
