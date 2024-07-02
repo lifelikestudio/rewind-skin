@@ -93,7 +93,8 @@ function normalizeOption(option) {
   return option
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/['’]/g, '-') // Replace apostrophes with dashes
+    .replace(/['']/g, '-') // Replace apostrophes with dashes
+    .replace(/\./g, '-') // Replace periods with dashes
     .replace(/[\s-]+/g, '-') // Replace spaces and multiple dashes with a single dash
     .toLowerCase(); // Convert to lower case
 }

@@ -502,7 +502,7 @@
                 {% assign primary_option_value = primary_option_value | replace: 'ź', 'z' | replace: 'ż', 'z' | replace: 'ž', 'z' | replace: 'ẓ', 'z'
                 %}
                   {% comment %} {# Normalize the primary option value #} {% endcomment %}
-                {% assign normalized_primary_option = primary_option_value | replace: "'", "-" | replace: "’", "-" | replace: " ", "-" | downcase %}
+                {% assign normalized_primary_option = primary_option_value | replace: "'", "-" | replace: "’", "-" | replace: " ", "-" | replace: ".", "-" | downcase %}
 
                   {% comment %} {# Further replace any sequences of dashes or spaces with a single dash #} {% endcomment %}
                   {% assign normalized_primary_option = normalized_primary_option | replace: " ", "-" | replace: "--", "-" %}
