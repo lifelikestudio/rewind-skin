@@ -213,6 +213,15 @@ const Products = () => {
     if (singleVariantSection) {
       singleVariantSection.style.display = 'flex';
     }
+    // Get the variant ID from the product form
+    const productForm = document.querySelector('form[action="/cart/add"]');
+    if (productForm) {
+      const variantInput = productForm.querySelector('input[name="id"]');
+      if (variantInput) {
+        variantIdUrl = variantInput.value;
+        showVariantImages(variantIdUrl);
+      }
+    }
   } else {
     // Initially show images for the variantIdUrl or the first variant
     showVariantImages(variantIdUrl);
