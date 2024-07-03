@@ -506,6 +506,7 @@
 
                   {% comment %} {# Further replace any sequences of dashes or spaces with a single dash #} {% endcomment %}
                   {% assign normalized_primary_option = normalized_primary_option | replace: " ", "-" | replace: "--", "-" %}
+                  {% assign normalized_primary_option = normalized_primary_option | replace: "/", "-" %}
                   {% comment %} {# Use the normalized primary option to match images #} {% endcomment %}
                   {% for image in item.images %}
                     {% if image.src contains 'product-card' and image.src contains normalized_primary_option %}

@@ -391,6 +391,7 @@ function displayProducts(selectedConcern) {
               .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
               .replace(/['’]/g, '-') // Replace apostrophes with dashes
               .replace(/\./g, '-') // Replace periods with dashes
+              .replace(/\//g, '-') // Replace forward slashes with dashes
               .replace(/[\s-]+/g, '-') // Replace spaces and multiple dashes with a single dash
               .toLowerCase(); // Convert to lower case
           }
