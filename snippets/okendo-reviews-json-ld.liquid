@@ -1,7 +1,7 @@
-{% if request.page_type == 'product' and shop.metafields.okendo.settings.isJsonLdSnippetEnabled == true %}
+{% if request.page_type == 'product' %}
   <script type="application/ld+json">
     {
-      "@context": "http://schema.org/",
+      "@context": "http://schema.org",
       "@type": "Product",
       "name": {{ product.title | strip_html | strip | json }},
       "image": "https:{{ product.featured_image | product_img_url: '450x450' }}",
@@ -25,13 +25,13 @@
         "aggregateRating" : {
           "@type": "AggregateRating",
           "ratingValue": "{{ product.metafields.okendo.summaryData.reviewAverageValue }}",
-          "ratingCount": "{{ product.metafields.okendo.summaryData.reviewCount }}"
+          "reviewCount": "{{ product.metafields.okendo.summaryData.reviewCount }}"
         }
       {% elsif product.metafields.okendo.ReviewCount > 0 %},
         "aggregateRating" : {
           "@type": "AggregateRating",
           "ratingValue": "{{ product.metafields.okendo.ReviewAverageValue }}",
-          "ratingCount": "{{ product.metafields.okendo.ReviewCount }}"
+          "reviewCount": "{{ product.metafields.okendo.ReviewCount }}"
         }
         {% endif %}
       }
