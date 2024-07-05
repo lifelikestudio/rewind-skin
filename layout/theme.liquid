@@ -16,7 +16,9 @@
         href="https://fonts.shopifycdn.com"
         crossorigin>
     {%- endunless -%}
-    <title> {{ page_title }} </title>
+    <title>
+      {{ page_title }}
+    </title>
     {{ content_for_header }}
     {% if template contains 'customers' %}
       <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
@@ -120,7 +122,10 @@
         background-image: url('{{ 'treatments_shop-gifting_LNK7709_hi-res_compressed.jpg' | asset_url }}');
       }
     </style>
-    <script src="https://cdn.usefathom.com/script.js" data-site="QIXWEBMS" defer></script>
+    <script
+      src="https://cdn.usefathom.com/script.js"
+      data-site="QIXWEBMS"
+      defer></script>
     <script>
       (function(h,o,t,j,a,r){
           h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
@@ -143,6 +148,7 @@
 
       gtag('config', 'G-YKYGP4Q5QL');
     </script>
+    {% render 'okendo-reviews-json-ld' %}
   </head>
   {% liquid
     if template.suffix
@@ -174,10 +180,11 @@
             >
           {% endcomment %}
           <a
-  class="announcement-bar__type"
-  href="/collections/all"
-  id="evergreen-announcement" style="max-width: 800px;">
-    Free Shipping on Orders Over $149 CAD. Start Here.
+            class="announcement-bar__type"
+            href="/collections/all"
+            id="evergreen-announcement"
+            style="max-width: 800px;">
+            Free Shipping on Orders Over $149 CAD. Start Here.
           </a>
         </div>
       </section>
@@ -378,9 +385,9 @@
                   </li>
                 {% endfor %}
                 <!-- Hardcoded link -->
-  <li class="all-caps drawer__link">
-    <a href="/pages/our-founder">Our Founder</a>
-  </li>
+                <li class="all-caps drawer__link">
+                  <a href="/pages/our-founder">Our Founder</a>
+                </li>
               </ul>
             </li>
             <li class="drawer__menu">
@@ -388,27 +395,27 @@
                 {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
                 {% for link in linklists['main-menu'].links offset: half_count %}
                   {% unless forloop.last %}
+                    {% comment %} double-check when pushed to theme {% endcomment %}
                     <li class="all-caps drawer__link">
                       {% if link.title != 'Account' and link.url == '#' %}
                         <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
                       {% else %}
                         <a id="{{ link.handle }}-mobile-action" href="
-                          {%- if link.title == 'Account' -%}
-                            {% if shop.customer_accounts_enabled %}
-                              {% if customer %}
-                                {{ routes.account_url }}
-                              {% else %}
-                                {{ routes.account_login_url }}
-                              {% endif %}
-                            {% endif %}
-                          {%- else -%}
-                            {{ link.url }}
-                          {%- endif -%}
-                        ">
-                        {{ link.title }}
+      {%- if link.title == 'Account' -%}
+        {% if shop.customer_accounts_enabled %}
+          {% if customer %}
+            {{ routes.account_url }}
+          {% else %}
+            {{ routes.account_login_url }}
+          {% endif %}
+        {% endif %}
+      {%- else -%}
+        {{ link.url }}
+      {%- endif -%}
+    ">
+                          {{ link.title }}
                         </a>
                       {% endif %}
-                      </a>
                     </li>
                   {% endunless %}
                 {% endfor %}
@@ -500,10 +507,11 @@
             >
           {% endcomment %}
           <a
-  class="announcement-bar__type"
-  href="/collections/all"
-  id="evergreen-announcement" style="max-width: 800px;">
-    Free Shipping on Orders Over $149 CAD. Start Here.
+            class="announcement-bar__type"
+            href="/collections/all"
+            id="evergreen-announcement"
+            style="max-width: 800px;">
+            Free Shipping on Orders Over $149 CAD. Start Here.
           </a>
         </div>
       </section>
@@ -704,9 +712,9 @@
                   </li>
                 {% endfor %}
                 <!-- Hardcoded link -->
-  <li class="all-caps drawer__link">
-    <a href="/pages/our-founder">Our Founder</a>
-  </li>
+                <li class="all-caps drawer__link">
+                  <a href="/pages/our-founder">Our Founder</a>
+                </li>
               </ul>
             </li>
             <li class="drawer__menu">
