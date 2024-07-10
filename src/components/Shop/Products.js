@@ -48,6 +48,9 @@ async function showVariantImages(variantId) {
       return;
     }
 
+    // Create an array of normalized option values
+    const normalizedOptions = variant.options.map(normalizeOption);
+
     const sliderElement = document.getElementById('keen-slider');
     if (!sliderElement) {
       console.error('Slider element not found.');
@@ -55,16 +58,12 @@ async function showVariantImages(variantId) {
     }
 
     sliderElement.innerHTML = ''; // Clear previous slides
-    console.log(productData);
     productData.media.forEach((mediaItem) => {
       if (
         mediaItem.src.includes('product-page') &&
-        variant.options.some((option) => {
-          const normalizedOption = normalizeOption(option);
-          return (
-            mediaItem.src.includes(`_${normalizedOption}_`) ||
-            mediaItem.src.endsWith(`_${normalizedOption}`)
-          );
+        normalizedOptions.every((option) => {
+          // Split the filename by underscores and check if any part matches the option
+          return mediaItem.src.split('_').some((part) => part === option);
         })
       ) {
         const slide = document.createElement('div');
