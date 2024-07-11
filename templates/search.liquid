@@ -442,6 +442,10 @@
                   {% endcomment %}
                   {% assign primary_option_value = variant.option1 | downcase %}
 
+                  {% if primary_option_value contains '$' %}
+                    {% assign primary_option_value = primary_option_value | remove_first: '$' | strip %}
+                  {% endif %}
+
                   {% assign primary_option_value = primary_option_value | replace: '/', '-' %}
 
                   {% assign primary_option_value = primary_option_value | replace: 'á', 'a' | replace: 'à', 'a' | replace: 'â', 'a' | replace: 'ã', 'a' | replace: 'ä', 'a' | replace: 'å', 'a' | replace: 'ā', 'a' | replace: 'ă', 'a' | replace: 'ȧ', 'a' | replace: 'ạ', 'a' | replace: 'ą', 'a' | replace: 'ả', 'a' | replace: 'ȃ', 'a'
