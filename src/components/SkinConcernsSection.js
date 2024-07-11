@@ -386,14 +386,17 @@ function displayProducts(selectedConcern) {
 
           // Function to normalize option values
           function normalizeOption(option) {
+            // If the option starts with a dollar sign, remove it
+            if (option.startsWith('$')) {
+              option = option.slice(1);
+            }
+
             return option
               .normalize('NFD')
               .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-              .replace(/['’]/g, '-') // Replace apostrophes with dashes
-              .replace(/\./g, '-') // Replace periods with dashes
-              .replace(/\//g, '-') // Replace forward slashes with dashes
-              .replace(/[\s-]+/g, '-') // Replace spaces and multiple dashes with a single dash
-              .toLowerCase(); // Convert to lower case
+              .replace(/[^a-z0-9]+/gi, '-') // Replace all non-alphanumeric characters (including spaces) with a single dash
+              .toLowerCase() // Convert to lower case
+              .replace(/^-+|-+$/g, ''); // Trim leading and trailing dashes
           }
 
           // Assuming 'variant' is defined and represents the currently processed variant
