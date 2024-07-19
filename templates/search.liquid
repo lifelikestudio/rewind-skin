@@ -374,67 +374,150 @@
           data-search-handle="{{ search.terms | replace: ' ', '+' }}">
           {% paginate search.results by 24 %}
             {% for item in search.results %}
-              {% assign first_available_variant = item.variants | where: "available" | first %}
-              {% if first_available_variant == blank %}
-                {% assign first_available_variant = item.variants.first %}
-              {% endif %}
-
-              {% assign url_parts = item.url | split: '?' %}
-                {% if url_parts[1] contains 'variant=' %}
-                {% assign variant_url = item.url %}
-              {% comment %} DEBUG: Original URL already contains variant parameter: {{ item.url }} {% endcomment %}
-              {% else %}
-                {% assign variant_url = item.url | append: '?variant=' | append: first_available_variant.id %}
-                {% comment %} DEBUG: Added variant parameter to URL. Original: {{ item.url }} | New: {{ variant_url }} {% endcomment %}
-              {% endif %}
-
-              <a href="{{ variant_url }}" class="product-card">
-                <div class="product-card__info">
-                  <p class="all-caps product-card__brand">{{ item.vendor }}</p>
-                  <h2 class="product-card__product">
-                    {{ item.title -}}
-                    {%- if first_available_variant.title != 'Default Title' %}
-                      / {{ first_available_variant.title }}
-                    {% endif %}
-                  </h2>
-                {% comment %} DEBUG: Product: {{ item.title }} | Variant: {{ first_available_variant.title }} | URL: {{ variant_url }} {% endcomment %}
-                </div>
-                {% assign downcased_vendor = item.vendor | strip | downcase %}
-                {% if downcased_vendor == 'biologique recherche' and customer == null %}
-                  <div class="all-caps btn btn--primary product-card__btn product-card__btn--icon" data-url="{{ variant_url }}">
-                    Login to Shop
-                  </div>
+              {% for variant in item.variants %}
+                {% assign url_parts = item.url | split: '?' %}
+                  {% if url_parts[1] contains 'variant=' %}
+                  {% assign base_url = url_parts[0] %}
+                  {% assign variant_url = base_url | append: '?variant=' | append: variant.id %}
+                {% comment %} DEBUG: Reconstructed URL with correct variant: {{ variant_url }} {% endcomment %}
                 {% else %}
-                  {% if first_available_variant.available %}
-                    <form
-                      action="/cart/add"
-                      method="post"
-                      class="product-card__form">
-                      <input
-                        type="hidden"
-                        name="id"
-                        value="{{ first_available_variant.id }}">
-                      <button class="all-caps btn btn--primary product-card__btn">
-                        {% if item.compare_at_price > first_available_variant.price %}
-                          <span>Add to Bag</span>
-                          <span class="product-card__sale-price">
-                            <del>{{ item.compare_at_price | money_with_currency | remove: '.00' }}</del>
-                            <ins>{{ first_available_variant.price | money_with_currency | remove: '.00' }}</ins>
-                          </span>
-                        {% else %}
-                          <span>Add to Bag</span>
-                          <span>{{ first_available_variant.price | money_with_currency | remove: '.00' }}</span>
-                        {% endif %}
-                      </button>
-                    </form>
-                  {% else %}
-                    <div class="all-caps btn btn--primary product-card__btn product-card__btn--sold-out">
-                      Out of Stock
-                    </div>
-                  {% endif %}
+                  {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
+                  {% comment %} DEBUG: Added variant parameter to URL: {{ variant_url }} {% endcomment %}
                 {% endif %}
-              {% comment %} Image code would go here {% endcomment %}
-              </a>
+
+                <a href="{{ variant_url }}" class="product-card">
+                  <div class="product-card__info">
+                    <p class="all-caps product-card__brand">{{ item.vendor }}</p>
+                    <h2 class="product-card__product">
+                      {{ item.title -}}
+                      {%- if variant.title != 'Default Title' %}
+                        / {{ variant.title }}
+                      {% endif %}
+                    </h2>
+                  {% comment %} DEBUG: Product: {{ item.title }} | Variant: {{ variant.title }} | URL: {{ variant_url }} {% endcomment %}
+                  </div>
+                  {% assign downcased_vendor = item.vendor | strip | downcase %}
+                  {% if downcased_vendor == 'biologique recherche' and customer == null %}
+                    <div class="all-caps btn btn--primary product-card__btn product-card__btn--icon" data-url="{{ variant_url }}">
+                      Login to Shop
+                    </div>
+                  {% else %}
+                    {% if variant.available %}
+                      <form
+                        action="/cart/add"
+                        method="post"
+                        class="product-card__form">
+                        <input
+                          type="hidden"
+                          name="id"
+                          value="{{ variant.id }}">
+                        <button class="all-caps btn btn--primary product-card__btn">
+                          {% if item.compare_at_price > variant.price %}
+                            <span>Add to Bag</span>
+                            <span class="product-card__sale-price">
+                              <del>{{ item.compare_at_price | money_with_currency | remove: '.00' }}</del>
+                              <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
+                            </span>
+                          {% else %}
+                            <span>Add to Bag</span>
+                            <span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
+                          {% endif %}
+                        </button>
+                      </form>
+                    {% else %}
+                      <div class="all-caps btn btn--primary product-card__btn product-card__btn--sold-out">
+                        Out of Stock
+                      </div>
+                    {% endif %}
+                  {% endif %}
+
+                  {% assign primary_option_value = variant.option1 | downcase %}
+
+                  {% if primary_option_value contains '$' %}
+                    {% assign primary_option_value = primary_option_value | remove_first: '$' | strip %}
+                  {% endif %}
+
+                  {% assign primary_option_value = primary_option_value | replace: '/', '-' %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'á', 'a' | replace: 'à', 'a' | replace: 'â', 'a' | replace: 'ã', 'a' | replace: 'ä', 'a' | replace: 'å', 'a' | replace: 'ā', 'a' | replace: 'ă', 'a' | replace: 'ȧ', 'a' | replace: 'ạ', 'a' | replace: 'ą', 'a' | replace: 'ả', 'a' | replace: 'ȃ', 'a'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'é', 'e' | replace: 'è', 'e' | replace: 'ê', 'e' | replace: 'ë', 'e' | replace: 'ē', 'e' | replace: 'ĕ', 'e' | replace: 'ė', 'e' | replace: 'ẹ', 'e' | replace: 'ę', 'e' | replace: 'ẻ', 'e' | replace: 'ȅ', 'e' | replace: 'ȇ', 'e' | replace: 'ě', 'e'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'í', 'i' | replace: 'ì', 'i' | replace: 'î', 'i' | replace: 'ï', 'i' | replace: 'ī', 'i' | replace: 'ĭ', 'i' | replace: 'ị', 'i' | replace: 'ỉ', 'i' | replace: 'į', 'i' | replace: 'ȉ', 'i' | replace: 'ȋ', 'i'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ó', 'o' | replace: 'ò', 'o' | replace: 'ô', 'o' | replace: 'õ', 'o' | replace: 'ö', 'o' | replace: 'ō', 'o' | replace: 'ŏ', 'o' | replace: 'ȯ', 'o' | replace: 'ọ', 'o' | replace: 'ỏ', 'o' | replace: 'ơ', 'o' | replace: 'ø', 'o' | replace: 'ő', 'o' | replace: 'ǒ', 'o' | replace: 'ȍ', 'o' | replace: 'ȏ', 'o'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ú', 'u' | replace: 'ù', 'u' | replace: 'û', 'u' | replace: 'ü', 'u' | replace: 'ū', 'u' | replace: 'ŭ', 'u' | replace: 'ů', 'u' | replace: 'ű', 'u' | replace: 'ụ', 'u' | replace: 'ų', 'u' | replace: 'ủ', 'u' | replace: 'ư', 'u' | replace: 'ȕ', 'u' | replace: 'ȗ', 'u'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ý', 'y' | replace: 'ÿ', 'y' | replace: 'ȳ', 'y' | replace: 'ỳ', 'y' | replace: 'ỷ', 'y' | replace: 'ỵ', 'y' | replace: 'ỹ', 'y' | replace: 'ŷ', 'y'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ç', 'c' | replace: 'ć', 'c' | replace: 'ĉ', 'c' | replace: 'ċ', 'c' | replace: 'č', 'c'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ď', 'd' | replace: 'ḍ', 'd' | replace: 'đ', 'd' | replace: 'ȡ', 'd'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ĝ', 'g' | replace: 'ğ', 'g' | replace: 'ġ', 'g' | replace: 'ǧ', 'g'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ĥ', 'h' | replace: 'ȟ', 'h' | replace: 'ḥ', 'h' | replace: 'ħ', 'h' | replace: 'ɦ', 'h'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ĵ', 'j' | replace: 'ǰ', 'j'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ķ', 'k' | replace: 'ḳ', 'k' | replace: 'ǩ', 'k'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ĺ', 'l' | replace: 'ľ', 'l' | replace: 'ļ', 'l' | replace: 'ḷ', 'l' | replace: 'ł', 'l'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ṁ', 'm'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ń', 'n' | replace: 'ņ', 'n' | replace: 'ň', 'n' | replace: 'ṅ', 'n' | replace: 'ṇ', 'n'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ŕ', 'r' | replace: 'ř', 'r' | replace: 'ŗ', 'r' | replace: 'ṛ', 'r'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ś', 's' | replace: 'š', 's' | replace: 'ş', 's' | replace: 'ṣ', 's' | replace: 'ș', 's'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ť', 't' | replace: 'ţ', 't' | replace: 'ṭ', 't' | replace: 'ț', 't' | replace: 'ŧ', 't' | replace: 'ȶ', 't'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ŵ', 'w' | replace: 'ẁ', 'w' | replace: 'ẃ', 'w' | replace: 'ẅ', 'w' | replace: 'ẇ', 'w' | replace: 'ẉ', 'w'
+                  %}
+
+                  {% assign primary_option_value = primary_option_value | replace: 'ź', 'z' | replace: 'ż', 'z' | replace: 'ž', 'z' | replace: 'ẓ', 'z'
+                  %}
+
+                  {% assign normalized_primary_option = primary_option_value | replace: "'", "-" | replace: "'", "-" | replace: " ", "-" | replace: ".", "-" | replace: "/", "-" | replace: "--", "-" | replace: "--", "-" | downcase
+                  %}
+
+                  {% assign normalized_primary_option = normalized_primary_option | replace: " ", "-" | replace: "--", "-" %}
+                  {% assign normalized_primary_option = normalized_primary_option | replace: "/", "-" %}
+
+                  {% for image in item.images %}
+                    {% if image.src contains 'product-card' and image.src contains normalized_primary_option %}
+                      <img
+                        class="product-card__image"
+                        src="{{ image | img_url: '780x1170' }}"
+                        width="780"
+                        height="1170"
+                        loading="lazy">
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                </a>
+              {% endfor %}
             {% endfor %}
 
             <div class="pagination">
