@@ -211,6 +211,19 @@ const initializeSlider = () => {
 let slider = null; // Holds the current slider instance
 
 const Products = () => {
+  // Clean up URL if it contains duplicate variant parameters
+  let url = new URL(window.location.href);
+  let params = new URLSearchParams(url.search);
+  let variantValues = params.getAll('variant');
+  if (variantValues.length > 1) {
+    params.delete('variant');
+    params.set('variant', variantValues[variantValues.length - 1]); // Use the last variant value
+    let newUrl = `${url.origin}${url.pathname}?${params.toString()}${url.hash}`;
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState({}, '', newUrl);
+    }
+  }
+
   // Robust check for product page
   const isProductPage = () => {
     // Check URL path
@@ -307,34 +320,40 @@ const Products = () => {
         quantityInput.name = 'quantity-' + variantId;
       }
 
-      // Update the URL's query string to reflect the selected variant
+      // Store all existing parameters
       let url = new URL(window.location.href);
-      let params = url.search + url.hash; // Combine search and hash
-      params = params.replace('?', ''); // Remove the first question mark
-      params = new URLSearchParams(params); // Create a new URLSearchParams object
-
-      // Get the _ss parameter's value
-      let ssValue = params.get('_ss');
-      if (ssValue) {
-        // Use a regular expression to replace the variant parameter
-        ssValue = ssValue.replace(/variant=[^&]*/, 'variant=' + variantId);
-
-        // Update the _ss parameter's value
-        params.set('_ss', ssValue);
+      let params = new URLSearchParams(url.search);
+      let existingParams = {};
+      for (let [key, value] of params.entries()) {
+        if (key !== 'variant') {
+          existingParams[key] = value;
+        }
       }
 
-      // Check for a top-level variant parameter
-      if (params.has('variant')) {
-        params.set('variant', variantId);
+      // Clear all parameters and re-add them (except variant)
+      params = new URLSearchParams();
+      for (let [key, value] of Object.entries(existingParams)) {
+        params.set(key, value);
       }
 
-      console.log('After update:', params.toString()); // Debug
+      // Add the new variant parameter
+      params.set('variant', variantId);
+
+      // Special handling for _ss parameter
+      if (existingParams['_ss']) {
+        let ssParams = new URLSearchParams(existingParams['_ss']);
+        ssParams.set('variant', variantId);
+        params.set('_ss', ssParams.toString());
+      }
+
+      // Construct the new URL
+      let newUrl = `${url.origin}${url.pathname}?${params.toString()}${
+        url.hash
+      }`;
+
+      // Update the URL without reloading the page
       if (window.history && window.history.replaceState) {
-        window.history.replaceState(
-          {},
-          '',
-          url.origin + url.pathname + '?' + params.toString()
-        );
+        window.history.replaceState({}, '', newUrl);
       }
     });
   });
