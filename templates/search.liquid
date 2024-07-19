@@ -375,9 +375,15 @@
           {% paginate search.results by 24 %}
             {% for item in search.results %}
               {% for variant in item.variants %}
-                {% comment %} item.url {% endcomment %}
-                {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
-                  <a href="{{ variant_url }}" class="product-card">
+                {% assign url_parts = item.url | split: '?' %}
+                  {% if url_parts[1] contains 'variant=' %}
+                  {% assign variant_url = item.url %}
+                {% comment %} DEBUG: Original URL already contains variant parameter: {{ item.url }} {% endcomment %}
+                {% else %}
+                  {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
+                  {% comment %} DEBUG: Added variant parameter to URL. Original: {{ item.url }} | New: {{ variant_url }} {% endcomment %}
+                {% endif %}
+                <a href="{{ variant_url }}" class="product-card">
                   <div class="product-card__info">
                     <p class="all-caps product-card__brand">{{ item.vendor }}</p>
                     <h2 class="product-card__product">
@@ -386,6 +392,7 @@
                         / {{ variant.title }}
                       {% endif %}
                     </h2>
+                  {% comment %} DEBUG: Product: {{ item.title }} | Variant: {{ variant.title }} | URL: {{ variant_url }} {% endcomment %}
                   </div>
                   {% assign downcased_vendor = item.vendor | strip | downcase %}
                   {% if downcased_vendor == 'biologique recherche' and customer == null %}
@@ -555,7 +562,7 @@
     <section class="search-results__main wrapper wrapper--lg">
       <div class="search-results__inner">
         <p class="search-results__no-results-msg main-body">
-          No results found for “{{ search.terms }}”. Check the spelling or use a different word or phrase.
+          No results found for "{{ search.terms }}". Check the spelling or use a different word or phrase.
         </p>
       </div>
     </section>
