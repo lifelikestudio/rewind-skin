@@ -211,6 +211,36 @@ const initializeSlider = () => {
 let slider = null; // Holds the current slider instance
 
 const Products = () => {
+  // Robust check for product page
+  const isProductPage = () => {
+    // Check URL path
+    const isProductPath = window.location.pathname.includes('/products/');
+
+    // Check for product-specific elements
+    const hasProductForm = !!document.querySelector('form[action="/cart/add"]');
+    const hasVariantRadios = !!document.querySelectorAll(
+      'input[type=radio][name=id]'
+    ).length;
+    const hasProductImages = !!document.getElementById('keen-slider');
+
+    // Check for product JSON
+    const hasProductJSON = !!document.getElementById(
+      'ProductJson-product-template'
+    );
+
+    // Combine all checks
+    return (
+      isProductPath &&
+      (hasProductForm || hasVariantRadios || hasProductImages || hasProductJSON)
+    );
+  };
+
+  // Exit early if not on a product page
+  if (!isProductPage()) {
+    console.log('Not a product page, exiting Products component.');
+    return;
+  }
+
   // Determine and show images for the initial variant
   if (variantRadios.length === 0) {
     // If there are no radio buttons, assume the product has only one variant
