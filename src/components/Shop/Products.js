@@ -58,6 +58,7 @@ async function showVariantImages(variantId) {
     }
 
     sliderElement.innerHTML = ''; // Clear previous slides
+    let isFirstImage = true; // Flag to track the first image
     productData.media.forEach((mediaItem) => {
       if (
         mediaItem.src.includes('product-page') &&
@@ -77,11 +78,13 @@ async function showVariantImages(variantId) {
         img.src = mediaItem.src;
         img.alt = mediaItem.alt || 'product image';
         img.width = 893;
-        img.loading = 'eager';
+        img.loading = isFirstImage ? 'eager' : 'lazy'; // Set loading attribute based on whether it's the first image
         img.className = 'product-page__product-img';
 
         slide.appendChild(img);
         sliderElement.appendChild(slide);
+
+        isFirstImage = false; // Set to false after the first image
       }
     });
 
