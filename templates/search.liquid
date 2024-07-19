@@ -375,8 +375,13 @@
           {% paginate search.results by 24 %}
             {% for item in search.results %}
               {% for variant in item.variants %}
-                {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
-                  <a href="{{ variant_url }}" class="product-card">
+                {% comment %} Check if the item URL already contains a variant parameter {% endcomment %}
+                {% if item.url contains '?variant=' %}
+                  {% assign variant_url = item.url %}
+                {% else %}
+                  {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
+                {% endif %}
+                <a href="{{ variant_url }}" class="product-card">
                   <div class="product-card__info">
                     <p class="all-caps product-card__brand">{{ item.vendor }}</p>
                     <h2 class="product-card__product">
@@ -481,7 +486,7 @@
                   {% assign primary_option_value = primary_option_value | replace: 'ĵ', 'j' | replace: 'ǰ', 'j'
                   %}
 
-                  {% assign primary_option_value = primary_option_value | replace: 'ķ', 'k' | replace: 'ḳ', 'k' | replace: 'ǩ', 'k'
+                  {% assign primary_option_value = primary_option_value | replace: 'ķ', 'k' | replace: 'ḳ', 'k' | replace: '��', 'k'
                   %}
 
                   {% assign primary_option_value = primary_option_value | replace: 'ĺ', 'l' | replace: 'ľ', 'l' | replace: 'ļ', 'l' | replace: 'ḷ', 'l' | replace: 'ł', 'l'
@@ -554,7 +559,7 @@
     <section class="search-results__main wrapper wrapper--lg">
       <div class="search-results__inner">
         <p class="search-results__no-results-msg main-body">
-          No results found for “{{ search.terms }}”. Check the spelling or use a different word or phrase.
+          No results found for "{{ search.terms }}". Check the spelling or use a different word or phrase.
         </p>
       </div>
     </section>
