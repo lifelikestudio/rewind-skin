@@ -375,13 +375,8 @@
           {% paginate search.results by 24 %}
             {% for item in search.results %}
               {% for variant in item.variants %}
-                {% comment %} Check if the item URL already contains a variant parameter {% endcomment %}
-                {% if item.url contains '?variant=' %}
-                  {% assign variant_url = item.url %}
-                {% else %}
-                  {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
-                {% endif %}
-                <a href="{{ variant_url }}" class="product-card">
+                {% assign variant_url = item.url %}
+                  <a href="{{ variant_url }}" class="product-card">
                   <div class="product-card__info">
                     <p class="all-caps product-card__brand">{{ item.vendor }}</p>
                     <h2 class="product-card__product">
@@ -486,7 +481,7 @@
                   {% assign primary_option_value = primary_option_value | replace: 'ĵ', 'j' | replace: 'ǰ', 'j'
                   %}
 
-                  {% assign primary_option_value = primary_option_value | replace: 'ķ', 'k' | replace: 'ḳ', 'k' | replace: '��', 'k'
+                  {% assign primary_option_value = primary_option_value | replace: 'ķ', 'k' | replace: 'ḳ', 'k' | replace: '', 'k'
                   %}
 
                   {% assign primary_option_value = primary_option_value | replace: 'ĺ', 'l' | replace: 'ľ', 'l' | replace: 'ļ', 'l' | replace: 'ḷ', 'l' | replace: 'ł', 'l'
