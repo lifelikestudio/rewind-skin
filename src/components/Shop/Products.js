@@ -211,64 +211,10 @@ const initializeSlider = () => {
 let slider = null; // Holds the current slider instance
 
 const Products = () => {
-  // Function to clean up and parse URL parameters
-  const parseUrlParameters = (url) => {
-    try {
-      const fullPath = url.search + url.hash;
-      const cleanPath = fullPath.replace(/\?/g, '&').replace(/^&/, '');
-      return new URLSearchParams(cleanPath);
-    } catch (error) {
-      console.error('Error parsing URL parameters:', error);
-      return new URLSearchParams();
-    }
-  };
-
-  // Function to get the last occurrence of a parameter
-  const getLastParameterValue = (params, key) => {
-    const values = params.getAll(key);
-    return values.length > 0 ? values[values.length - 1] : null;
-  };
-
-  // Function to update URL without reloading the page
-  const updateUrl = (newUrl) => {
-    if (window.history && window.history.replaceState) {
-      try {
-        window.history.replaceState({}, '', newUrl);
-      } catch (error) {
-        console.error('Error updating URL:', error);
-      }
-    }
-  };
-
-  // Clean up URL if it contains duplicate parameters
-  const cleanUpUrl = () => {
-    const url = new URL(window.location.href);
-    const params = parseUrlParameters(url);
-    const paramNames = new Set(params.keys());
-
-    let changed = false;
-    paramNames.forEach((name) => {
-      const values = params.getAll(name);
-      if (values.length > 1) {
-        params.delete(name);
-        params.set(name, values[values.length - 1]);
-        changed = true;
-      }
-    });
-
-    if (changed) {
-      const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
-      updateUrl(newUrl);
-    }
-  };
-
-  // Call cleanUpUrl when the page loads
-  cleanUpUrl();
-
   // Handle variant selection
   const handleVariantSelection = (variantId) => {
     const url = new URL(window.location.href);
-    const params = parseUrlParameters(url);
+    const params = new URLSearchParams(url.search);
 
     // Update or add the variant parameter
     params.set('variant', variantId);
@@ -286,7 +232,11 @@ const Products = () => {
     }
 
     const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
-    updateUrl(newUrl);
+
+    // Update the URL without reloading the page
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState({}, '', newUrl);
+    }
   };
 
   // Attach event listeners to variant radios
