@@ -211,18 +211,91 @@ const initializeSlider = () => {
 let slider = null; // Holds the current slider instance
 
 const Products = () => {
-  // Clean up URL if it contains duplicate variant parameters
-  let url = new URL(window.location.href);
-  let params = new URLSearchParams(url.search);
-  let variantValues = params.getAll('variant');
-  if (variantValues.length > 1) {
-    params.delete('variant');
-    params.set('variant', variantValues[variantValues.length - 1]); // Use the last variant value
-    let newUrl = `${url.origin}${url.pathname}?${params.toString()}${url.hash}`;
-    if (window.history && window.history.replaceState) {
-      window.history.replaceState({}, '', newUrl);
+  // Function to clean up and parse URL parameters
+  const parseUrlParameters = (url) => {
+    try {
+      const fullPath = url.search + url.hash;
+      const cleanPath = fullPath.replace(/\?/g, '&').replace(/^&/, '');
+      return new URLSearchParams(cleanPath);
+    } catch (error) {
+      console.error('Error parsing URL parameters:', error);
+      return new URLSearchParams();
     }
-  }
+  };
+
+  // Function to get the last occurrence of a parameter
+  const getLastParameterValue = (params, key) => {
+    const values = params.getAll(key);
+    return values.length > 0 ? values[values.length - 1] : null;
+  };
+
+  // Function to update URL without reloading the page
+  const updateUrl = (newUrl) => {
+    if (window.history && window.history.replaceState) {
+      try {
+        window.history.replaceState({}, '', newUrl);
+      } catch (error) {
+        console.error('Error updating URL:', error);
+      }
+    }
+  };
+
+  // Clean up URL if it contains duplicate parameters
+  const cleanUpUrl = () => {
+    const url = new URL(window.location.href);
+    const params = parseUrlParameters(url);
+    const paramNames = new Set(params.keys());
+
+    let changed = false;
+    paramNames.forEach((name) => {
+      const values = params.getAll(name);
+      if (values.length > 1) {
+        params.delete(name);
+        params.set(name, values[values.length - 1]);
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
+      updateUrl(newUrl);
+    }
+  };
+
+  // Call cleanUpUrl when the page loads
+  cleanUpUrl();
+
+  // Handle variant selection
+  const handleVariantSelection = (variantId) => {
+    const url = new URL(window.location.href);
+    const params = parseUrlParameters(url);
+
+    // Update or add the variant parameter
+    params.set('variant', variantId);
+
+    // Special handling for _ss parameter if it exists
+    const ssValue = params.get('_ss');
+    if (ssValue) {
+      try {
+        const ssParams = new URLSearchParams(ssValue);
+        ssParams.set('variant', variantId);
+        params.set('_ss', ssParams.toString());
+      } catch (error) {
+        console.error('Error updating _ss parameter:', error);
+      }
+    }
+
+    const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
+    updateUrl(newUrl);
+  };
+
+  // Attach event listeners to variant radios
+  const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
+  variantRadios.forEach((radio) => {
+    radio.addEventListener('change', function () {
+      handleVariantSelection(this.value);
+    });
+  });
 
   // Robust check for product page
   const isProductPage = () => {
