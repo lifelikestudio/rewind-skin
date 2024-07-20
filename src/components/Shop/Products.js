@@ -4,6 +4,18 @@ import KeenSlider from 'keen-slider';
 let url = window.location.href;
 let variantIdUrl = null;
 let match = url.match(/variant=([^&]*)/);
+
+// Define the updateUrlWithVariant function
+function updateUrlWithVariant(variantId) {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  params.set('variant', variantId);
+  const newUrl = `${url.origin}${url.pathname}?${params.toString()}${url.hash}`;
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState({}, '', newUrl);
+  }
+}
+
 if (match) {
   variantIdUrl = match[1];
   variantIdUrl = variantIdUrl.replace(/#*$/, ''); // Remove trailing hash symbols
