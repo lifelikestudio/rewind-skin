@@ -229,23 +229,20 @@ const Products = () => {
   // Handle variant selection
   const handleVariantSelection = (variantId) => {
     const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search);
+    let params = new URLSearchParams(url.search);
 
-    // Update or add the variant parameter
-    params.set('variant', variantId);
-
-    // Special handling for _ss parameter if it exists
-    const ssValue = params.get('_ss');
+    // Handle the _ss parameter separately
+    let ssValue = params.get('_ss');
     if (ssValue) {
-      try {
-        const ssParams = new URLSearchParams(ssValue);
-        ssParams.set('variant', variantId);
-        params.set('_ss', ssParams.toString());
-      } catch (error) {
-        console.error('Error updating _ss parameter:', error);
-      }
+      let ssParams = new URLSearchParams(ssValue);
+      ssParams.set('variant', variantId);
+      params.set('_ss', ssParams.toString());
     }
 
+    // Update the main variant parameter
+    params.set('variant', variantId);
+
+    // Construct the new URL
     const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
 
     // Update the URL without reloading the page
@@ -258,7 +255,32 @@ const Products = () => {
   const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
   variantRadios.forEach((radio) => {
     radio.addEventListener('change', function () {
-      handleVariantSelection(this.value);
+      const variantId = this.value;
+      handleVariantSelection(variantId);
+
+      // Hide all variant-specific sections
+      document.querySelectorAll('.variant-section').forEach((section) => {
+        section.style.display = 'none';
+      });
+
+      // Show only the section related to the selected variant
+      const selectedVariantSection = document.querySelector(
+        `.variant-section-${variantId}`
+      );
+      if (selectedVariantSection) {
+        selectedVariantSection.style.display = 'flex';
+      }
+
+      // Update UI for the selected variant
+      showVariantImages(variantId);
+
+      // Update the quantity field's name attribute to match the selected variant
+      const quantityInput = document.querySelector(
+        '.product-page__quantity-input'
+      );
+      if (quantityInput) {
+        quantityInput.name = 'quantity-' + variantId;
+      }
     });
   });
 
@@ -328,73 +350,6 @@ const Products = () => {
       selectedVariantSection.style.display = 'flex';
     }
   }
-
-  // Add a change event listener to each radio button for variants with multiple images
-  variantRadios.forEach((radio) => {
-    radio.addEventListener('change', function () {
-      const variantId = this.value;
-
-      // Hide all variant-specific sections
-      document.querySelectorAll('.variant-section').forEach((section) => {
-        section.style.display = 'none';
-      });
-
-      // Show only the section related to the selected variant
-      const selectedVariantSection = document.querySelector(
-        `.variant-section-${variantId}`
-      );
-      if (selectedVariantSection) {
-        selectedVariantSection.style.display = 'flex';
-      }
-
-      // Update UI for the selected variant
-      showVariantImages(variantId);
-
-      // Update the quantity field's name attribute to match the selected variant
-      const quantityInput = document.querySelector(
-        '.product-page__quantity-input'
-      );
-      if (quantityInput) {
-        quantityInput.name = 'quantity-' + variantId;
-      }
-
-      // Store all existing parameters
-      let url = new URL(window.location.href);
-      let params = new URLSearchParams(url.search);
-      let existingParams = {};
-      for (let [key, value] of params.entries()) {
-        if (key !== 'variant') {
-          existingParams[key] = value;
-        }
-      }
-
-      // Clear all parameters and re-add them (except variant)
-      params = new URLSearchParams();
-      for (let [key, value] of Object.entries(existingParams)) {
-        params.set(key, value);
-      }
-
-      // Add the new variant parameter
-      params.set('variant', variantId);
-
-      // Special handling for _ss parameter
-      if (existingParams['_ss']) {
-        let ssParams = new URLSearchParams(existingParams['_ss']);
-        ssParams.set('variant', variantId);
-        params.set('_ss', ssParams.toString());
-      }
-
-      // Construct the new URL
-      let newUrl = `${url.origin}${url.pathname}?${params.toString()}${
-        url.hash
-      }`;
-
-      // Update the URL without reloading the page
-      if (window.history && window.history.replaceState) {
-        window.history.replaceState({}, '', newUrl);
-      }
-    });
-  });
 };
 
 export default Products;
