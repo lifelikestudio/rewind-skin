@@ -376,13 +376,13 @@
             {% for item in search.results %}
               {% for variant in item.variants %}
                 {% assign url_parts = item.url | split: '?' %}
-                  {% if url_parts[1] contains 'variant=' %}
-                  {% assign base_url = url_parts[0] %}
-                  {% assign variant_url = base_url | append: '?variant=' | append: variant.id %}
-                {% comment %} DEBUG: Reconstructed URL with correct variant: {{ variant_url }} {% endcomment %}
+                {% assign base_url = url_parts[0] %}
+                {% assign query_params = url_parts[1] | default: '' %}
+
+                {% if query_params != '' %}
+                  {% assign variant_url = item.url | append: '&variant=' | append: variant.id %}
                 {% else %}
                   {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
-                  {% comment %} DEBUG: Added variant parameter to URL: {{ variant_url }} {% endcomment %}
                 {% endif %}
 
                 <a href="{{ variant_url }}" class="product-card">
