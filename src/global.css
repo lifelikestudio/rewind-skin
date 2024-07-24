@@ -9095,7 +9095,7 @@ input[type='number']::-webkit-outer-spin-button {
 
 .treatments-category__container:first-child.embla .embla__container {
   display: flex;
-  height: 40px;
+  /* height: 40px; */
   cursor: grab;
   cursor: -webkit-grab;
   cursor: -moz-grab;
@@ -9131,7 +9131,7 @@ input[type='number']::-webkit-outer-spin-button {
   }
 
   .treatments-category__container:first-child.embla .embla__container {
-    height: 29px;
+    /* height: 29px; */
   }
 }
 
@@ -9143,14 +9143,14 @@ input[type='number']::-webkit-outer-spin-button {
   }
 
   .treatments-category__container:first-child.embla .embla__container {
-    height: 25px;
+    /* height: 25px; */
   }
 }
 
 /* Between 1024px and 1055px */
 @media screen and (min-width: 1024px) and (max-width: 1055px) {
   .treatments-category__container:first-child.embla .embla__container {
-    height: 22px;
+    /* height: 22px; */
   }
 }
 
@@ -9165,7 +9165,7 @@ input[type='number']::-webkit-outer-spin-button {
 /* Between 672px and 1023px */
 @media screen and (min-width: 672px) and (max-width: 1023px) {
   .treatments-category__container:first-child.embla .embla__container {
-    height: 24px;
+    /* height: 24px; */
   }
 }
 
@@ -9177,7 +9177,7 @@ input[type='number']::-webkit-outer-spin-button {
   }
 
   .treatments-category__container:first-child.embla .embla__container {
-    height: 20px;
+    /* height: 20px; */
   }
 }
 
