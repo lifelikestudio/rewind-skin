@@ -94,6 +94,7 @@
             spellcheck="false"
             autocapitalize="off"
             autocomplete="email"
+            required
             aria-required="true"
             {% if form.errors contains 'email' %}
             aria-invalid="true"
@@ -116,6 +117,7 @@
             type="password"
             name="customer[password]"
             id="RegisterForm-password"
+            required
             aria-required="true"
             {% if form.errors contains 'password' %}
             aria-invalid="true"
