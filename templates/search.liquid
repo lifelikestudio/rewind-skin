@@ -260,7 +260,7 @@
               <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
               {%- for filter in search.filters -%}
                 {%- assign downcased_label = filter.label | downcase -%}
-                {%- if downcased_label == 'skin type' -%}
+                {%- if downcased_label == 'skin types' -%}
                   <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
                 {%- endif -%}
               {%- endfor -%}
@@ -274,7 +274,7 @@
             <div class="drawer__container drawer__menu">
               {%- for filter in search.filters -%}
                 {%- assign downcased_label = filter.label | downcase -%}
-                {%- if downcased_label == 'skin type' -%}
+                {%- if downcased_label == 'skin types' -%}
                   {%- case filter.type -%}
                     {%- when 'list' -%}
                       <ul class="drawer__links-list">
