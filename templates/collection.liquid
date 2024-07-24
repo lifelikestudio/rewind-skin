@@ -52,6 +52,41 @@
           </ul>
         </div>
       </div>
+
+      {%- for filter in collection.filters -%}
+        {%- if filter.label == 'Categories' -%}
+          <div class="collections__filter-group">
+            <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
+            <div class="collections__filter-group-options">
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="filter-group-options__list">
+                    {%- for filter_value in filter.values -%}
+                      <li class="all-caps filter-group-options__list-item">
+                        <label for="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            name="{{ filter_value.param_name }}"
+                            value="{{ filter_value.value }}"
+                            id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
+                            {% if filter_value.active -%}
+                            checked{%- endif %}
+                            {% if filter_value.count == 0 and filter_value.active == false -%}
+                            disabled{%- endif %}>
+                          {% assign label_characters = filter_value.label | join: ', ' | replace: '_', ', ' | replace: 'plus', '+' %}
+                          <span class="filter-group-options__label">
+                            {{- label_characters -}}{{ ' ' }} ({{ filter_value.count }})
+                          </span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
       <div class="collections__filter-group">
         <h2 class="all-caps collections__filter-group-title">Areas</h2>
         <div class="collections__filter-group-options">
@@ -68,40 +103,39 @@
           </ul>
         </div>
       </div>
+
       {%- for filter in collection.filters -%}
-        <div class="collections__filter-group">
-          <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
-          <div class="collections__filter-group-options">
-            {%- case filter.type -%}
-              {%- when 'list' -%}
-                <ul class="filter-group-options__list">
-                  {%- for filter_value in filter.values -%}
-                    <li class="all-caps filter-group-options__list-item">
-                      <label for="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}">
-                        <input
-                          type="checkbox"
-                          name="{{ filter_value.param_name }}"
-                          value="{{ filter_value.value }}"
-                          id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
-                          {% if filter_value.active -%}
-                          checked
-                          {%- endif %}
-                          {% if filter_value.count == 0 and filter_value.active == false -%}
-                          disabled
-                          {%- endif %}>
-                        {% assign label_characters = filter_value.label | join: ', ' | replace: '_', ', ' | replace: 'plus', '+'
-                        %}
-                        <span class="filter-group-options__label">
-                          {{- label_characters -}}
-                          {{ ' ' }} ({{ filter_value.count }})
-                        </span>
-                      </label>
-                    </li>
-                  {%- endfor -%}
-                </ul>
-            {%- endcase -%}
+        {%- if filter.label != 'Categories' -%}
+          <div class="collections__filter-group">
+            <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
+            <div class="collections__filter-group-options">
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="filter-group-options__list">
+                    {%- for filter_value in filter.values -%}
+                      <li class="all-caps filter-group-options__list-item">
+                        <label for="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            name="{{ filter_value.param_name }}"
+                            value="{{ filter_value.value }}"
+                            id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
+                            {% if filter_value.active -%}
+                            checked{%- endif %}
+                            {% if filter_value.count == 0 and filter_value.active == false -%}
+                            disabled{%- endif %}>
+                          {% assign label_characters = filter_value.label | join: ', ' | replace: '_', ', ' | replace: 'plus', '+' %}
+                          <span class="filter-group-options__label">
+                            {{- label_characters -}}{{ ' ' }} ({{ filter_value.count }})
+                          </span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            </div>
           </div>
-        </div>
+        {%- endif -%}
       {%- endfor -%}
     </form>
 
@@ -459,23 +493,23 @@
                 {% endif %}
             {% endif %}
               {% comment %}  
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <!-- Original Code -->
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {% if variant.image != blank %}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <img
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="product-card__image"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        src="{{ variant.image | image_url: width: 780 }}"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width="780"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        height="1170"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        loading="lazy">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {% else %}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <img
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="product-card__image"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        src="{{ product.featured_image | image_url: width: 780 }}"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width="780"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        height="1170"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        loading="lazy">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {% endif %}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {% endcomment %}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <!-- Original Code -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {% if variant.image != blank %}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <img
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="product-card__image"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        src="{{ variant.image | image_url: width: 780 }}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width="780"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        height="1170"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        loading="lazy">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {% else %}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <img
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="product-card__image"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        src="{{ product.featured_image | image_url: width: 780 }}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width="780"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        height="1170"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        loading="lazy">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {% endif %}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          {% endcomment %}
 
               {% assign primary_option_value = variant.option1 | downcase %}
 
