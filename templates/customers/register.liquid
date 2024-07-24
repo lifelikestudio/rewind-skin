@@ -52,8 +52,8 @@
         </div>
         {%- if form.errors contains 'first_name' -%}
           <span class="account__form-error-label" id="RegisterForm-FirstName-error">
-            {{ form.errors.translated_fields.first_name | capitalize }}
-            {{ form.errors.messages.first_name }}.
+            {{ form.errors.translated_fields['first_name'] | capitalize }}
+            {{ form.errors.messages['first_name'] }}.
           </span>
         {%- endif -%}
         <div class="account__field-group">
@@ -79,8 +79,8 @@
         </div>
         {%- if form.errors contains 'last_name' -%}
           <span class="account__form-error-label" id="RegisterForm-LastName-error">
-            {{ form.errors.translated_fields.last_name | capitalize }}
-            {{ form.errors.messages.last_name }}.
+            {{ form.errors.translated_fields['last_name'] | capitalize }}
+            {{ form.errors.messages['last_name'] }}.
           </span>
         {%- endif -%}
         <div class="account__field-group">
