@@ -375,15 +375,34 @@
           {% paginate search.results by 24 %}
             {% for item in search.results %}
               {% for variant in item.variants %}
+                <!-- DEBUG: Original item URL: {{ item.url }} -->
+                <!-- DEBUG: Variant ID: {{ variant.id }} -->
+
                 {% assign url_parts = item.url | split: '?' %}
                 {% assign base_url = url_parts[0] %}
-                {% assign query_params = url_parts[1] | default: '' %}
+              {% assign query_params = url_parts[1] | default: '' %}
 
-                {% if query_params != '' %}
-                  {% assign variant_url = item.url | append: '&variant=' | append: variant.id %}
+                <!-- DEBUG: Base URL: {{ base_url }} -->
+                <!-- DEBUG: Query params: {{ query_params }} -->
+
+                {% assign new_query_params = '' %}
+                {% assign param_pairs = query_params | split: '&' %}
+                {% for pair in param_pairs %}
+                  {% unless pair contains 'variant=' %}
+                    {% if new_query_params != '' %}
+                      {% assign new_query_params = new_query_params | append: '&' %}
+                    {% endif %}
+                    {% assign new_query_params = new_query_params | append: pair %}
+                  {% endunless %}
+                {% endfor %}
+
+                {% if new_query_params != '' %}
+                  {% assign variant_url = base_url | append: '?' | append: new_query_params | append: '&variant=' | append: variant.id %}
                 {% else %}
-                  {% assign variant_url = item.url | append: '?variant=' | append: variant.id %}
+                  {% assign variant_url = base_url | append: '?variant=' | append: variant.id %}
                 {% endif %}
+
+                <!-- DEBUG: Final variant URL: {{ variant_url }} -->
 
                 <a href="{{ variant_url }}" class="product-card">
                   <div class="product-card__info">
