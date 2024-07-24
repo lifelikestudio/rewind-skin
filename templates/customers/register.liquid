@@ -3,10 +3,15 @@
     <div class="account__form-header">
       <h1 class="main-heading main-heading--account-form">Create an account</h1>
     </div>
-    {%- form 'create_customer', novalidate: 'novalidate', class: 'account__form' -%}
+    {%- form 'create_customer'
+      , novalidate: 'novalidate'
+      , class: 'account__form' -%}
       {%- if form.errors -%}
         <div class="account__form-inner account__form-inner--error">
-          <h2 class="main-heading--form-sub" tabindex="-1" autofocus>Please correct the following:</h2>
+          <h2
+            class="main-heading--form-sub"
+            tabindex="-1"
+            autofocus>Please correct the following:</h2>
           <div class="errors">
             <ul>
               {%- for field in form.errors -%}
@@ -30,51 +35,72 @@
             name="customer[first_name]"
             id="RegisterForm-FirstName"
             {% if form.first_name %}
-              value="{{ form.first_name }}"
+            value="{{ form.first_name }}"
             {% endif %}
             autocomplete="given-name"
             placeholder="{{ 'customer.register.first_name' | t }}"
             class="main-body account__input-field"
-          >
+            required
+            aria-required="true"
+            {% if form.errors contains 'first_name' %}
+            aria-invalid="true"
+            aria-describedby="RegisterForm-FirstName-error"
+            {% endif %}>
           <label for="RegisterForm-FirstName" class="visually-hidden">
             {{ 'customer.register.first_name' | t }}
           </label>
         </div>
+        {%- if form.errors contains 'first_name' -%}
+          <span class="account__form-error-label" id="RegisterForm-FirstName-error">
+            {{ form.errors.translated_fields.first_name | capitalize }}
+            {{ form.errors.messages.first_name }}.
+          </span>
+        {%- endif -%}
         <div class="account__field-group">
           <input
             type="text"
             name="customer[last_name]"
             id="RegisterForm-LastName"
             {% if form.last_name %}
-              value="{{ form.last_name }}"
+            value="{{ form.last_name }}"
             {% endif %}
             autocomplete="family-name"
             placeholder="{{ 'customer.register.last_name' | t }}"
             class="main-body account__input-field"
-          >
+            required
+            aria-required="true"
+            {% if form.errors contains 'last_name' %}
+            aria-invalid="true"
+            aria-describedby="RegisterForm-LastName-error"
+            {% endif %}>
           <label for="RegisterForm-LastName" class="visually-hidden">
             {{ 'customer.register.last_name' | t }}
           </label>
         </div>
+        {%- if form.errors contains 'last_name' -%}
+          <span class="account__form-error-label" id="RegisterForm-LastName-error">
+            {{ form.errors.translated_fields.last_name | capitalize }}
+            {{ form.errors.messages.last_name }}.
+          </span>
+        {%- endif -%}
         <div class="account__field-group">
           <input
             type="email"
             name="customer[email]"
             id="RegisterForm-email"
             {% if form.email %}
-              value="{{ form.email }}"
+            value="{{ form.email }}"
             {% endif %}
             spellcheck="false"
             autocapitalize="off"
             autocomplete="email"
             aria-required="true"
             {% if form.errors contains 'email' %}
-              aria-invalid="true"
-              aria-describedby="RegisterForm-email-error"
+            aria-invalid="true"
+            aria-describedby="RegisterForm-email-error"
             {% endif %}
             placeholder="{{ 'customer.register.email' | t }}"
-            class="main-body account__input-field"
-          >
+            class="main-body account__input-field">
           <label for="RegisterForm-email" class="visually-hidden">
             {{ 'customer.register.email' | t }}
           </label>
@@ -92,12 +118,11 @@
             id="RegisterForm-password"
             aria-required="true"
             {% if form.errors contains 'password' %}
-              aria-invalid="true"
-              aria-describedby="RegisterForm-password-error"
+            aria-invalid="true"
+            aria-describedby="RegisterForm-password-error"
             {% endif %}
             placeholder="{{ 'customer.register.password' | t }}"
-            class="main-body account__input-field"
-          >
+            class="main-body account__input-field">
           <label for="RegisterForm-password" class="visually-hidden">
             {{ 'customer.register.password' | t }}
           </label>

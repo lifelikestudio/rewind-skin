@@ -5,7 +5,8 @@
         {{ 'customer.recover_password.title' | t | remove: 'your' }}
       </h1>
     </div>
-    {%- form 'recover_customer_password', class: 'account__form' -%}
+    {%- form 'recover_customer_password'
+      , class: 'account__form' -%}
       <div class="account__form-inner">
         <p class="main-body main-body--account-form">
           {{ 'customer.recover_password.subtext' | t }}
@@ -21,13 +22,12 @@
             autocapitalize="off"
             autocomplete="email"
             {% if form.errors %}
-              aria-invalid="true"
-              aria-describedby="RecoverEmail-email-error"
-              autofocus
+            aria-invalid="true"
+            aria-describedby="RecoverEmail-email-error"
+            autofocus
             {% endif %}
             placeholder="{{ 'customer.login_page.email' | t }}"
-            class="account__input-field"
-          >
+            class="account__input-field">
           <label class="visually-hidden" for="RecoverEmail">
             {{ 'customer.login_page.email' | t }}
           </label>
@@ -40,10 +40,15 @@
 
         <div class="account__form-inner">
           <button class="all-caps btn btn--secondary btn--account">
-            <span> Reset Password </span>
+            <span>
+              Reset Password
+            </span>
           </button>
 
-          <button type="button" class="account__btn-link" id="cancel-reset-password">
+          <button
+            type="button"
+            class="account__btn-link"
+            id="cancel-reset-password">
             {{ 'customer.login_page.cancel' | t }}
           </button>
         </div>
@@ -58,14 +63,22 @@
     </div>
     <div class="account__form-inner">
       {%- if recover_success == true -%}
-        <h3 class="main-heading--form-sub" tabindex="-1" autofocus>
+        <h3
+          class="main-heading--form-sub"
+          tabindex="-1"
+          autofocus>
           {{ 'customer.recover_password.success' | t }}
         </h3>
       {%- endif -%}
-      {%- form 'customer_login', novalidate: 'novalidate', class: 'account__form' -%}
+      {%- form 'customer_login'
+        , novalidate: 'novalidate'
+        , class: 'account__form' -%}
         {%- if form.errors -%}
           <div class="account__form-inner account__form-inner--error">
-            <h2 class="main-heading main-heading--form-sub" tabindex="-1" autofocus>Please correct the following:</h2>
+            <h2
+              class="main-heading main-heading--form-sub"
+              tabindex="-1"
+              autofocus>Please correct the following:</h2>
             {{ form.errors | default_errors }}
           </div>
         {%- endif -%}
@@ -79,11 +92,10 @@
               autocorrect="off"
               autocapitalize="off"
               {% if form.errors contains 'form' %}
-                aria-invalid="true"
+              aria-invalid="true"
               {% endif %}
               placeholder="{{ 'customer.login_page.email' | t }}"
-              class="main-body account__input-field"
-            >
+              class="main-body account__input-field">
             <label for="CustomerEmail" class="visually-hidden">
               {{ 'customer.login_page.email' | t }}
             </label>
@@ -98,17 +110,21 @@
                 id="CustomerPassword"
                 autocomplete="current-password"
                 {% if form.errors contains 'form' %}
-                  aria-invalid="true"
+                aria-invalid="true"
                 {% endif %}
                 placeholder="{{ 'customer.login_page.password' | t }}"
-                class="main-body account__input-field"
-              >
+                class="main-body account__input-field">
               <label for="CustomerPassword" class="visually-hidden">
                 {{ 'customer.login_page.password' | t }}
               </label>
             </div>
-            <button type="button" class="account__btn-link" id="reset-password-trigger">
-              <span> {{ 'customer.login_page.forgot_password' | t }} </span>
+            <button
+              type="button"
+              class="account__btn-link"
+              id="reset-password-trigger">
+              <span>
+                {{ 'customer.login_page.forgot_password' | t }}
+              </span>
             </button>
           {%- endif -%}
         </div>
@@ -117,7 +133,9 @@
             {{ 'customer.login_page.sign_in' | t }}
           </button>
 
-          <a href="{{ routes.account_register_url }}"> Create an account </a>
+          <a href="{{ routes.account_register_url }}">
+            Create an account
+          </a>
         </div>
       {%- endform -%}
     </div>
@@ -125,7 +143,8 @@
 
   {%- if shop.checkout.guest_login -%}
     <section class="wrapper account__inner account__form-inner--guest">
-      {%- form 'guest_login', class: 'account__form' -%}
+      {%- form 'guest_login'
+        , class: 'account__form' -%}
         <button class="account__btn-link">Shop as a guest</button>
       {%- endform -%}
     </section>
