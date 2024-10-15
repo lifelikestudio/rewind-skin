@@ -1,8 +1,8 @@
-import { gsap } from 'gsap';
-import ScrollSelect from './ScrollSelect';
-import SwiperEmbla from './Swiper/SwiperEmbla';
-import { attachEventListenersToProduct } from './Drawers/CartDrawer.js';
-import { createPopup, nurseLedId } from './Utility/Forms';
+import { gsap } from "gsap";
+import ScrollSelect from "./ScrollSelect";
+import SwiperEmbla from "./Swiper/SwiperEmbla";
+import { attachEventListenersToProduct } from "./Drawers/CartDrawer.js";
+import { createPopup, nurseLedId } from "./Utility/Forms";
 
 // Selectors
 let scrollSelectNode,
@@ -11,37 +11,37 @@ let scrollSelectNode,
   swiperViewportNode,
   progressNode;
 
-if (document.querySelector('.concerns-section__inner:first-child.embla')) {
+if (document.querySelector(".concerns-section__inner:first-child.embla")) {
   scrollSelectNode = document.querySelector(
-    '.concerns-section__inner:first-child.embla'
+    ".concerns-section__inner:first-child.embla"
   );
-  scrollSelectSlides = '.scroll-select-type.embla__slide';
+  scrollSelectSlides = ".scroll-select-type.embla__slide";
 }
 
-if (document.querySelector('.concerns-section__inner:last-child.embla')) {
+if (document.querySelector(".concerns-section__inner:last-child.embla")) {
   swiperNode = document.querySelector(
-    '.concerns-section__inner:last-child.embla'
+    ".concerns-section__inner:last-child.embla"
   );
   swiperViewportNode = document.querySelector(
-    '.concerns-section__inner:last-child.embla .embla__viewport'
+    ".concerns-section__inner:last-child.embla .embla__viewport"
   );
 
   if (swiperNode) {
     progressNode = swiperNode.querySelector(
-      '.concerns-section__inner:last-child .embla__progress-bar'
+      ".concerns-section__inner:last-child .embla__progress-bar"
     );
   }
 }
 
-const isCustomerLoggedIn = document.body.dataset.customerLoggedIn === 'true';
+const isCustomerLoggedIn = document.body.dataset.customerLoggedIn === "true";
 
 // Get the radio buttons
-const productsRadio = document.querySelector('#skin-concerns-filter-products');
+const productsRadio = document.querySelector("#skin-concerns-filter-products");
 const treatmentsRadio = document.querySelector(
-  '#skin-concerns-filter-treatments'
+  "#skin-concerns-filter-treatments"
 );
 
-const skinConcernsResults = document.querySelector('#skin-concerns-results');
+const skinConcernsResults = document.querySelector("#skin-concerns-results");
 
 // Function to normalize the skin concern strings
 function normalize(str) {
@@ -49,14 +49,14 @@ function normalize(str) {
   str = str.toLowerCase().trim();
 
   // Remove 'plus', 'and', 'of'
-  str = str.replace(/\b(plus|and|of)\b/g, '');
+  str = str.replace(/\b(plus|and|of)\b/g, "");
 
   // Replace spaces with '-'
-  str = str.replace(/\s+/g, '-');
+  str = str.replace(/\s+/g, "-");
 
   // Handle the special case
-  if (str === 'hyperpigmentation' || str === 'scarring') {
-    str = 'hyperpigmentation-scarring';
+  if (str === "hyperpigmentation" || str === "scarring") {
+    str = "hyperpigmentation-scarring";
   }
 
   return str;
@@ -64,20 +64,20 @@ function normalize(str) {
 
 // Get all the skin concern elements
 const skinConcerns = document.querySelectorAll(
-  '.scroll-select-type.concerns-section__skin-concern'
+  ".scroll-select-type.concerns-section__skin-concern"
 );
 
 // Function to fetch and display products or treatments based on the checked radio button
 function displayResults() {
   // Get the active skin concern and normalize it
   const activeSkinConcern = document.querySelector(
-    '.scroll-select-type.concerns-section__skin-concern.active'
+    ".scroll-select-type.concerns-section__skin-concern.active"
   );
 
   // Check if activeSkinConcern exists
   if (activeSkinConcern) {
     const selectedConcern = normalize(
-      activeSkinConcern.getAttribute('data-slide-concern')
+      activeSkinConcern.getAttribute("data-slide-concern")
     );
 
     if (productsRadio.checked) {
@@ -109,12 +109,12 @@ const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     // Check if a class was added
     const wasClassAdded =
-      mutation.target.classList.length > mutation.oldValue.split(' ').length;
+      mutation.target.classList.length > mutation.oldValue.split(" ").length;
 
     if (
-      mutation.attributeName === 'class' &&
+      mutation.attributeName === "class" &&
       wasClassAdded &&
-      mutation.target.classList.contains('active')
+      mutation.target.classList.contains("active")
     ) {
       // Call debouncedDisplayResults to update the displayed products or treatments
       debouncedDisplayResults();
@@ -126,22 +126,22 @@ const observer = new MutationObserver((mutations) => {
 skinConcerns.forEach((skinConcern) => {
   observer.observe(skinConcern, {
     attributes: true,
-    attributeFilter: ['class'],
+    attributeFilter: ["class"],
     attributeOldValue: true,
   });
 });
 
 // Shopify API call
-const shopifyStorefrontAccessToken = 'd20d0cde1f02fc638e0611331c45a289';
-const shopifyStoreUrl = 'https://rewind-skin-co.myshopify.com';
+const shopifyStorefrontAccessToken = "d20d0cde1f02fc638e0611331c45a289";
+const shopifyStoreUrl = "https://rewind-skin-co.myshopify.com";
 
 const metafields = [
-  'featured_image_treatments',
-  'treatment_area_treatments',
-  'skin_concerns_treatments',
-  'starting_rate_treatments',
-  'booking_link_treatments',
-  'related_treatment_types_treatments',
+  "featured_image_treatments",
+  "treatment_area_treatments",
+  "skin_concerns_treatments",
+  "starting_rate_treatments",
+  "booking_link_treatments",
+  "related_treatment_types_treatments",
 ];
 
 const fetchMetafield = (pageId, metafieldKey) => {
@@ -158,10 +158,10 @@ const fetchMetafield = (pageId, metafieldKey) => {
   `;
 
   return fetch(`${shopifyStoreUrl}/api/2021-07/graphql.json`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': shopifyStorefrontAccessToken,
+      "Content-Type": "application/json",
+      "X-Shopify-Storefront-Access-Token": shopifyStorefrontAccessToken,
     },
     body: JSON.stringify({ query }),
   })
@@ -227,10 +227,10 @@ const fetchProducts = () => {
     `;
 
   return fetch(`${shopifyStoreUrl}/api/2021-07/graphql.json`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': shopifyStorefrontAccessToken,
+      "Content-Type": "application/json",
+      "X-Shopify-Storefront-Access-Token": shopifyStorefrontAccessToken,
     },
     body: JSON.stringify({ query }),
   })
@@ -247,7 +247,7 @@ const fetchProducts = () => {
 
 function displayProducts(selectedConcern) {
   // Clear the current contents of skinConcernsResults
-  skinConcernsResults.innerHTML = '';
+  skinConcernsResults.innerHTML = "";
 
   // Start the animation with opacity 0
   gsap.set(skinConcernsResults, { opacity: 0 });
@@ -292,10 +292,10 @@ function displayProducts(selectedConcern) {
 
       // Check if there are any related pages
       if (relatedProducts.length === 0) {
-        const message = document.createElement('p');
-        message.classList.add('main-body', 'concerns-section__empty-res-msg');
+        const message = document.createElement("p");
+        message.classList.add("main-body", "concerns-section__empty-res-msg");
         message.textContent =
-          'We do not offer any products for this skin concern at this time. Please check for relevant treatments instead.';
+          "We do not offer any products for this skin concern at this time. Please check for relevant treatments instead.";
         skinConcernsResults.append(message);
         // Resume the animation after the data has been loaded and rendered
         animation.play();
@@ -318,68 +318,67 @@ function displayProducts(selectedConcern) {
         // If the product has only one variant, handle it as a single product
         if (product.variants.edges.length === 1) {
           const variant = product.variants.edges[0].node;
-          const card = document.createElement('a');
-          const variantId = variant.id.split('/').pop(); // Extract the actual ID
+          const card = document.createElement("a");
+          const variantId = variant.id.split("/").pop(); // Extract the actual ID
           card.href = `/products/${product.handle}?variant=${variantId}`; // Use the actual ID
           card.className =
-            'concerns-section__card concerns-section__card--product embla__slide';
+            "concerns-section__card concerns-section__card--product embla__slide";
 
-          const info = document.createElement('div');
-          info.className = 'product-card__info';
+          const info = document.createElement("div");
+          info.className = "product-card__info";
 
-          const brand = document.createElement('p');
-          brand.className = 'all-caps product-card__brand';
+          const brand = document.createElement("p");
+          brand.className = "all-caps product-card__brand";
           brand.textContent = product.vendor;
 
-          const title = document.createElement('h4');
-          title.className = 'product-card__product';
+          const title = document.createElement("h4");
+          title.className = "product-card__product";
           title.textContent = product.title;
 
           info.append(brand, title);
 
-          if (
-            product.vendor.toLowerCase() === 'biologique recherche' &&
-            !isCustomerLoggedIn
-          ) {
-            const buttonDiv = document.createElement('div');
-            buttonDiv.className =
-              'all-caps btn btn--primary product-card__btn product-card__btn--icon';
-            buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
-            buttonDiv.textContent = 'Login to Shop';
-            // Set the href attribute of the parent anchor to the URL in the data-url attribute
-            card.href = buttonDiv.dataset.url;
-            card.append(info, buttonDiv);
-          } else {
-            const form = document.createElement('form');
-            form.action = '/cart/add';
-            form.method = 'post';
-            form.className = 'product-card__form';
+          // if (
+          //   product.vendor.toLowerCase() === 'biologique recherche' &&
+          //   !isCustomerLoggedIn
+          // ) {
+          //   const buttonDiv = document.createElement('div');
+          //   buttonDiv.className =
+          //     'all-caps btn btn--primary product-card__btn product-card__btn--icon';
+          //   buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
+          //   buttonDiv.textContent = 'Login to Shop';
+          //   // Set the href attribute of the parent anchor to the URL in the data-url attribute
+          //   card.href = buttonDiv.dataset.url;
+          //   card.append(info, buttonDiv);
+          // } else {}
+          const form = document.createElement("form");
+          form.action = "/cart/add";
+          form.method = "post";
+          form.className = "product-card__form";
 
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'id';
-            idInput.value = variantId;
+          const idInput = document.createElement("input");
+          idInput.type = "hidden";
+          idInput.name = "id";
+          idInput.value = variantId;
 
-            const button = document.createElement('button');
-            button.className = 'all-caps btn btn--primary product-card__btn';
+          const button = document.createElement("button");
+          button.className = "all-caps btn btn--primary product-card__btn";
 
-            const addToBag = document.createElement('span');
-            addToBag.textContent = 'Add to Bag';
+          const addToBag = document.createElement("span");
+          addToBag.textContent = "Add to Bag";
 
-            const price = document.createElement('span');
-            const priceValue = parseFloat(variant.priceV2.amount);
-            const priceText =
-              priceValue % 1 === 0
-                ? `$${priceValue.toFixed(0)}`
-                : `$${priceValue.toFixed(2)}`;
-            price.textContent = `${priceText} ${variant.priceV2.currencyCode}`;
+          const price = document.createElement("span");
+          const priceValue = parseFloat(variant.priceV2.amount);
+          const priceText =
+            priceValue % 1 === 0
+              ? `$${priceValue.toFixed(0)}`
+              : `$${priceValue.toFixed(2)}`;
+          price.textContent = `${priceText} ${variant.priceV2.currencyCode}`;
 
-            button.append(addToBag, price);
-            form.append(idInput, button);
-            attachEventListenersToProduct(form); // Attach the event listeners to the product form
+          button.append(addToBag, price);
+          form.append(idInput, button);
+          attachEventListenersToProduct(form); // Attach the event listeners to the product form
 
-            card.append(info, form);
-          }
+          card.append(info, form);
 
           // Assuming 'product' is already defined and contains the product information
           // Assuming 'variant' is defined and represents the currently processed variant
@@ -387,16 +386,16 @@ function displayProducts(selectedConcern) {
           // Function to normalize option values
           function normalizeOption(option) {
             // If the option starts with a dollar sign, remove it
-            if (option.startsWith('$')) {
+            if (option.startsWith("$")) {
               option = option.slice(1);
             }
 
             return option
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-              .replace(/[^a-z0-9]+/gi, '-') // Replace all non-alphanumeric characters (including spaces) with a single dash
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+              .replace(/[^a-z0-9]+/gi, "-") // Replace all non-alphanumeric characters (including spaces) with a single dash
               .toLowerCase() // Convert to lower case
-              .replace(/^-+|-+$/g, ''); // Trim leading and trailing dashes
+              .replace(/^-+|-+$/g, ""); // Trim leading and trailing dashes
           }
 
           // Assuming 'variant' is defined and represents the currently processed variant
@@ -409,7 +408,7 @@ function displayProducts(selectedConcern) {
           const matchingImage = product.images.edges.find((edge) => {
             const imageUrl = edge.node.originalSrc;
             return (
-              imageUrl.includes('product-card') &&
+              imageUrl.includes("product-card") &&
               imageUrl.includes(firstVariantValue)
             );
           });
@@ -424,12 +423,12 @@ function displayProducts(selectedConcern) {
             ? matchingImage.node.originalSrc
             : fallbackImageSrc;
 
-          const image = document.createElement('img');
-          image.className = 'product-card__image';
+          const image = document.createElement("img");
+          image.className = "product-card__image";
           image.src = selectedImageSrc;
-          image.width = '780';
-          image.height = '1170';
-          image.loading = 'lazy';
+          image.width = "780";
+          image.height = "1170";
+          image.loading = "lazy";
 
           // Append the image to the card and the card to the results container
           card.append(image);
@@ -437,68 +436,67 @@ function displayProducts(selectedConcern) {
         } else {
           product.variants.edges.forEach((variantEdge) => {
             const variant = variantEdge.node;
-            const card = document.createElement('a');
-            const variantId = variant.id.split('/').pop(); // Extract the actual ID
+            const card = document.createElement("a");
+            const variantId = variant.id.split("/").pop(); // Extract the actual ID
             card.href = `/products/${product.handle}?variant=${variantId}`; // Use the actual ID
             card.className =
-              'concerns-section__card concerns-section__card--product embla__slide';
+              "concerns-section__card concerns-section__card--product embla__slide";
 
-            const info = document.createElement('div');
-            info.className = 'product-card__info';
+            const info = document.createElement("div");
+            info.className = "product-card__info";
 
-            const brand = document.createElement('p');
-            brand.className = 'all-caps product-card__brand';
+            const brand = document.createElement("p");
+            brand.className = "all-caps product-card__brand";
             brand.textContent = product.vendor;
 
-            const title = document.createElement('h4');
-            title.className = 'product-card__product';
+            const title = document.createElement("h4");
+            title.className = "product-card__product";
             title.textContent = `${product.title} / ${variant.title}`;
 
             info.append(brand, title);
 
-            if (
-              product.vendor.toLowerCase() === 'biologique recherche' &&
-              !isCustomerLoggedIn
-            ) {
-              const buttonDiv = document.createElement('div');
-              buttonDiv.className =
-                'all-caps btn btn--primary product-card__btn product-card__btn--icon';
-              buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
-              buttonDiv.textContent = 'Login to Shop';
-              // Set the href attribute of the parent anchor to the URL in the data-url attribute
-              card.href = buttonDiv.dataset.url;
-              card.append(info, buttonDiv);
-            } else {
-              const form = document.createElement('form');
-              form.action = '/cart/add';
-              form.method = 'post';
-              form.className = 'product-card__form';
+            // if (
+            //   product.vendor.toLowerCase() === "biologique recherche" &&
+            //   !isCustomerLoggedIn
+            // ) {
+            //   const buttonDiv = document.createElement("div");
+            //   buttonDiv.className =
+            //     "all-caps btn btn--primary product-card__btn product-card__btn--icon";
+            //   buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
+            //   buttonDiv.textContent = "Login to Shop";
+            //   // Set the href attribute of the parent anchor to the URL in the data-url attribute
+            //   card.href = buttonDiv.dataset.url;
+            //   card.append(info, buttonDiv);
+            // } else {}
+            const form = document.createElement("form");
+            form.action = "/cart/add";
+            form.method = "post";
+            form.className = "product-card__form";
 
-              const idInput = document.createElement('input');
-              idInput.type = 'hidden';
-              idInput.name = 'id';
-              idInput.value = variantId;
+            const idInput = document.createElement("input");
+            idInput.type = "hidden";
+            idInput.name = "id";
+            idInput.value = variantId;
 
-              const button = document.createElement('button');
-              button.className = 'all-caps btn btn--primary product-card__btn';
+            const button = document.createElement("button");
+            button.className = "all-caps btn btn--primary product-card__btn";
 
-              const addToBag = document.createElement('span');
-              addToBag.textContent = 'Add to Bag';
+            const addToBag = document.createElement("span");
+            addToBag.textContent = "Add to Bag";
 
-              const price = document.createElement('span');
-              const priceValue = parseFloat(variant.priceV2.amount);
-              const priceText =
-                priceValue % 1 === 0
-                  ? `$${priceValue.toFixed(0)}`
-                  : `$${priceValue.toFixed(2)}`;
-              price.textContent = `${priceText} ${variant.priceV2.currencyCode}`;
+            const price = document.createElement("span");
+            const priceValue = parseFloat(variant.priceV2.amount);
+            const priceText =
+              priceValue % 1 === 0
+                ? `$${priceValue.toFixed(0)}`
+                : `$${priceValue.toFixed(2)}`;
+            price.textContent = `${priceText} ${variant.priceV2.currencyCode}`;
 
-              button.append(addToBag, price);
-              form.append(idInput, button);
-              attachEventListenersToProduct(form); // Attach the event listeners to the product form
+            button.append(addToBag, price);
+            form.append(idInput, button);
+            attachEventListenersToProduct(form); // Attach the event listeners to the product form
 
-              card.append(info, form);
-            }
+            card.append(info, form);
 
             // Assuming 'product' is already defined and contains the product information
             // Assuming 'variant' is defined and represents the currently processed variant
@@ -507,13 +505,13 @@ function displayProducts(selectedConcern) {
             const firstVariantValue = variant.selectedOptions[0]?.value
               .trim()
               .toLowerCase()
-              .replace(/\s+/g, '-'); // Normalize the value by making it lowercase and replacing spaces with '-'
+              .replace(/\s+/g, "-"); // Normalize the value by making it lowercase and replacing spaces with '-'
 
             // Filter product images to find one that matches the criteria
             const matchingImage = product.images.edges.find((edge) => {
               const imageUrl = edge.node.originalSrc;
               return (
-                imageUrl.includes('product-card') &&
+                imageUrl.includes("product-card") &&
                 imageUrl.includes(firstVariantValue)
               );
             });
@@ -528,12 +526,12 @@ function displayProducts(selectedConcern) {
               ? matchingImage.node.originalSrc
               : fallbackImageSrc;
 
-            const image = document.createElement('img');
-            image.className = 'product-card__image';
+            const image = document.createElement("img");
+            image.className = "product-card__image";
             image.src = selectedImageSrc;
-            image.width = '780';
-            image.height = '1170';
-            image.loading = 'lazy';
+            image.width = "780";
+            image.height = "1170";
+            image.loading = "lazy";
 
             // Append the image to the card and the card to the results container
             card.append(image);
@@ -544,7 +542,7 @@ function displayProducts(selectedConcern) {
       // Resume the animation after the data has been loaded and rendered
       animation.play();
     })
-    .catch((error) => console.error('Error:', error));
+    .catch((error) => console.error("Error:", error));
 }
 
 const fetchPages = () => {
@@ -566,10 +564,10 @@ const fetchPages = () => {
   `;
 
   return fetch(`${shopifyStoreUrl}/api/2021-07/graphql.json`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': shopifyStorefrontAccessToken,
+      "Content-Type": "application/json",
+      "X-Shopify-Storefront-Access-Token": shopifyStorefrontAccessToken,
     },
     body: JSON.stringify({ query }),
   })
@@ -577,7 +575,7 @@ const fetchPages = () => {
     .then((data) => {
       const pages = data.data.pages.edges
         .map((edge) => edge.node)
-        .filter((page) => page.metafield && page.metafield.value === 'true');
+        .filter((page) => page.metafield && page.metafield.value === "true");
       return pages;
     });
 };
@@ -585,7 +583,7 @@ const fetchPages = () => {
 // Function to fetch and display pages
 function displayPages(selectedConcern) {
   // Clear the current contents of skinConcernsResults
-  skinConcernsResults.innerHTML = '';
+  skinConcernsResults.innerHTML = "";
 
   // Start the animation with opacity 0
   gsap.set(skinConcernsResults, { opacity: 0 });
@@ -625,10 +623,10 @@ function displayPages(selectedConcern) {
 
       // Check if there are any related pages
       if (relatedPages.length === 0) {
-        const message = document.createElement('p');
-        message.classList.add('main-body', 'concerns-section__empty-res-msg');
+        const message = document.createElement("p");
+        message.classList.add("main-body", "concerns-section__empty-res-msg");
         message.textContent =
-          'We do not offer any treatments for this skin concern at this time. Please check for relevant products instead.';
+          "We do not offer any treatments for this skin concern at this time. Please check for relevant products instead.";
         skinConcernsResults.append(message);
         // Resume the animation after the data has been loaded and rendered
         animation.play();
@@ -640,43 +638,43 @@ function displayPages(selectedConcern) {
           page.metafields.skin_concerns_treatments.map(normalize);
         // Check if the page's skin concerns include the selected concern
         if (normalizedConcerns.includes(selectedConcern)) {
-          const card = document.createElement('div');
+          const card = document.createElement("div");
           card.className =
-            'concerns-section__card concerns-section__card--treatment embla__slide';
+            "concerns-section__card concerns-section__card--treatment embla__slide";
 
-          const info = document.createElement('div');
-          info.className = 'treatment-card__info';
+          const info = document.createElement("div");
+          info.className = "treatment-card__info";
 
-          const title = document.createElement('h4');
-          title.className = 'treatment-card__treatment';
+          const title = document.createElement("h4");
+          title.className = "treatment-card__treatment";
           title.textContent = page.title;
 
           let link;
           if (!page.metafields.booking_link_treatments) {
-            link = document.createElement('p');
-            link.textContent = 'Inquire Now';
-            link.classList.add('nurse-led-inquiry-trigger');
+            link = document.createElement("p");
+            link.textContent = "Inquire Now";
+            link.classList.add("nurse-led-inquiry-trigger");
             link.className = page.metafields.starting_rate_treatments
-              ? 'all-caps btn btn--primary treatment-card__btn'
-              : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
+              ? "all-caps btn btn--primary treatment-card__btn"
+              : "all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon";
             const { open } = createPopup(nurseLedId);
             link.onclick = open;
           } else {
-            link = document.createElement('a');
-            link.target = '_blank'; // This line makes the link open in a new window
+            link = document.createElement("a");
+            link.target = "_blank"; // This line makes the link open in a new window
             link.href = page.metafields.booking_link_treatments;
             link.className = page.metafields.starting_rate_treatments
-              ? 'all-caps btn btn--primary treatment-card__btn'
-              : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';
-            link.textContent = 'Book Now';
+              ? "all-caps btn btn--primary treatment-card__btn"
+              : "all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon";
+            link.textContent = "Book Now";
           }
 
-          const image = document.createElement('img');
-          image.className = 'treatment-card__image';
+          const image = document.createElement("img");
+          image.className = "treatment-card__image";
           image.src = page.metafields.featured_image_treatments;
-          image.width = '292';
-          image.height = '438';
-          image.loading = 'lazy';
+          image.width = "292";
+          image.height = "438";
+          image.loading = "lazy";
 
           info.append(title, link);
           card.append(info, image);
@@ -686,14 +684,14 @@ function displayPages(selectedConcern) {
       // Resume the animation after the data has been loaded and rendered
       animation.play();
     })
-    .catch((error) => console.error('Error:', error));
+    .catch((error) => console.error("Error:", error));
 }
 
 displayResults();
 
 // Add event listener to the products radio button
 if (productsRadio) {
-  productsRadio.addEventListener('change', function () {
+  productsRadio.addEventListener("change", function () {
     if (this.checked) {
       displayResults();
     }
@@ -702,7 +700,7 @@ if (productsRadio) {
 
 if (treatmentsRadio) {
   // Add event listener to the treatments radio button
-  treatmentsRadio.addEventListener('change', function () {
+  treatmentsRadio.addEventListener("change", function () {
     if (this.checked) {
       displayResults();
     }
