@@ -1,0 +1,234 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  color: var(--black);
+}
+
+.gift-card {
+  max-width: 600px;
+  width: 100%;
+  padding: 3rem;
+  text-align: center;
+}
+
+.gift-card__title {
+  margin-bottom: 2rem;
+}
+
+.gift-card__logo {
+  max-width: 200px;
+  margin: 0 auto 2rem;
+}
+
+.gift-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-card__label {
+  font-size: 1.4rem;
+}
+
+.gift-card__image-wrapper {
+  margin: 3rem auto;
+  max-width: 40rem;
+}
+
+.gift-card__image {
+  max-width: 100%;
+  height: auto;
+}
+
+.gift-card__qr-code {
+  margin: 3rem auto;
+  display: flex;
+  justify-content: center;
+}
+
+.gift-card__number {
+  font-size: 1.8rem;
+  text-align: center;
+  letter-spacing: 0.25rem;
+  margin: 2rem auto;
+  width: 100%;
+  max-width: 300px;
+  padding: 1rem;
+  border: 1px solid var(--regular-grey);
+  border-radius: var(--form-ui-radius);
+  color: var(--black);
+}
+
+.gift-card__copy-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.gift-card__buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 25rem;
+  margin: 2rem auto 0;
+}
+
+.gift-card__buttons > .btn {
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+/* Base styles for links and buttons */
+a,
+.btn {
+  color: var(--black);
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+a:hover,
+a:focus,
+.btn:hover,
+.btn:focus {
+  opacity: 0.8;
+}
+
+a:visited {
+  color: var(--black);
+}
+
+/* Button styles */
+.btn {
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: none;
+  padding: 1.5rem 3rem;
+  min-width: 12rem;
+  height: auto;
+  font-size: 1.5rem;
+  letter-spacing: 0.1rem;
+  line-height: calc(1 + 0.2 / var(--font-body-scale));
+  border-radius: var(--form-ui-radius);
+}
+
+/* Primary button */
+.btn--primary {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.btn--primary:hover,
+.btn--primary:focus,
+.btn--primary:visited {
+  color: var(--white);
+}
+
+/* Secondary button */
+.btn--secondary {
+  background-color: transparent;
+  border: var(--divider-width) solid var(--black);
+  color: var(--black);
+}
+
+.btn--secondary:hover,
+.btn--secondary:focus,
+.btn--secondary:visited {
+  color: var(--black);
+}
+
+/* Specific link styles */
+.gift-card__copy-link {
+  color: var(--white);
+}
+
+.gift_card__apple-wallet {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.badge--expired {
+  background-color: var(--error-red);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  border-radius: var(--form-ui-radius);
+  display: inline-block;
+}
+
+@media screen and (min-width: 750px) {
+  .gift-card {
+    padding: 5rem;
+  }
+
+  .gift-card__buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    max-width: none;
+  }
+
+  .gift-card__buttons > .btn {
+    width: auto;
+  }
+}
+
+.gift-card__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.gift-card__logo {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 2rem;
+}
+
+.gift-card__heading {
+  margin-bottom: 3rem;
+}
+
+.gift-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.gift-card__label {
+  font-size: 1.4rem;
+}
+
+@media screen and (max-width: 749px) {
+  .gift-card__header {
+    margin-bottom: 2rem;
+  }
+
+  .gift-card__logo {
+    margin-bottom: 3rem;
+  }
+
+  .gift-card__heading {
+    margin-bottom: 3rem;
+  }
+
+  .gift-card__price {
+    margin-bottom: 0.75rem;
+  }
+}
