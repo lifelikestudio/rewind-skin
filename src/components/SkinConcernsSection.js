@@ -69,6 +69,17 @@ const skinConcerns = document.querySelectorAll(
   ".scroll-select-type.concerns-section__skin-concern"
 );
 
+const getPriceDisplay = (variant) => {
+  const presentmentPrice = variant.presentmentPrices?.edges[0]?.node?.price;
+  const price = presentmentPrice || variant.price;
+  const priceValue = parseFloat(price.amount);
+  return {
+    amount:
+      priceValue % 1 === 0 ? priceValue.toFixed(0) : priceValue.toFixed(2),
+    currencyCode: price.currencyCode,
+  };
+};
+
 // Function to fetch and display products or treatments based on the checked radio button
 function displayResults() {
   // Get the active skin concern and normalize it
@@ -214,6 +225,16 @@ const fetchProducts = () => {
                 price {
                   amount
                   currencyCode
+                }
+                presentmentPrices(first: 1) {
+                  edges {
+                    node {
+                      price {
+                        amount
+                        currencyCode
+                      }
+                    }
+                  }
                 }
                 selectedOptions {
                   name
@@ -375,12 +396,8 @@ function displayProducts(selectedConcern) {
           addToBag.textContent = "Add to Bag";
 
           const price = document.createElement("span");
-          const priceValue = parseFloat(variant.price.amount);
-          const priceText =
-            priceValue % 1 === 0
-              ? `$${priceValue.toFixed(0)}`
-              : `$${priceValue.toFixed(2)}`;
-          price.textContent = `${priceText} ${variant.price.currencyCode}`;
+          const priceData = getPriceDisplay(variant);
+          price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
 
           button.append(addToBag, price);
           form.append(idInput, button);
@@ -493,12 +510,8 @@ function displayProducts(selectedConcern) {
             addToBag.textContent = "Add to Bag";
 
             const price = document.createElement("span");
-            const priceValue = parseFloat(variant.price.amount);
-            const priceText =
-              priceValue % 1 === 0
-                ? `$${priceValue.toFixed(0)}`
-                : `$${priceValue.toFixed(2)}`;
-            price.textContent = `${priceText} ${variant.price.currencyCode}`;
+            const priceData = getPriceDisplay(variant);
+            price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
 
             button.append(addToBag, price);
             form.append(idInput, button);
