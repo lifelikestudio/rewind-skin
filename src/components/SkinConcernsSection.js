@@ -135,7 +135,7 @@ skinConcerns.forEach((skinConcern) => {
 
 // Shopify API call
 const shopifyStorefrontAccessToken = "d20d0cde1f02fc638e0611331c45a289";
-const shopifyStoreUrl = "https://rewind-skin-co.myshopify.com";
+const shopifyStoreUrl = "https://rewind-skin-co.myshopify.com/api/2024-01";
 
 const metafields = [
   "featured_image_treatments",
@@ -159,7 +159,7 @@ const fetchMetafield = (pageId, metafieldKey) => {
     }
   `;
 
-  return fetch(`${shopifyStoreUrl}/api/2021-07/graphql.json`, {
+  return fetch(`${shopifyStoreUrl}/graphql.json`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -195,7 +195,7 @@ const fetchProducts = () => {
           images(first: 10) {
             edges {
               node {
-                originalSrc
+                url
               }
             }
           }
@@ -209,9 +209,9 @@ const fetchProducts = () => {
                 title
                 availableForSale
                 image {
-                  originalSrc
+                  url
                 }
-                priceV2 {
+                price {
                   amount
                   currencyCode
                 }
@@ -228,7 +228,7 @@ const fetchProducts = () => {
   }
     `;
 
-  return fetch(`${shopifyStoreUrl}/api/2021-07/graphql.json`, {
+  return fetch(`${shopifyStoreUrl}/graphql.json`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -375,12 +375,12 @@ function displayProducts(selectedConcern) {
           addToBag.textContent = "Add to Bag";
 
           const price = document.createElement("span");
-          const priceValue = parseFloat(variant.priceV2.amount);
+          const priceValue = parseFloat(variant.price.amount);
           const priceText =
             priceValue % 1 === 0
               ? `$${priceValue.toFixed(0)}`
               : `$${priceValue.toFixed(2)}`;
-          price.textContent = `${priceText} ${variant.priceV2.currencyCode}`;
+          price.textContent = `${priceText} ${variant.price.currencyCode}`;
 
           button.append(addToBag, price);
           form.append(idInput, button);
@@ -414,7 +414,7 @@ function displayProducts(selectedConcern) {
 
           // Filter product images to find one that matches the criteria
           const matchingImage = product.images.edges.find((edge) => {
-            const imageUrl = edge.node.originalSrc;
+            const imageUrl = edge.node.url;
             return (
               imageUrl.includes("product-card") &&
               imageUrl.includes(firstVariantValue)
@@ -423,12 +423,12 @@ function displayProducts(selectedConcern) {
 
           // Determine the fallback image source: variant's image, or the product's first image if the variant has no image
           const fallbackImageSrc = variant.image
-            ? variant.image.originalSrc
-            : product.images.edges[0]?.node.originalSrc;
+            ? variant.image.url
+            : product.images.edges[0]?.node.url;
 
           // Use the matching image if found; otherwise, use the fallback image source
           const selectedImageSrc = matchingImage
-            ? matchingImage.node.originalSrc
+            ? matchingImage.node.url
             : fallbackImageSrc;
 
           const image = document.createElement("img");
@@ -493,12 +493,12 @@ function displayProducts(selectedConcern) {
             addToBag.textContent = "Add to Bag";
 
             const price = document.createElement("span");
-            const priceValue = parseFloat(variant.priceV2.amount);
+            const priceValue = parseFloat(variant.price.amount);
             const priceText =
               priceValue % 1 === 0
                 ? `$${priceValue.toFixed(0)}`
                 : `$${priceValue.toFixed(2)}`;
-            price.textContent = `${priceText} ${variant.priceV2.currencyCode}`;
+            price.textContent = `${priceText} ${variant.price.currencyCode}`;
 
             button.append(addToBag, price);
             form.append(idInput, button);
@@ -517,7 +517,7 @@ function displayProducts(selectedConcern) {
 
             // Filter product images to find one that matches the criteria
             const matchingImage = product.images.edges.find((edge) => {
-              const imageUrl = edge.node.originalSrc;
+              const imageUrl = edge.node.url;
               return (
                 imageUrl.includes("product-card") &&
                 imageUrl.includes(firstVariantValue)
@@ -526,12 +526,12 @@ function displayProducts(selectedConcern) {
 
             // Determine the fallback image source: variant's image, or the product's first image if the variant has no image
             const fallbackImageSrc = variant.image
-              ? variant.image.originalSrc
-              : product.images.edges[0]?.node.originalSrc;
+              ? variant.image.url
+              : product.images.edges[0]?.node.url;
 
             // Use the matching image if found; otherwise, use the fallback image source
             const selectedImageSrc = matchingImage
-              ? matchingImage.node.originalSrc
+              ? matchingImage.node.url
               : fallbackImageSrc;
 
             const image = document.createElement("img");
@@ -571,7 +571,7 @@ const fetchPages = () => {
     }
   `;
 
-  return fetch(`${shopifyStoreUrl}/api/2021-07/graphql.json`, {
+  return fetch(`${shopifyStoreUrl}/graphql.json`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
