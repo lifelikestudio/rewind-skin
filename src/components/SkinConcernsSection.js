@@ -43,6 +43,8 @@ const treatmentsRadio = document.querySelector(
 
 const skinConcernsResults = document.querySelector("#skin-concerns-results");
 
+const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
+
 // Function to normalize the skin concern strings
 function normalize(str) {
   // Convert to lowercase and remove leading/trailing whitespace
@@ -181,7 +183,7 @@ const fetchMetafield = (pageId, metafieldKey) => {
 
 const fetchProducts = () => {
   const query = `
-  {
+  query ($country: CountryCode = CA, $language: LanguageCode = EN) @inContext(country: $country, language: $language) {
     products(first: 250) {
       edges {
         node {
@@ -232,7 +234,13 @@ const fetchProducts = () => {
       "Content-Type": "application/json",
       "X-Shopify-Storefront-Access-Token": shopifyStorefrontAccessToken,
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({
+      query,
+      variables: {
+        country: countryCode,
+        language: "EN",
+      },
+    }),
   })
     .then((response) => response.json())
     .then((data) => {

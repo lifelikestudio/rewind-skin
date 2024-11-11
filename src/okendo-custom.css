@@ -1,0 +1,278 @@
+.okeReviews[data-oke-container].oke-w,
+div.okeReviews.oke-w {
+  max-width: none !important;
+}
+
+.oke-w-ratingAverageModule-rating {
+  font-weight: 400 !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-navBar-item,
+div.okeReviews .oke-w-navBar-item {
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.14em !important;
+  border-bottom-width: 1.6px !important;
+  padding-bottom: 5px !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-reviews-controls,
+div.okeReviews .oke-w-reviews-controls {
+  justify-content: flex-end !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-reviews-count,
+div.okeReviews .oke-w-reviews-count {
+  display: none !important;
+}
+
+.okeReviews[data-oke-container]
+  .oke-button:not(.oke-is-loading):not(.oke-is-active):hover,
+div.okeReviews .oke-button:not(.oke-is-loading):not(.oke-is-active):hover {
+  box-shadow: none;
+}
+
+.okeReviews[data-oke-container] .oke-button-text,
+div.okeReviews .oke-button-text {
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.14em !important;
+  font-size: 12px !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-reviews-filterToggle .oke-icon,
+div.okeReviews .oke-w-reviews-filterToggle .oke-icon {
+  display: none !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-textSearchFilter-input,
+div.okeReviews .oke-w-textSearchFilter-input {
+  border-radius: 100px !important;
+  font-weight: 300 !important;
+  letter-spacing: -0.005em !important;
+  border-color: #000 !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-filterOption-label,
+div.okeReviews .oke-w-filterOption-label {
+  border-width: 0.8px !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-filter-title,
+div.okeReviews .oke-w-filter-title {
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.14em !important;
+  font-size: 12px !important;
+}
+
+.okeReviews[data-oke-container] label,
+div.okeReviews label {
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.14em !important;
+  font-size: 12px !important;
+  margin-right: 8px !important;
+}
+
+.okeReviews[data-oke-container] .oke-select,
+div.okeReviews .oke-select {
+  font-weight: 300 !important;
+  letter-spacing: -0.005em !important;
+  font-size: 12px !important;
+  padding-left: 0px !important;
+  padding-right: 8px !important;
+}
+
+@media (max-width: 768px) {
+  .oke-is-small .oke-w-header-content-module {
+    justify-content: flex-start !important;
+    text-align: left !important;
+  }
+}
+
+.oke-state-empty-text {
+  font-weight: 300 !important;
+  letter-spacing: -0.005em !important;
+}
+
+.okeReviews[data-oke-container] .oke-button,
+div.okeReviews .oke-button {
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.14em !important;
+  font-size: 12px !important;
+}
+
+div.okeReviews .oke-is-large .oke-w-review--minimalBorders .oke-w-review-side,
+.okeReviews[data-oke-container]
+  .oke-is-medium
+  .oke-w-review--minimalBorders
+  .oke-w-review-side,
+div.okeReviews .oke-is-medium .oke-w-review--minimalBorders .oke-w-review-side,
+.okeReviews[data-oke-container] .oke-w-review-side,
+div.okeReviews .oke-w-review-side {
+  border: none !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-writeReview::before,
+div.okeReviews .oke-w-writeReview::before {
+  content: "" !important;
+  display: none !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-review-side-expandContent,
+div.okeReviews .oke-w-review-side-expandContent {
+  display: none !important;
+}
+
+.oke-helpful-label {
+  display: none !important;
+}
+
+.okeReviews[data-oke-container] .oke-helpful-vote,
+div.okeReviews .oke-helpful-vote {
+  margin-left: 0px !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-review-footer,
+div.okeReviews .oke-w-review-footer {
+  justify-content: flex-end !important;
+  margin-top: 24px !important;
+}
+
+.okeReviews[data-oke-container] .oke-helpful-vote-button,
+div.okeReviews .oke-helpful-vote-button {
+  font-size: 16px !important;
+}
+
+.oke-w-reviewer-name {
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.005em !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-reviewer-verified,
+div.okeReviews .oke-w-reviewer-verified {
+  font-weight: 400 !important;
+  letter-spacing: -0.005em !important;
+  margin-top: 1px !important;
+}
+
+.okeReviews[data-oke-container] .oke-reviewContent-title,
+div.okeReviews .oke-reviewContent-title {
+  letter-spacing: -0.005em !important;
+  margin-top: 10px !important;
+}
+
+.okeReviews[data-oke-container] p,
+div.okeReviews p {
+  margin: 0px !important;
+  line-height: 1.8em !important;
+  letter-spacing: -0.005em !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-review-main,
+div.okeReviews .oke-w-review-main {
+  padding: 0px !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-reviews-list-item,
+div.okeReviews .oke-w-reviews-list-item {
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
+}
+
+.oke-sr-count {
+  font-size: 16px !important;
+  line-height: 1em !important;
+}
+
+@media screen and (max-width: 374px) {
+  .oke-sr-count {
+    font-size: 14px !important;
+  }
+}
+
+.okeReviews[data-oke-container] .oke-w-reviews-list-item:last-child,
+div.okeReviews .oke-w-reviews-list-item:last-child {
+  border: none !important;
+}
+
+.okeReviews[data-oke-container] .oke-state,
+div.okeReviews .oke-state {
+  border: none !important;
+}
+
+.oke-w-reviewReply-date,
+.oke-qw-question-main-date,
+.oke-qw-answer-main-date {
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  letter-spacing: -0.005em !important;
+  line-height: 1em !important;
+  height: 12px !important;
+  margin-bottom: 12px !important;
+}
+
+.okeReviews[data-oke-container] .oke-bodyText,
+div.okeReviews .oke-bodyText {
+  margin-bottom: 24px !important;
+}
+
+.oke-qw-question-main-author,
+.oke-qw-answer-main-author {
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.005em !important;
+  line-height: 1em !important;
+  height: 12px !important;
+  margin-bottom: 12px !important;
+}
+
+.okeReviews[data-oke-container] .oke-helpful,
+div.okeReviews .oke-helpful {
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+.oke-w-reviewReply-title {
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.005em !important;
+  line-height: 1em !important;
+  margin-bottom: 8px !important;
+}
+
+.oke-w-reviewReply-body {
+  font-weight: 300 !important;
+  font-size: 14px !important;
+  letter-spacing: -0.005em !important;
+  line-height: 1.8em !important;
+}
+
+#oke-sortSelect--questions {
+  padding-right: 24px !important;
+}
+
+.oke-qw-answer {
+  border: none !important;
+}
+
+.oke-qw-question-avatar {
+  display: none !important;
+}
+
+.okeReviews[data-oke-container] .oke-w-review-reply,
+div.okeReviews .oke-w-review-reply {
+  border-top: none !important;
+}
+
+.oke-w-reviewer-avatar {
+  display: none !important;
+}
+
+.oke-external-provider {
+  margin-right: 16px !important;
+}
