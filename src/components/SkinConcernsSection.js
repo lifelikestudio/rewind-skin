@@ -190,7 +190,55 @@ const fetchMetafield = (pageId, metafieldKey) => {
     });
 };
 
+const fetchAvailableCountries = () => {
+  console.log("Starting fetchAvailableCountries");
+  console.log("Current country code:", countryCode);
+
+  const query = `
+    query {
+      localization {
+        availableCountries {
+          currency {
+            isoCode
+            name
+            symbol
+          }
+          isoCode
+          name
+        }
+      }
+    }
+  `;
+
+  return fetch(`${shopifyStoreUrl}/graphql.json`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Shopify-Storefront-Access-Token": shopifyStorefrontAccessToken,
+    },
+    body: JSON.stringify({ query }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Available Countries Response:", data);
+
+      // Debug available currencies for current country
+      const currentCountry = data.data?.localization?.availableCountries.find(
+        (country) => country.isoCode === countryCode
+      );
+      console.log("Current country details:", currentCountry);
+
+      return data;
+    })
+    .catch((error) => {
+      console.error("Error fetching available countries:", error);
+      throw error;
+    });
+};
+
 const fetchProducts = () => {
+  console.log("Starting fetchProducts");
+  console.log("Using country code:", countryCode);
   const query = `
   query ($country: CountryCode = CA, $language: LanguageCode = EN) @inContext(country: $country, language: $language) {
     products(first: 250) {
@@ -201,6 +249,16 @@ const fetchProducts = () => {
           handle
           vendor
           description
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+            maxVariantPrice {
+              amount
+              currencyCode
+            }
+          }
           images(first: 10) {
             edges {
               node {
@@ -237,42 +295,53 @@ const fetchProducts = () => {
   }
     `;
 
-  return fetch(`${shopifyStoreUrl}/graphql.json`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Shopify-Storefront-Access-Token": shopifyStorefrontAccessToken,
-    },
-    body: JSON.stringify({
-      query,
-      variables: {
+  return fetchAvailableCountries()
+    .then(() => {
+      console.log("Fetching products with context:", {
         country: countryCode,
         language: "EN",
-      },
-    }),
-  })
+      });
+
+      return fetch(`${shopifyStoreUrl}/graphql.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Storefront-Access-Token": shopifyStorefrontAccessToken,
+        },
+        body: JSON.stringify({
+          query,
+          variables: {
+            country: countryCode,
+            language: "EN",
+          },
+        }),
+      });
+    })
     .then((response) => response.json())
     .then((data) => {
-      // Add error logging
-      console.log("API Response:", data);
+      console.log("Products Response:", data);
 
-      // Check for errors in the response
       if (data.errors) {
         console.error("GraphQL Errors:", data.errors);
         return [];
       }
 
-      // Check if we have the expected data structure
       if (!data.data || !data.data.products) {
         console.error("Unexpected data structure:", data);
         return [];
       }
-      const products = data.data.products.edges.map((edge) => {
-        const product = edge.node;
-        // Include logic here to process each product's variants to extract the size option
-        return product;
-      });
-      return products;
+
+      // Debug first product's pricing
+      const firstProduct = data.data.products.edges[0]?.node;
+      if (firstProduct) {
+        console.log("First product pricing:", {
+          title: firstProduct.title,
+          priceRange: firstProduct.priceRange,
+          firstVariantPrice: firstProduct.variants.edges[0]?.node.price,
+        });
+      }
+
+      return data.data.products.edges.map((edge) => edge.node);
     })
     .catch((error) => {
       console.error("Fetch Error:", error);
