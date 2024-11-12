@@ -7,10 +7,26 @@ import { createPopup, nurseLedId } from "./Utility/Forms";
 const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
 
 function shuffleArray(array) {
+  // First do a basic shuffle
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+
+  // Then ensure no adjacent vendors
+  for (let i = 1; i < array.length; i++) {
+    if (array[i].vendor === array[i - 1].vendor) {
+      // Look for the next product with a different vendor
+      for (let j = i + 1; j < array.length; j++) {
+        if (array[j].vendor !== array[i - 1].vendor) {
+          // Swap the products
+          [array[i], array[j]] = [array[j], array[i]];
+          break;
+        }
+      }
+    }
+  }
+
   return array;
 }
 
