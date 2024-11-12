@@ -432,31 +432,44 @@ function displayProducts(selectedConcern) {
           //   card.href = buttonDiv.dataset.url;
           //   card.append(info, buttonDiv);
           // } else {}
-          const form = document.createElement("form");
-          form.action = "/cart/add";
-          form.method = "post";
-          form.className = "product-card__form";
+          if (
+            product.vendor.toLowerCase() === "biologique recherche" &&
+            countryCode === "US"
+          ) {
+            const buttonDiv = document.createElement("div");
+            buttonDiv.className =
+              "all-caps btn btn--primary product-card__btn product-card__btn--icon";
+            buttonDiv.textContent = "Exclusive to Canada";
+            // Make the button unclickable by styling it differently
+            buttonDiv.style.cursor = "default";
+            card.append(info, buttonDiv);
+          } else {
+            const form = document.createElement("form");
+            form.action = "/cart/add";
+            form.method = "post";
+            form.className = "product-card__form";
 
-          const idInput = document.createElement("input");
-          idInput.type = "hidden";
-          idInput.name = "id";
-          idInput.value = variantId;
+            const idInput = document.createElement("input");
+            idInput.type = "hidden";
+            idInput.name = "id";
+            idInput.value = variantId;
 
-          const button = document.createElement("button");
-          button.className = "all-caps btn btn--primary product-card__btn";
+            const button = document.createElement("button");
+            button.className = "all-caps btn btn--primary product-card__btn";
 
-          const addToBag = document.createElement("span");
-          addToBag.textContent = "Add to Bag";
+            const addToBag = document.createElement("span");
+            addToBag.textContent = "Add to Bag";
 
-          const price = document.createElement("span");
-          const priceData = getPriceDisplay(variant);
-          price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
+            const price = document.createElement("span");
+            const priceData = getPriceDisplay(variant);
+            price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
 
-          button.append(addToBag, price);
-          form.append(idInput, button);
-          attachEventListenersToProduct(form); // Attach the event listeners to the product form
+            button.append(addToBag, price);
+            form.append(idInput, button);
+            attachEventListenersToProduct(form);
 
-          card.append(info, form);
+            card.append(info, form);
+          }
 
           // Assuming 'product' is already defined and contains the product information
           // Assuming 'variant' is defined and represents the currently processed variant
@@ -546,31 +559,44 @@ function displayProducts(selectedConcern) {
             //   card.href = buttonDiv.dataset.url;
             //   card.append(info, buttonDiv);
             // } else {}
-            const form = document.createElement("form");
-            form.action = "/cart/add";
-            form.method = "post";
-            form.className = "product-card__form";
+            if (
+              product.vendor.toLowerCase() === "biologique recherche" &&
+              countryCode === "US"
+            ) {
+              const buttonDiv = document.createElement("div");
+              buttonDiv.className =
+                "all-caps btn btn--primary product-card__btn product-card__btn--icon";
+              buttonDiv.textContent = "Exclusive to Canada";
+              // Make the button unclickable by styling it differently
+              buttonDiv.style.cursor = "default";
+              card.append(info, buttonDiv);
+            } else {
+              const form = document.createElement("form");
+              form.action = "/cart/add";
+              form.method = "post";
+              form.className = "product-card__form";
 
-            const idInput = document.createElement("input");
-            idInput.type = "hidden";
-            idInput.name = "id";
-            idInput.value = variantId;
+              const idInput = document.createElement("input");
+              idInput.type = "hidden";
+              idInput.name = "id";
+              idInput.value = variantId;
 
-            const button = document.createElement("button");
-            button.className = "all-caps btn btn--primary product-card__btn";
+              const button = document.createElement("button");
+              button.className = "all-caps btn btn--primary product-card__btn";
 
-            const addToBag = document.createElement("span");
-            addToBag.textContent = "Add to Bag";
+              const addToBag = document.createElement("span");
+              addToBag.textContent = "Add to Bag";
 
-            const price = document.createElement("span");
-            const priceData = getPriceDisplay(variant);
-            price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
+              const price = document.createElement("span");
+              const priceData = getPriceDisplay(variant);
+              price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
 
-            button.append(addToBag, price);
-            form.append(idInput, button);
-            attachEventListenersToProduct(form); // Attach the event listeners to the product form
+              button.append(addToBag, price);
+              form.append(idInput, button);
+              attachEventListenersToProduct(form);
 
-            card.append(info, form);
+              card.append(info, form);
+            }
 
             // Assuming 'product' is already defined and contains the product information
             // Assuming 'variant' is defined and represents the currently processed variant
