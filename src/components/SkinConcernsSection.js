@@ -13,12 +13,18 @@ function shuffleArray(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 
-  // Then ensure no adjacent vendors
+  // Then ensure no adjacent vendors or product variants
   for (let i = 1; i < array.length; i++) {
-    if (array[i].vendor === array[i - 1].vendor) {
-      // Look for the next product with a different vendor
+    if (
+      array[i].vendor === array[i - 1].vendor ||
+      array[i].handle === array[i - 1].handle
+    ) {
+      // Look for the next product with a different vendor and handle
       for (let j = i + 1; j < array.length; j++) {
-        if (array[j].vendor !== array[i - 1].vendor) {
+        if (
+          array[j].vendor !== array[i - 1].vendor &&
+          array[j].handle !== array[i - 1].handle
+        ) {
           // Swap the products
           [array[i], array[j]] = [array[j], array[i]];
           break;
