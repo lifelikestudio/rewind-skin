@@ -7,48 +7,52 @@ import { createPopup, nurseLedId } from "./Utility/Forms";
 const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
 
 function shuffleArray(array) {
-  // Group products by handle
-  const productGroups = {};
-  array.forEach((item) => {
-    if (!productGroups[item.handle]) {
-      productGroups[item.handle] = [];
+  // First do a basic shuffle
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  // First pass: Fix handle (variant) adjacencies
+  for (let i = 1; i < array.length; i++) {
+    if (array[i].handle === array[i - 1].handle) {
+      // Find next position that doesn't create handle adjacencies
+      for (let j = i + 1; j < array.length; j++) {
+        if (
+          array[j].handle !== array[i - 1].handle &&
+          (j === array.length - 1 || array[j + 1]?.handle !== array[i].handle)
+        ) {
+          // Move the item to this position
+          const itemToMove = array[i];
+          array.splice(i, 1);
+          array.splice(j, 0, itemToMove);
+          break;
+        }
+      }
     }
-    productGroups[item.handle].push(item);
-  });
+  }
 
-  // Create a new array with products spaced out
-  const result = new Array(array.length);
-  let currentIndex = 0;
-
-  // Place each group's items with spacing
-  Object.values(productGroups).forEach((group) => {
-    group.forEach((item) => {
-      // Find next available slot that doesn't create adjacencies
-      while (
-        (currentIndex < array.length && result[currentIndex]) ||
-        (currentIndex > 0 &&
-          result[currentIndex - 1]?.handle === item.handle) ||
-        (currentIndex < array.length - 1 &&
-          result[currentIndex + 1]?.handle === item.handle)
-      ) {
-        currentIndex++;
+  // Second pass: Try to fix vendor adjacencies where possible
+  for (let i = 1; i < array.length; i++) {
+    if (array[i].vendor === array[i - 1].vendor) {
+      // Find next position that doesn't create handle or vendor adjacencies
+      for (let j = i + 1; j < array.length; j++) {
+        // Make sure we don't create handle adjacencies while fixing vendor
+        if (
+          array[j].vendor !== array[i - 1].vendor &&
+          array[j].handle !== array[i - 1].handle &&
+          array[j].handle !== array[i].handle
+        ) {
+          const itemToMove = array[i];
+          array.splice(i, 1);
+          array.splice(j, 0, itemToMove);
+          break;
+        }
       }
+    }
+  }
 
-      // If we reached the end, find first available slot
-      if (currentIndex >= array.length) {
-        currentIndex = result.findIndex(
-          (slot, i) =>
-            !slot &&
-            (!result[i - 1] || result[i - 1].handle !== item.handle) &&
-            (!result[i + 1] || result[i + 1].handle !== item.handle)
-        );
-      }
-
-      result[currentIndex] = item;
-    });
-  });
-
-  return result;
+  return array;
 }
 
 // Selectors
