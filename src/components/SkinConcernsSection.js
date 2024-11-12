@@ -70,13 +70,11 @@ const skinConcerns = document.querySelectorAll(
 );
 
 const getPriceDisplay = (variant) => {
-  const presentmentPrice = variant.presentmentPrices?.edges[0]?.node?.price;
-  const price = presentmentPrice || variant.price;
-  const priceValue = parseFloat(price.amount);
+  const priceValue = parseFloat(variant.price.amount);
   return {
     amount:
       priceValue % 1 === 0 ? priceValue.toFixed(0) : priceValue.toFixed(2),
-    currencyCode: price.currencyCode,
+    currencyCode: variant.price.currencyCode,
   };
 };
 
@@ -225,16 +223,6 @@ const fetchProducts = () => {
                 price {
                   amount
                   currencyCode
-                }
-                presentmentPrices(first: 1) {
-                  edges {
-                    node {
-                      price {
-                        amount
-                        currencyCode
-                      }
-                    }
-                  }
                 }
                 selectedOptions {
                   name
