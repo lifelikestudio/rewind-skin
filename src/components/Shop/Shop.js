@@ -27,16 +27,16 @@ const Shop = () => {
     '.collections__products'
   );
   // setup product card click event
-  if (collectionsProductsElement) {
-    collectionsProductsElement.addEventListener('click', function (event) {
-      const iconButton = event.target.closest('.product-card__btn--icon');
-      if (iconButton) {
-        event.preventDefault();
-        const dataUrl = iconButton.getAttribute('data-url');
-        window.location.href = `/account/login?checkout_url=${dataUrl}`;
-      }
-    });
-  }
+  // if (collectionsProductsElement) {
+  //   collectionsProductsElement.addEventListener('click', function (event) {
+  //     const iconButton = event.target.closest('.product-card__btn--icon');
+  //     if (iconButton) {
+  //       event.preventDefault();
+  //       const dataUrl = iconButton.getAttribute('data-url');
+  //       window.location.href = `/account/login?checkout_url=${dataUrl}`;
+  //     }
+  //   });
+  // }
 
   let collectionHandle;
   if (collectionsProductsElement) {
