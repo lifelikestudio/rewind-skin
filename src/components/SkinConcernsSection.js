@@ -490,7 +490,7 @@ function displayProducts(selectedConcern) {
 
         if (
           product.vendor.toLowerCase() === "biologique recherche" &&
-          countryCode === "US"
+          countryCode !== "CA"
         ) {
           const buttonDiv = document.createElement("div");
           buttonDiv.className =

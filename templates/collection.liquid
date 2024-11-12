@@ -509,14 +509,14 @@
                   {% endif %}
                 </h2>
               </div>
-              {% comment %}
+              
                 {% assign downcased_vendor = product.vendor | strip | downcase %}
-                {% if downcased_vendor == 'biologique recherche' and customer == null %}
-                  <div class="all-caps btn btn--primary product-card__btn product-card__btn--icon" data-url="{{ variant_url }}">
-                    Login to Shop
+                {% if downcased_vendor == 'biologique recherche' and localization.country.code != 'CA' %}
+                  <div class="all-caps btn btn--primary product-card__btn product-card__btn--icon">
+                    Exclusive to Canada
                   </div>
                 {% else %} {% endif %}
-              {% endcomment %}
+              
               {% if variant.available %}
                 <form
                   action="/cart/add"
