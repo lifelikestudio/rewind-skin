@@ -7,31 +7,11 @@ import { createPopup, nurseLedId } from "./Utility/Forms";
 const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
 
 function shuffleArray(array) {
-  // Debug initial state
-  console.log(
-    "Initial array:",
-    array.map((p) => ({
-      title: p.title,
-      handle: p.handle,
-      variant: p.currentVariant?.title || "single variant",
-    }))
-  );
-
   // First do a basic shuffle
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
-
-  // Debug after initial shuffle
-  console.log(
-    "After initial shuffle:",
-    array.map((p) => ({
-      title: p.title,
-      handle: p.handle,
-      variant: p.currentVariant?.title || "single variant",
-    }))
-  );
 
   // First pass: Fix handle (variant) adjacencies
   for (let i = 1; i < array.length; i++) {
@@ -51,16 +31,6 @@ function shuffleArray(array) {
       }
     }
   }
-
-  // Debug final state
-  console.log(
-    "Final array:",
-    array.map((p) => ({
-      title: p.title,
-      handle: p.handle,
-      variant: p.currentVariant?.title || "single variant",
-    }))
-  );
 
   return array;
 }
@@ -526,7 +496,7 @@ function displayProducts(selectedConcern) {
           buttonDiv.className =
             "all-caps btn btn--primary product-card__btn product-card__btn--icon";
           buttonDiv.textContent = "Exclusive to Canada";
-          buttonDiv.style.cursor = "default";
+          // buttonDiv.style.cursor = "default";
           card.append(info, buttonDiv);
         } else {
           const form = document.createElement("form");
