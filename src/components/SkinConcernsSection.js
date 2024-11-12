@@ -7,84 +7,60 @@ import { createPopup, nurseLedId } from "./Utility/Forms";
 const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
 
 function shuffleArray(array) {
+  // Debug initial state
+  console.log(
+    "Initial array:",
+    array.map((p) => ({
+      title: p.title,
+      handle: p.handle,
+      variant: p.currentVariant?.title || "single variant",
+    }))
+  );
+
   // First do a basic shuffle
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
 
+  // Debug after initial shuffle
+  console.log(
+    "After initial shuffle:",
+    array.map((p) => ({
+      title: p.title,
+      handle: p.handle,
+      variant: p.currentVariant?.title || "single variant",
+    }))
+  );
+
   // First pass: Fix handle (variant) adjacencies
   for (let i = 1; i < array.length; i++) {
     if (array[i].handle === array[i - 1].handle) {
-      console.log("Found adjacent variants:", {
-        prev: {
-          title: array[i - 1].title,
-          handle: array[i - 1].handle,
-          variant: array[i - 1].currentVariant?.title || "single variant",
-        },
-        current: {
-          title: array[i].title,
-          handle: array[i].handle,
-          variant: array[i].currentVariant?.title || "single variant",
-        },
-      });
-
       // Find next position that doesn't create handle adjacencies
-      let foundSpot = false;
       for (let j = i + 1; j < array.length; j++) {
         if (
           array[j].handle !== array[i - 1].handle &&
           (j === array.length - 1 || array[j + 1]?.handle !== array[i].handle)
         ) {
-          console.log("Moving variant to position", j, {
-            moving: {
-              title: array[i].title,
-              handle: array[i].handle,
-              variant: array[i].currentVariant?.title || "single variant",
-            },
-            destination: {
-              title: array[j].title,
-              handle: array[j].handle,
-              variant: array[j].currentVariant?.title || "single variant",
-            },
-          });
-
           // Move the item to this position
           const itemToMove = array[i];
           array.splice(i, 1);
           array.splice(j, 0, itemToMove);
-          foundSpot = true;
           break;
         }
       }
-
-      if (!foundSpot) {
-        console.log("Could not find spot to move variant:", {
-          title: array[i].title,
-          handle: array[i].handle,
-          variant: array[i].currentVariant?.title || "single variant",
-        });
-      }
     }
   }
 
-  // Log any remaining adjacencies after all attempts
-  for (let i = 1; i < array.length; i++) {
-    if (array[i].handle === array[i - 1].handle) {
-      console.log("Still have adjacent variants after shuffling:", {
-        prev: {
-          title: array[i - 1].title,
-          handle: array[i - 1].handle,
-          variant: array[i - 1].currentVariant?.title || "single variant",
-        },
-        current: {
-          title: array[i].title,
-          handle: array[i].handle,
-          variant: array[i].currentVariant?.title || "single variant",
-        },
-      });
-    }
-  }
+  // Debug final state
+  console.log(
+    "Final array:",
+    array.map((p) => ({
+      title: p.title,
+      handle: p.handle,
+      variant: p.currentVariant?.title || "single variant",
+    }))
+  );
 
   return array;
 }
@@ -404,13 +380,6 @@ const fetchProducts = () => {
         const product = edge.node;
         const variants = product.variants.edges;
 
-        // Debug what we're getting
-        console.log("Processing product:", {
-          title: product.title,
-          handle: product.handle,
-          variantCount: variants.length,
-        });
-
         // If product has only one variant, return it as a single item
         if (variants.length === 1) {
           return [product];
@@ -422,28 +391,12 @@ const fetchProducts = () => {
             ...product,
             currentVariant: variantEdge.node,
           };
-          // Debug what we're creating
-          console.log("Created variant item:", {
-            title: item.title,
-            handle: item.handle,
-            variantTitle: item.currentVariant.title,
-          });
+
           return item;
         });
       });
 
-      // Debug final array
-      console.log(
-        "Final products array:",
-        products.map((p) => ({
-          title: p.title,
-          handle: p.handle,
-          variantTitle: p.currentVariant?.title || "single variant",
-        }))
-      );
-
-      // Shuffle the flattened array
-      return shuffleArray(products);
+      return products;
 
       // Debug first product's pricing
       const firstProduct = data.data.products.edges[0]?.node;
@@ -493,7 +446,7 @@ function displayProducts(selectedConcern) {
     })
     .then((products) => {
       // Filter the products based on the selected skin concern
-      const relatedProducts = products.filter(
+      let relatedProducts = products.filter(
         (product) =>
           product.metafield &&
           JSON.parse(product.metafield.value)
@@ -501,274 +454,152 @@ function displayProducts(selectedConcern) {
             .includes(selectedConcern)
       );
 
-      // Check if there are any related pages
-      if (relatedProducts.length === 0) {
+      // Create array of all variants
+      let allVariants = [];
+      relatedProducts.forEach((product) => {
+        // Filter out the out-of-stock variants first
+        const inStockVariants = product.variants.edges.filter(
+          (variantEdge) => variantEdge.node.availableForSale
+        );
+
+        if (inStockVariants.length === 0) return;
+
+        if (inStockVariants.length === 1) {
+          allVariants.push({
+            ...product,
+            currentVariant: inStockVariants[0].node,
+          });
+        } else {
+          inStockVariants.forEach((variantEdge) => {
+            allVariants.push({
+              ...product,
+              currentVariant: variantEdge.node,
+            });
+          });
+        }
+      });
+
+      // Shuffle the variants array
+      allVariants = shuffleArray(allVariants);
+
+      // Check if there are any products
+      if (allVariants.length === 0) {
         const message = document.createElement("p");
         message.classList.add("main-body", "concerns-section__empty-res-msg");
         message.textContent =
           "We do not offer any products for this skin concern at this time. Please check for relevant treatments instead.";
         skinConcernsResults.append(message);
-        // Resume the animation after the data has been loaded and rendered
         animation.play();
         return;
       }
 
-      // Display the related products
-      relatedProducts.forEach((product) => {
-        // Fetch and display the products
-        // Filter out the out-of-stock variants
-        const inStockVariants = product.variants.edges.filter(
-          (variantEdge) => variantEdge.node.availableForSale
+      // Display the shuffled variants
+      allVariants.forEach((product) => {
+        const variant = product.currentVariant;
+        const card = document.createElement("a");
+        const variantId = variant.id.split("/").pop();
+        card.href = `/products/${product.handle}?variant=${variantId}`;
+        card.className =
+          "concerns-section__card concerns-section__card--product embla__slide";
+
+        const info = document.createElement("div");
+        info.className = "product-card__info";
+
+        const brand = document.createElement("p");
+        brand.className = "all-caps product-card__brand";
+        brand.textContent = product.vendor;
+
+        const title = document.createElement("h4");
+        title.className = "product-card__product";
+        title.textContent =
+          product.variants.edges.length === 1
+            ? product.title
+            : `${product.title} / ${variant.title}`;
+
+        info.append(brand, title);
+
+        if (
+          product.vendor.toLowerCase() === "biologique recherche" &&
+          countryCode === "US"
+        ) {
+          const buttonDiv = document.createElement("div");
+          buttonDiv.className =
+            "all-caps btn btn--primary product-card__btn product-card__btn--icon";
+          buttonDiv.textContent = "Exclusive to Canada";
+          buttonDiv.style.cursor = "default";
+          card.append(info, buttonDiv);
+        } else {
+          const form = document.createElement("form");
+          form.action = "/cart/add";
+          form.method = "post";
+          form.className = "product-card__form";
+
+          const idInput = document.createElement("input");
+          idInput.type = "hidden";
+          idInput.name = "id";
+          idInput.value = variantId;
+
+          const button = document.createElement("button");
+          button.className = "all-caps btn btn--primary product-card__btn";
+
+          const addToBag = document.createElement("span");
+          addToBag.textContent = "Add to Bag";
+
+          const price = document.createElement("span");
+          const priceData = getPriceDisplay(variant);
+          price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
+
+          button.append(addToBag, price);
+          form.append(idInput, button);
+          attachEventListenersToProduct(form);
+
+          card.append(info, form);
+        }
+
+        // Function to normalize option values
+        function normalizeOption(option) {
+          if (option.startsWith("$")) {
+            option = option.slice(1);
+          }
+          return option
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/gi, "-")
+            .toLowerCase()
+            .replace(/^-+|-+$/g, "");
+        }
+
+        const firstVariantValue = normalizeOption(
+          variant.selectedOptions[0]?.value
         );
 
-        // If there are no in-stock variants, don't render the product
-        if (inStockVariants.length === 0) {
-          return;
-        }
-
-        // If the product has only one variant, handle it as a single product
-        if (product.variants.edges.length === 1) {
-          const variant = product.variants.edges[0].node;
-          const card = document.createElement("a");
-          const variantId = variant.id.split("/").pop(); // Extract the actual ID
-          card.href = `/products/${product.handle}?variant=${variantId}`; // Use the actual ID
-          card.className =
-            "concerns-section__card concerns-section__card--product embla__slide";
-
-          const info = document.createElement("div");
-          info.className = "product-card__info";
-
-          const brand = document.createElement("p");
-          brand.className = "all-caps product-card__brand";
-          brand.textContent = product.vendor;
-
-          const title = document.createElement("h4");
-          title.className = "product-card__product";
-          title.textContent = product.title;
-
-          info.append(brand, title);
-
-          // if (
-          //   product.vendor.toLowerCase() === 'biologique recherche' &&
-          //   !isCustomerLoggedIn
-          // ) {
-          //   const buttonDiv = document.createElement('div');
-          //   buttonDiv.className =
-          //     'all-caps btn btn--primary product-card__btn product-card__btn--icon';
-          //   buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
-          //   buttonDiv.textContent = 'Login to Shop';
-          //   // Set the href attribute of the parent anchor to the URL in the data-url attribute
-          //   card.href = buttonDiv.dataset.url;
-          //   card.append(info, buttonDiv);
-          // } else {}
-          if (
-            product.vendor.toLowerCase() === "biologique recherche" &&
-            countryCode === "US"
-          ) {
-            const buttonDiv = document.createElement("div");
-            buttonDiv.className =
-              "all-caps btn btn--primary product-card__btn product-card__btn--icon";
-            buttonDiv.textContent = "Exclusive to Canada";
-            // Make the button unclickable by styling it differently
-            buttonDiv.style.cursor = "default";
-            card.append(info, buttonDiv);
-          } else {
-            const form = document.createElement("form");
-            form.action = "/cart/add";
-            form.method = "post";
-            form.className = "product-card__form";
-
-            const idInput = document.createElement("input");
-            idInput.type = "hidden";
-            idInput.name = "id";
-            idInput.value = variantId;
-
-            const button = document.createElement("button");
-            button.className = "all-caps btn btn--primary product-card__btn";
-
-            const addToBag = document.createElement("span");
-            addToBag.textContent = "Add to Bag";
-
-            const price = document.createElement("span");
-            const priceData = getPriceDisplay(variant);
-            price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
-
-            button.append(addToBag, price);
-            form.append(idInput, button);
-            attachEventListenersToProduct(form);
-
-            card.append(info, form);
-          }
-
-          // Assuming 'product' is already defined and contains the product information
-          // Assuming 'variant' is defined and represents the currently processed variant
-
-          // Function to normalize option values
-          function normalizeOption(option) {
-            // If the option starts with a dollar sign, remove it
-            if (option.startsWith("$")) {
-              option = option.slice(1);
-            }
-
-            return option
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-              .replace(/[^a-z0-9]+/gi, "-") // Replace all non-alphanumeric characters (including spaces) with a single dash
-              .toLowerCase() // Convert to lower case
-              .replace(/^-+|-+$/g, ""); // Trim leading and trailing dashes
-          }
-
-          // Assuming 'variant' is defined and represents the currently processed variant
-          // Select the first variant's value using the newly defined normalizeOption
-          const firstVariantValue = normalizeOption(
-            variant.selectedOptions[0]?.value
+        const matchingImage = product.images.edges.find((edge) => {
+          const imageUrl = edge.node.url;
+          return (
+            imageUrl.includes("product-card") &&
+            imageUrl.includes(firstVariantValue)
           );
+        });
 
-          // Filter product images to find one that matches the criteria
-          const matchingImage = product.images.edges.find((edge) => {
-            const imageUrl = edge.node.url;
-            return (
-              imageUrl.includes("product-card") &&
-              imageUrl.includes(firstVariantValue)
-            );
-          });
+        const fallbackImageSrc = variant.image
+          ? variant.image.url
+          : product.images.edges[0]?.node.url;
 
-          // Determine the fallback image source: variant's image, or the product's first image if the variant has no image
-          const fallbackImageSrc = variant.image
-            ? variant.image.url
-            : product.images.edges[0]?.node.url;
+        const selectedImageSrc = matchingImage
+          ? matchingImage.node.url
+          : fallbackImageSrc;
 
-          // Use the matching image if found; otherwise, use the fallback image source
-          const selectedImageSrc = matchingImage
-            ? matchingImage.node.url
-            : fallbackImageSrc;
+        const image = document.createElement("img");
+        image.className = "product-card__image";
+        image.src = selectedImageSrc;
+        image.width = "780";
+        image.height = "1170";
+        image.loading = "lazy";
 
-          const image = document.createElement("img");
-          image.className = "product-card__image";
-          image.src = selectedImageSrc;
-          image.width = "780";
-          image.height = "1170";
-          image.loading = "lazy";
-
-          // Append the image to the card and the card to the results container
-          card.append(image);
-          skinConcernsResults.append(card);
-        } else {
-          product.variants.edges.forEach((variantEdge) => {
-            const variant = variantEdge.node;
-            const card = document.createElement("a");
-            const variantId = variant.id.split("/").pop(); // Extract the actual ID
-            card.href = `/products/${product.handle}?variant=${variantId}`; // Use the actual ID
-            card.className =
-              "concerns-section__card concerns-section__card--product embla__slide";
-
-            const info = document.createElement("div");
-            info.className = "product-card__info";
-
-            const brand = document.createElement("p");
-            brand.className = "all-caps product-card__brand";
-            brand.textContent = product.vendor;
-
-            const title = document.createElement("h4");
-            title.className = "product-card__product";
-            title.textContent = `${product.title} / ${variant.title}`;
-
-            info.append(brand, title);
-
-            // if (
-            //   product.vendor.toLowerCase() === "biologique recherche" &&
-            //   !isCustomerLoggedIn
-            // ) {
-            //   const buttonDiv = document.createElement("div");
-            //   buttonDiv.className =
-            //     "all-caps btn btn--primary product-card__btn product-card__btn--icon";
-            //   buttonDiv.dataset.url = `/account/login?checkout_url=/products/${product.handle}?variant=${variantId}`;
-            //   buttonDiv.textContent = "Login to Shop";
-            //   // Set the href attribute of the parent anchor to the URL in the data-url attribute
-            //   card.href = buttonDiv.dataset.url;
-            //   card.append(info, buttonDiv);
-            // } else {}
-            if (
-              product.vendor.toLowerCase() === "biologique recherche" &&
-              countryCode === "US"
-            ) {
-              const buttonDiv = document.createElement("div");
-              buttonDiv.className =
-                "all-caps btn btn--primary product-card__btn product-card__btn--icon";
-              buttonDiv.textContent = "Exclusive to Canada";
-              // Make the button unclickable by styling it differently
-              buttonDiv.style.cursor = "default";
-              card.append(info, buttonDiv);
-            } else {
-              const form = document.createElement("form");
-              form.action = "/cart/add";
-              form.method = "post";
-              form.className = "product-card__form";
-
-              const idInput = document.createElement("input");
-              idInput.type = "hidden";
-              idInput.name = "id";
-              idInput.value = variantId;
-
-              const button = document.createElement("button");
-              button.className = "all-caps btn btn--primary product-card__btn";
-
-              const addToBag = document.createElement("span");
-              addToBag.textContent = "Add to Bag";
-
-              const price = document.createElement("span");
-              const priceData = getPriceDisplay(variant);
-              price.textContent = `$${priceData.amount} ${priceData.currencyCode}`;
-
-              button.append(addToBag, price);
-              form.append(idInput, button);
-              attachEventListenersToProduct(form);
-
-              card.append(info, form);
-            }
-
-            // Assuming 'product' is already defined and contains the product information
-            // Assuming 'variant' is defined and represents the currently processed variant
-
-            // Select the first variant's value
-            const firstVariantValue = variant.selectedOptions[0]?.value
-              .trim()
-              .toLowerCase()
-              .replace(/\s+/g, "-"); // Normalize the value by making it lowercase and replacing spaces with '-'
-
-            // Filter product images to find one that matches the criteria
-            const matchingImage = product.images.edges.find((edge) => {
-              const imageUrl = edge.node.url;
-              return (
-                imageUrl.includes("product-card") &&
-                imageUrl.includes(firstVariantValue)
-              );
-            });
-
-            // Determine the fallback image source: variant's image, or the product's first image if the variant has no image
-            const fallbackImageSrc = variant.image
-              ? variant.image.url
-              : product.images.edges[0]?.node.url;
-
-            // Use the matching image if found; otherwise, use the fallback image source
-            const selectedImageSrc = matchingImage
-              ? matchingImage.node.url
-              : fallbackImageSrc;
-
-            const image = document.createElement("img");
-            image.className = "product-card__image";
-            image.src = selectedImageSrc;
-            image.width = "780";
-            image.height = "1170";
-            image.loading = "lazy";
-
-            // Append the image to the card and the card to the results container
-            card.append(image);
-            skinConcernsResults.append(card);
-          });
-        }
+        card.append(image);
+        skinConcernsResults.append(card);
       });
-      // Resume the animation after the data has been loaded and rendered
+
       animation.play();
     })
     .catch((error) => console.error("Error:", error));
