@@ -33,6 +33,27 @@ function shuffleArray(array) {
     }
   }
 
+  // Add a final check to verify no adjacents
+  for (let i = 1; i < array.length; i++) {
+    if (
+      array[i].vendor === array[i - 1].vendor ||
+      array[i].handle === array[i - 1].handle
+    ) {
+      console.log("Found adjacent items:", {
+        item1: {
+          vendor: array[i - 1].vendor,
+          handle: array[i - 1].handle,
+          title: array[i - 1].title,
+        },
+        item2: {
+          vendor: array[i].vendor,
+          handle: array[i].handle,
+          title: array[i].title,
+        },
+      });
+    }
+  }
+
   return array;
 }
 
