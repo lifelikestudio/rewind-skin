@@ -403,17 +403,43 @@ const fetchProducts = () => {
         const product = edge.node;
         const variants = product.variants.edges;
 
+        // Debug what we're getting
+        console.log("Processing product:", {
+          title: product.title,
+          handle: product.handle,
+          variantCount: variants.length,
+        });
+
         // If product has only one variant, return it as a single item
         if (variants.length === 1) {
           return [product];
         }
 
         // For multiple variants, create an item for each variant
-        return variants.map((variantEdge) => ({
-          ...product,
-          currentVariant: variantEdge.node,
-        }));
+        return variants.map((variantEdge) => {
+          const item = {
+            ...product,
+            currentVariant: variantEdge.node,
+          };
+          // Debug what we're creating
+          console.log("Created variant item:", {
+            title: item.title,
+            handle: item.handle,
+            variantTitle: item.currentVariant.title,
+          });
+          return item;
+        });
       });
+
+      // Debug final array
+      console.log(
+        "Final products array:",
+        products.map((p) => ({
+          title: p.title,
+          handle: p.handle,
+          variantTitle: p.currentVariant?.title || "single variant",
+        }))
+      );
 
       // Shuffle the flattened array
       return shuffleArray(products);
