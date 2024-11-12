@@ -16,39 +16,73 @@ function shuffleArray(array) {
   // First pass: Fix handle (variant) adjacencies
   for (let i = 1; i < array.length; i++) {
     if (array[i].handle === array[i - 1].handle) {
+      console.log("Found adjacent variants:", {
+        prev: {
+          title: array[i - 1].title,
+          handle: array[i - 1].handle,
+          variant: array[i - 1].currentVariant?.title || "single variant",
+        },
+        current: {
+          title: array[i].title,
+          handle: array[i].handle,
+          variant: array[i].currentVariant?.title || "single variant",
+        },
+      });
+
       // Find next position that doesn't create handle adjacencies
+      let foundSpot = false;
       for (let j = i + 1; j < array.length; j++) {
         if (
           array[j].handle !== array[i - 1].handle &&
           (j === array.length - 1 || array[j + 1]?.handle !== array[i].handle)
         ) {
+          console.log("Moving variant to position", j, {
+            moving: {
+              title: array[i].title,
+              handle: array[i].handle,
+              variant: array[i].currentVariant?.title || "single variant",
+            },
+            destination: {
+              title: array[j].title,
+              handle: array[j].handle,
+              variant: array[j].currentVariant?.title || "single variant",
+            },
+          });
+
           // Move the item to this position
           const itemToMove = array[i];
           array.splice(i, 1);
           array.splice(j, 0, itemToMove);
+          foundSpot = true;
           break;
         }
+      }
+
+      if (!foundSpot) {
+        console.log("Could not find spot to move variant:", {
+          title: array[i].title,
+          handle: array[i].handle,
+          variant: array[i].currentVariant?.title || "single variant",
+        });
       }
     }
   }
 
-  // Second pass: Try to fix vendor adjacencies where possible
+  // Log any remaining adjacencies after all attempts
   for (let i = 1; i < array.length; i++) {
-    if (array[i].vendor === array[i - 1].vendor) {
-      // Find next position that doesn't create handle or vendor adjacencies
-      for (let j = i + 1; j < array.length; j++) {
-        // Make sure we don't create handle adjacencies while fixing vendor
-        if (
-          array[j].vendor !== array[i - 1].vendor &&
-          array[j].handle !== array[i - 1].handle &&
-          array[j].handle !== array[i].handle
-        ) {
-          const itemToMove = array[i];
-          array.splice(i, 1);
-          array.splice(j, 0, itemToMove);
-          break;
-        }
-      }
+    if (array[i].handle === array[i - 1].handle) {
+      console.log("Still have adjacent variants after shuffling:", {
+        prev: {
+          title: array[i - 1].title,
+          handle: array[i - 1].handle,
+          variant: array[i - 1].currentVariant?.title || "single variant",
+        },
+        current: {
+          title: array[i].title,
+          handle: array[i].handle,
+          variant: array[i].currentVariant?.title || "single variant",
+        },
+      });
     }
   }
 
