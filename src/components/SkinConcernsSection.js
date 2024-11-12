@@ -265,12 +265,30 @@ const fetchProducts = () => {
   })
     .then((response) => response.json())
     .then((data) => {
+      // Add error logging
+      console.log("API Response:", data);
+
+      // Check for errors in the response
+      if (data.errors) {
+        console.error("GraphQL Errors:", data.errors);
+        return [];
+      }
+
+      // Check if we have the expected data structure
+      if (!data.data || !data.data.products) {
+        console.error("Unexpected data structure:", data);
+        return [];
+      }
       const products = data.data.products.edges.map((edge) => {
         const product = edge.node;
         // Include logic here to process each product's variants to extract the size option
         return product;
       });
       return products;
+    })
+    .catch((error) => {
+      console.error("Fetch Error:", error);
+      return [];
     });
 };
 
