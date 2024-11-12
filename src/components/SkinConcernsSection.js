@@ -7,85 +7,48 @@ import { createPopup, nurseLedId } from "./Utility/Forms";
 const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
 
 function shuffleArray(array) {
-  // First do a basic shuffle
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-
-  // Then ensure no adjacent vendors or product variants
-  for (let i = 1; i < array.length; i++) {
-    if (
-      array[i].vendor === array[i - 1].vendor ||
-      array[i].handle === array[i - 1].handle
-    ) {
-      // Look for the next product with a different vendor and handle
-      for (let j = i + 1; j < array.length; j++) {
-        if (
-          array[j].vendor !== array[i - 1].vendor &&
-          array[j].handle !== array[i - 1].handle
-        ) {
-          // Swap the products
-          [array[i], array[j]] = [array[j], array[i]];
-          break;
-        }
-      }
+  // Group products by handle
+  const productGroups = {};
+  array.forEach((item) => {
+    if (!productGroups[item.handle]) {
+      productGroups[item.handle] = [];
     }
-  }
+    productGroups[item.handle].push(item);
+  });
 
-  // Multiple passes to ensure no adjacents
-  let hasAdjacents = true;
-  let maxPasses = array.length; // Prevent infinite loops
-  let passes = 0;
+  // Create a new array with products spaced out
+  const result = new Array(array.length);
+  let currentIndex = 0;
 
-  while (hasAdjacents && passes < maxPasses) {
-    hasAdjacents = false;
-    for (let i = 1; i < array.length; i++) {
-      if (
-        array[i].vendor === array[i - 1].vendor ||
-        array[i].handle === array[i - 1].handle
+  // Place each group's items with spacing
+  Object.values(productGroups).forEach((group) => {
+    group.forEach((item) => {
+      // Find next available slot that doesn't create adjacencies
+      while (
+        (currentIndex < array.length && result[currentIndex]) ||
+        (currentIndex > 0 &&
+          result[currentIndex - 1]?.handle === item.handle) ||
+        (currentIndex < array.length - 1 &&
+          result[currentIndex + 1]?.handle === item.handle)
       ) {
-        hasAdjacents = true;
-        // Try to find a non-adjacent product to swap with
-        for (let j = i + 1; j < array.length; j++) {
-          if (
-            array[j].vendor !== array[i - 1].vendor &&
-            array[j].handle !== array[i - 1].handle &&
-            (j === array.length - 1 ||
-              array[j].vendor !== array[j + 1].vendor) &&
-            (j === array.length - 1 || array[j].handle !== array[j + 1].handle)
-          ) {
-            [array[i], array[j]] = [array[j], array[i]];
-            break;
-          }
-        }
+        currentIndex++;
       }
-    }
-    passes++;
-  }
 
-  // Add a final check to verify no adjacents
-  for (let i = 1; i < array.length; i++) {
-    if (
-      array[i].vendor === array[i - 1].vendor ||
-      array[i].handle === array[i - 1].handle
-    ) {
-      console.log("Found adjacent items:", {
-        item1: {
-          vendor: array[i - 1].vendor,
-          handle: array[i - 1].handle,
-          title: array[i - 1].title,
-        },
-        item2: {
-          vendor: array[i].vendor,
-          handle: array[i].handle,
-          title: array[i].title,
-        },
-      });
-    }
-  }
+      // If we reached the end, find first available slot
+      if (currentIndex >= array.length) {
+        currentIndex = result.findIndex(
+          (slot, i) =>
+            !slot &&
+            (!result[i - 1] || result[i - 1].handle !== item.handle) &&
+            (!result[i + 1] || result[i + 1].handle !== item.handle)
+        );
+      }
 
-  return array;
+      result[currentIndex] = item;
+    });
+  });
+
+  return result;
 }
 
 // Selectors
