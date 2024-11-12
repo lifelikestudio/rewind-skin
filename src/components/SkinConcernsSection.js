@@ -6,6 +6,14 @@ import { createPopup, nurseLedId } from "./Utility/Forms";
 
 const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 // Selectors
 let scrollSelectNode,
   scrollSelectSlides,
@@ -315,6 +323,12 @@ const fetchProducts = () => {
         console.error("Unexpected data structure:", data);
         return [];
       }
+
+      // Get the products array and shuffle it
+      const products = shuffleArray(
+        data.data.products.edges.map((edge) => edge.node)
+      );
+      return products;
 
       // Debug first product's pricing
       const firstProduct = data.data.products.edges[0]?.node;
