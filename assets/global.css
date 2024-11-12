@@ -4588,7 +4588,8 @@ a.drawer-cart__empty-continue::after {
   align-items: center;
 }
 
-.concerns-section__card--product > .product-card__btn--icon {
+.concerns-section__card--product > .product-card__btn--icon,
+.concerns-section__card--product > .product-card__btn--sold-out {
   z-index: 1;
 }
 
@@ -6413,6 +6414,9 @@ a.drawer-cart__empty-continue::after {
 .collections__products > .product-card .product-card__btn--sold-out,
 .search-results__products > .product-card .product-card__btn--sold-out {
   justify-content: center;
+}
+.concerns-section__card--product > .product-card__btn--sold-out {
+  justify-content: center !important;
 }
 
 /* Between 1056px and 1311px */

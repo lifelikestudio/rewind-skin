@@ -25,10 +25,7 @@
         {%- for line_item in order.line_items -%}
           <div class="order order--single">
             <div class="order__col">
-              <div
-                class="order__cell order__cell--heading is--first"
-                data-label="{{ 'customer.order.product' | t }}"
-              >
+              <div class="order__cell order__cell--heading is--first" data-label="{{ 'customer.order.product' | t }}">
                 <span class="all-caps order__heading">
                   {{ 'customer.order.product' | t }}
                 </span>
@@ -122,9 +119,7 @@
                   {{ 'customer.order.price' | t }}
                 </span>
               </div>
-              <div
-                class="order__cell order__cell--body is--last"
-              >
+              <div class="order__cell order__cell--body is--last">
                 <span class="main-body order__info">
                   {%- if line_item.original_price != line_item.final_price or line_item.unit_price_measurement -%}
                     <dl>
@@ -184,9 +179,7 @@
                   {{ 'customer.order.quantity' | t }}
                 </span>
               </div>
-              <div
-                class="order__cell order__cell--body is--last"
-              >
+              <div class="order__cell order__cell--body is--last">
                 <span class="main-body order__info">
                   {{ line_item.quantity }}
                 </span>
@@ -228,10 +221,7 @@
             <div class="order__row--half order__cell order__cell--heading">
               <span class="all-caps order__heading">{{ 'customer.order.subtotal' | t }}</span>
             </div>
-            <div
-              class="order__row--half order__cell order__cell--heading"
-              data-label="{{ 'customer.order.subtotal' | t }}"
-            >
+            <div class="order__row--half order__cell order__cell--heading" data-label="{{ 'customer.order.subtotal' | t }}">
               <span class="all-caps order__heading">{{ order.line_items_subtotal_price | money }}</span>
             </div>
           </div>
@@ -242,19 +232,14 @@
                   <span class="all-caps order__heading">
                     {{ 'customer.order.discount' | t }}
                   </span>
-                  <span class="all-caps order__heading">
-                    {{- discount_application.title -}}
+                  <span class="all-caps order__heading" style="padding-left:4px;">
+                    ({{- discount_application.title -}})
                   </span>
                 </div>
-                <div
-                  class="order__row--half order__cell order__cell--heading"
-                  data-label="{{ 'customer.order.discount' | t }}"
-                >
-                  <span class="all-caps order__heading"
-                    >-{{ discount_application.total_allocated_amount | money -}}
-                  </span>
-                  <span class="all-caps order__heading">
-                    {{- discount_application.title -}}
+                <div class="order__row--half order__cell order__cell--heading" data-label="{{ 'customer.order.discount' | t }}">
+                  <span class="all-caps order__heading">-{{ discount_application.total_allocated_amount | money -}}</span>
+                  <span class="all-caps order__heading" style="padding-left:4px;">
+                    ({{- discount_application.title -}})
                   </span>
                 </div>
               </div>
@@ -264,13 +249,9 @@
             <div class="order__row">
               <div class="order__row--half order__cell order__cell--heading">
                 <span class="all-caps order__heading">
-                  {{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</span
-                >
+                  {{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</span>
               </div>
-              <div
-                class="order__row--half order__cell order__cell--heading"
-                data-label="{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})"
-              >
+              <div class="order__row--half order__cell order__cell--heading" data-label="{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})">
                 <span class="all-caps order__heading">{{ shipping_method.price | money }}</span>
               </div>
             </div>
@@ -280,13 +261,9 @@
               <div class="order__row--half order__cell order__cell--heading">
                 <span class="all-caps order__heading">
                   {{- 'customer.order.tax' | t }} ({{ tax_line.title }}
-                  {{ tax_line.rate | times: 100 }}%)</span
-                >
+                  {{ tax_line.rate | times: 100 }}%)</span>
               </div>
-              <div
-                class="order__row--half order__cell order__cell--heading"
-                data-label="{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)"
-              >
+              <div class="order__row--half order__cell order__cell--heading" data-label="{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)">
                 <span class="all-caps order__heading">{{ tax_line.price | money }}</span>
               </div>
             </div>
@@ -296,10 +273,7 @@
               <div class="order__row--half order__cell order__cell--heading">
                 <span class="all-caps order__heading">{{ 'customer.order.total_duties' | t }}</span>
               </div>
-              <div
-                class="order__row--half order__cell order__cell--heading"
-                data-label="{{ 'customer.order.total_duties' | t }}"
-              >
+              <div class="order__row--half order__cell order__cell--heading" data-label="{{ 'customer.order.total_duties' | t }}">
                 <span class="all-caps order__heading">{{ order.total_duties | money }}</span>
               </div>
             </div>
@@ -307,12 +281,10 @@
           {%- if order.total_refunded_amount > 0 -%}
             <div class="order__row">
               <div class="order__row--half order__cell order__cell--heading">
-                <span class="all-caps order__heading"> {{ 'customer.order.total_refunded' | t }}</span>
+                <span class="all-caps order__heading">
+                  {{ 'customer.order.total_refunded' | t }}</span>
               </div>
-              <div
-                class="order__row--half order__cell order__cell--heading"
-                data-label="{{ 'customer.order.total_refunded' | t }}"
-              >
+              <div class="order__row--half order__cell order__cell--heading" data-label="{{ 'customer.order.total_refunded' | t }}">
                 <span class="all-caps order__heading">-{{ order.total_refunded_amount | money_with_currency }}</span>
               </div>
             </div>
@@ -321,10 +293,7 @@
             <div class="order__row--half order__cell order__cell--heading">
               <span class="all-caps order__heading">{{ 'customer.order.total' | t }}</span>
             </div>
-            <div
-              class="order__row--half order__cell order__cell--heading"
-              data-label="{{ 'customer.order.total' | t }}"
-            >
+            <div class="order__row--half order__cell order__cell--heading" data-label="{{ 'customer.order.total' | t }}">
               <span class="main-body order__info">
                 {{ order.total_net_amount | money_with_currency }}
               </span>
