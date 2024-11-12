@@ -367,11 +367,25 @@ const fetchProducts = () => {
         return [];
       }
 
-      // Get the products array and shuffle it
-      const products = shuffleArray(
-        data.data.products.edges.map((edge) => edge.node)
-      );
-      return products;
+      // Get all products and their variants as individual items
+      const products = data.data.products.edges.flatMap((edge) => {
+        const product = edge.node;
+        const variants = product.variants.edges;
+
+        // If product has only one variant, return it as a single item
+        if (variants.length === 1) {
+          return [product];
+        }
+
+        // For multiple variants, create an item for each variant
+        return variants.map((variantEdge) => ({
+          ...product,
+          currentVariant: variantEdge.node,
+        }));
+      });
+
+      // Shuffle the flattened array
+      return shuffleArray(products);
 
       // Debug first product's pricing
       const firstProduct = data.data.products.edges[0]?.node;
