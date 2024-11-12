@@ -4,13 +4,7 @@ import SwiperEmbla from "./Swiper/SwiperEmbla";
 import { attachEventListenersToProduct } from "./Drawers/CartDrawer.js";
 import { createPopup, nurseLedId } from "./Utility/Forms";
 
-// Near the top of the file, update how we get the country code
-console.log(
-  "HTML country code:",
-  document.documentElement.dataset.shopifyCountryCode
-);
 const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
-console.log("Using country code:", countryCode);
 
 // Selectors
 let scrollSelectNode,
@@ -197,9 +191,6 @@ const fetchMetafield = (pageId, metafieldKey) => {
 };
 
 const fetchAvailableCountries = () => {
-  console.log("Starting fetchAvailableCountries");
-  console.log("Current country code:", countryCode);
-
   const query = `
     query {
       localization {
@@ -226,16 +217,9 @@ const fetchAvailableCountries = () => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Available Countries Response:", data);
-
       // Debug available currencies for current country
       const currentCountry = data.data?.localization?.availableCountries.find(
         (country) => country.isoCode === countryCode
-      );
-      // Log all available countries for debugging
-      console.log(
-        "All available countries:",
-        data.data?.localization?.availableCountries
       );
 
       return data;
@@ -247,8 +231,6 @@ const fetchAvailableCountries = () => {
 };
 
 const fetchProducts = () => {
-  console.log("Starting fetchProducts");
-  console.log("Using country code:", countryCode);
   const query = `
   query ($country: CountryCode = CA, $language: LanguageCode = EN) @inContext(country: $country, language: $language) {
     products(first: 250) {
@@ -307,11 +289,6 @@ const fetchProducts = () => {
 
   return fetchAvailableCountries()
     .then(() => {
-      console.log("Fetching products with context:", {
-        country: countryCode,
-        language: "EN",
-      });
-
       return fetch(`${shopifyStoreUrl}/graphql.json`, {
         method: "POST",
         headers: {
@@ -329,8 +306,6 @@ const fetchProducts = () => {
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Products Response:", data);
-
       if (data.errors) {
         console.error("GraphQL Errors:", data.errors);
         return [];
@@ -343,13 +318,6 @@ const fetchProducts = () => {
 
       // Debug first product's pricing
       const firstProduct = data.data.products.edges[0]?.node;
-      if (firstProduct) {
-        console.log("First product pricing:", {
-          title: firstProduct.title,
-          priceRange: firstProduct.priceRange,
-          firstVariantPrice: firstProduct.variants.edges[0]?.node.price,
-        });
-      }
 
       return data.data.products.edges.map((edge) => edge.node);
     })
