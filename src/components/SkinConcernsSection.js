@@ -4,6 +4,14 @@ import SwiperEmbla from "./Swiper/SwiperEmbla";
 import { attachEventListenersToProduct } from "./Drawers/CartDrawer.js";
 import { createPopup, nurseLedId } from "./Utility/Forms";
 
+// Near the top of the file, update how we get the country code
+console.log(
+  "HTML country code:",
+  document.documentElement.dataset.shopifyCountryCode
+);
+const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
+console.log("Using country code:", countryCode);
+
 // Selectors
 let scrollSelectNode,
   scrollSelectSlides,
@@ -42,8 +50,6 @@ const treatmentsRadio = document.querySelector(
 );
 
 const skinConcernsResults = document.querySelector("#skin-concerns-results");
-
-const countryCode = document.documentElement.dataset.shopifyCountryCode || "CA";
 
 // Function to normalize the skin concern strings
 function normalize(str) {
@@ -226,7 +232,11 @@ const fetchAvailableCountries = () => {
       const currentCountry = data.data?.localization?.availableCountries.find(
         (country) => country.isoCode === countryCode
       );
-      console.log("Current country details:", currentCountry);
+      // Log all available countries for debugging
+      console.log(
+        "All available countries:",
+        data.data?.localization?.availableCountries
+      );
 
       return data;
     })
