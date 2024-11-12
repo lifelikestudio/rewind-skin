@@ -33,6 +33,37 @@ function shuffleArray(array) {
     }
   }
 
+  // Multiple passes to ensure no adjacents
+  let hasAdjacents = true;
+  let maxPasses = array.length; // Prevent infinite loops
+  let passes = 0;
+
+  while (hasAdjacents && passes < maxPasses) {
+    hasAdjacents = false;
+    for (let i = 1; i < array.length; i++) {
+      if (
+        array[i].vendor === array[i - 1].vendor ||
+        array[i].handle === array[i - 1].handle
+      ) {
+        hasAdjacents = true;
+        // Try to find a non-adjacent product to swap with
+        for (let j = i + 1; j < array.length; j++) {
+          if (
+            array[j].vendor !== array[i - 1].vendor &&
+            array[j].handle !== array[i - 1].handle &&
+            (j === array.length - 1 ||
+              array[j].vendor !== array[j + 1].vendor) &&
+            (j === array.length - 1 || array[j].handle !== array[j + 1].handle)
+          ) {
+            [array[i], array[j]] = [array[j], array[i]];
+            break;
+          }
+        }
+      }
+    }
+    passes++;
+  }
+
   // Add a final check to verify no adjacents
   for (let i = 1; i < array.length; i++) {
     if (
