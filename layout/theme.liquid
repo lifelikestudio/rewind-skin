@@ -1,6 +1,5 @@
 <!doctype html>
-<html data-shopify-country-code="{{ localization.country.iso_code }}"
-lang="{{ request.locale.iso_code }}">
+<html data-shopify-country-code="{{ localization.country.iso_code }}" lang="{{ request.locale.iso_code }}">
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,14 +9,12 @@ lang="{{ request.locale.iso_code }}">
     <link
       rel="preconnect"
       href="https://cdn.shopify.com"
-      crossorigin
-    >
+      crossorigin>
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
       <link
         rel="preconnect"
         href="https://fonts.shopifycdn.com"
-        crossorigin
-      >
+        crossorigin>
     {%- endunless -%}
     <title>
       {{ page_title }}
@@ -26,8 +23,7 @@ lang="{{ request.locale.iso_code }}">
     <script
       type="text/javascript"
       src="https://app.getterms.io/cookie-consent/embed/8e59a8e0-82ba-43bb-be68-8c1383740ac7/en-us"
-      defer
-    ></script>
+      defer></script>
     {% if template contains 'customers' %}
       <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
       <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
@@ -133,8 +129,7 @@ lang="{{ request.locale.iso_code }}">
     <script
       src="https://cdn.usefathom.com/script.js"
       data-site="QIXWEBMS"
-      defer
-    ></script>
+      defer></script>
     <script>
       (function (h, o, t, j, a, r) {
         h.hj =
@@ -211,20 +206,7 @@ lang="{{ request.locale.iso_code }}">
   %}
 
   <body data-customer-logged-in="{% if customer %}true{% else %}false{% endif %}" class="{{ bodyClass }}">
-    {% if template contains 'product'
-      or template contains 'cart'
-      or template contains 'search'
-      or template contains 'login'
-      or template contains 'register'
-      or template contains 'activate_account'
-      or template contains 'reset_password'
-      or template contains 'account'
-      or template contains 'order'
-      or template contains 'addresses'
-      or template == 'page.our-founder'
-      or template == 'page.terms'
-      or template == 'page.privacy'
-      or template == 'page.shipping-returns'
+    {% if template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder' or template == 'page.terms' or template == 'page.privacy' or template == 'page.shipping-returns'
     %}
       <section class="announcement-bar">
         <div class="wrapper wrapper--lg announcement-bar__container">
@@ -237,14 +219,24 @@ lang="{{ request.locale.iso_code }}">
             >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
             >
           {% endcomment %}
+          {% comment %} 
+                                    <a
+                                      class="announcement-bar__type"
+                                      href="/collections/all"
+                                      id="evergreen-announcement"
+                                      style="max-width: 800px;"
+                                    >
+                                      Free Shipping on Orders Over $149 CAD. Start Here.
+                                    </a>
+                              {% endcomment %}
           <a
             class="announcement-bar__type"
             href="/collections/all"
-            id="evergreen-announcement"
-            style="max-width: 800px;"
-          >
-            Free Shipping on Orders Over $149 CAD. Start Here.
+            id="shipping-delays-announcement"
+            style="max-width: 800px;">
+            Expect shipping delays due to increased holiday volumes and Canada Post strikes. We appreciate your patience.
           </a>
+
         </div>
       </section>
       <header>
@@ -262,8 +254,7 @@ lang="{{ request.locale.iso_code }}">
                     <a
                       class="main-nav__link all-caps link--main-nav"
                       id="{{ link.handle }}-action"
-                      href="{{ link.url }}"
-                    >
+                      href="{{ link.url }}">
                       {{- link.title -}}
                     </a>
                   {% endif %}
@@ -282,8 +273,7 @@ lang="{{ request.locale.iso_code }}">
                   fill="currentColor"
                   preserveAspectRatio="xMinYMin meet"
                   version="1.1"
-                  viewBox="0 0 358.8 26.5"
-                >
+                  viewBox="0 0 358.8 26.5">
                   <path d="m32.6 25.6-0.1 0.1h-4l-10.5-10.8h-14.9v10.9h-3.1v-25.2h20.3c2 0 3.8 0.1 5.2 0.4s2.7 0.7 3.7 1.4c1.9 1.2 2.9 2.9 2.9 5.3 0 2.3-0.9 4-2.6 5.2s-4.3 1.9-7.7 2l10.8 10.7zm-29.5-22.3v8.9h16.3c2.1 0 3.7-0.1 4.9-0.3 1.1-0.2 2-0.5 2.7-0.8 1.3-0.7 1.9-1.8 1.9-3.4s-0.6-2.7-1.9-3.4c-0.6-0.4-1.5-0.6-2.7-0.8-1.1-0.2-2.7-0.2-4.9-0.2h-16.3z" />
                   <path d="M71,3.3H43.6v8.5h25.9v2.7H43.6v8.6H71v2.7H40.4V0.6H71V3.3z" />
                   <path d="m121.4 0.6 0.1 0.1-11 25h-3l-9-21.2-9 21.2h-3l-11-25h3.4l8.9 21.2 9-21.2h3.4l8.9 21.2 9-21.2c0-0.1 3.4-0.1 3.3-0.1z" />
@@ -302,16 +292,13 @@ lang="{{ request.locale.iso_code }}">
               {% for link in linklists['main-menu'].links offset: half_count %}
                 <li class="main-nav__link-item">
                   {% if link.url == '#' and link.title != 'Account' %}
-                    <p
-                      class="main-nav__link all-caps link--main-nav"
-                      id="
+                    <p class="main-nav__link all-caps link--main-nav" id="
                         {%- if link.title == 'Shopping Bag' -%}
                           cart-action
                         {%- else -%}
                           {{ link.handle }}-action
                         {%- endif -%}
-                      "
-                    >
+                      ">
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
                         <span class="cart-action__count">({{ cart.item_count }})</span>
@@ -341,8 +328,7 @@ lang="{{ request.locale.iso_code }}">
                         {%- else -%}
                           {{ link.url }}
                         {%- endif -%}
-                      "
-                    >
+                      ">
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
                         <span class="cart-action__count">({{ cart.item_count }})</span>
@@ -371,9 +357,7 @@ lang="{{ request.locale.iso_code }}">
             <a
               href="/pages/skin-treatments/"
               class="all-caps drawer__header-action"
-              id="treatments-all"
-              >View All</a
-            >
+              id="treatments-all">View All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -401,9 +385,7 @@ lang="{{ request.locale.iso_code }}">
             <a
               href="/collections/all"
               class="all-caps drawer__header-action"
-              id="shop-all"
-              >Shop All</a
-            >
+              id="shop-all">Shop All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -469,9 +451,7 @@ lang="{{ request.locale.iso_code }}">
                       {% if link.title != 'Account' and link.url == '#' %}
                         <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
                       {% else %}
-                        <a
-                          id="{{ link.handle }}-mobile-action"
-                          href="
+                        <a id="{{ link.handle }}-mobile-action" href="
                             {%- if link.title == 'Account' -%}
                               {% if shop.customer_accounts_enabled %}
                                 {% if customer %}
@@ -483,8 +463,7 @@ lang="{{ request.locale.iso_code }}">
                             {%- else -%}
                               {{ link.url }}
                             {%- endif -%}
-                          "
-                        >
+                          ">
                           {{ link.title }}
                         </a>
                       {% endif %}
@@ -501,8 +480,7 @@ lang="{{ request.locale.iso_code }}">
               id="search-in-drawer"
               class="search__form"
               action="{{ routes.search_url }}"
-              role="search"
-            >
+              role="search">
               <div class="search__field">
                 <div class="search__inputs">
                   <input
@@ -511,37 +489,31 @@ lang="{{ request.locale.iso_code }}">
                     name="q"
                     value="{{ search.terms | escape }}"
                     placeholder="{{ 'general.search.search' | t }}"
-                    class="field__inner"
-                  >
+                    class="field__inner">
                   <label for="search-input-drawer" class="visually-hidden">{{ 'general.search.search' | t }}</label>
 
                   <input
                     type="hidden"
                     name="type"
-                    value="product,page"
-                  >
+                    value="product,page">
                   <input
                     type="hidden"
                     name="options[unavailable_products]"
-                    value="show"
-                  >
+                    value="show">
                   <input
                     type="hidden"
                     name="options[prefix]"
-                    value="last"
-                  >
+                    value="last">
                 </div>
                 <div class="search__btns">
                   <button
                     id="search-clear-drawer"
                     type="reset"
-                    aria-label="Clear search term"
-                  >
+                    aria-label="Clear search term">
                     <svg
                       fill="none"
                       viewBox="0 0 10 10"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
+                      xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M1 1L9 9M1 9L9 1"
                         stroke="currentColor"
@@ -555,8 +527,7 @@ lang="{{ request.locale.iso_code }}">
                     <svg
                       fill="none"
                       viewBox="0 0 26 26"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
+                      xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
                         stroke="currentColor"
@@ -590,8 +561,7 @@ lang="{{ request.locale.iso_code }}">
             class="announcement-bar__type"
             href="/collections/all"
             id="evergreen-announcement"
-            style="max-width: 800px;"
-          >
+            style="max-width: 800px;">
             Free Shipping on Orders Over $149 CAD. Start Here.
           </a>
         </div>
@@ -611,8 +581,7 @@ lang="{{ request.locale.iso_code }}">
                     <a
                       class="main-nav__link all-caps link--main-nav"
                       id="{{ link.handle }}-action"
-                      href="{{ link.url }}"
-                    >
+                      href="{{ link.url }}">
                       {{- link.title -}}
                     </a>
                   {% endif %}
@@ -631,8 +600,7 @@ lang="{{ request.locale.iso_code }}">
                   fill="currentColor"
                   preserveAspectRatio="xMinYMin meet"
                   version="1.1"
-                  viewBox="0 0 358.8 26.5"
-                >
+                  viewBox="0 0 358.8 26.5">
                   <path d="m32.6 25.6-0.1 0.1h-4l-10.5-10.8h-14.9v10.9h-3.1v-25.2h20.3c2 0 3.8 0.1 5.2 0.4s2.7 0.7 3.7 1.4c1.9 1.2 2.9 2.9 2.9 5.3 0 2.3-0.9 4-2.6 5.2s-4.3 1.9-7.7 2l10.8 10.7zm-29.5-22.3v8.9h16.3c2.1 0 3.7-0.1 4.9-0.3 1.1-0.2 2-0.5 2.7-0.8 1.3-0.7 1.9-1.8 1.9-3.4s-0.6-2.7-1.9-3.4c-0.6-0.4-1.5-0.6-2.7-0.8-1.1-0.2-2.7-0.2-4.9-0.2h-16.3z" />
                   <path d="M71,3.3H43.6v8.5h25.9v2.7H43.6v8.6H71v2.7H40.4V0.6H71V3.3z" />
                   <path d="m121.4 0.6 0.1 0.1-11 25h-3l-9-21.2-9 21.2h-3l-11-25h3.4l8.9 21.2 9-21.2h3.4l8.9 21.2 9-21.2c0-0.1 3.4-0.1 3.3-0.1z" />
@@ -651,16 +619,13 @@ lang="{{ request.locale.iso_code }}">
               {% for link in linklists['main-menu'].links offset: half_count %}
                 <li class="main-nav__link-item">
                   {% if link.url == '#' and link.title != 'Account' %}
-                    <p
-                      class="main-nav__link all-caps link--main-nav"
-                      id="
+                    <p class="main-nav__link all-caps link--main-nav" id="
                         {%- if link.title == 'Shopping Bag' -%}
                           cart-action
                         {%- else -%}
                           {{ link.handle }}-action
                         {%- endif -%}
-                      "
-                    >
+                      ">
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
                         <span class="cart-action__count">({{ cart.item_count }})</span>
@@ -690,8 +655,7 @@ lang="{{ request.locale.iso_code }}">
                         {%- else -%}
                           {{ link.url }}
                         {%- endif -%}
-                      "
-                    >
+                      ">
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
                         <span class="cart-action__count">({{ cart.item_count }})</span>
@@ -720,9 +684,7 @@ lang="{{ request.locale.iso_code }}">
             <a
               href="/pages/skin-treatments/"
               class="all-caps drawer__header-action"
-              id="treatments-all"
-              >View All</a
-            >
+              id="treatments-all">View All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -750,9 +712,7 @@ lang="{{ request.locale.iso_code }}">
             <a
               href="/collections/all"
               class="all-caps drawer__header-action"
-              id="shop-all"
-              >Shop All</a
-            >
+              id="shop-all">Shop All</a>
           </div>
           <ul class="drawer__container">
             {% for link in linklists['main-menu'].links %}
@@ -817,9 +777,7 @@ lang="{{ request.locale.iso_code }}">
                       {% if link.title != 'Account' and link.url == '#' %}
                         <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
                       {% else %}
-                        <a
-                          id="{{ link.handle }}-mobile-action"
-                          href="
+                        <a id="{{ link.handle }}-mobile-action" href="
                             {%- if link.title == 'Account' -%}
                               {% if shop.customer_accounts_enabled %}
                                 {% if customer %}
@@ -831,8 +789,7 @@ lang="{{ request.locale.iso_code }}">
                             {%- else -%}
                               {{ link.url }}
                             {%- endif -%}
-                          "
-                        >
+                          ">
                           {{ link.title }}
                         </a>
                       {% endif %}
@@ -849,8 +806,7 @@ lang="{{ request.locale.iso_code }}">
               id="search-in-drawer"
               class="search__form"
               action="{{ routes.search_url }}"
-              role="search"
-            >
+              role="search">
               <div class="search__field">
                 <div class="search__inputs">
                   <input
@@ -860,37 +816,31 @@ lang="{{ request.locale.iso_code }}">
                     value="{{ search.terms | escape }}"
                     placeholder="{{ 'general.search.search' | t }}"
                     class="field__inner"
-                    required
-                  >
+                    required>
                   <label for="search-input" class="visually-hidden">{{ 'general.search.search' | t }}</label>
 
                   <input
                     type="hidden"
                     name="type"
-                    value="product,page"
-                  >
+                    value="product,page">
                   <input
                     type="hidden"
                     name="options[unavailable_products]"
-                    value="show"
-                  >
+                    value="show">
                   <input
                     type="hidden"
                     name="options[prefix]"
-                    value="last"
-                  >
+                    value="last">
                 </div>
                 <div class="search__btns">
                   <button
                     id="search-clear"
                     type="reset"
-                    aria-label="Clear search term"
-                  >
+                    aria-label="Clear search term">
                     <svg
                       fill="none"
                       viewBox="0 0 10 10"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
+                      xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M1 1L9 9M1 9L9 1"
                         stroke="currentColor"
@@ -904,8 +854,7 @@ lang="{{ request.locale.iso_code }}">
                     <svg
                       fill="none"
                       viewBox="0 0 26 26"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
+                      xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
                         stroke="currentColor"
