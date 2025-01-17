@@ -4139,6 +4139,7 @@ a.drawer-cart__empty-continue::after {
 
 .main-footer__copyright {
   display: inline-block;
+  cursor: unset;
 }
 
 .main-footer .main-footer__row:nth-child(2) .main-footer__copyright {
