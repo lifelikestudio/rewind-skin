@@ -11088,6 +11088,8 @@ a.order__info--pill {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: 540px;
+  row-gap: 32px;
 }
 
 /* Breakpoints Reference */
