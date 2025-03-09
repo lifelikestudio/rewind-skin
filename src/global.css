@@ -444,7 +444,8 @@ template {
 }
 
 /* Global Type */
-.main-heading {
+.main-heading,
+.shopify-email-marketing-confirmation__container > h1 {
   font-weight: var(--regular);
   font-size: 4.2rem;
   line-height: 52px;
@@ -453,13 +454,15 @@ template {
   text-align: left;
 }
 
-.main-heading::before {
+.main-heading::before,
+.shopify-email-marketing-confirmation__container > h1::before {
   content: '';
   margin-bottom: -0.225em;
   display: table;
 }
 
-.main-heading::after {
+.main-heading::after,
+.shopify-email-marketing-confirmation__container > h1::after {
   content: '';
   margin-top: -0.319em;
   display: table;
@@ -467,69 +470,82 @@ template {
 
 /* Between 1056px and 1311px */
 @media screen and (min-width: 1056px) and (max-width: 1311px) {
-  .main-heading {
+  .main-heading,
+  .shopify-email-marketing-confirmation__container > h1 {
     font-size: 3.6rem;
     line-height: 44px;
   }
 
-  .main-heading::before {
+  .main-heading::before,
+  .shopify-email-marketing-confirmation__container > h1::before {
     margin-bottom: -0.2171em;
   }
 
-  .main-heading::after {
+  .main-heading::after,
+  .shopify-email-marketing-confirmation__container > h1::after {
     margin-top: -0.3111em;
   }
 }
 
 /* Between 428px and 671px */
 @media screen and (min-width: 428px) and (max-width: 671px) {
-  .main-heading {
+  .main-heading,
+  .shopify-email-marketing-confirmation__container > h1 {
     font-size: 3.2rem;
     line-height: 40px;
   }
 
-  .main-heading::before {
+  .main-heading::before,
+  .shopify-email-marketing-confirmation__container > h1::before {
     margin-bottom: -0.231em;
   }
 
-  .main-heading::after {
+  .main-heading::after,
+  .shopify-email-marketing-confirmation__container > h1::after {
     margin-top: -0.325em;
   }
 }
 
 /* Between 375px and 427px */
 @media screen and (min-width: 375px) and (max-width: 427px) {
-  .main-heading {
+  .main-heading,
+  .shopify-email-marketing-confirmation__container > h1 {
     font-size: 2.8rem;
     line-height: 36px;
   }
 
-  .main-heading::before {
+  .main-heading::before,
+  .shopify-email-marketing-confirmation__container > h1::before {
     margin-bottom: -0.2489em;
   }
 
-  .main-heading::after {
+  .main-heading::after,
+  .shopify-email-marketing-confirmation__container > h1::after {
     margin-top: -0.3429em;
   }
 }
 
 /* Less than or equal to 374px */
 @media screen and (max-width: 374px) {
-  .main-heading {
+  .main-heading,
+  .shopify-email-marketing-confirmation__container > h1 {
     font-size: 2.4rem;
     line-height: 28px;
   }
 
-  .main-heading::before {
+  .main-heading::before,
+  .shopify-email-marketing-confirmation__container > h1::before {
     margin-bottom: -0.1893em;
   }
 
-  .main-heading::after {
+  .main-heading::after,
+  .shopify-email-marketing-confirmation__container > h1::after {
     margin-top: -0.2833em;
   }
 }
 
-.main-body {
+.main-body,
+.shopify-email-marketing-confirmation__container > p {
   font-weight: var(--light);
   font-size: 2.4rem;
   line-height: 36px;
@@ -548,13 +564,15 @@ template {
   }
 }
 
-.main-body::before {
+.main-body::before,
+.shopify-email-marketing-confirmation__container > p::before {
   content: '';
   margin-bottom: -0.356em;
   display: table;
 }
 
-.main-body::after {
+.main-body::after,
+.shopify-email-marketing-confirmation__container > p::after {
   content: '';
   margin-top: -0.45em;
   display: table;
@@ -562,64 +580,76 @@ template {
 
 /* Between 1056px and 1311px */
 @media screen and (min-width: 1056px) and (max-width: 1311px) {
-  .main-body {
+  .main-body,
+  .shopify-email-marketing-confirmation__container > p {
     font-size: 2rem;
     line-height: 28px;
   }
 
-  .main-body::before {
+  .main-body::before,
+  .shopify-email-marketing-confirmation__container > p::before {
     margin-bottom: -0.306em;
   }
 
-  .main-body::after {
+  .main-body::after,
+  .shopify-email-marketing-confirmation__container > p::after {
     margin-top: -0.4em;
   }
 }
 
 /* Between 428px and 671px */
 @media screen and (min-width: 428px) and (max-width: 671px) {
-  .main-body {
+  .main-body,
+  .shopify-email-marketing-confirmation__container > p {
     font-size: 1.8rem;
     line-height: 24px;
   }
 
-  .main-body::before {
+  .main-body::before,
+  .shopify-email-marketing-confirmation__container > p::before {
     margin-bottom: -0.2727em;
   }
 
-  .main-body::after {
+  .main-body::after,
+  .shopify-email-marketing-confirmation__container > p::after {
     margin-top: -0.3667em;
   }
 }
 
 /* Between 375px and 427px */
 @media screen and (min-width: 375px) and (max-width: 427px) {
-  .main-body {
+  .main-body,
+  .shopify-email-marketing-confirmation__container > p {
     font-size: 1.6rem;
     line-height: 20px;
   }
 
-  .main-body::before {
+  .main-body::before,
+  .shopify-email-marketing-confirmation__container > p::before {
     margin-bottom: -0.231em;
   }
 
-  .main-body::after {
+  .main-body::after,
+  .shopify-email-marketing-confirmation__container > p::after {
     margin-top: -0.325em;
   }
 }
 
 /* Less than or equal to 374px */
 @media screen and (max-width: 374px) {
-  .main-body {
+  .main-body,
+  .shopify-email-marketing-confirmation__container > p {
     font-size: 1.4rem;
     line-height: 20px;
   }
 
-  .main-body::before {
+  .main-body::before,
+  .shopify-email-marketing-confirmation__container > p::before {
     margin-bottom: -0.3203em;
   }
 
-  .main-body::after {
+  .main-body::after,
+  .shopify-email-marketing-confirmation__container > p::after {
     margin-top: -0.4143em;
   }
 }
@@ -11051,6 +11081,15 @@ a.order__info--pill {
     padding-bottom: 24px;
   }
 }
+
+/* Email Unsubscribe Confirmation Page */
+.shopify-email-marketing-confirmation__container {
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 /* Breakpoints Reference */
 /* Greater than or equal to 1784px */
 @media screen and (min-width: 1784px) {
