@@ -135,8 +135,7 @@
                 data-variant-id="{{ variant.id }}">
               <button type="button" class="quantity__increment">+</button>
             </div>
-            <!-- Insertion point for Subify widget -->
-            <div class="subify-insertion-point" data-variant-id="{{ variant.id }}"></div>
+
             <!-- Add to Cart button -->
             <button
               class="btn btn--secondary all-caps product-page__checkout-btn"
@@ -168,173 +167,87 @@
           </div>
         {% endif %}
       {% endfor %}
-      <!-- Add Subify container outside the variant loop, but hide it initially -->
-      <div
-        id="subify-container"
-        class="subify-container"
-        style="display: none;"></div>
+
+      <!-- Subify widget container between variant selection and Add to Bag button -->
+      <div id="subify-wrapper" class="subify-wrapper">
+        <!-- This container will hold the Subify widget -->
+        <div id="subify-container"></div>
+      </div>
+
+      <style>
+        /* Position the Subify wrapper properly */
+        .subify-wrapper {
+          width: 100%;
+          margin: 15px 0;
+          order: 1;
+          /* Adjust this value as needed to position it correctly */
+        }
+
+        /* Hide Subify wrapper when variant sections are hidden */
+        .variant-section:not(:first-child):not([style*="display: block"]) + .subify-wrapper {
+          display: none;
+        }
+      </style>
+
       <script type="text/javascript">
         (function() {
-          // Track initialization state
-          let subifyInitialized = false;
-          let activeVariantId = null;
-          let initializationInProgress = false;
-          
-          // Get all possible insertion points for Subify
-          const allInsertionPoints = document.querySelectorAll('.subify-insertion-point');
-          
-          // Function to hide all insertion points (to avoid multiple containers)
-          function hideAllInsertionPoints() {
-            allInsertionPoints.forEach(point => {
-              const existingContainer = point.querySelector('.subify-container');
-              if (existingContainer) {
-                existingContainer.remove();
-              }
-            });
-          }
-          
-          // Function to safely destroy any existing Subify widgets
-          function destroyExistingWidgets() {
-            try {
-              // Check if Subify SDK has a destroy method
-              if (window.subifySdk && typeof window.subifySdk.destroyWidget === 'function') {
-                window.subifySdk.destroyWidget();
-              }
-              
-              // Clear the container content as backup
-              const container = document.getElementById('subify-container');
-              if (container) {
-                container.innerHTML = '';
-              }
-            } catch (err) {
-              console.warn('Error destroying Subify widget:', err);
-            }
-          }
-          
-          // Function to move Subify container to the correct insertion point
-          function moveSubifyContainer(variantId) {
-            const container = document.getElementById('subify-container');
-            if (!container) return;
-            
-            hideAllInsertionPoints();
-            
-            // Find the insertion point for the current variant
-            const insertionPoint = document.querySelector(`.subify-insertion-point[data-variant-id="${variantId}"]`);
-            if (!insertionPoint) return;
-            
-            // Move the Subify container to the insertion point
-            insertionPoint.appendChild(container);
-            container.style.display = 'block';
-          }
-          
-          // Function to initialize or reinitialize Subify with error handling
-          function initSubifyWidget() {
-            // Prevent multiple simultaneous initializations
-            if (initializationInProgress) return;
-            initializationInProgress = true;
-            
-            // Get the selected variant ID
+          // Initialize Subify once with the current variant
+          function initSubify() {
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
                                         document.querySelector('input[name="id"]');
             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
             
-            // Skip if it's the same variant and already initialized
-            if (activeVariantId === variantId && subifyInitialized) {
-              initializationInProgress = false;
-              return;
-            }
-            
             console.log("Initializing Subify with variant ID:", variantId);
             
-            // Clean up any existing widgets first
-            destroyExistingWidgets();
-            
-            // Set the active variant
-            activeVariantId = variantId;
-            
-            // Move the Subify container to the correct insertion point
-            moveSubifyContainer(variantId);
-            
-            // Only proceed if we have the SDK and a selected variant
             if (window.subifySdk && variantId) {
-              try {
-                window.subifySdk.renderWidget(
-                  {{ product | json }}, 
-                  {
-                    renderPosition: {wrapper: "#subify-container"},
-                    selectedVariantId: variantId
-                  }
-                );
-                subifyInitialized = true;
-              } catch (err) {
-                console.error('Error initializing Subify widget:', err);
-                // If the widget already exists error occurs, try to recover
-                if (err.message && err.message.includes('already exists')) {
-                  destroyExistingWidgets();
-                  setTimeout(() => {
-                    try {
-                      window.subifySdk.renderWidget(
-                        {{ product | json }}, 
-                        {
-                          renderPosition: {wrapper: "#subify-container"},
-                          selectedVariantId: variantId
-                        }
-                      );
-                      subifyInitialized = true;
-                    } catch (retryErr) {
-                      console.error('Failed to retry Subify widget initialization:', retryErr);
-                    }
-                  }, 100);
+              window.subifySdk.renderWidget(
+                {{ product | json }}, 
+                {
+                  renderPosition: {wrapper: "#subify-container"},
+                  selectedVariantId: variantId
                 }
-              }
+              );
             } else {
               console.warn("Could not initialize Subify. SDK loaded:", !!window.subifySdk, "Variant ID:", variantId);
             }
-            
-            initializationInProgress = false;
           }
           
-          // Initialize on page load with URL-specified variant (with delayed execution)
-          function handleInitialLoad() {
-            // Check URL for variant ID
+          // Update Subify when the selected variant changes
+          function updateSubifyVariant() {
+            const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                        document.querySelector('input[name="id"]');
+            const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+            
+            if (window.subifySdk && variantId && typeof window.subifySdk.updateSelectedVariant === 'function') {
+              console.log("Updating Subify variant to:", variantId);
+              window.subifySdk.updateSelectedVariant(variantId);
+            }
+          }
+          
+          // Initialize when the page loads
+          document.addEventListener('DOMContentLoaded', function() {
+            // Check URL for variant ID and select that radio button
             const urlParams = new URLSearchParams(window.location.search);
             const variantFromUrl = urlParams.get('variant');
             
             if (variantFromUrl) {
-              // If URL has variant, select that radio button
               const variantInput = document.querySelector(`input[name="id"][value="${variantFromUrl}"]`);
               if (variantInput) {
                 variantInput.checked = true;
               }
             }
             
-            // Use a slight delay to ensure only one initialization happens
-            setTimeout(() => {
-              // Now initialize Subify with the correct variant
-              if (window.subifySdk) {
-                initSubifyWidget();
-              } else {
-                window.addEventListener("subify:sdkLoaded", initSubifyWidget);
-              }
-            }, 100);
-          }
-          
-          // Set up variant change listeners
-          function setupVariantListeners() {
-            const variantInputs = document.querySelectorAll('input[name="id"]');
-            variantInputs.forEach(input => {
-              input.addEventListener('change', initSubifyWidget);
-            });
-          }
-          
-          // Only run initialization once when the DOM is ready
-          let setupComplete = false;
-          document.addEventListener('DOMContentLoaded', function() {
-            if (!setupComplete) {
-              handleInitialLoad();
-              setupVariantListeners();
-              setupComplete = true;
+            // Initialize Subify
+            if (window.subifySdk) {
+              initSubify();
+            } else {
+              window.addEventListener("subify:sdkLoaded", initSubify);
             }
+            
+            // Add event listeners to variant radio buttons
+            document.querySelectorAll('input[name="id"]').forEach(input => {
+              input.addEventListener('change', updateSubifyVariant);
+            });
           });
         })();
       </script>
