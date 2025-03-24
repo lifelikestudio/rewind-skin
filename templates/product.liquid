@@ -107,6 +107,10 @@
           name="id"
           value="{{ product.variants.first.id }}">
       {% endif %}
+
+      <!-- Place Subify widget wrapper outside of the variant loop but after variant selection -->
+      <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
+
       {% assign downcased_vendor = product.vendor | strip | downcase %}
 
       {% if downcased_vendor == 'biologique recherche' and localization.country.iso_code != 'CA' %}
@@ -135,8 +139,8 @@
                 data-variant-id="{{ variant.id }}">
               <button type="button" class="quantity__increment">+</button>
             </div>
-            <!-- Place the Subify widget wrapper here - between variant selection and product options -->
-            <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
+
+            <!-- Remove the Subify wrapper from inside the variant loop -->
 
             <!-- Add to Cart button -->
             <button
@@ -175,13 +179,40 @@
         .subify-widget-wrapper {
           width: 100%;
           margin: 15px 0;
+          display: block;
+          /* Ensure it's always displayed */
+        }
+
+        /* Add styling to position the widget properly in the layout flow */
+        .product-page__checkout-form {
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Ensure variant sections appear after the widget */
+        .variant-section {
+          order: 3;
+        }
+
+        /* Position the widget after the variant selection */
+        .product-page__variants-group {
+          order: 1;
+        }
+
+        #subify-widget-wrapper {
+          order: 2;
         }
       </style>
 
       <script type="text/javascript">
         (function() {
+          let isWidgetInitialized = false;
+          
           // Initialize Subify with the current variant
           function initSubify() {
+            // Skip if already initialized
+            if (isWidgetInitialized) return;
+            
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
                                         document.querySelector('input[name="id"]');
             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
@@ -189,6 +220,12 @@
             console.log("Initializing Subify with variant ID:", variantId);
             
             if (window.subifySdk && variantId) {
+              // Clear any existing widget first
+              const widgetWrapper = document.getElementById('subify-widget-wrapper');
+              if (widgetWrapper) {
+                widgetWrapper.innerHTML = '';
+              }
+              
               window.subifySdk.renderWidget(
                 {{ product | json }}, 
                 {
@@ -202,6 +239,8 @@
                   }
                 }
               );
+              
+              isWidgetInitialized = true;
             } else {
               console.warn("Could not initialize Subify. SDK loaded:", !!window.subifySdk, "Variant ID:", variantId);
             }
@@ -219,6 +258,12 @@
               // Use the product ID with the variant ID
               const productId = {{ product.id }};
               window.subifySdk.changeVariant(productId, variantId);
+              
+              // Make sure the widget wrapper is visible
+              const widgetWrapper = document.getElementById('subify-widget-wrapper');
+              if (widgetWrapper) {
+                widgetWrapper.style.display = 'block';
+              }
             }
           }
           
@@ -235,12 +280,14 @@
               }
             }
             
-            // Initialize Subify
-            if (window.subifySdk) {
-              initSubify();
-            } else {
-              window.addEventListener("subify:sdkLoaded", initSubify);
-            }
+            // Initialize Subify - with a short delay to ensure DOM is ready
+            setTimeout(function() {
+              if (window.subifySdk) {
+                initSubify();
+              } else {
+                window.addEventListener("subify:sdkLoaded", initSubify);
+              }
+            }, 100);
             
             // Add event listeners to variant radio buttons
             document.querySelectorAll('input[name="id"]').forEach(input => {
@@ -263,7 +310,7 @@
               const textSpan = addToCartBtn.querySelector('span:first-child');
               
               // If a selling plan is selected, update button text
-              if (event.detail.sellingPlanId) {
+              if (event.detail && event.detail.sellingPlanId) {
                 if (textSpan) {
                   textSpan.textContent = 'Subscribe & Save';
                 }
