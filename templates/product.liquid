@@ -372,7 +372,15 @@
   </section>
 {% endcomment %}
 <script type="text/javascript">
-  // Add this function after your variant handling code
+  // Create an object with pre-formatted money values for all variants
+  var formattedPrices = {
+    {% for variant in product.variants %}
+      "{{ variant.id }}": {
+        "price": "{{ variant.price | money_with_currency | remove: '.00' }}",
+        "compareAtPrice": "{{ variant.compare_at_price | money_with_currency | remove: '.00' }}"
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  };
   
   // Update the button text and price when subscription is selected
   function updateButtonWithSubscriptionPrice(sellingPlan) {
@@ -393,20 +401,14 @@
       // Reset to one-time purchase
       if (textSpan) textSpan.textContent = 'Add to Bag';
       
-      // Reset to original price
-      if (priceSpan) {
-        const product = {{ product | json }};
-        const variant = product.variants.find(v => v.id.toString() === variantId.toString());
+      // Reset to original price using pre-formatted values
+      if (priceSpan && formattedPrices[variantId]) {
+        const variant = findVariantById(variantId);
         
-        if (variant) {
-          if (variant.compare_at_price > variant.price) {
-            priceSpan.innerHTML = `
-              <del>{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.compare_at_price/100).toFixed(2)}' }}</del>
-              <ins>{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.price/100).toFixed(2)}' }}</ins>
-            `;
-          } else {
-            priceSpan.innerHTML = `{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.price/100).toFixed(2)}' }}`;
-          }
+        if (variant && variant.compare_at_price > variant.price) {
+          priceSpan.innerHTML = `<del>${formattedPrices[variantId].compareAtPrice}</del> <ins>${formattedPrices[variantId].price}</ins>`;
+        } else {
+          priceSpan.innerHTML = formattedPrices[variantId].price;
         }
       }
       
@@ -424,15 +426,15 @@
       console.log("Subscription selling plan:", sellingPlan);
       
       try {
-        // Get the current variant details
-        const product = {{ product | json }};
-        const variant = product.variants.find(v => v.id.toString() === variantId.toString());
+        // Get the current variant
+        const variant = findVariantById(variantId);
         
         if (!variant) {
           console.error("Could not find variant with ID:", variantId);
           return;
         }
         
+        // Calculate the subscription price
         let subscriptionPrice = variant.price;
         let discountApplied = false;
         
@@ -446,58 +448,60 @@
           if (adjustment.value_type === 'percentage') {
             // Percentage discount
             const discountPercent = adjustment.value;
-            subscriptionPrice = variant.price * (1 - (discountPercent / 100));
-            console.log(`Applied ${discountPercent}% discount: ${variant.price} → ${subscriptionPrice}`);
+            subscriptionPrice = Math.round(variant.price * (1 - (discountPercent / 100)));
           } else if (adjustment.value_type === 'fixed_amount') {
             // Fixed amount discount
             subscriptionPrice = variant.price - adjustment.value;
-            console.log(`Applied fixed discount of ${adjustment.value}: ${variant.price} → ${subscriptionPrice}`);
           } else if (adjustment.value_type === 'price') {
             // Direct price override
             subscriptionPrice = adjustment.value;
-            console.log(`Applied direct price: ${subscriptionPrice}`);
           }
         } else if (sellingPlan.price !== undefined) {
-          // Some selling plans directly provide the price
           subscriptionPrice = sellingPlan.price;
           discountApplied = subscriptionPrice < variant.price;
-          console.log(`Using direct price from selling plan: ${subscriptionPrice}`);
         }
         
-        // Format and display the price
-        const formattedSubscriptionPrice = `{{ shop.money_with_currency_format | replace: '{{amount}}', '${(subscriptionPrice/100).toFixed(2)}' }}`;
+        // We need to format the subscription price using our shopify money filter
+        // Use a data attribute to help us identify which variant and what discount to apply
+        
+        // Store the subscription price as a data attribute on the button
+        addToCartBtn.setAttribute('data-subscription-price', subscriptionPrice);
+        addToCartBtn.setAttribute('data-discount-applied', discountApplied);
         
         if (discountApplied) {
-          // Show original price with strikethrough if there's a discount
-          const formattedOriginalPrice = `{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.price/100).toFixed(2)}' }}`;
-          priceSpan.innerHTML = `<del>${formattedOriginalPrice}</del> <ins>${formattedSubscriptionPrice}</ins>`;
-          console.log(`Updated button with discount: ${formattedOriginalPrice} → ${formattedSubscriptionPrice}`);
+          // Send this to a separate function that will handle the price display
+          updateSubscriptionPriceDisplay(priceSpan, variant.price, subscriptionPrice, variantId);
         } else {
-          // Just show the subscription price
-          priceSpan.innerHTML = formattedSubscriptionPrice;
-          console.log(`Updated button price: ${formattedSubscriptionPrice}`);
+          // If no discount, use the regular price
+          priceSpan.innerHTML = formattedPrices[variantId].price;
         }
       } catch (err) {
-        console.error("Error updating button with subscription price:", err);
+        console.error("Error updating subscription price:", err);
       }
     }
   }
   
-  // Add this to your event listeners section
-  window.addEventListener("subify:sellingPlanChange", function(event) {
-    console.log("Selling plan changed:", event.detail);
+  // Helper function to find variant by ID
+  function findVariantById(variantId) {
+    const product = {{ product | json }};
+    return product.variants.find(v => v.id.toString() === variantId.toString());
+  }
+  
+  // This function will update the display with the subscription price
+  function updateSubscriptionPriceDisplay(priceSpan, originalPrice, subscriptionPrice, variantId) {
+    // We'll use a simple approach to format the subscription price
+    // This multiplies the price by currency conversion and adds the currency symbol
     
-    // Get the selling plan data
-    const { targetProductId, selectedSellingPlan } = event.detail;
+    // Get the original formatted price
+    const originalFormatted = formattedPrices[variantId].price;
     
-    // Update selling plan input for cart submission
-    const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
-    if (sellingPlanInput) {
-      sellingPlanInput.value = selectedSellingPlan ? selectedSellingPlan.id : '';
-      console.log("Updated selling plan input value:", sellingPlanInput.value);
-    }
+    // Create a simple formatted version for the subscription price
+    // This is a basic approach - for perfect formatting we'd need server-side help
+    const currencySymbol = originalFormatted.charAt(0);
+    const subscriptionFormatted = currencySymbol + (subscriptionPrice / 100).toFixed(2) + ' {{ shop.currency }}';
     
-    // Update button text and price
-    updateButtonWithSubscriptionPrice(selectedSellingPlan);
-  });
+    // Update the display
+    priceSpan.innerHTML = `<del>${originalFormatted}</del> <ins>${subscriptionFormatted}</ins>`;
+    console.log(`Updated price: ${originalFormatted} → ${subscriptionFormatted}`);
+  }
 </script>
