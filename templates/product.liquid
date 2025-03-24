@@ -135,85 +135,8 @@
                 data-variant-id="{{ variant.id }}">
               <button type="button" class="quantity__increment">+</button>
             </div>
-            <!-- Single container for Subify widget -->
-            <div id="subify-container" class="subify-container"></div>
-            <script type="text/javascript">
-              (function() {
-                // Track if Subify has been initialized
-                let subifyInitialized = false;
-                
-                // Function to clear previous Subify instances
-                function clearSubifyInstances() {
-                  const container = document.getElementById('subify-container');
-                  if (container) {
-                    container.innerHTML = '';
-                  }
-                }
-                
-                // Function to initialize or reinitialize Subify
-                function initSubifyWidget() {
-                  // Clear any existing instances first
-                  clearSubifyInstances();
-                  
-                  // Get the selected variant ID
-                  const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                              document.querySelector('input[name="id"]');
-                  const variantId = selectedVariantInput ? selectedVariantInput.value : null;
-                  
-                  console.log("Initializing Subify with variant ID:", variantId);
-                  
-                  // Only proceed if we have the SDK and a selected variant
-                  if (window.subifySdk && variantId) {
-                    window.subifySdk.renderWidget(
-                      {{ product | json }}, 
-                      {
-                        renderPosition: {wrapper: "#subify-container"},
-                        selectedVariantId: variantId
-                      }
-                    );
-                    subifyInitialized = true;
-                  } else {
-                    console.warn("Could not initialize Subify. SDK loaded:", !!window.subifySdk, "Variant ID:", variantId);
-                  }
-                }
-                
-                // Initialize on page load with URL-specified variant
-                function handleInitialLoad() {
-                  // Check URL for variant ID
-                  const urlParams = new URLSearchParams(window.location.search);
-                  const variantFromUrl = urlParams.get('variant');
-                  
-                  if (variantFromUrl) {
-                    // If URL has variant, select that radio button
-                    const variantInput = document.querySelector(`input[name="id"][value="${variantFromUrl}"]`);
-                    if (variantInput) {
-                      variantInput.checked = true;
-                    }
-                  }
-                  
-                  // Now initialize Subify with the correct variant
-                  if (window.subifySdk) {
-                    initSubifyWidget();
-                  } else {
-                    window.addEventListener("subify:sdkLoaded", initSubifyWidget);
-                  }
-                }
-                
-                // Set up variant change listeners
-                function setupVariantListeners() {
-                  const variantInputs = document.querySelectorAll('input[name="id"]');
-                  variantInputs.forEach(input => {
-                    input.addEventListener('change', initSubifyWidget);
-                  });
-                }
-                
-                // Run when the DOM is ready
-                document.addEventListener('DOMContentLoaded', function() {
-                  handleInitialLoad();
-                  setupVariantListeners();
-                });
-              })();
-            </script>
+            <!-- Insertion point for Subify widget -->
+            <div class="subify-insertion-point" data-variant-id="{{ variant.id }}"></div>
             <!-- Add to Cart button -->
             <button
               class="btn btn--secondary all-caps product-page__checkout-btn"
@@ -245,6 +168,110 @@
           </div>
         {% endif %}
       {% endfor %}
+      <!-- Add Subify container outside the variant loop, but hide it initially -->
+      <div
+        id="subify-container"
+        class="subify-container"
+        style="display: none;"></div>
+      <script type="text/javascript">
+         (function() {
+           // Track if Subify has been initialized
+           let subifyInitialized = false;
+           let activeVariantId = null;
+           
+           // Function to clear previous Subify instances
+           function clearSubifyInstances() {
+             const container = document.getElementById('subify-container');
+             if (container) {
+               container.innerHTML = '';
+             }
+           }
+           
+           // Function to move Subify container to the correct insertion point
+           function moveSubifyContainer(variantId) {
+             const container = document.getElementById('subify-container');
+             if (!container) return;
+             
+             // Find the insertion point for the current variant
+             const insertionPoint = document.querySelector(`.subify-insertion-point[data-variant-id="${variantId}"]`);
+             if (!insertionPoint) return;
+             
+             // Move the Subify container to the insertion point
+             insertionPoint.appendChild(container);
+             container.style.display = 'block';
+           }
+           
+           // Function to initialize or reinitialize Subify
+           function initSubifyWidget() {
+             // Clear any existing instances first
+             clearSubifyInstances();
+             
+             // Get the selected variant ID
+             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                          document.querySelector('input[name="id"]');
+             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+             
+             // Skip if it's the same variant
+             if (activeVariantId === variantId && subifyInitialized) return;
+             
+             activeVariantId = variantId;
+             console.log("Initializing Subify with variant ID:", variantId);
+             
+             // Move the Subify container to the correct insertion point
+             moveSubifyContainer(variantId);
+             
+             // Only proceed if we have the SDK and a selected variant
+             if (window.subifySdk && variantId) {
+               window.subifySdk.renderWidget(
+                 {{ product | json }}, 
+                 {
+                   renderPosition: {wrapper: "#subify-container"},
+                   selectedVariantId: variantId
+                 }
+               );
+               subifyInitialized = true;
+             } else {
+               console.warn("Could not initialize Subify. SDK loaded:", !!window.subifySdk, "Variant ID:", variantId);
+             }
+           }
+           
+           // Initialize on page load with URL-specified variant
+           function handleInitialLoad() {
+             // Check URL for variant ID
+             const urlParams = new URLSearchParams(window.location.search);
+             const variantFromUrl = urlParams.get('variant');
+             
+             if (variantFromUrl) {
+               // If URL has variant, select that radio button
+               const variantInput = document.querySelector(`input[name="id"][value="${variantFromUrl}"]`);
+               if (variantInput) {
+                 variantInput.checked = true;
+               }
+             }
+             
+             // Now initialize Subify with the correct variant
+             if (window.subifySdk) {
+               initSubifyWidget();
+             } else {
+               window.addEventListener("subify:sdkLoaded", initSubifyWidget);
+             }
+           }
+           
+           // Set up variant change listeners
+           function setupVariantListeners() {
+             const variantInputs = document.querySelectorAll('input[name="id"]');
+             variantInputs.forEach(input => {
+               input.addEventListener('change', initSubifyWidget);
+             });
+           }
+           
+           // Run when the DOM is ready
+           document.addEventListener('DOMContentLoaded', function() {
+             handleInitialLoad();
+             setupVariantListeners();
+           });
+         })();
+      </script>
     </form>
   </section>
 </main>
