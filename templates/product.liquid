@@ -135,7 +135,32 @@
                 data-variant-id="{{ variant.id }}">
               <button type="button" class="quantity__increment">+</button>
             </div>
-            {% comment %} Test {% endcomment %}
+            {% assign target_product = product %}
+            <script id="render-subify-widget-{{ target_product.id }}">
+              console.log("ecom product",{{ product | json }})
+
+                function createSubifyBlock(){
+                const parent = document.getElementById("render-subify-widget-{{ target_product.id }}").parentElement;
+                const wrapper = document.createElement("div");
+                wrapper.className = "subify-app-block-wrapper product-{{ target_product.id }}";
+                parent.appendChild(wrapper);
+              }
+                function initSubifyBlock(){
+              createSubifyBlock();
+              function renderWidget(){
+                const selector = ".subify-app-block-wrapper.product-{{ target_product.id }}";
+                subifySdk.renderWidget({{ target_product |  json }},{renderPosition:{wrapper:selector}})
+              }
+              if(window.subifySdk){
+              renderWidget();
+              }else{
+                window.addEventListener("subify:sdkLoaded",()=>{
+                renderWidget();
+                })
+              }
+              }
+              initSubifyBlock();
+            </script>
             <!-- Add to Cart button -->
             <button
               class="btn btn--secondary all-caps product-page__checkout-btn"
