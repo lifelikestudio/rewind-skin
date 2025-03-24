@@ -135,6 +135,8 @@
                 data-variant-id="{{ variant.id }}">
               <button type="button" class="quantity__increment">+</button>
             </div>
+            <!-- Place the Subify widget wrapper here - between variant selection and product options -->
+            <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
 
             <!-- Add to Cart button -->
             <button
@@ -168,30 +170,17 @@
         {% endif %}
       {% endfor %}
 
-      <!-- Subify widget container between variant selection and Add to Bag button -->
-      <div id="subify-wrapper" class="subify-wrapper">
-        <!-- This container will hold the Subify widget -->
-        <div id="subify-container"></div>
-      </div>
-
       <style>
-        /* Position the Subify wrapper properly */
-        .subify-wrapper {
+        /* Style for the Subify widget wrapper */
+        .subify-widget-wrapper {
           width: 100%;
           margin: 15px 0;
-          order: 1;
-          /* Adjust this value as needed to position it correctly */
-        }
-
-        /* Hide Subify wrapper when variant sections are hidden */
-        .variant-section:not(:first-child):not([style*="display: block"]) + .subify-wrapper {
-          display: none;
         }
       </style>
 
       <script type="text/javascript">
         (function() {
-          // Initialize Subify once with the current variant
+          // Initialize Subify with the current variant
           function initSubify() {
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
                                         document.querySelector('input[name="id"]');
@@ -203,8 +192,14 @@
               window.subifySdk.renderWidget(
                 {{ product | json }}, 
                 {
-                  renderPosition: {wrapper: "#subify-container"},
-                  selectedVariantId: variantId
+                  renderPosition: {
+                    wrapper: "#subify-widget-wrapper",
+                    position: "APPEND"
+                  },
+                  sellingPlanInput: {
+                    wrapper: "form.product-page__checkout-form", // Add the input to the form
+                    id: "selling-plan-input"
+                  }
                 }
               );
             } else {
@@ -212,15 +207,18 @@
             }
           }
           
-          // Update Subify when the selected variant changes
-          function updateSubifyVariant() {
+          // Update the selected variant when it changes
+          function updateVariant() {
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
                                         document.querySelector('input[name="id"]');
             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
             
-            if (window.subifySdk && variantId && typeof window.subifySdk.updateSelectedVariant === 'function') {
+            if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
               console.log("Updating Subify variant to:", variantId);
-              window.subifySdk.updateSelectedVariant(variantId);
+              
+              // Use the product ID with the variant ID
+              const productId = {{ product.id }};
+              window.subifySdk.changeVariant(productId, variantId);
             }
           }
           
@@ -246,7 +244,34 @@
             
             // Add event listeners to variant radio buttons
             document.querySelectorAll('input[name="id"]').forEach(input => {
-              input.addEventListener('change', updateSubifyVariant);
+              input.addEventListener('change', updateVariant);
+            });
+            
+            // Listen for subscription selection changes to update the Add to Bag button text
+            document.addEventListener('subify:sellingPlanSelected', function(event) {
+              console.log('Subscription selected:', event.detail);
+              
+              // Find the visible Add to Bag button
+              const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                          document.querySelector('input[name="id"]');
+              if (!selectedVariantInput) return;
+              
+              const variantId = selectedVariantInput.value;
+              const addToCartBtn = document.querySelector(`button[name="add-to-cart-${variantId}"]`);
+              if (!addToCartBtn) return;
+              
+              const textSpan = addToCartBtn.querySelector('span:first-child');
+              
+              // If a selling plan is selected, update button text
+              if (event.detail.sellingPlanId) {
+                if (textSpan) {
+                  textSpan.textContent = 'Subscribe & Save';
+                }
+              } else {
+                if (textSpan) {
+                  textSpan.textContent = 'Add to Bag';
+                }
+              }
             });
           });
         })();
