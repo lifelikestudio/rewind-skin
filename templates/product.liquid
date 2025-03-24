@@ -274,6 +274,31 @@
             }
           }
           
+          // Function to update the Add to Bag button text based on subscription selection
+          function updateAddToBagButton(isSubscription, sellingPlan) {
+            const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                        document.querySelector('input[name="id"]');
+            if (!selectedVariantInput) return;
+            
+            const variantId = selectedVariantInput.value;
+            const addToCartBtn = document.querySelector(`button[name="add-to-cart-${variantId}"]`);
+            if (!addToCartBtn) return;
+            
+            const textSpan = addToCartBtn.querySelector('span:first-child');
+            
+            if (isSubscription && sellingPlan) {
+              // Update to subscription text
+              if (textSpan) {
+                textSpan.textContent = 'Subscribe & Save';
+              }
+            } else {
+              // Reset to default text
+              if (textSpan) {
+                textSpan.textContent = 'Add to Bag';
+              }
+            }
+          }
+          
           // Initialize when the page loads
           document.addEventListener('DOMContentLoaded', function() {
             // Check URL for variant ID and select that radio button
@@ -301,31 +326,48 @@
               input.addEventListener('change', updateVariant);
             });
             
-            // Listen for subscription selection changes to update the Add to Bag button text
-            document.addEventListener('subify:sellingPlanSelected', function(event) {
-              console.log('Subscription selected:', event.detail);
+            // Listen for selling plan changes
+            window.addEventListener("subify:sellingPlanChange", function(event) {
+              console.log('Subscription plan changed:', event.detail);
               
-              // Find the visible Add to Bag button
-              const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                          document.querySelector('input[name="id"]');
-              if (!selectedVariantInput) return;
+              // event.detail contains targetProductId and selectedSellingPlan
+              const { targetProductId, selectedSellingPlan } = event.detail;
               
-              const variantId = selectedVariantInput.value;
-              const addToCartBtn = document.querySelector(`button[name="add-to-cart-${variantId}"]`);
-              if (!addToCartBtn) return;
+              // Update the hidden input for the selling plan
+              const sellingPlanInput = document.getElementById('selling-plan-input');
               
-              const textSpan = addToCartBtn.querySelector('span:first-child');
-              
-              // If a selling plan is selected, update button text
-              if (event.detail && event.detail.sellingPlanId) {
-                if (textSpan) {
-                  textSpan.textContent = 'Subscribe & Save';
+              if (selectedSellingPlan) {
+                // If a selling plan is selected, set the value
+                if (sellingPlanInput) {
+                  sellingPlanInput.value = selectedSellingPlan.id || '';
+                } else {
+                  // If the input doesn't exist yet, create it
+                  const input = document.createElement('input');
+                  input.type = 'hidden';
+                  input.id = 'selling-plan-input';
+                  input.name = 'selling_plan';
+                  input.value = selectedSellingPlan.id || '';
+                  document.querySelector('form.product-page__checkout-form').appendChild(input);
                 }
+                
+                // Update the Add to Bag button text
+                updateAddToBagButton(true, selectedSellingPlan);
               } else {
-                if (textSpan) {
-                  textSpan.textContent = 'Add to Bag';
+                // If one-time purchase is selected, remove the selling plan
+                if (sellingPlanInput) {
+                  sellingPlanInput.value = '';
                 }
+                
+                // Reset the Add to Bag button text
+                updateAddToBagButton(false, null);
               }
+            });
+            
+            // Also handle variant changes to ensure selling plan is still reflected
+            window.addEventListener("subify:variantChange", function(event) {
+              console.log('Variant changed:', event.detail);
+              // You might need to check if the selling plan is still valid for the new variant
+              // This depends on your specific setup
             });
           });
         })();
