@@ -214,15 +214,17 @@
       <script type="text/javascript">
         (function() {
           let isWidgetInitialized = false;
+          let currentVariantId = null;
           
           // Initialize Subify with the current variant
           function initSubify() {
-            // Skip if already initialized
-            if (isWidgetInitialized) return;
-            
+            // Get the selected variant ID
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                        document.querySelector('input[name="id"]');
+                                       document.querySelector('input[name="id"]');
             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+            
+            // Store the current variant ID
+            currentVariantId = variantId;
             
             console.log("Initializing Subify with variant ID:", variantId);
             
@@ -233,6 +235,7 @@
                 widgetWrapper.innerHTML = '';
               }
               
+              // Initialize with the correct variant ID
               window.subifySdk.renderWidget(
                 {{ product | json }}, 
                 {
@@ -241,13 +244,18 @@
                     position: "APPEND"
                   },
                   sellingPlanInput: {
-                    wrapper: "form.product-page__checkout-form", // Add the input to the form
+                    wrapper: "form.product-page__checkout-form",
                     id: "selling-plan-input"
-                  }
+                  },
+                  // Pass the current variant ID explicitly
+                  selectedVariantId: variantId
                 }
               );
               
               isWidgetInitialized = true;
+              
+              // Log the initialization for debugging
+              console.log(`Subify initialized with product ID: ${{{ product.id }}}, variant ID: ${variantId}`);
             } else {
               console.warn("Could not initialize Subify. SDK loaded:", !!window.subifySdk, "Variant ID:", variantId);
             }
@@ -256,78 +264,26 @@
           // Update the selected variant when it changes
           function updateVariant() {
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                        document.querySelector('input[name="id"]');
+                                       document.querySelector('input[name="id"]');
             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+            
+            // Skip if the variant hasn't changed
+            if (variantId === currentVariantId) return;
+            
+            currentVariantId = variantId;
             
             if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
               console.log("Updating Subify variant to:", variantId);
               
               // Use the product ID with the variant ID
               const productId = {{ product.id }};
+              
+              // Call the changeVariant method with proper IDs
               window.subifySdk.changeVariant(productId, variantId);
               
-              // Make sure the widget wrapper is visible
-              const widgetWrapper = document.getElementById('subify-widget-wrapper');
-              if (widgetWrapper) {
-                widgetWrapper.style.display = 'block';
-              }
+              // Log the change for debugging
+              console.log(`Variant changed - Product ID: ${productId}, Variant ID: ${variantId}`);
             }
-          }
-          
-          // Function to update the Add to Bag button text based on subscription selection
-          function updateAddToBagButton(isSubscription, sellingPlan) {
-            const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                        document.querySelector('input[name="id"]');
-            if (!selectedVariantInput) return;
-            
-            const variantId = selectedVariantInput.value;
-            const addToCartBtn = document.querySelector(`button[name="add-to-cart-${variantId}"]`);
-            if (!addToCartBtn) return;
-            
-            const textSpan = addToCartBtn.querySelector('span:first-child');
-            const priceSpan = addToCartBtn.querySelector('span:last-child');
-            
-            if (isSubscription && sellingPlan) {
-              // Update to subscription text
-              if (textSpan) {
-                textSpan.textContent = 'Subscribe & Save';
-              }
-              
-              // Update price display if subscription has a different price
-              if (priceSpan && sellingPlan.price) {
-                // Format the subscription price
-                const formattedPrice = formatMoney(sellingPlan.price / 100); // Price is in cents
-                priceSpan.innerHTML = formattedPrice;
-              }
-            } else {
-              // Reset to default text
-              if (textSpan) {
-                textSpan.textContent = 'Add to Bag';
-              }
-              
-              // Reset price to original
-              if (priceSpan) {
-                const variant = findVariantById(variantId);
-                if (variant) {
-                  if (variant.compare_at_price > variant.price) {
-                    priceSpan.innerHTML = `<del>${formatMoney(variant.compare_at_price)}</del> <ins>${formatMoney(variant.price)}</ins>`;
-                  } else {
-                    priceSpan.innerHTML = formatMoney(variant.price);
-                  }
-                }
-              }
-            }
-          }
-          
-          // Helper function to find variant by ID
-          function findVariantById(variantId) {
-            const product = {{ product | json }};
-            return product.variants.find(v => v.id.toString() === variantId.toString());
-          }
-          
-          // Helper function to format money values
-          function formatMoney(amount) {
-            return '{{ shop.money_format }}'.replace('{{amount}}', amount);
           }
           
           // Initialize when the page loads
@@ -336,90 +292,42 @@
             const urlParams = new URLSearchParams(window.location.search);
             const variantFromUrl = urlParams.get('variant');
             
+            console.log("URL contains variant:", variantFromUrl);
+            
             if (variantFromUrl) {
               const variantInput = document.querySelector(`input[name="id"][value="${variantFromUrl}"]`);
               if (variantInput) {
                 variantInput.checked = true;
+                console.log("Selected variant from URL:", variantFromUrl);
               }
             }
             
-            // Initialize Subify - with a short delay to ensure DOM is ready
+            // Initialize Subify with a delay to ensure DOM is ready
             setTimeout(function() {
               if (window.subifySdk) {
                 initSubify();
               } else {
-                window.addEventListener("subify:sdkLoaded", initSubify);
+                console.log("Waiting for Subify SDK to load...");
+                window.addEventListener("subify:sdkLoaded", function() {
+                  console.log("Subify SDK loaded event detected");
+                  initSubify();
+                });
               }
-            }, 100);
+            }, 300); // Increased delay for more reliable initialization
             
             // Add event listeners to variant radio buttons
             document.querySelectorAll('input[name="id"]').forEach(input => {
-              input.addEventListener('change', updateVariant);
-            });
-            
-            // Listen for selling plan changes
-            window.addEventListener("subify:sellingPlanChange", function(event) {
-              console.log('Subscription plan changed:', event.detail);
-              
-              // event.detail contains targetProductId and selectedSellingPlan
-              const { targetProductId, selectedSellingPlan } = event.detail;
-              
-              // Update the hidden input for the selling plan
-              let sellingPlanInput = document.getElementById('selling-plan-input') || 
-                                     document.querySelector('input[name="selling_plan"]');
-              
-              if (selectedSellingPlan) {
-                // If a selling plan is selected, set the value
-                if (sellingPlanInput) {
-                  sellingPlanInput.value = selectedSellingPlan.id || '';
-                } else {
-                  // If the input doesn't exist yet, create it
-                  const input = document.createElement('input');
-                  input.type = 'hidden';
-                  input.id = 'selling-plan-input';
-                  input.name = 'selling_plan'; // This is the critical field name for cart submissions
-                  input.value = selectedSellingPlan.id || '';
-                  document.querySelector('form.product-page__checkout-form').appendChild(input);
-                }
-                
-                console.log('Setting selling plan to:', selectedSellingPlan.id);
-                
-                // Update the Add to Bag button text and price
-                updateAddToBagButton(true, selectedSellingPlan);
-              } else {
-                // If one-time purchase is selected, remove the selling plan value
-                if (sellingPlanInput) {
-                  sellingPlanInput.value = '';
-                }
-                
-                console.log('Clearing selling plan - one-time purchase selected');
-                
-                // Reset the Add to Bag button text and price
-                updateAddToBagButton(false, null);
-              }
-            });
-            
-            // Add form submission debugging
-            const form = document.querySelector('form.product-page__checkout-form');
-            if (form) {
-              form.addEventListener('submit', function(e) {
-                // Don't prevent submission, just log what's being submitted
-                const formData = new FormData(form);
-                console.log('Form submission data:');
-                for (let [key, value] of formData.entries()) {
-                  console.log(`${key}: ${value}`);
-                }
-                
-                // Double-check selling plan is included if it should be
-                const sellingPlanInput = document.getElementById('selling-plan-input') || 
-                                        document.querySelector('input[name="selling_plan"]');
-                if (sellingPlanInput) {
-                  console.log('Selling plan value in form:', sellingPlanInput.value);
-                } else {
-                  console.log('No selling plan input found in form');
-                }
+              input.addEventListener('change', function() {
+                console.log("Variant radio button changed to:", this.value);
+                updateVariant();
               });
-            }
+            });
+            
+            // Listen for variant change events from Subify
+            window.addEventListener("subify:variantChange", function(event) {
+              console.log("Subify variant change event:", event.detail);
+              // You can add additional logic here if needed
+            });
           });
         })();
       </script>
@@ -463,3 +371,133 @@
   </div>
   </section>
 {% endcomment %}
+<script type="text/javascript">
+  // Add this function after your variant handling code
+  
+  // Update the button text and price when subscription is selected
+  function updateButtonWithSubscriptionPrice(sellingPlan) {
+    // Get currently selected variant
+    const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                document.querySelector('input[name="id"]');
+    if (!selectedVariantInput) return;
+    
+    const variantId = selectedVariantInput.value;
+    const addToCartBtn = document.querySelector(`button[name="add-to-cart-${variantId}"]`);
+    if (!addToCartBtn) return;
+    
+    // Get the button text and price spans
+    const textSpan = addToCartBtn.querySelector('span:first-child');
+    const priceSpan = addToCartBtn.querySelector('span:last-child');
+    
+    if (!sellingPlan) {
+      // Reset to one-time purchase
+      if (textSpan) textSpan.textContent = 'Add to Bag';
+      
+      // Reset to original price
+      if (priceSpan) {
+        const product = {{ product | json }};
+        const variant = product.variants.find(v => v.id.toString() === variantId.toString());
+        
+        if (variant) {
+          if (variant.compare_at_price > variant.price) {
+            priceSpan.innerHTML = `
+              <del>{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.compare_at_price/100).toFixed(2)}' }}</del>
+              <ins>{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.price/100).toFixed(2)}' }}</ins>
+            `;
+          } else {
+            priceSpan.innerHTML = `{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.price/100).toFixed(2)}' }}`;
+          }
+        }
+      }
+      
+      console.log("Reset button to one-time purchase");
+      return;
+    }
+    
+    // Change button text for subscription
+    if (textSpan) {
+      textSpan.textContent = 'Subscribe & Save';
+    }
+    
+    // Update price if we have the selling plan details
+    if (priceSpan && sellingPlan) {
+      console.log("Subscription selling plan:", sellingPlan);
+      
+      try {
+        // Get the current variant details
+        const product = {{ product | json }};
+        const variant = product.variants.find(v => v.id.toString() === variantId.toString());
+        
+        if (!variant) {
+          console.error("Could not find variant with ID:", variantId);
+          return;
+        }
+        
+        let subscriptionPrice = variant.price;
+        let discountApplied = false;
+        
+        // If selling plan has discount info, calculate the discounted price
+        if (sellingPlan.price_adjustments && sellingPlan.price_adjustments.length > 0) {
+          const adjustment = sellingPlan.price_adjustments[0];
+          discountApplied = true;
+          
+          console.log("Found price adjustment:", adjustment);
+          
+          if (adjustment.value_type === 'percentage') {
+            // Percentage discount
+            const discountPercent = adjustment.value;
+            subscriptionPrice = variant.price * (1 - (discountPercent / 100));
+            console.log(`Applied ${discountPercent}% discount: ${variant.price} → ${subscriptionPrice}`);
+          } else if (adjustment.value_type === 'fixed_amount') {
+            // Fixed amount discount
+            subscriptionPrice = variant.price - adjustment.value;
+            console.log(`Applied fixed discount of ${adjustment.value}: ${variant.price} → ${subscriptionPrice}`);
+          } else if (adjustment.value_type === 'price') {
+            // Direct price override
+            subscriptionPrice = adjustment.value;
+            console.log(`Applied direct price: ${subscriptionPrice}`);
+          }
+        } else if (sellingPlan.price !== undefined) {
+          // Some selling plans directly provide the price
+          subscriptionPrice = sellingPlan.price;
+          discountApplied = subscriptionPrice < variant.price;
+          console.log(`Using direct price from selling plan: ${subscriptionPrice}`);
+        }
+        
+        // Format and display the price
+        const formattedSubscriptionPrice = `{{ shop.money_with_currency_format | replace: '{{amount}}', '${(subscriptionPrice/100).toFixed(2)}' }}`;
+        
+        if (discountApplied) {
+          // Show original price with strikethrough if there's a discount
+          const formattedOriginalPrice = `{{ shop.money_with_currency_format | replace: '{{amount}}', '${(variant.price/100).toFixed(2)}' }}`;
+          priceSpan.innerHTML = `<del>${formattedOriginalPrice}</del> <ins>${formattedSubscriptionPrice}</ins>`;
+          console.log(`Updated button with discount: ${formattedOriginalPrice} → ${formattedSubscriptionPrice}`);
+        } else {
+          // Just show the subscription price
+          priceSpan.innerHTML = formattedSubscriptionPrice;
+          console.log(`Updated button price: ${formattedSubscriptionPrice}`);
+        }
+      } catch (err) {
+        console.error("Error updating button with subscription price:", err);
+      }
+    }
+  }
+  
+  // Add this to your event listeners section
+  window.addEventListener("subify:sellingPlanChange", function(event) {
+    console.log("Selling plan changed:", event.detail);
+    
+    // Get the selling plan data
+    const { targetProductId, selectedSellingPlan } = event.detail;
+    
+    // Update selling plan input for cart submission
+    const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
+    if (sellingPlanInput) {
+      sellingPlanInput.value = selectedSellingPlan ? selectedSellingPlan.id : '';
+      console.log("Updated selling plan input value:", sellingPlanInput.value);
+    }
+    
+    // Update button text and price
+    updateButtonWithSubscriptionPrice(selectedSellingPlan);
+  });
+</script>
