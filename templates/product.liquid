@@ -349,5 +349,127 @@
         });
       });
     })();
+  </script>{% endif %}
+
+{% comment %} Implement Subify subscription widget {% endcomment %}
+{% assign has_subify_plans = false %}
+{% for selling_plan_group in product.selling_plan_groups %}
+  {% if selling_plan_group.app_id == 'subi' or selling_plan_group.app_id == 'subify' %}
+    {% assign has_subify_plans = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% if has_subify_plans %}
+  <!-- Subify widget wrapper -->
+  <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
+
+  <!-- Subify SDK script -->
+  <script src="https://cdn.hengam.io/subify/subify-sdk.js" defer></script>
+
+  <!-- Subify styles -->
+  <style>
+    .subify-widget-wrapper {
+      width: 100%;
+      margin: 15px 0;
+      display: block;
+    }
+
+    .product-page__checkout-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .variant-section {
+      order: 3;
+    }
+
+    .product-page__variants-group {
+      order: 1;
+    }
+
+    #subify-widget-wrapper {
+      order: 2;
+    }
+  </style>
+
+  <!-- Subify initialization script -->
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      let isWidgetInitialized = false;
+      
+      // Function to initialize or re-initialize the widget
+      function initSubifyWidget() {
+        if (!window.subifySdk) return;
+        
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                    document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
+        
+        if (!variantId) return;
+        
+        try {
+          window.subifySdk.renderWidget(
+            {{ product | json }}, 
+            {
+              renderPosition: {
+                wrapper: "#subify-widget-wrapper",
+                position: "APPEND"
+              },
+              sellingPlanInput: {
+                wrapper: "form.product-page__checkout-form",
+                id: "selling-plan-input"
+              },
+              useCardApi: true
+            }
+          ).then(() => {
+            isWidgetInitialized = true;
+            console.log("Subify widget initialized successfully");
+          }).catch(error => {
+            console.error("Error initializing Subify widget:", error);
+          });
+        } catch (error) {
+          console.error("Error during Subify initialization:", error);
+        }
+      }
+      
+      // Function to update the variant in the widget
+      function updateSubifyVariant() {
+        if (!window.subifySdk || !isWidgetInitialized) return;
+        
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                   document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
+        
+        if (variantId && typeof window.subifySdk.changeVariant === 'function') {
+          window.subifySdk.changeVariant({{ product.id }}, variantId);
+          console.log("Subify variant updated to:", variantId);
+        }
+      }
+      
+      // Initialize when SDK is loaded
+      if (window.subifySdk) {
+        initSubifyWidget();
+      } else {
+        window.addEventListener("subify:sdkLoaded", initSubifyWidget);
+      }
+      
+      // Add change listeners to variant selectors
+      document.querySelectorAll('input[name="id"]').forEach(input => {
+        input.addEventListener('change', updateSubifyVariant);
+      });
+      
+      // Listen for variant changes detected by the SDK
+      window.addEventListener("subify:variantChange", function(event) {
+        const { targetProductId, selectedVariantId } = event.detail;
+        console.log("Subify detected variant change:", selectedVariantId);
+      });
+      
+      // Listen for selling plan changes
+      window.addEventListener("subify:sellingPlanChange", function(event) {
+        const { targetProductId, selectedSellingPlan } = event.detail;
+        console.log("Subify selling plan changed:", selectedSellingPlan);
+      });
+    });
   </script>
 {% endif %}
