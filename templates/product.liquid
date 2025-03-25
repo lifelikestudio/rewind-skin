@@ -236,21 +236,21 @@
 </script>
 
 {% if hasSubiPlans %}
-  <!-- Subi widget wrapper -->
-  <div id="subi-widget-wrapper" class="subi-widget-wrapper"></div>
+  <!-- Subify widget wrapper -->
+  <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
 
-  <!-- Subi SDK script -->
+  <!-- Subify SDK script -->
   <script>
-    console.log("Loading Subi SDK...");
+    console.log("Loading Subify SDK...");
   </script>
   <script
     src="https://cdn.hengam.io/subify/subify-sdk.js"
     defer
-    id="subi-sdk-script"></script>
+    id="subify-sdk-script"></script>
 
-  <!-- Subi styles -->
+  <!-- Subify styles -->
   <style>
-    .subi-widget-wrapper {
+    .subify-widget-wrapper {
       width: 100%;
       margin: 15px 0;
       display: block;
@@ -269,57 +269,20 @@
       order: 1;
     }
 
-    #subi-widget-wrapper {
+    #subify-widget-wrapper {
       order: 2;
     }
   </style>
 
-  <!-- Subi initialization script -->
+  <!-- Subify initialization script -->
   <script type="text/javascript">
-    console.log("Subi init script running");
+    console.log("Subify init script running");
     
     (function() {
       let isWidgetInitialized = false;
       
-      // Function to format money with currency using Shopify's format
-      function formatMoney(cents) {
-        if (typeof cents == 'string') cents = cents.replace('.', '');
-        cents = parseInt(cents);
-        
-        // Use the same money format that's used in your Liquid templates
-        const format = {{ shop.money_with_currency_format | json }};
-        
-        function formatWithDelimiters(number, precision, thousands, decimal) {
-          precision = precision || 2;
-          thousands = thousands || ',';
-          decimal = decimal || '.';
-
-          if (isNaN(number) || number == null) return '0';
-          
-          number = (number/100.0).toFixed(precision);
-          
-          const parts = number.split('.');
-          const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
-          const cents = parts[1] ? (decimal + parts[1]) : '';
-          
-          return dollars + cents;
-        }
-        
-        const formatted = formatWithDelimiters(cents);
-        let result = format.replace(/\{\{\s*amount\s*\}\}/, formatted);
-        
-        // Remove trailing zeros but keep the decimal point
-        result = result.replace(/(\.\d*?)0+\s/, '$1 ');  // Replace trailing zeros before space
-        result = result.replace(/(\.\d*?)0+([^\d])/, '$1$2');  // Replace trailing zeros before non-digit
-        
-        // Only remove the decimal point if ALL digits after it are zeros
-        result = result.replace(/\.00+([^\d]|$)/, '$1');  // Only remove decimal point for .00
-        
-        return result;
-      }
-      
-      function initSubi() {
-        console.log("initSubi function called");
+      function initSubify() {
+        console.log("initSubify function called");
         if (isWidgetInitialized) {
           console.log("Widget already initialized, skipping");
           return;
@@ -328,18 +291,18 @@
         const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
                                    document.querySelector('input[name="id"]');
         const variantId = selectedVariantInput ? selectedVariantInput.value : null;
-        console.log("Selected variant for Subi:", variantId);
+        console.log("Selected variant for Subify:", variantId);
         
         if (window.subifySdk && variantId) {
-          console.log("Subi SDK found in window");
+          console.log("Subify SDK found in window");
           
           try {
-            console.log("Attempting to render Subi widget");
+            console.log("Attempting to render Subify widget");
             window.subifySdk.renderWidget(
               {{ product | json }}, 
               {
                 renderPosition: {
-                  wrapper: "#subi-widget-wrapper",
+                  wrapper: "#subify-widget-wrapper",
                   position: "APPEND"
                 },
                 sellingPlanInput: {
@@ -349,18 +312,18 @@
                 selectedVariantId: variantId
               }
             ).then(() => {
-              console.log("Subi widget rendered successfully");
+              console.log("Subify widget rendered successfully");
               isWidgetInitialized = true;
               // Setup the price update functionality for selling plans
               setupSellingPlanPriceUpdates();
             }).catch(error => {
-              console.error("Error initializing Subi widget:", error);
+              console.error("Error initializing Subify widget:", error);
             });
           } catch (error) {
-            console.error("Error during Subi initialization:", error);
+            console.error("Error during Subify initialization:", error);
           }
         } else {
-          console.error("Subi SDK not found or variant ID missing");
+          console.error("Subify SDK not found or variant ID missing");
         }
       }
       
@@ -370,7 +333,7 @@
         const variantId = selectedVariantInput ? selectedVariantInput.value : null;
         
         if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
-          console.log("Updating Subi variant to:", variantId);
+          console.log("Updating Subify variant to:", variantId);
           window.subifySdk.changeVariant({{ product.id }}, variantId);
         }
       }
@@ -454,26 +417,21 @@
               console.log("Original price:", variant.price);
               console.log("Adjusted price from allocation:", adjustedPrice);
               
-              // Format price with currency
-              const formattedPrice = formatMoney(adjustedPrice);
-              
               // Update the price display
               if (variant.compare_at_price > variant.price) {
-                const formattedComparePrice = formatMoney(variant.compare_at_price);
                 priceSpan.innerHTML = `
-                  <del>${formattedComparePrice}</del>
-                  <ins>${formattedPrice}</ins>
+                  <del>{{ currency.symbol }}${(variant.compare_at_price/100).toFixed(2)} {{ currency.code }}</del>
+                  <ins>{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}</ins>
                 `;
               } else {
-                priceSpan.textContent = formattedPrice;
+                priceSpan.textContent = `{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}`;
               }
               
               // Update Sezzle payments
               const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
               if (paymentPlanElement) {
                 const dividedPrice = Math.round(adjustedPrice / 4);
-                const formattedDividedPrice = formatMoney(dividedPrice);
-                paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
+                paymentPlanElement.innerHTML = `or 4 interest-free payments of {{ currency.symbol }}${(dividedPrice/100).toFixed(2)} {{ currency.code }} with <span class="is--emphasized">Sezzle</span>`;
               }
               return;
             }
@@ -501,26 +459,21 @@
             console.log("Original price:", variant.price);
             console.log("Adjusted price:", adjustedPrice);
             
-            // Format price with currency
-            const formattedPrice = formatMoney(adjustedPrice);
-            
             // Update the price display
             if (variant.compare_at_price > variant.price) {
-              const formattedComparePrice = formatMoney(variant.compare_at_price);
               priceSpan.innerHTML = `
-                <del>${formattedComparePrice}</del>
-                <ins>${formattedPrice}</ins>
+                <del>{{ currency.symbol }}${(variant.compare_at_price/100).toFixed(2)} {{ currency.code }}</del>
+                <ins>{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}</ins>
               `;
             } else {
-              priceSpan.textContent = formattedPrice;
+              priceSpan.textContent = `{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}`;
             }
             
             // Update Sezzle payments
             const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
             if (paymentPlanElement) {
               const dividedPrice = Math.round(adjustedPrice / 4);
-              const formattedDividedPrice = formatMoney(dividedPrice);
-              paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
+              paymentPlanElement.innerHTML = `or 4 interest-free payments of {{ currency.symbol }}${(dividedPrice/100).toFixed(2)} {{ currency.code }} with <span class="is--emphasized">Sezzle</span>`;
             }
           } else {
             console.log("Selling plan not found in groups or allocations");
@@ -528,25 +481,22 @@
         } else {
           console.log("Resetting to one-time purchase price");
           // Reset to original price with currency
-          const formattedPrice = formatMoney(variant.price);
           
           // Keep the same HTML structure for consistency
           if (variant.compare_at_price > variant.price) {
-            const formattedComparePrice = formatMoney(variant.compare_at_price);
             priceSpan.innerHTML = `
-              <del>${formattedComparePrice}</del>
-              <ins>${formattedPrice}</ins>
+              <del>{{ currency.symbol }}${(variant.compare_at_price/100).toFixed(2)} {{ currency.code }}</del>
+              <ins>{{ currency.symbol }}${(variant.price/100).toFixed(2)} {{ currency.code }}</ins>
             `;
           } else {
-            priceSpan.textContent = formattedPrice;
+            priceSpan.textContent = `{{ currency.symbol }}${(variant.price/100).toFixed(2)} {{ currency.code }}`;
           }
           
           // Reset Sezzle payments
           const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
           if (paymentPlanElement) {
             const dividedPrice = Math.round(variant.price / 4);
-            const formattedDividedPrice = formatMoney(dividedPrice);
-            paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
+            paymentPlanElement.innerHTML = `or 4 interest-free payments of {{ currency.symbol }}${(dividedPrice/100).toFixed(2)} {{ currency.code }} with <span class="is--emphasized">Sezzle</span>`;
           }
         }
       }
@@ -576,22 +526,22 @@
       }
       
       document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded, checking for Subi SDK");
+        console.log("DOM loaded, checking for Subify SDK");
         if (window.subifySdk) {
-          console.log("Subi SDK already available at DOMContentLoaded");
-          initSubi();
+          console.log("Subify SDK already available at DOMContentLoaded");
+          initSubify();
         } else {
-          console.log("Waiting for Subi SDK to load...");
+          console.log("Waiting for Subify SDK to load...");
           window.addEventListener("subify:sdkLoaded", function() {
-            console.log("Subi SDK loaded event fired");
-            initSubi();
+            console.log("Subify SDK loaded event fired");
+            initSubify();
           });
           
           // Fallback: check once after a delay
           setTimeout(function() {
             if (!isWidgetInitialized && window.subifySdk) {
-              console.log("Subi SDK found through timeout check");
-              initSubi();
+              console.log("Subify SDK found through timeout check");
+              initSubify();
             }
           }, 2000);
         }
