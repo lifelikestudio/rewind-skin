@@ -392,6 +392,145 @@
     document.addEventListener('DOMContentLoaded', function() {
       let isWidgetInitialized = false;
       
+      // Function to format currency according to current shop settings
+      function formatMoney(cents, format) {
+        if (typeof cents == 'string') { cents = cents.replace('.', ''); }
+        
+        const shopFormat = {{ shop.money_format | json }};
+        const formatString = format || shopFormat;
+        
+        function formatWithDelimiters(number, precision, thousands, decimal) {
+          precision = precision || 2;
+          thousands = thousands || ',';
+          decimal = decimal || '.';
+
+          if (isNaN(number) || number == null) return '0';
+          
+          number = (number/100.0).toFixed(precision);
+          
+          const parts = number.split('.');
+          const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+          const cents = parts[1] ? (decimal + parts[1]) : '';
+          
+          return dollars + cents;
+        }
+        
+        let value = '';
+        
+        const placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
+        switch (formatString.match(placeholderRegex)[1]) {
+          case 'amount':
+            value = formatWithDelimiters(cents, 2);
+            break;
+          case 'amount_no_decimals':
+            value = formatWithDelimiters(cents, 0);
+            break;
+          case 'amount_with_comma_separator':
+            value = formatWithDelimiters(cents, 2, '.', ',');
+            break;
+          case 'amount_no_decimals_with_comma_separator':
+            value = formatWithDelimiters(cents, 0, '.', ',');
+            break;
+          case 'amount_with_space_separator': 
+            value = formatWithDelimiters(cents, 2, ' ', ',');
+            break;
+        }
+        
+        return formatString.replace(placeholderRegex, value).replace('.00', '');
+      }
+      
+      // Function to update button price based on selected selling plan
+      function updateButtonPrice(selectedSellingPlan) {
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                    document.querySelector('input[name="id"]');
+        if (!selectedVariantInput) return;
+        
+        const variantId = parseInt(selectedVariantInput.value);
+        const variant = {{ product.variants | json }}.find(v => v.id === variantId);
+        if (!variant) return;
+        
+        // Find the pricing for this variant with the selected selling plan
+        const checkoutButtons = document.querySelectorAll(`.variant-section-${variantId} .product-page__checkout-btn`);
+        
+        if (selectedSellingPlan) {
+          // Find the selling plan
+          const sellingPlanGroups = {{ product.selling_plan_groups | json }};
+          let sellingPlanPrice = null;
+          
+          // Look through all selling plan groups to find our plan
+          for (const group of sellingPlanGroups) {
+            const plan = group.selling_plans.find(p => p.id == selectedSellingPlan);
+            if (plan) {
+              // Check variant-specific pricing if available
+              const variantPlan = plan.price_adjustments.find(adj => 
+                adj.variants && adj.variants.includes(variantId)
+              ) || plan.price_adjustments[0]; // Fallback to first adjustment
+              
+              if (variantPlan) {
+                // Calculate adjusted price based on adjustment type
+                if (variantPlan.value_type === 'percentage') {
+                  const discount = variant.price * (variantPlan.value / 100);
+                  sellingPlanPrice = variant.price - discount;
+                } else if (variantPlan.value_type === 'fixed_amount') {
+                  sellingPlanPrice = variant.price - variantPlan.value;
+                } else if (variantPlan.value_type === 'price') {
+                  sellingPlanPrice = variantPlan.value;
+                }
+                break;
+              }
+            }
+          }
+          
+          // Update the button text with subscription price
+          if (sellingPlanPrice !== null) {
+            checkoutButtons.forEach(button => {
+              const priceSpan = button.querySelector('span:last-child');
+              if (priceSpan) {
+                if (variant.compare_at_price > variant.price) {
+                  priceSpan.innerHTML = `
+                    <del>${formatMoney(variant.compare_at_price)}</del>
+                    <ins>${formatMoney(sellingPlanPrice)}</ins>
+                  `;
+                } else {
+                  priceSpan.textContent = formatMoney(sellingPlanPrice);
+                }
+              }
+            });
+            
+            // Also update payment plan amount (if applicable)
+            const paymentPlanElements = document.querySelectorAll(`.variant-section-${variantId} .product-page__payment-plan`);
+            paymentPlanElements.forEach(element => {
+              const dividedPrice = Math.round(sellingPlanPrice / 4);
+              const formattedDividedPrice = formatMoney(dividedPrice);
+              element.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
+            });
+          }
+        } else {
+          // Reset to original price
+          checkoutButtons.forEach(button => {
+            const priceSpan = button.querySelector('span:last-child');
+            if (priceSpan) {
+              if (variant.compare_at_price > variant.price) {
+                priceSpan.innerHTML = `
+                  <del>${formatMoney(variant.compare_at_price)}</del>
+                  <ins>${formatMoney(variant.price)}</ins>
+                `;
+              } else {
+                priceSpan.textContent = formatMoney(variant.price);
+              }
+            }
+          });
+          
+          // Reset payment plan 
+          const paymentPlanElements = document.querySelectorAll(`.variant-section-${variantId} .product-page__payment-plan`);
+          paymentPlanElements.forEach(element => {
+            const dividedPrice = Math.round(variant.price / 4);
+            const formattedDividedPrice = formatMoney(dividedPrice);
+            element.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
+          });
+        }
+      }
+      
       // Function to initialize or re-initialize the widget
       function initSubifyWidget() {
         if (!window.subifySdk) return;
@@ -414,13 +553,13 @@
                 wrapper: "form.product-page__checkout-form",
                 id: "selling-plan-input"
               },
-              useCardApi: true // This should intercept cart additions, but let's make sure the form submit works properly
+              useCardApi: true
             }
           ).then(() => {
             isWidgetInitialized = true;
             console.log("Subify widget initialized successfully");
             
-            // Let's make sure form submission is handled properly
+            // Setup cart integration and attach event listeners
             setupCartIntegration();
           }).catch(error => {
             console.error("Error initializing Subify widget:", error);
@@ -430,7 +569,7 @@
         }
       }
       
-      // Function to ensure selling plan is properly included in cart submissions
+      // Setup event listeners for selling plan changes
       function setupCartIntegration() {
         const form = document.querySelector('form.product-page__checkout-form');
         if (!form) return;
@@ -453,10 +592,13 @@
           return true;
         };
         
-        // Log selling plan changes to debug
+        // Listen for selling plan changes and update button price
         window.addEventListener("subify:sellingPlanChange", function(event) {
           const { targetProductId, selectedSellingPlan } = event.detail;
           console.log("Subify selling plan changed to:", selectedSellingPlan);
+          
+          // Update the button price when selling plan changes
+          updateButtonPrice(selectedSellingPlan);
           
           // Let's explicitly check if the hidden input was created
           setTimeout(() => {
@@ -467,20 +609,6 @@
                         "Not found");
           }, 500);
         });
-      }
-      
-      // Function to update the variant in the widget
-      function updateSubifyVariant() {
-        if (!window.subifySdk || !isWidgetInitialized) return;
-        
-        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                   document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
-        
-        if (variantId && typeof window.subifySdk.changeVariant === 'function') {
-          window.subifySdk.changeVariant({{ product.id }}, variantId);
-          console.log("Subify variant updated to:", variantId);
-        }
       }
       
       // Initialize when SDK is loaded
