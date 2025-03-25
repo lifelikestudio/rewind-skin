@@ -417,21 +417,26 @@
               console.log("Original price:", variant.price);
               console.log("Adjusted price from allocation:", adjustedPrice);
               
-              // Update the price display
+              // Update the price display using Shopify's built-in formatting
               if (variant.compare_at_price > variant.price) {
+                const compareAtPriceText = "{{ currency.symbol }}" + (variant.compare_at_price/100).toFixed(2) + " {{ currency.code }}";
+                const adjustedPriceText = "{{ currency.symbol }}" + (adjustedPrice/100).toFixed(2) + " {{ currency.code }}";
+                
                 priceSpan.innerHTML = `
-                  <del>{{ currency.symbol }}${(variant.compare_at_price/100).toFixed(2)} {{ currency.code }}</del>
-                  <ins>{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}</ins>
+                  <del>${compareAtPriceText}</del>
+                  <ins>${adjustedPriceText}</ins>
                 `;
               } else {
-                priceSpan.textContent = `{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}`;
+                const adjustedPriceText = "{{ currency.symbol }}" + (adjustedPrice/100).toFixed(2) + " {{ currency.code }}";
+                priceSpan.textContent = adjustedPriceText;
               }
               
               // Update Sezzle payments
               const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
               if (paymentPlanElement) {
                 const dividedPrice = Math.round(adjustedPrice / 4);
-                paymentPlanElement.innerHTML = `or 4 interest-free payments of {{ currency.symbol }}${(dividedPrice/100).toFixed(2)} {{ currency.code }} with <span class="is--emphasized">Sezzle</span>`;
+                const dividedPriceText = "{{ currency.symbol }}" + (dividedPrice/100).toFixed(2) + " {{ currency.code }}";
+                paymentPlanElement.innerHTML = `or 4 interest-free payments of ${dividedPriceText} with <span class="is--emphasized">Sezzle</span>`;
               }
               return;
             }
@@ -459,21 +464,26 @@
             console.log("Original price:", variant.price);
             console.log("Adjusted price:", adjustedPrice);
             
-            // Update the price display
+            // Update the price display using Shopify's built-in formatting
             if (variant.compare_at_price > variant.price) {
+              const compareAtPriceText = "{{ currency.symbol }}" + (variant.compare_at_price/100).toFixed(2) + " {{ currency.code }}";
+              const adjustedPriceText = "{{ currency.symbol }}" + (adjustedPrice/100).toFixed(2) + " {{ currency.code }}";
+              
               priceSpan.innerHTML = `
-                <del>{{ currency.symbol }}${(variant.compare_at_price/100).toFixed(2)} {{ currency.code }}</del>
-                <ins>{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}</ins>
+                <del>${compareAtPriceText}</del>
+                <ins>${adjustedPriceText}</ins>
               `;
             } else {
-              priceSpan.textContent = `{{ currency.symbol }}${(adjustedPrice/100).toFixed(2)} {{ currency.code }}`;
+              const adjustedPriceText = "{{ currency.symbol }}" + (adjustedPrice/100).toFixed(2) + " {{ currency.code }}";
+              priceSpan.textContent = adjustedPriceText;
             }
             
             // Update Sezzle payments
             const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
             if (paymentPlanElement) {
               const dividedPrice = Math.round(adjustedPrice / 4);
-              paymentPlanElement.innerHTML = `or 4 interest-free payments of {{ currency.symbol }}${(dividedPrice/100).toFixed(2)} {{ currency.code }} with <span class="is--emphasized">Sezzle</span>`;
+              const dividedPriceText = "{{ currency.symbol }}" + (dividedPrice/100).toFixed(2) + " {{ currency.code }}";
+              paymentPlanElement.innerHTML = `or 4 interest-free payments of ${dividedPriceText} with <span class="is--emphasized">Sezzle</span>`;
             }
           } else {
             console.log("Selling plan not found in groups or allocations");
@@ -484,19 +494,24 @@
           
           // Keep the same HTML structure for consistency
           if (variant.compare_at_price > variant.price) {
+            const compareAtPriceText = "{{ currency.symbol }}" + (variant.compare_at_price/100).toFixed(2) + " {{ currency.code }}";
+            const variantPriceText = "{{ currency.symbol }}" + (variant.price/100).toFixed(2) + " {{ currency.code }}";
+            
             priceSpan.innerHTML = `
-              <del>{{ currency.symbol }}${(variant.compare_at_price/100).toFixed(2)} {{ currency.code }}</del>
-              <ins>{{ currency.symbol }}${(variant.price/100).toFixed(2)} {{ currency.code }}</ins>
+              <del>${compareAtPriceText}</del>
+              <ins>${variantPriceText}</ins>
             `;
           } else {
-            priceSpan.textContent = `{{ currency.symbol }}${(variant.price/100).toFixed(2)} {{ currency.code }}`;
+            const variantPriceText = "{{ currency.symbol }}" + (variant.price/100).toFixed(2) + " {{ currency.code }}";
+            priceSpan.textContent = variantPriceText;
           }
           
           // Reset Sezzle payments
           const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
           if (paymentPlanElement) {
             const dividedPrice = Math.round(variant.price / 4);
-            paymentPlanElement.innerHTML = `or 4 interest-free payments of {{ currency.symbol }}${(dividedPrice/100).toFixed(2)} {{ currency.code }} with <span class="is--emphasized">Sezzle</span>`;
+            const dividedPriceText = "{{ currency.symbol }}" + (dividedPrice/100).toFixed(2) + " {{ currency.code }}";
+            paymentPlanElement.innerHTML = `or 4 interest-free payments of ${dividedPriceText} with <span class="is--emphasized">Sezzle</span>`;
           }
         }
       }
