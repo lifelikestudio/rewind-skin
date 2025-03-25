@@ -19,6 +19,35 @@
         {% render 'okendo-reviews-product-rating-summary'
           , product: product %}
       </div>
+
+      <!-- Generate selling plan pricing data using Liquid -->
+      <script type="application/json" id="selling-plan-data">
+        {
+          "product": {{ product.id | json }},
+          "variants": [
+            {% for variant in product.variants %}
+              {
+                "id": {{ variant.id | json }},
+                "price": {{ variant.price | json }},
+                "compare_at_price": {{ variant.compare_at_price | json }},
+                "selling_plan_allocations": [
+                  {% for allocation in variant.selling_plan_allocations %}
+                    {
+                      "selling_plan_id": {{ allocation.selling_plan_id | json }},
+                      "selling_plan_group_id": {{ allocation.selling_plan_group_id | json }},
+                      "price": {{ allocation.price | json }},
+                      "compare_at_price": {{ allocation.compare_at_price | json }},
+                      "per_delivery_price": {{ allocation.per_delivery_price | json }}
+                    }{% unless forloop.last %},{% endunless %}
+                  {% endfor %}
+                ]
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ],
+          "money_format": {{ shop.money_with_currency_format | json }}
+        }
+      </script>
+
       {{ product.description }}
     </div>
   </section>
@@ -390,6 +419,8 @@
   <!-- Subify initialization script -->
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
+      // Get the selling plan data from the pre-rendered JSON
+      const sellingPlanData = JSON.parse(document.getElementById('selling-plan-data').textContent);
       let isWidgetInitialized = false;
       
       // Function to format money with currency using Shopify's format
@@ -397,8 +428,8 @@
         if (typeof cents == 'string') cents = cents.replace('.', '');
         cents = parseInt(cents);
         
-        // Use the same money format that's used in your Liquid templates
-        const format = {{ shop.money_with_currency_format | json }};
+        // Use the money format from our pre-rendered data
+        const format = sellingPlanData.money_format;
         
         function formatWithDelimiters(number, precision, thousands, decimal) {
           precision = precision || 2;
@@ -420,33 +451,60 @@
         return format.replace(/\{\{\s*amount\s*\}\}/, formatted);
       }
       
+      // Function to get accurate selling plan price from the pre-rendered data
+      function getSellingPlanPrice(variantId, sellingPlanId) {
+        // Find the variant in our data
+        const variant = sellingPlanData.variants.find(v => v.id === parseInt(variantId));
+        if (!variant) {
+          console.log("Variant not found in selling plan data:", variantId);
+          return null;
+        }
+        
+        // If no selling plan selected, return regular price
+        if (!sellingPlanId) {
+          return {
+            price: variant.price,
+            compare_at_price: variant.compare_at_price
+          };
+        }
+        
+        // Find the allocation for this variant + selling plan combination
+        const allocation = variant.selling_plan_allocations.find(
+          a => parseInt(a.selling_plan_id) === parseInt(sellingPlanId)
+        );
+        
+        if (!allocation) {
+          console.log("Allocation not found for selling plan:", sellingPlanId);
+          return null;
+        }
+        
+        return {
+          price: allocation.price,
+          compare_at_price: allocation.compare_at_price || variant.compare_at_price
+        };
+      }
+      
       // Function to update button price based on selected selling plan
-      function updateButtonPrice(selectedSellingPlan) {
-        console.log("updateButtonPrice called with selling plan:", selectedSellingPlan);
-        
-        // Handle both cases where selectedSellingPlan is an object or just an ID
-        const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
-                              selectedSellingPlan.id : selectedSellingPlan;
-        
-        console.log("Using selling plan ID:", sellingPlanId);
+      function updateButtonPrice(sellingPlanId) {
+        console.log("updateButtonPrice called with selling plan:", sellingPlanId);
         
         const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                    document.querySelector('input[name="id"]');
+                                   document.querySelector('input[name="id"]');
         if (!selectedVariantInput) {
           console.log("No variant selected");
           return;
         }
         
         const variantId = parseInt(selectedVariantInput.value);
-        const productVariants = {{ product.variants | json }};
-        const variant = productVariants.find(v => v.id === variantId);
         
-        if (!variant) {
-          console.log("Variant not found:", variantId);
+        // Get pricing data from our server-rendered JSON
+        const pricingData = getSellingPlanPrice(variantId, sellingPlanId);
+        if (!pricingData) {
+          console.log("Pricing data not found");
           return;
         }
         
-        console.log("Selected variant:", variant);
+        console.log("Pricing data:", pricingData);
         
         // Find the buttons for this variant
         const variantSection = document.querySelector(`.variant-section-${variantId}`);
@@ -463,150 +521,26 @@
           return;
         }
         
-        if (sellingPlanId) {
-          console.log("Finding selling plan price for plan ID:", sellingPlanId);
-          // Find the selling plan in all selling plan groups
-          const allSellingPlanGroups = {{ product.selling_plan_groups | json }};
-          let selectedPlan = null;
-          let priceAdjustment = null;
-          
-          // Search through all groups and plans by ID
-          for (const group of allSellingPlanGroups) {
-            console.log("Checking selling plan group:", group.name);
-            for (const plan of group.selling_plans) {
-              console.log("Checking plan:", plan.id, "against:", sellingPlanId);
-              if (parseInt(plan.id) === parseInt(sellingPlanId)) {
-                console.log("Found matching plan by ID!");
-                selectedPlan = plan;
-                priceAdjustment = plan.price_adjustments[0];
-                break;
-              }
-            }
-            if (selectedPlan) break;
-          }
-          
-          // Alternative approach: check variant's selling plan allocations
-          if (!selectedPlan && variant.selling_plan_allocations) {
-            console.log("Searching in variant's selling_plan_allocations");
-            const allocation = variant.selling_plan_allocations.find(
-              alloc => parseInt(alloc.selling_plan_id) === parseInt(sellingPlanId)
-            );
-            
-            if (allocation) {
-              console.log("Found allocation:", allocation);
-              // Use the price directly from the allocation
-              const adjustedPrice = allocation.price;
-              console.log("Original price:", variant.price);
-              console.log("Adjusted price from allocation:", adjustedPrice);
-              
-              // Format price with currency
-              const formattedPrice = formatMoney(adjustedPrice);
-              
-              // Update the price display
-              if (variant.compare_at_price > variant.price) {
-                const formattedComparePrice = formatMoney(variant.compare_at_price);
-                priceSpan.innerHTML = `
-                  <del>${formattedComparePrice}</del>
-                  <ins>${formattedPrice}</ins>
-                `;
-              } else {
-                priceSpan.textContent = formattedPrice;
-              }
-              
-              // Update Sezzle payments
-              const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
-              if (paymentPlanElement) {
-                const dividedPrice = Math.round(adjustedPrice / 4);
-                const formattedDividedPrice = formatMoney(dividedPrice);
-                paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-              }
-              return;
-            }
-          }
-          
-          if (selectedPlan && priceAdjustment) {
-            console.log("Found plan:", selectedPlan);
-            console.log("Price adjustment:", priceAdjustment);
-            
-            let adjustedPrice;
-            
-            // Calculate the adjusted price based on the adjustment type
-            if (priceAdjustment.value_type === 'percentage') {
-              const discountPercentage = priceAdjustment.value;
-              const discountAmount = variant.price * (discountPercentage / 100);
-              adjustedPrice = variant.price - discountAmount;
-            } else if (priceAdjustment.value_type === 'fixed_amount') {
-              adjustedPrice = variant.price - priceAdjustment.value;
-            } else if (priceAdjustment.value_type === 'price') {
-              adjustedPrice = priceAdjustment.value;
-            } else {
-              adjustedPrice = variant.price;
-            }
-            
-            console.log("Original price:", variant.price);
-            console.log("Adjusted price:", adjustedPrice);
-            
-            // Format price with currency
-            const formattedPrice = formatMoney(adjustedPrice);
-            
-            // Update the price display
-            if (variant.compare_at_price > variant.price) {
-              const formattedComparePrice = formatMoney(variant.compare_at_price);
-              priceSpan.innerHTML = `
-                <del>${formattedComparePrice}</del>
-                <ins>${formattedPrice}</ins>
-              `;
-            } else {
-              priceSpan.textContent = formattedPrice;
-            }
-            
-            // Update Sezzle payments
-            const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
-            if (paymentPlanElement) {
-              const dividedPrice = Math.round(adjustedPrice / 4);
-              const formattedDividedPrice = formatMoney(dividedPrice);
-              paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-            }
-          } else {
-            console.log("Selling plan not found in groups or allocations");
-          }
+        // Format the prices with currency
+        const formattedPrice = formatMoney(pricingData.price);
+        
+        // Update the price display
+        if (pricingData.compare_at_price && pricingData.compare_at_price > pricingData.price) {
+          const formattedComparePrice = formatMoney(pricingData.compare_at_price);
+          priceSpan.innerHTML = `
+            <del>${formattedComparePrice}</del>
+            <ins>${formattedPrice}</ins>
+          `;
         } else {
-          console.log("Resetting to one-time purchase price");
-          // Reset to original price with currency
-          const formattedPrice = formatMoney(variant.price);
-          
-          // Keep the same HTML structure for consistency
-          if (variant.compare_at_price > variant.price) {
-            const formattedComparePrice = formatMoney(variant.compare_at_price);
-            priceSpan.innerHTML = `
-              <del>${formattedComparePrice}</del>
-              <ins>${formattedPrice}</ins>
-            `;
-          } else {
-            priceSpan.textContent = formattedPrice;
-          }
-          
-          // Reset Sezzle payments
-          const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
-          if (paymentPlanElement) {
-            const dividedPrice = Math.round(variant.price / 4);
-            const formattedDividedPrice = formatMoney(dividedPrice);
-            paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-          }
+          priceSpan.textContent = formattedPrice;
         }
-      }
-      
-      // Function to update the variant in the widget
-      function updateSubifyVariant() {
-        if (!window.subifySdk || !isWidgetInitialized) return;
         
-        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                   document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
-        
-        if (variantId && typeof window.subifySdk.changeVariant === 'function') {
-          window.subifySdk.changeVariant({{ product.id }}, variantId);
-          console.log("Subify variant updated to:", variantId);
+        // Update Sezzle payments
+        const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
+        if (paymentPlanElement) {
+          const dividedPrice = Math.round(pricingData.price / 4);
+          const formattedDividedPrice = formatMoney(dividedPrice);
+          paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
         }
       }
       
@@ -615,7 +549,7 @@
         if (!window.subifySdk) return;
         
         const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                    document.querySelector('input[name="id"]');
+                                   document.querySelector('input[name="id"]');
         const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
         
         if (!variantId) return;
@@ -638,7 +572,7 @@
             isWidgetInitialized = true;
             console.log("Subify widget initialized successfully");
             
-            // Setup cart integration and attach event listeners
+            // Setup cart integration
             setupCartIntegration();
           }).catch(error => {
             console.error("Error initializing Subify widget:", error);
@@ -650,28 +584,9 @@
       
       // Setup event listeners for selling plan changes
       function setupCartIntegration() {
-        const form = document.querySelector('form.product-page__checkout-form');
-        if (!form) return;
-        
-        // Save original submit handler
-        const originalSubmit = form.onsubmit;
-        
-        form.onsubmit = function(e) {
-          // Let the original handler run if it exists
-          if (originalSubmit && originalSubmit.call(this, e) === false) {
-            return false;
-          }
-          
-          // Check if a selling plan is selected
-          const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
-          console.log("Current selling plan value:", sellingPlanInput ? sellingPlanInput.value : "No selling plan input found");
-          
-          return true;
-        };
-        
         // Listen for selling plan changes and update button price
         window.addEventListener("subify:sellingPlanChange", function(event) {
-          const { targetProductId, selectedSellingPlan } = event.detail;
+          const { selectedSellingPlan } = event.detail;
           console.log("Subify selling plan changed to:", selectedSellingPlan);
           
           // Update the button price when selling plan changes
@@ -679,16 +594,21 @@
           const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
                                selectedSellingPlan.id : selectedSellingPlan;
           updateButtonPrice(sellingPlanId);
-          
-          // Check if the hidden input was created
-          setTimeout(() => {
-            const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
-            console.log("After selection, selling plan input:", 
-                        sellingPlanInput ? 
-                        `Value: ${sellingPlanInput.value}, Visible: ${sellingPlanInput.style.display !== 'none'}` : 
-                        "Not found");
-          }, 500);
         });
+      }
+      
+      // Function to update the variant in the widget
+      function updateSubifyVariant() {
+        if (!window.subifySdk || !isWidgetInitialized) return;
+        
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                   document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
+        
+        if (variantId && typeof window.subifySdk.changeVariant === 'function') {
+          window.subifySdk.changeVariant({{ product.id }}, variantId);
+          console.log("Subify variant updated to:", variantId);
+        }
       }
       
       // Initialize when SDK is loaded
@@ -700,7 +620,18 @@
       
       // Add change listeners to variant selectors
       document.querySelectorAll('input[name="id"]').forEach(input => {
-        input.addEventListener('change', updateSubifyVariant);
+        input.addEventListener('change', function() {
+          updateSubifyVariant();
+          
+          // Check if a selling plan is selected and update prices
+          const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
+          if (sellingPlanInput && sellingPlanInput.value) {
+            updateButtonPrice(sellingPlanInput.value);
+          } else {
+            // Reset to one-time purchase price
+            updateButtonPrice(null);
+          }
+        });
       });
     });
   </script>
