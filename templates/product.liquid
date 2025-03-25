@@ -191,16 +191,18 @@
               class="btn btn--secondary all-caps product-page__checkout-btn"
               type="submit"
               name="add-to-cart-{{ variant.id }}">
-              {% if variant.compare_at_price > variant.price %}
-                <span>Add to Bag</span>
-                <span class="checkout-btn__sale-price">
-                  <del>{{ variant.compare_at_price | money_with_currency | remove: '.00' }}</del>
-                  <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
-                </span>
-              {% else %}
-                <span>Add to Bag</span>
-                <span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
-              {% endif %}
+              <!-- This span contains the button text -->
+              <span id="add-to-cart-text-{{ variant.id }}">Add to Bag</span>
+              <span>
+                {% if variant.compare_at_price > variant.price %}
+                  <span class="checkout-btn__sale-price">
+                    <del>{{ variant.compare_at_price | money_with_currency | remove: '.00' }}</del>
+                    <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
+                  </span>
+                {% else %}
+                  {{ variant.price | money_with_currency | remove: '.00' }}
+                {% endif %}
+              </span>
             </button>
             <p class="product-page__payment-plan">
               or 4 interest-free payments of {% assign divided_price = variant.price | divided_by: 4 %}
@@ -428,26 +430,26 @@
         const sellingPlanData = JSON.parse(document.getElementById('selling-plan-data').textContent);
         console.log("Pre-rendered selling plan data:", sellingPlanData);
         
-        let isWidgetInitialized = false;
+      let isWidgetInitialized = false;
+      
+      // Function to format money with currency using Shopify's format
+      function formatMoney(cents) {
+        if (typeof cents == 'string') cents = cents.replace('.', '');
+        cents = parseInt(cents);
         
-        // Function to format money with currency using Shopify's format
-        function formatMoney(cents) {
-          if (typeof cents == 'string') cents = cents.replace('.', '');
-          cents = parseInt(cents);
-          
           // Use the money format from our pre-rendered data
           const format = sellingPlanData.money_format;
-          
-          function formatWithDelimiters(number, precision, thousands, decimal) {
-            precision = precision || 2;
-            thousands = thousands || ',';
-            decimal = decimal || '.';
+        
+        function formatWithDelimiters(number, precision, thousands, decimal) {
+          precision = precision || 2;
+          thousands = thousands || ',';
+          decimal = decimal || '.';
 
-            if (isNaN(number) || number == null) return '0';
-            
+          if (isNaN(number) || number == null) return '0';
+          
             // Format with full precision first
-            number = (number/100.0).toFixed(precision);
-            
+          number = (number/100.0).toFixed(precision);
+          
             // Remove trailing zeros if it's a whole number
             if (parseFloat(number) === parseInt(number)) {
               number = parseInt(number);
@@ -455,16 +457,16 @@
             
             // Format with appropriate delimiters
             let parts = String(number).split('.');
-            const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+          const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
             const cents = parts.length > 1 ? (decimal + parts[1]) : '';
-            
-            return dollars + cents;
-          }
           
-          const formatted = formatWithDelimiters(cents);
-          return format.replace(/\{\{\s*amount\s*\}\}/, formatted);
+          return dollars + cents;
         }
         
+        const formatted = formatWithDelimiters(cents);
+        return format.replace(/\{\{\s*amount\s*\}\}/, formatted);
+      }
+      
         // Function to get accurate selling plan price from the pre-rendered data
         function getSellingPlanPrice(variantId, sellingPlanId) {
           // Find the variant in our data
@@ -558,44 +560,44 @@
         // Function to update button price based on selected selling plan
         function updateButtonPrice(sellingPlanId) {
           console.log("updateButtonPrice called with selling plan:", sellingPlanId);
-          
-          const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                     document.querySelector('input[name="id"]');
-          if (!selectedVariantInput) {
-            console.log("No variant selected");
-            return;
-          }
-          
-          const variantId = parseInt(selectedVariantInput.value);
+        
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                    document.querySelector('input[name="id"]');
+        if (!selectedVariantInput) {
+          console.log("No variant selected");
+          return;
+        }
+        
+        const variantId = parseInt(selectedVariantInput.value);
           
           // Get pricing data from our server-rendered JSON
           const pricingData = getSellingPlanPrice(variantId, sellingPlanId);
           if (!pricingData) {
             console.log("Pricing data not found");
-            return;
-          }
-          
+          return;
+        }
+        
           console.log("Pricing data:", pricingData);
-          
-          // Find the buttons for this variant
-          const variantSection = document.querySelector(`.variant-section-${variantId}`);
-          if (!variantSection) {
-            console.log("Variant section not found");
-            return;
-          }
-          
-          const checkoutButton = variantSection.querySelector('.product-page__checkout-btn');
-          const priceSpan = checkoutButton.querySelector('span:last-child');
-          
-          if (!priceSpan) {
-            console.log("Price span not found");
-            return;
-          }
-          
+        
+        // Find the buttons for this variant
+        const variantSection = document.querySelector(`.variant-section-${variantId}`);
+        if (!variantSection) {
+          console.log("Variant section not found");
+          return;
+        }
+        
+        const checkoutButton = variantSection.querySelector('.product-page__checkout-btn');
+        const priceSpan = checkoutButton.querySelector('span:last-child');
+        
+        if (!priceSpan) {
+          console.log("Price span not found");
+          return;
+        }
+        
           // Format the prices with currency
           const formattedPrice = formatMoney(pricingData.price);
-          
-          // Update the price display
+              
+              // Update the price display
           if (pricingData.compare_at_price && pricingData.compare_at_price > pricingData.price) {
             const formattedComparePrice = formatMoney(pricingData.compare_at_price);
             priceSpan.innerHTML = `
@@ -612,59 +614,76 @@
             const dividedPrice = Math.round(pricingData.price / 4);
             const formattedDividedPrice = formatMoney(dividedPrice);
             paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-          }
         }
+      }
+      
+      // Function to initialize or re-initialize the widget
+      function initSubifyWidget() {
+        if (!window.subifySdk) return;
         
-        // Function to initialize or re-initialize the widget
-        function initSubifyWidget() {
-          if (!window.subifySdk) return;
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                    document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
+        
+        if (!variantId) return;
+        
+        try {
+          window.subifySdk.renderWidget(
+            {{ product | json }}, 
+            {
+              renderPosition: {
+                wrapper: "#subify-widget-wrapper",
+                position: "APPEND"
+              },
+              sellingPlanInput: {
+                wrapper: "form.product-page__checkout-form",
+                id: "selling-plan-input"
+              },
+              useCardApi: true
+            }
+          ).then(() => {
+            isWidgetInitialized = true;
+            console.log("Subify widget initialized successfully");
+            
+              // Setup cart integration
+            setupCartIntegration();
+          }).catch(error => {
+            console.error("Error initializing Subify widget:", error);
+          });
+        } catch (error) {
+          console.error("Error during Subify initialization:", error);
+        }
+      }
+      
+      // Setup event listeners for selling plan changes
+      function setupCartIntegration() {
+        // Listen for selling plan changes and update button price
+        window.addEventListener("subify:sellingPlanChange", function(event) {
+            const { selectedSellingPlan } = event.detail;
+          console.log("Subify selling plan changed to:", selectedSellingPlan);
           
+          // Get the selected variant ID
           const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
                                      document.querySelector('input[name="id"]');
-          const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
+          const variantId = selectedVariantInput ? selectedVariantInput.value : null;
           
-          if (!variantId) return;
+          // Get the text element for the button
+          const buttonTextElement = document.getElementById(`add-to-cart-text-${variantId}`);
           
-          try {
-            window.subifySdk.renderWidget(
-              {{ product | json }}, 
-              {
-                renderPosition: {
-                  wrapper: "#subify-widget-wrapper",
-                  position: "APPEND"
-                },
-                sellingPlanInput: {
-                  wrapper: "form.product-page__checkout-form",
-                  id: "selling-plan-input"
-                },
-                useCardApi: true
-              }
-            ).then(() => {
-              isWidgetInitialized = true;
-              console.log("Subify widget initialized successfully");
-              
-              // Setup cart integration
-              setupCartIntegration();
-            }).catch(error => {
-              console.error("Error initializing Subify widget:", error);
-            });
-          } catch (error) {
-            console.error("Error during Subify initialization:", error);
+          // Update the button text based on whether a selling plan is selected
+          if (buttonTextElement) {
+            if (selectedSellingPlan && selectedSellingPlan.id) {
+              buttonTextElement.textContent = "Subscribe & Save";
+            } else {
+              buttonTextElement.textContent = "Add to Bag";
+            }
           }
-        }
-        
-        // Setup event listeners for selling plan changes
-        function setupCartIntegration() {
-          // Listen for selling plan changes and update button price
-          window.addEventListener("subify:sellingPlanChange", function(event) {
-            const { selectedSellingPlan } = event.detail;
-            console.log("Subify selling plan changed to:", selectedSellingPlan);
-            
-            // Update the button price when selling plan changes
-            // Pass just the ID if selectedSellingPlan is an object with an id property
-            const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
-                                 selectedSellingPlan.id : selectedSellingPlan;
-            updateButtonPrice(sellingPlanId);
+          
+          // Update the button price when selling plan changes
+          // Pass just the ID if selectedSellingPlan is an object with an id property
+          const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
+                               selectedSellingPlan.id : selectedSellingPlan;
+          updateButtonPrice(sellingPlanId);
           });
         }
         
@@ -680,17 +699,17 @@
             window.subifySdk.changeVariant({{ product.id }}, variantId);
             console.log("Subify variant updated to:", variantId);
           }
-        }
-        
-        // Initialize when SDK is loaded
-        if (window.subifySdk) {
-          initSubifyWidget();
-        } else {
-          window.addEventListener("subify:sdkLoaded", initSubifyWidget);
-        }
-        
-        // Add change listeners to variant selectors
-        document.querySelectorAll('input[name="id"]').forEach(input => {
+      }
+      
+      // Initialize when SDK is loaded
+      if (window.subifySdk) {
+        initSubifyWidget();
+      } else {
+        window.addEventListener("subify:sdkLoaded", initSubifyWidget);
+      }
+      
+      // Add change listeners to variant selectors
+      document.querySelectorAll('input[name="id"]').forEach(input => {
           input.addEventListener('change', function() {
             updateSubifyVariant();
             
