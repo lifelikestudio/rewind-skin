@@ -143,7 +143,7 @@ export const attachEventListeners = () => {
   addToCart.forEach((form) => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      console.log('Add to cart button clicked'); // Add this line
+      console.log('Add to cart button clicked');
       // Optimistically update UI
       openDrawer(drawerCart);
       showLoadingInCart();
@@ -166,7 +166,7 @@ export const attachEventListeners = () => {
         // Make sure the input field exists before trying to read its value
         if (variantIdInput) {
           const variantId = variantIdInput.value;
-          console.log('Variant ID:', variantId); // Add this line
+          console.log('Variant ID:', variantId);
           formData.append('id', variantId);
 
           // Append the quantity
@@ -176,6 +176,19 @@ export const attachEventListeners = () => {
           const quantity = quantityInput ? quantityInput.value : '1';
           console.log('Quantity:', quantity);
           formData.append('quantity', quantity);
+
+          // Check for and append selling plan if present
+          const sellingPlanInput = form.querySelector(
+            'input[name="selling_plan"]'
+          );
+          if (
+            sellingPlanInput &&
+            sellingPlanInput.value &&
+            sellingPlanInput.value.trim() !== ''
+          ) {
+            console.log('Adding selling plan to cart:', sellingPlanInput.value);
+            formData.append('selling_plan', sellingPlanInput.value);
+          }
 
           // Submit form with AJAX
           await fetch('/cart/add', {
@@ -225,7 +238,7 @@ export const attachEventListenersToProduct = (productForm) => {
         );
       }
 
-      // Make sure theinput field exists before trying to undefinedread its value
+      // Make sure the input field exists before trying to read its value
       if (variantIdInput) {
         const variantId = variantIdInput.value;
         console.log('Variant ID:', variantId);
@@ -238,6 +251,19 @@ export const attachEventListenersToProduct = (productForm) => {
         const quantity = quantityInput ? quantityInput.value : '1';
         console.log('Quantity:', quantity);
         formData.append('quantity', quantity);
+
+        // Check for and append selling plan if present
+        const sellingPlanInput = productForm.querySelector(
+          'input[name="selling_plan"]'
+        );
+        if (
+          sellingPlanInput &&
+          sellingPlanInput.value &&
+          sellingPlanInput.value.trim() !== ''
+        ) {
+          console.log('Adding selling plan to cart:', sellingPlanInput.value);
+          formData.append('selling_plan', sellingPlanInput.value);
+        }
 
         // Submit form with AJAX
         await fetch('/cart/add', {
@@ -268,7 +294,7 @@ const CartDrawer = () => {
   addToCart.forEach((form) => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      console.log('Add to cart button clicked'); // Add this line
+      console.log('Add to cart button clicked');
       // Optimistically update UI
       openDrawer(drawerCart);
       showLoadingInCart();
@@ -301,6 +327,19 @@ const CartDrawer = () => {
           const quantity = quantityInput ? quantityInput.value : '1';
           console.log('Quantity:', quantity);
           formData.append('quantity', quantity);
+
+          // Check for and append selling plan if present
+          const sellingPlanInput = form.querySelector(
+            'input[name="selling_plan"]'
+          );
+          if (
+            sellingPlanInput &&
+            sellingPlanInput.value &&
+            sellingPlanInput.value.trim() !== ''
+          ) {
+            console.log('Adding selling plan to cart:', sellingPlanInput.value);
+            formData.append('selling_plan', sellingPlanInput.value);
+          }
 
           // Submit form with AJAX
           await fetch('/cart/add', {
