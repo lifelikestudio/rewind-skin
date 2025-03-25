@@ -226,6 +226,9 @@
   <div id="subi-widget-wrapper" class="subi-widget-wrapper"></div>
 
   <!-- Subi SDK script -->
+  <script>
+    console.log("Loading Subi SDK...");
+  </script>
   <script
     src="https://cdn.hengam.io/subify/subify-sdk.js"
     defer
@@ -259,19 +262,28 @@
 
   <!-- Subi initialization script -->
   <script type="text/javascript">
+    console.log("Subi init script running");
+    
     (function() {
       let isWidgetInitialized = false;
       
       function initSubi() {
-        if (isWidgetInitialized) return;
+        console.log("initSubi function called");
+        if (isWidgetInitialized) {
+          console.log("Widget already initialized, skipping");
+          return;
+        }
         
         const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                  document.querySelector('input[name="id"]');
+                                   document.querySelector('input[name="id"]');
         const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+        console.log("Selected variant for Subi:", variantId);
         
         if (window.subifySdk && variantId) {
-          console.log("Initializing Subi with variant:", variantId);
+          console.log("Subi SDK found in window");
+          
           try {
+            console.log("Attempting to render Subi widget");
             window.subifySdk.renderWidget(
               {{ product | json }}, 
               {
@@ -285,20 +297,23 @@
                 },
                 selectedVariantId: variantId
               }
-            ).catch(error => {
+            ).then(() => {
+              console.log("Subi widget rendered successfully");
+              isWidgetInitialized = true;
+            }).catch(error => {
               console.error("Error initializing Subi widget:", error);
             });
-            
-            isWidgetInitialized = true;
           } catch (error) {
             console.error("Error during Subi initialization:", error);
           }
+        } else {
+          console.error("Subi SDK not found or variant ID missing");
         }
       }
       
       function updateVariant() {
         const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                  document.querySelector('input[name="id"]');
+                                   document.querySelector('input[name="id"]');
         const variantId = selectedVariantInput ? selectedVariantInput.value : null;
         
         if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
@@ -310,13 +325,22 @@
       document.addEventListener('DOMContentLoaded', function() {
         console.log("DOM loaded, checking for Subi SDK");
         if (window.subifySdk) {
+          console.log("Subi SDK already available at DOMContentLoaded");
           initSubi();
         } else {
           console.log("Waiting for Subi SDK to load...");
           window.addEventListener("subify:sdkLoaded", function() {
-            console.log("Subi SDK loaded, initializing...");
+            console.log("Subi SDK loaded event fired");
             initSubi();
           });
+          
+          // Fallback: check once after a delay
+          setTimeout(function() {
+            if (!isWidgetInitialized && window.subifySdk) {
+              console.log("Subi SDK found through timeout check");
+              initSubi();
+            }
+          }, 2000);
         }
         
         // Add change listeners to variant selectors
