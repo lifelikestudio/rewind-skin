@@ -531,7 +531,7 @@
 {% endraw %}
 </style>
 
-<!-- First, check if the product has Subi selling plans -->
+<!-- Subi Subscription Widget Integration -->
 <script>
   const productData = {{ product | json }};
   const hasSubiPlans = productData.selling_plan_groups && 
@@ -540,7 +540,7 @@
                        );
 </script>
 
-{% if hasSubiPlans %}
+{% if true %}
   <!-- Only include Subi elements if selling plans exist -->
   <div id="subi-widget-wrapper" class="subi-widget-wrapper"></div>
 
@@ -586,22 +586,29 @@
         const variantId = selectedVariantInput ? selectedVariantInput.value : null;
         
         if (window.subifySdk && variantId) {
-          window.subifySdk.renderWidget(
-            {{ product | json }}, 
-            {
-              renderPosition: {
-                wrapper: "#subi-widget-wrapper",
-                position: "APPEND"
-              },
-              sellingPlanInput: {
-                wrapper: "form.product-page__checkout-form",
-                id: "selling-plan-input"
-              },
-              selectedVariantId: variantId
-            }
-          );
-          
-          isWidgetInitialized = true;
+          console.log("Initializing Subi with variant:", variantId);
+          try {
+            window.subifySdk.renderWidget(
+              {{ product | json }}, 
+              {
+                renderPosition: {
+                  wrapper: "#subi-widget-wrapper",
+                  position: "APPEND"
+                },
+                sellingPlanInput: {
+                  wrapper: "form.product-page__checkout-form",
+                  id: "selling-plan-input"
+                },
+                selectedVariantId: variantId
+              }
+            ).catch(error => {
+              console.error("Error initializing Subi widget:", error);
+            });
+            
+            isWidgetInitialized = true;
+          } catch (error) {
+            console.error("Error during Subi initialization:", error);
+          }
         }
       }
       
@@ -611,17 +618,24 @@
         const variantId = selectedVariantInput ? selectedVariantInput.value : null;
         
         if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
+          console.log("Updating Subi variant to:", variantId);
           window.subifySdk.changeVariant({{ product.id }}, variantId);
         }
       }
       
       document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM loaded, checking for Subi SDK");
         if (window.subifySdk) {
           initSubi();
         } else {
-          window.addEventListener("subify:sdkLoaded", initSubi);
+          console.log("Waiting for Subi SDK to load...");
+          window.addEventListener("subify:sdkLoaded", function() {
+            console.log("Subi SDK loaded, initializing...");
+            initSubi();
+          });
         }
         
+        // Add change listeners to variant selectors
         document.querySelectorAll('input[name="id"]').forEach(input => {
           input.addEventListener('change', updateVariant);
         });
