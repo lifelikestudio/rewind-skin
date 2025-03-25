@@ -214,28 +214,16 @@
       <script type="text/javascript">
         (function() {
           let isWidgetInitialized = false;
-          let currentVariantId = null;
           
-          // Initialize Subify with the current variant
+          // Initialize Subify
           function initSubify() {
-            // Get the selected variant ID
+            if (isWidgetInitialized) return;
+            
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
                                        document.querySelector('input[name="id"]');
             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
             
-            // Store the current variant ID
-            currentVariantId = variantId;
-            
-            console.log("Initializing Subify with variant ID:", variantId);
-            
             if (window.subifySdk && variantId) {
-              // Clear any existing widget first
-              const widgetWrapper = document.getElementById('subify-widget-wrapper');
-              if (widgetWrapper) {
-                widgetWrapper.innerHTML = '';
-              }
-              
-              // Initialize with the correct variant ID
               window.subifySdk.renderWidget(
                 {{ product | json }}, 
                 {
@@ -247,86 +235,36 @@
                     wrapper: "form.product-page__checkout-form",
                     id: "selling-plan-input"
                   },
-                  // Pass the current variant ID explicitly
                   selectedVariantId: variantId
                 }
               );
               
               isWidgetInitialized = true;
-              
-              // Log the initialization for debugging
-              console.log(`Subify initialized with product ID: ${{{ product.id }}}, variant ID: ${variantId}`);
-            } else {
-              console.warn("Could not initialize Subify. SDK loaded:", !!window.subifySdk, "Variant ID:", variantId);
             }
           }
           
-          // Update the selected variant when it changes
+          // Handle variant changes
           function updateVariant() {
             const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                       document.querySelector('input[name="id"]');
+                                      document.querySelector('input[name="id"]');
             const variantId = selectedVariantInput ? selectedVariantInput.value : null;
             
-            // Skip if the variant hasn't changed
-            if (variantId === currentVariantId) return;
-            
-            currentVariantId = variantId;
-            
             if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
-              console.log("Updating Subify variant to:", variantId);
-              
-              // Use the product ID with the variant ID
-              const productId = {{ product.id }};
-              
-              // Call the changeVariant method with proper IDs
-              window.subifySdk.changeVariant(productId, variantId);
-              
-              // Log the change for debugging
-              console.log(`Variant changed - Product ID: ${productId}, Variant ID: ${variantId}`);
+              window.subifySdk.changeVariant({{ product.id }}, variantId);
             }
           }
           
           // Initialize when the page loads
           document.addEventListener('DOMContentLoaded', function() {
-            // Check URL for variant ID and select that radio button
-            const urlParams = new URLSearchParams(window.location.search);
-            const variantFromUrl = urlParams.get('variant');
-            
-            console.log("URL contains variant:", variantFromUrl);
-            
-            if (variantFromUrl) {
-              const variantInput = document.querySelector(`input[name="id"][value="${variantFromUrl}"]`);
-              if (variantInput) {
-                variantInput.checked = true;
-                console.log("Selected variant from URL:", variantFromUrl);
-              }
+            if (window.subifySdk) {
+              initSubify();
+            } else {
+              window.addEventListener("subify:sdkLoaded", initSubify);
             }
             
-            // Initialize Subify with a delay to ensure DOM is ready
-            setTimeout(function() {
-              if (window.subifySdk) {
-                initSubify();
-              } else {
-                console.log("Waiting for Subify SDK to load...");
-                window.addEventListener("subify:sdkLoaded", function() {
-                  console.log("Subify SDK loaded event detected");
-                  initSubify();
-                });
-              }
-            }, 300); // Increased delay for more reliable initialization
-            
-            // Add event listeners to variant radio buttons
+            // Add change listeners to variant selectors
             document.querySelectorAll('input[name="id"]').forEach(input => {
-              input.addEventListener('change', function() {
-                console.log("Variant radio button changed to:", this.value);
-                updateVariant();
-              });
-            });
-            
-            // Listen for variant change events from Subify
-            window.addEventListener("subify:variantChange", function(event) {
-              console.log("Subify variant change event:", event.detail);
-              // You can add additional logic here if needed
+              input.addEventListener('change', updateVariant);
             });
           });
         })();
