@@ -417,7 +417,14 @@
         }
         
         const formatted = formatWithDelimiters(cents);
-        return format.replace(/\{\{\s*amount\s*\}\}/, formatted);
+        let result = format.replace(/\{\{\s*amount\s*\}\}/, formatted);
+        
+        // Remove trailing zeros (including decimal point if all zeros)
+        result = result.replace(/(\.\d*?)0+\s/, '$1 ');  // Replace trailing zeros before space
+        result = result.replace(/(\.\d*?)0+([^\d])/, '$1$2');  // Replace trailing zeros before non-digit
+        result = result.replace(/\.0+([^\d]|$)/, '$1');  // Remove decimal point if followed by only zeros
+        
+        return result;
       }
       
       // Function to update button price based on selected selling plan
