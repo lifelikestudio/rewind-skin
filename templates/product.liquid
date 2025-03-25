@@ -392,35 +392,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       let isWidgetInitialized = false;
       
-      // Function to format money with currency using Shopify's format
-      function formatMoney(cents) {
-        if (typeof cents == 'string') cents = cents.replace('.', '');
-        cents = parseInt(cents);
-        
-        // Use the same money format that's used in your Liquid templates
-        const format = {{ shop.money_with_currency_format | json }};
-        
-        function formatWithDelimiters(number, precision, thousands, decimal) {
-          precision = precision || 2;
-          thousands = thousands || ',';
-          decimal = decimal || '.';
-
-          if (isNaN(number) || number == null) return '0';
-          
-          number = (number/100.0).toFixed(precision);
-          
-          const parts = number.split('.');
-          const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
-          const cents = parts[1] ? (decimal + parts[1]) : '';
-          
-          return dollars + cents;
-        }
-        
-        const formatted = formatWithDelimiters(cents);
-        return format.replace(/\{\{\s*amount\s*\}\}/, formatted);
-      }
-      
-      // Function to update button price based on selected selling plan
+      // Function to safely update button price based on selected selling plan
       function updateButtonPrice(selectedSellingPlan) {
         console.log("updateButtonPrice called with selling plan:", selectedSellingPlan);
         
@@ -438,15 +410,6 @@
         }
         
         const variantId = parseInt(selectedVariantInput.value);
-        const productVariants = {{ product.variants | json }};
-        const variant = productVariants.find(v => v.id === variantId);
-        
-        if (!variant) {
-          console.log("Variant not found:", variantId);
-          return;
-        }
-        
-        console.log("Selected variant:", variant);
         
         // Find the buttons for this variant
         const variantSection = document.querySelector(`.variant-section-${variantId}`);
@@ -463,137 +426,170 @@
           return;
         }
         
-        if (sellingPlanId) {
-          console.log("Finding selling plan price for plan ID:", sellingPlanId);
-          // Find the selling plan in all selling plan groups
-          const allSellingPlanGroups = {{ product.selling_plan_groups | json }};
-          let selectedPlan = null;
-          let priceAdjustment = null;
+        // Use a temporary cart item approach to get properly formatted prices from Shopify
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            items: [{
+              id: variantId,
+              quantity: 1,
+              selling_plan: sellingPlanId || ''
+            }]
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Added item to cart temporarily:", data);
           
-          // Search through all groups and plans by ID
-          for (const group of allSellingPlanGroups) {
-            console.log("Checking selling plan group:", group.name);
-            for (const plan of group.selling_plans) {
-              console.log("Checking plan:", plan.id, "against:", sellingPlanId);
-              if (parseInt(plan.id) === parseInt(sellingPlanId)) {
-                console.log("Found matching plan by ID!");
-                selectedPlan = plan;
-                priceAdjustment = plan.price_adjustments[0];
-                break;
-              }
-            }
-            if (selectedPlan) break;
-          }
-          
-          // Alternative approach: check variant's selling plan allocations
-          if (!selectedPlan && variant.selling_plan_allocations) {
-            console.log("Searching in variant's selling_plan_allocations");
-            const allocation = variant.selling_plan_allocations.find(
-              alloc => parseInt(alloc.selling_plan_id) === parseInt(sellingPlanId)
-            );
+          if (data.items && data.items.length > 0) {
+            const item = data.items[0];
+            const itemKey = item.key;
             
-            if (allocation) {
-              console.log("Found allocation:", allocation);
-              // Use the price directly from the allocation
-              const adjustedPrice = allocation.price;
-              console.log("Original price:", variant.price);
-              console.log("Adjusted price from allocation:", adjustedPrice);
-              
-              // Format price with currency
-              const formattedPrice = formatMoney(adjustedPrice);
+            // Get the current cart to retrieve properly formatted prices
+            fetch('/cart.js')
+              .then(response => response.json())
+              .then(cart => {
+                console.log("Retrieved cart:", cart);
+                
+                // Find our temporary item
+                const tempItem = cart.items.find(cartItem => cartItem.key === itemKey);
+                
+                if (tempItem) {
+                  console.log("Found temporary item with formatted price:", tempItem);
+                  
+                  // Get the properly formatted prices
+                  const finalPrice = tempItem.final_price;
+                  const formattedPrice = tempItem.final_line_price_formatted.replace(/\d+\s×\s/, '');
+                  const originalPrice = tempItem.original_price;
+                  const formattedOriginalPrice = tempItem.original_line_price_formatted.replace(/\d+\s×\s/, '');
+                  
+                  console.log("Formatted prices:", {
+                    finalPrice,
+                    formattedPrice,
+                    originalPrice,
+                    formattedOriginalPrice
+                  });
               
               // Update the price display
-              if (variant.compare_at_price > variant.price) {
-                const formattedComparePrice = formatMoney(variant.compare_at_price);
+                  if (originalPrice > finalPrice) {
                 priceSpan.innerHTML = `
-                  <del>${formattedComparePrice}</del>
+                      <del>${formattedOriginalPrice}</del>
                   <ins>${formattedPrice}</ins>
                 `;
               } else {
                 priceSpan.textContent = formattedPrice;
               }
               
-              // Update Sezzle payments
+                  // Update Sezzle payments with properly formatted currency
               const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
               if (paymentPlanElement) {
-                const dividedPrice = Math.round(adjustedPrice / 4);
-                const formattedDividedPrice = formatMoney(dividedPrice);
-                paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-              }
-              return;
-            }
+                    const dividedAmount = Math.round(finalPrice / 4);
+                    
+                    // Use another temporary cart item to get the formatted divided price
+                    fetch('/cart/add.js', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                      },
+                      body: JSON.stringify({
+                        items: [{
+                          id: variantId,
+                          quantity: 1,
+                          properties: {
+                            '_divided_price': 'true'
+                          }
+                        }]
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      const dividedItemKey = data.items[0].key;
+                      
+                      // Update the line item price to be the divided amount
+                      fetch('/cart/change.js', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                          id: dividedItemKey,
+                          quantity: 1,
+                          line_price: dividedAmount
+                        })
+                      })
+                      .then(response => response.json())
+                      .then(cart => {
+                        // Find our divided price item
+                        const dividedItem = cart.items.find(item => item.key === dividedItemKey);
+                        
+                        if (dividedItem) {
+                          const formattedDividedPrice = dividedItem.final_line_price_formatted.replace(/\d+\s×\s/, '');
+                          
+                          paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
+                        }
+                        
+                        // Remove the divided price item
+                        return fetch('/cart/change.js', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                          },
+                          body: JSON.stringify({
+                            id: dividedItemKey,
+                            quantity: 0
+                          })
+                        });
+                      })
+                      .catch(error => {
+                        console.error("Error updating divided price:", error);
+                      });
+                    })
+                    .catch(error => {
+                      console.error("Error adding divided price item:", error);
+                    });
+                  }
+                }
+                
+                // Remove the temporary item from cart
+                return fetch('/cart/change.js', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    id: itemKey,
+                    quantity: 0
+                  })
+                });
+              })
+              .catch(error => {
+                console.error("Error retrieving cart:", error);
+                
+                // Ensure we clean up the temporary item
+                fetch('/cart/change.js', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    id: itemKey,
+                    quantity: 0
+                  })
+                });
+              });
           }
-          
-          if (selectedPlan && priceAdjustment) {
-            console.log("Found plan:", selectedPlan);
-            console.log("Price adjustment:", priceAdjustment);
-            
-            let adjustedPrice;
-            
-            // Calculate the adjusted price based on the adjustment type
-            if (priceAdjustment.value_type === 'percentage') {
-              const discountPercentage = priceAdjustment.value;
-              const discountAmount = variant.price * (discountPercentage / 100);
-              adjustedPrice = variant.price - discountAmount;
-            } else if (priceAdjustment.value_type === 'fixed_amount') {
-              adjustedPrice = variant.price - priceAdjustment.value;
-            } else if (priceAdjustment.value_type === 'price') {
-              adjustedPrice = priceAdjustment.value;
-            } else {
-              adjustedPrice = variant.price;
-            }
-            
-            console.log("Original price:", variant.price);
-            console.log("Adjusted price:", adjustedPrice);
-            
-            // Format price with currency
-            const formattedPrice = formatMoney(adjustedPrice);
-            
-            // Update the price display
-            if (variant.compare_at_price > variant.price) {
-              const formattedComparePrice = formatMoney(variant.compare_at_price);
-              priceSpan.innerHTML = `
-                <del>${formattedComparePrice}</del>
-                <ins>${formattedPrice}</ins>
-              `;
-            } else {
-              priceSpan.textContent = formattedPrice;
-            }
-            
-            // Update Sezzle payments
-            const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
-            if (paymentPlanElement) {
-              const dividedPrice = Math.round(adjustedPrice / 4);
-              const formattedDividedPrice = formatMoney(dividedPrice);
-              paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-            }
-          } else {
-            console.log("Selling plan not found in groups or allocations");
-          }
-        } else {
-          console.log("Resetting to one-time purchase price");
-          // Reset to original price with currency
-          const formattedPrice = formatMoney(variant.price);
-          
-          // Keep the same HTML structure for consistency
-          if (variant.compare_at_price > variant.price) {
-            const formattedComparePrice = formatMoney(variant.compare_at_price);
-            priceSpan.innerHTML = `
-              <del>${formattedComparePrice}</del>
-              <ins>${formattedPrice}</ins>
-            `;
-          } else {
-            priceSpan.textContent = formattedPrice;
-          }
-          
-          // Reset Sezzle payments
-          const paymentPlanElement = variantSection.querySelector('.product-page__payment-plan');
-          if (paymentPlanElement) {
-            const dividedPrice = Math.round(variant.price / 4);
-            const formattedDividedPrice = formatMoney(dividedPrice);
-            paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-          }
-        }
+        })
+        .catch(error => {
+          console.error("Error adding temporary item to cart:", error);
+        });
       }
       
       // Function to update the variant in the widget
@@ -675,10 +671,7 @@
           console.log("Subify selling plan changed to:", selectedSellingPlan);
           
           // Update the button price when selling plan changes
-          // Pass just the ID if selectedSellingPlan is an object with an id property
-          const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
-                               selectedSellingPlan.id : selectedSellingPlan;
-          updateButtonPrice(sellingPlanId);
+          updateButtonPrice(selectedSellingPlan);
           
           // Check if the hidden input was created
           setTimeout(() => {
