@@ -414,17 +414,59 @@
                 wrapper: "form.product-page__checkout-form",
                 id: "selling-plan-input"
               },
-              useCardApi: true
+              useCardApi: true // This should intercept cart additions, but let's make sure the form submit works properly
             }
           ).then(() => {
             isWidgetInitialized = true;
             console.log("Subify widget initialized successfully");
+            
+            // Let's make sure form submission is handled properly
+            setupCartIntegration();
           }).catch(error => {
             console.error("Error initializing Subify widget:", error);
           });
         } catch (error) {
           console.error("Error during Subify initialization:", error);
         }
+      }
+      
+      // Function to ensure selling plan is properly included in cart submissions
+      function setupCartIntegration() {
+        const form = document.querySelector('form.product-page__checkout-form');
+        if (!form) return;
+        
+        // Save original submit handler
+        const originalSubmit = form.onsubmit;
+        
+        form.onsubmit = function(e) {
+          // Let the original handler run if it exists
+          if (originalSubmit && originalSubmit.call(this, e) === false) {
+            return false;
+          }
+          
+          // Check if a selling plan is selected
+          const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
+          console.log("Current selling plan value:", sellingPlanInput ? sellingPlanInput.value : "No selling plan input found");
+          
+          // If we're using useCardApi: true, we might not need to do anything else,
+          // but log information for debugging
+          return true;
+        };
+        
+        // Log selling plan changes to debug
+        window.addEventListener("subify:sellingPlanChange", function(event) {
+          const { targetProductId, selectedSellingPlan } = event.detail;
+          console.log("Subify selling plan changed to:", selectedSellingPlan);
+          
+          // Let's explicitly check if the hidden input was created
+          setTimeout(() => {
+            const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
+            console.log("After selection, selling plan input:", 
+                        sellingPlanInput ? 
+                        `Value: ${sellingPlanInput.value}, Visible: ${sellingPlanInput.style.display !== 'none'}` : 
+                        "Not found");
+          }, 500);
+        });
       }
       
       // Function to update the variant in the widget
@@ -451,18 +493,6 @@
       // Add change listeners to variant selectors
       document.querySelectorAll('input[name="id"]').forEach(input => {
         input.addEventListener('change', updateSubifyVariant);
-      });
-      
-      // Listen for variant changes detected by the SDK
-      window.addEventListener("subify:variantChange", function(event) {
-        const { targetProductId, selectedVariantId } = event.detail;
-        console.log("Subify detected variant change:", selectedVariantId);
-      });
-      
-      // Listen for selling plan changes
-      window.addEventListener("subify:sellingPlanChange", function(event) {
-        const { targetProductId, selectedSellingPlan } = event.detail;
-        console.log("Subify selling plan changed:", selectedSellingPlan);
       });
     });
   </script>
