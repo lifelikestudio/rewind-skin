@@ -443,3 +443,90 @@
     console.log(`Updated price: ${originalFormatted} → ${subscriptionFormatted}`);
   }
 </script>
+
+<!-- First, let's check if the product has any selling plans -->
+<script>
+  const productData = {{ product | json }};
+  const hasSellingPlans = productData.selling_plan_groups && 
+                         productData.selling_plan_groups.length > 0;
+</script>
+
+<!-- Only render the Subify elements if selling plans exist -->
+{% raw %}
+  <script type="text/javascript">
+      if (hasSellingPlans) {
+    document.write(`
+      <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
+      <script src="https://cdn.hengam.io/subify/subify-sdk.js" defer id="subify-sdk-script"><\/script>
+    `);
+      }
+  </script>
+{% endraw %}
+
+<!-- Conditionally include the Subify initialization script -->
+<script type="text/javascript">
+  if (hasSellingPlans) {
+    (function() {
+      let isWidgetInitialized = false;
+      
+      function initSubify() {
+        if (isWidgetInitialized) return;
+        
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                   document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+        
+        if (window.subifySdk && variantId) {
+          window.subifySdk.renderWidget(
+            {{ product | json }}, 
+            {
+              renderPosition: {
+                wrapper: "#subify-widget-wrapper",
+                position: "APPEND"
+              },
+              sellingPlanInput: {
+                wrapper: "form.product-page__checkout-form",
+                id: "selling-plan-input"
+              },
+              selectedVariantId: variantId
+            }
+          );
+          
+          isWidgetInitialized = true;
+        }
+      }
+      
+      function updateVariant() {
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                   document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+        
+        if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
+          window.subifySdk.changeVariant({{ product.id }}, variantId);
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.subifySdk) {
+          initSubify();
+        } else {
+          window.addEventListener("subify:sdkLoaded", initSubify);
+        }
+        
+        document.querySelectorAll('input[name="id"]').forEach(input => {
+          input.addEventListener('change', updateVariant);
+        });
+      });
+    })();
+  }
+</script>
+
+<!-- Conditionally include the styles -->
+<style>
+  {% raw %}
+    <script type="text/javascript" > if (hasSellingPlans) {
+    document.write(` .subify-widget-wrapper { width: 100%; margin: 15px 0; display: block; } .product-page__checkout-form { display: flex; flex-direction: column; } .variant-section { order: 3; } .product-page__variants-group { order: 1; } #subify-widget-wrapper { order: 2; } `);
+  }
+  </script>
+{% endraw %}
+</style>
