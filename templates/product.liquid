@@ -281,6 +281,43 @@
     (function() {
       let isWidgetInitialized = false;
       
+      // Function to format money with currency using Shopify's format
+      function formatMoney(cents) {
+        if (typeof cents == 'string') cents = cents.replace('.', '');
+        cents = parseInt(cents);
+        
+        // Use the same money format that's used in your Liquid templates
+        const format = {{ shop.money_with_currency_format | json }};
+        
+        function formatWithDelimiters(number, precision, thousands, decimal) {
+          precision = precision || 2;
+          thousands = thousands || ',';
+          decimal = decimal || '.';
+
+          if (isNaN(number) || number == null) return '0';
+          
+          number = (number/100.0).toFixed(precision);
+          
+          const parts = number.split('.');
+          const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+          const cents = parts[1] ? (decimal + parts[1]) : '';
+          
+          return dollars + cents;
+        }
+        
+        const formatted = formatWithDelimiters(cents);
+        let result = format.replace(/\{\{\s*amount\s*\}\}/, formatted);
+        
+        // Remove trailing zeros but keep the decimal point
+        result = result.replace(/(\.\d*?)0+\s/, '$1 ');  // Replace trailing zeros before space
+        result = result.replace(/(\.\d*?)0+([^\d])/, '$1$2');  // Replace trailing zeros before non-digit
+        
+        // Only remove the decimal point if ALL digits after it are zeros
+        result = result.replace(/\.00+([^\d]|$)/, '$1');  // Only remove decimal point for .00
+        
+        return result;
+      }
+      
       function initSubi() {
         console.log("initSubi function called");
         if (isWidgetInitialized) {
@@ -314,6 +351,8 @@
             ).then(() => {
               console.log("Subi widget rendered successfully");
               isWidgetInitialized = true;
+              // Setup the price update functionality for selling plans
+              setupSellingPlanPriceUpdates();
             }).catch(error => {
               console.error("Error initializing Subi widget:", error);
             });
@@ -336,104 +375,13 @@
         }
       }
       
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded, checking for Subi SDK");
-        if (window.subifySdk) {
-          console.log("Subi SDK already available at DOMContentLoaded");
-          initSubi();
-        } else {
-          console.log("Waiting for Subi SDK to load...");
-          window.addEventListener("subify:sdkLoaded", function() {
-            console.log("Subi SDK loaded event fired");
-            initSubi();
-          });
-          
-          // Fallback: check once after a delay
-          setTimeout(function() {
-            if (!isWidgetInitialized && window.subifySdk) {
-              console.log("Subi SDK found through timeout check");
-              initSubi();
-            }
-          }, 2000);
-        }
-        
-        // Add change listeners to variant selectors
-        document.querySelectorAll('input[name="id"]').forEach(input => {
-          input.addEventListener('change', updateVariant);
-        });
-      });
-    })();
-  </script>{% endif %}
-
-{% comment %} Implement Subify subscription widget {% endcomment %}
-{% assign has_subify_plans = false %}
-{% for selling_plan_group in product.selling_plan_groups %}
-  {% if selling_plan_group.app_id == 'subi' or selling_plan_group.app_id == 'subify' %}
-    {% assign has_subify_plans = true %}
-    {% break %}
-  {% endif %}
-{% endfor %}
-
-{% if has_subify_plans %}
-  <!-- Subify SDK script -->
-  <script src="https://cdn.hengam.io/subify/subify-sdk.js" defer></script>
-
-  <!-- Subify styles -->
-  <style>
-    .subify-widget-wrapper {
-      width: 100%;
-      margin: 15px 0;
-      display: block;
-    }
-  </style>
-
-  <!-- Subify initialization script -->
-  <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-      let isWidgetInitialized = false;
-      
-      // Function to format money with currency using Shopify's format
-      function formatMoney(cents) {
-        if (typeof cents == 'string') cents = cents.replace('.', '');
-        cents = parseInt(cents);
-        
-        // Use the same money format that's used in your Liquid templates
-        const format = {{ shop.money_with_currency_format | json }};
-        
-        function formatWithDelimiters(number, precision, thousands, decimal) {
-          precision = precision || 2;
-          thousands = thousands || ',';
-          decimal = decimal || '.';
-
-          if (isNaN(number) || number == null) return '0';
-          
-          number = (number/100.0).toFixed(precision);
-          
-          const parts = number.split('.');
-          const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
-          const cents = parts[1] ? (decimal + parts[1]) : '';
-          
-          return dollars + cents;
-        }
-        
-        const formatted = formatWithDelimiters(cents);
-        let result = format.replace(/\{\{\s*amount\s*\}\}/, formatted);
-        
-        // Remove trailing zeros (including decimal point if all zeros)
-        result = result.replace(/(\.\d*?)0+\s/, '$1 ');  // Replace trailing zeros before space
-        result = result.replace(/(\.\d*?)0+([^\d])/, '$1$2');  // Replace trailing zeros before non-digit
-        result = result.replace(/\.0+([^\d]|$)/, '$1');  // Remove decimal point if followed by only zeros
-        
-        return result;
-      }
-      
       // Function to update button price based on selected selling plan
       function updateButtonPrice(selectedSellingPlan) {
         console.log("updateButtonPrice called with selling plan:", selectedSellingPlan);
         
         // Handle both cases where selectedSellingPlan is an object or just an ID
         const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
-                              selectedSellingPlan.id : selectedSellingPlan;
+                             selectedSellingPlan.id : selectedSellingPlan;
         
         console.log("Using selling plan ID:", sellingPlanId);
         
@@ -603,79 +551,8 @@
         }
       }
       
-      // Function to update the variant in the widget
-      function updateSubifyVariant() {
-        if (!window.subifySdk || !isWidgetInitialized) return;
-        
-        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                   document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
-        
-        if (variantId && typeof window.subifySdk.changeVariant === 'function') {
-          window.subifySdk.changeVariant({{ product.id }}, variantId);
-          console.log("Subify variant updated to:", variantId);
-        }
-      }
-      
-      // Function to initialize or re-initialize the widget
-      function initSubifyWidget() {
-        if (!window.subifySdk) return;
-        
-        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                    document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
-        
-        if (!variantId) return;
-        
-        try {
-          window.subifySdk.renderWidget(
-            {{ product | json }}, 
-            {
-              renderPosition: {
-                wrapper: "#subify-widget-wrapper",
-                position: "APPEND"
-              },
-              sellingPlanInput: {
-                wrapper: "form.product-page__checkout-form",
-                id: "selling-plan-input"
-              },
-              useCardApi: true
-            }
-          ).then(() => {
-            isWidgetInitialized = true;
-            console.log("Subify widget initialized successfully");
-            
-            // Setup cart integration and attach event listeners
-            setupCartIntegration();
-          }).catch(error => {
-            console.error("Error initializing Subify widget:", error);
-          });
-        } catch (error) {
-          console.error("Error during Subify initialization:", error);
-        }
-      }
-      
-      // Setup event listeners for selling plan changes
-      function setupCartIntegration() {
-        const form = document.querySelector('form.product-page__checkout-form');
-        if (!form) return;
-        
-        // Save original submit handler
-        const originalSubmit = form.onsubmit;
-        
-        form.onsubmit = function(e) {
-          // Let the original handler run if it exists
-          if (originalSubmit && originalSubmit.call(this, e) === false) {
-            return false;
-          }
-          
-          // Check if a selling plan is selected
-          const sellingPlanInput = document.querySelector('input[name="selling_plan"]');
-          console.log("Current selling plan value:", sellingPlanInput ? sellingPlanInput.value : "No selling plan input found");
-          
-          return true;
-        };
-        
+      // Setup listeners for selling plan changes
+      function setupSellingPlanPriceUpdates() {
         // Listen for selling plan changes and update button price
         window.addEventListener("subify:sellingPlanChange", function(event) {
           const { targetProductId, selectedSellingPlan } = event.detail;
@@ -698,17 +575,32 @@
         });
       }
       
-      // Initialize when SDK is loaded
-      if (window.subifySdk) {
-        initSubifyWidget();
-      } else {
-        window.addEventListener("subify:sdkLoaded", initSubifyWidget);
-      }
-      
-      // Add change listeners to variant selectors
-      document.querySelectorAll('input[name="id"]').forEach(input => {
-        input.addEventListener('change', updateSubifyVariant);
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM loaded, checking for Subi SDK");
+        if (window.subifySdk) {
+          console.log("Subi SDK already available at DOMContentLoaded");
+          initSubi();
+        } else {
+          console.log("Waiting for Subi SDK to load...");
+          window.addEventListener("subify:sdkLoaded", function() {
+            console.log("Subi SDK loaded event fired");
+            initSubi();
+          });
+          
+          // Fallback: check once after a delay
+          setTimeout(function() {
+            if (!isWidgetInitialized && window.subifySdk) {
+              console.log("Subi SDK found through timeout check");
+              initSubi();
+            }
+          }, 2000);
+        }
+        
+        // Add change listeners to variant selectors
+        document.querySelectorAll('input[name="id"]').forEach(input => {
+          input.addEventListener('change', updateVariant);
+        });
       });
-    });
+    })();
   </script>
 {% endif %}
