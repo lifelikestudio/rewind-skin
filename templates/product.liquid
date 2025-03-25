@@ -448,7 +448,7 @@
 <script>
   const productData = {{ product | json }};
   const hasSellingPlans = productData.selling_plan_groups && 
-                         productData.selling_plan_groups.length > 0;
+                        productData.selling_plan_groups.length > 0;
 </script>
 
 <!-- Only render the Subify elements if selling plans exist -->
@@ -473,7 +473,7 @@
         if (isWidgetInitialized) return;
         
         const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                   document.querySelector('input[name="id"]');
+                                  document.querySelector('input[name="id"]');
         const variantId = selectedVariantInput ? selectedVariantInput.value : null;
         
         if (window.subifySdk && variantId) {
@@ -530,3 +530,102 @@
   </script>
 {% endraw %}
 </style>
+
+<!-- First, check if the product has Subi selling plans -->
+<script>
+  const productData = {{ product | json }};
+  const hasSubiPlans = productData.selling_plan_groups && 
+                       productData.selling_plan_groups.some(group => 
+                         group.app_id === 'subi' || group.app_id === 'subify'
+                       );
+</script>
+
+{% if hasSubiPlans %}
+  <!-- Only include Subi elements if selling plans exist -->
+  <div id="subi-widget-wrapper" class="subi-widget-wrapper"></div>
+
+  <script
+    src="https://cdn.hengam.io/subify/subify-sdk.js"
+    defer
+    id="subi-sdk-script"></script>
+
+  <style>
+    .subi-widget-wrapper {
+      width: 100%;
+      margin: 15px 0;
+      display: block;
+    }
+
+    .product-page__checkout-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .variant-section {
+      order: 3;
+    }
+
+    .product-page__variants-group {
+      order: 1;
+    }
+
+    #subi-widget-wrapper {
+      order: 2;
+    }
+  </style>
+
+  <script type="text/javascript">
+    (function() {
+      let isWidgetInitialized = false;
+      
+      function initSubi() {
+        if (isWidgetInitialized) return;
+        
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                   document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+        
+        if (window.subifySdk && variantId) {
+          window.subifySdk.renderWidget(
+            {{ product | json }}, 
+            {
+              renderPosition: {
+                wrapper: "#subi-widget-wrapper",
+                position: "APPEND"
+              },
+              sellingPlanInput: {
+                wrapper: "form.product-page__checkout-form",
+                id: "selling-plan-input"
+              },
+              selectedVariantId: variantId
+            }
+          );
+          
+          isWidgetInitialized = true;
+        }
+      }
+      
+      function updateVariant() {
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                   document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? selectedVariantInput.value : null;
+        
+        if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
+          window.subifySdk.changeVariant({{ product.id }}, variantId);
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.subifySdk) {
+          initSubi();
+        } else {
+          window.addEventListener("subify:sdkLoaded", initSubi);
+        }
+        
+        document.querySelectorAll('input[name="id"]').forEach(input => {
+          input.addEventListener('change', updateVariant);
+        });
+      });
+    })();
+  </script>
+{% endif %}
