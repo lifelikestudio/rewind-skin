@@ -458,3 +458,38 @@
     });
   });
 </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Log cart data to debug subscription items
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(cart => {
+        console.log('Cart data:', cart);
+        
+        // Check each item for selling plans
+        cart.items.forEach(item => {
+          console.log(`Item ${item.title} has selling plan:`, Boolean(item.selling_plan_allocation));
+          if (item.selling_plan_allocation) {
+            console.log('Selling plan details:', item.selling_plan_allocation);
+            console.log('Original price:', item.original_price);
+            console.log('Final price:', item.final_price);
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching cart:', error));
+    
+    // Check DOM rendering
+    setTimeout(() => {
+      const subscriptionElements = document.querySelectorAll('.subscription-plan');
+      console.log('Subscription plan elements found:', subscriptionElements.length);
+      
+      // Check prices
+      const priceElements = document.querySelectorAll('.cart-item__price-wrapper');
+      console.log('Price wrapper elements found:', priceElements.length);
+      priceElements.forEach((el, i) => {
+        console.log(`Price element ${i}:`, el.innerHTML);
+      });
+    }, 1000);
+  });
+</script>
