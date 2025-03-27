@@ -108,7 +108,7 @@
                           / {{ discount_percentage -}}% Off
                           {% if item.selling_plan_allocation %}
                             /
-                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                            {{ item.selling_plan_allocation.selling_plan.name }}
                           {% endif %}
                         </span>
                       {% elsif item.variant.compare_at_price > item.variant.price %}
@@ -125,7 +125,7 @@
                           / {{ discount_percentage -}}% Off
                           {% if item.selling_plan_allocation %}
                             /
-                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                            {{ item.selling_plan_allocation.selling_plan.name }}
                           {% endif %}
                         </span>
                       {% elsif item.variant.title != 'Default Title' %}
@@ -138,7 +138,7 @@
                           {% endif %}
                           {% if item.selling_plan_allocation %}
                             /
-                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                            {{ item.selling_plan_allocation.selling_plan.name }}
                           {% endif %}
                         </span>
                       {% else %}
@@ -150,7 +150,7 @@
                           {% endif %}
                           {% if item.selling_plan_allocation %}
                             /
-                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                            {{ item.selling_plan_allocation.selling_plan.name }}
                           {% endif %}
                         </span>
                       {% endif %}
