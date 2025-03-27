@@ -130,40 +130,58 @@ export async function updateCart() {
     e.stopPropagation();
   });
 
-  // Get cart data to check for subscription items
-  try {
-    const cartResponse = await fetch('/cart.js');
-    const cartData = await cartResponse.json();
-
-    // Check each item for selling plan allocations
-    if (cartData.items && cartData.items.length > 0) {
-      cartData.items.forEach((item) => {
-        if (item.selling_plan_allocation) {
-          // Find the corresponding item in the DOM
-          const cartItemElement = document.querySelector(
-            `.cart-item[data-key="${item.key}"]`
-          );
-          if (cartItemElement) {
-            cartItemElement.classList.add('is-subscription');
-          }
-        }
-      });
-    }
-  } catch (error) {
-    console.error('Error getting cart data:', error);
-  }
-
   updateQuantity();
 
   // Wait until the new HTML has been rendered
   setTimeout(() => {
     // Re-attach event listeners to remove buttons
     removeItems();
-  }, 0);
 
-  // Dispatch an event that the cart has been refreshed
-  const cartRefreshedEvent = new CustomEvent('cart:refreshed');
-  document.dispatchEvent(cartRefreshedEvent);
+    // NEW CODE: Fetch cart data directly to get accurate subscription info
+    fetch('/cart.js')
+      .then((response) => response.json())
+      .then((cartData) => {
+        // For each cart item with a selling plan, ensure price is displayed correctly
+        cartData.items.forEach((item) => {
+          if (item.selling_plan_allocation) {
+            const cartItemRow = document.querySelector(
+              `[data-key="${item.key}"]`
+            );
+            if (!cartItemRow) return;
+
+            // Update price displays
+            const priceWrapper = cartItemRow.querySelector(
+              '.cart-item__price-wrapper'
+            );
+            if (priceWrapper) {
+              // Format money values
+              const formatMoney = function (cents) {
+                if (typeof cents === 'string') cents = cents.replace('.', '');
+                const value = parseFloat(cents || 0) / 100;
+                return '$' + value.toFixed(2); // Basic formatting - customize as needed
+              };
+
+              const originalPrice = formatMoney(item.original_line_price);
+              const finalPrice = formatMoney(item.final_line_price);
+
+              // Update the price display
+              priceWrapper.innerHTML = `
+                <div class="cart-item__discounted-prices">
+                  <span class="visually-hidden">Regular price</span>
+                  <s class="cart-item__old-price price price--end">${originalPrice}</s>
+                  <span class="visually-hidden">Sale price</span>
+                  <span class="price price--end">${finalPrice}</span>
+                  <small class="subscription-label">${item.selling_plan_allocation.selling_plan.name}</small>
+                </div>
+              `;
+            }
+          }
+        });
+      })
+      .catch((error) =>
+        console.error('Error updating subscription prices:', error)
+      );
+  }, 0);
 }
 
 export const attachEventListeners = () => {
