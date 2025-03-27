@@ -241,10 +241,28 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
     inputElement.value = 0; // Show 0 in the UI
     return;
   }
-  axios
-    .post('/cart/change.js', {
-      id: key,
-      quantity: quantity,
+
+  // First fetch the current cart to get the selling plan ID if any
+  fetch('/cart.js')
+    .then((res) => res.json())
+    .then((cartData) => {
+      const item = cartData.items.find((item) => item.key === key);
+      const sellingPlanId =
+        item && item.selling_plan_allocation
+          ? item.selling_plan_allocation.selling_plan.id
+          : null;
+
+      // Now update the cart with the selling plan ID if needed
+      const updateData = {
+        id: key,
+        quantity: quantity,
+      };
+
+      if (sellingPlanId) {
+        updateData.selling_plan = sellingPlanId;
+      }
+
+      return axios.post('/cart/change.js', updateData);
     })
     .then(async (res) => {
       if (res.status === 422) {
