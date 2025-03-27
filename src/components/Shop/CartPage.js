@@ -53,6 +53,8 @@ async function updateCart() {
   const res = await fetch('/cart.js');
   const cartData = await res.json();
 
+  console.log('Cart data:', cartData); // Debug to see the structure
+
   // If there are no items left in the cart, display the "empty cart" message
   if (cartData.items.length === 0) {
     document.querySelector('.cart-page').innerHTML = `
@@ -81,34 +83,71 @@ async function updateCart() {
   const totalPrice = formatMoney(cartData.total_price, format);
   document.querySelector('#total-price').textContent = totalPrice;
 
-  // Update subscription information for items
+  // Update subscription information for each item
   cartData.items.forEach((item) => {
+    console.log('Processing item:', item); // Debug to check item structure
+
+    // Find the item element in the cart page
+    const itemElement = document.querySelector(
+      `.drawer-cart__item--cart-page[data-key="${item.key}"]`
+    );
+
+    if (!itemElement) {
+      console.log(`Item element not found for key: ${item.key}`);
+      return;
+    }
+
+    // Clear any existing subscription info to avoid duplicates
+    const existingSubscriptionInfo = itemElement.querySelector(
+      '.item__subscription-info'
+    );
+    if (existingSubscriptionInfo) {
+      existingSubscriptionInfo.remove();
+    }
+
+    // Check if this item has a selling plan
     if (item.selling_plan_allocation) {
-      // Find the item element in the cart page
-      const itemElement = document.querySelector(
-        `.drawer-cart__item--cart-page[data-key="${item.key}"]`
+      console.log('Item has selling plan:', item.selling_plan_allocation);
+
+      // Create a container for subscription info
+      const subscriptionInfo = document.createElement('div');
+      subscriptionInfo.className = 'item__subscription-info';
+
+      // Create a badge for visual emphasis
+      const subscriptionBadge = document.createElement('span');
+      subscriptionBadge.className = 'subscription-badge';
+      subscriptionBadge.textContent = 'Subscription';
+      subscriptionInfo.appendChild(subscriptionBadge);
+
+      // Add the plan details
+      const planText = document.createElement('span');
+      planText.className = 'subscription-details';
+      planText.textContent = item.selling_plan_allocation.selling_plan.name;
+      subscriptionInfo.appendChild(planText);
+
+      // Find the appropriate container to append to
+      const itemInfoContainer = itemElement.querySelector(
+        '.item__info--cart-page'
       );
+      if (itemInfoContainer) {
+        // Insert after the item title or after the price
+        const itemTitle =
+          itemInfoContainer.querySelector('.item__title') ||
+          itemInfoContainer.querySelector('.item__price');
 
-      if (itemElement) {
-        // Get or create a container for subscription info
-        let subscriptionInfo = itemElement.querySelector(
-          '.item__subscription-info'
-        );
-        if (!subscriptionInfo) {
-          subscriptionInfo = document.createElement('div');
-          subscriptionInfo.className = 'item__subscription-info';
-          const itemInfoContainer = itemElement.querySelector(
-            '.item__info--cart-page'
+        if (itemTitle && itemTitle.nextSibling) {
+          itemInfoContainer.insertBefore(
+            subscriptionInfo,
+            itemTitle.nextSibling
           );
-          if (itemInfoContainer) {
-            itemInfoContainer.appendChild(subscriptionInfo);
-          }
+        } else {
+          itemInfoContainer.appendChild(subscriptionInfo);
         }
-
-        // Display the selling plan name
-        subscriptionInfo.textContent =
-          item.selling_plan_allocation.selling_plan.name;
+      } else {
+        console.log('Item info container not found');
       }
+    } else {
+      console.log('Item has no selling plan');
     }
   });
 
@@ -328,6 +367,34 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
 
 const CartPage = () => {
   quantityHandler();
+
+  // Debug to check DOM structure and cart data
+  console.log('CartPage initialized');
+  fetch('/cart.js')
+    .then((res) => res.json())
+    .then((cart) => {
+      console.log('Current cart:', cart);
+
+      if (cart.items.length > 0) {
+        // Check if any items have selling plans
+        const itemsWithSellingPlans = cart.items.filter(
+          (item) => item.selling_plan_allocation
+        );
+        console.log('Items with selling plans:', itemsWithSellingPlans);
+
+        // Check if we can find the DOM elements for these items
+        cart.items.forEach((item) => {
+          const element = document.querySelector(
+            `.drawer-cart__item--cart-page[data-key="${item.key}"]`
+          );
+          console.log(`Item ${item.key}:`, {
+            found: !!element,
+            element: element,
+            sellingPlan: item.selling_plan_allocation,
+          });
+        });
+      }
+    });
 };
 
 export default CartPage;
