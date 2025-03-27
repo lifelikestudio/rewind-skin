@@ -130,6 +130,16 @@ export async function updateCart() {
     e.stopPropagation();
   });
 
+  // Highlight subscription items with a visual cue if desired
+  const subscriptionItems = document.querySelectorAll(
+    '.product-option:contains("subscription")'
+  );
+  if (subscriptionItems.length > 0) {
+    subscriptionItems.forEach((item) => {
+      item.closest('.cart-item').classList.add('is-subscription');
+    });
+  }
+
   updateQuantity();
 
   // Wait until the new HTML has been rendered
