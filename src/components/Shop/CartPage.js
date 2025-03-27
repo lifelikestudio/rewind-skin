@@ -401,15 +401,9 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       updateCartItemCount(cartData.item_count);
     })
     .catch((error) => {
-      console.error('Error changing item quantity:', error);
-
       // Special handling for 422 status (inventory constraints)
       if (error.response && error.response.status === 422) {
-        console.log(
-          'Inventory constraint detected - using maximum available quantity'
-        );
-
-        // Get the maximum available quantity from the cart
+        // Get the maximum available quantity from the cart - silently
         fetch('/cart.js')
           .then((res) => res.json())
           .then((cart) => {
@@ -424,14 +418,12 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
             }
           })
           .catch((err) => {
-            console.error(
-              'Error fetching cart after inventory constraint:',
-              err
-            );
+            // Silently revert to previous value
             inputElement.value = previousValue;
           });
       } else {
-        // For other errors, show the message and revert
+        // Only log and show alerts for non-inventory related errors
+        console.error('Error changing item quantity:', error);
         alert(error.message);
         inputElement.value = previousValue;
       }
