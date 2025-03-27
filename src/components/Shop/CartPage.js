@@ -343,6 +343,11 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         alert('The requested quantity is not in stock.');
       }
 
+      // Find the item element
+      const itemElement = document.querySelector(
+        `.drawer-cart__item--cart-page[data-key="${key}"]`
+      );
+
       // Check for selling plan and update price display
       if (itemElement) {
         const priceElement = itemElement.querySelector('.item__variant-price');
@@ -386,6 +391,10 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
             priceElement.textContent
           );
         }
+      } else {
+        console.log(
+          `Item element not found for key: ${key} after quantity update`
+        );
       }
 
       // Fetch the updated cart data
