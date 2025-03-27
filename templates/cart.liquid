@@ -94,25 +94,22 @@
                     <p class="item__product">
                       <span class="product__title">{{ item.product.title }}</span>
 
-                      {% if item.selling_plan_allocation != nil %}
+                      {%- if item.selling_plan_allocation != nil -%}
                         <span class="item__subscription">
                           {{ item.selling_plan_allocation.selling_plan.name }}
                         </span>
-                        {% if item.variant.compare_at_price > item.variant.price %}
+
+                        {% if item.original_price != item.final_price %}
                           <span class="item__variant-price">
-                            <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
+                            <del>{{ item.original_price | money_without_trailing_zeros }}</del>
                             <ins>{{ item.final_price | money_with_currency | remove: '.00' }}</ins>
-                            {% assign discount = item.variant.compare_at_price | minus: item.final_price %}
-                            {% assign discount_percentage = discount | times: 100.0 | divided_by: item.variant.compare_at_price %}
-                            {% assign discount_percentage = discount_percentage | round %}
-                            / {{ discount_percentage -}}% Off
                           </span>
                         {% else %}
                           <span class="item__variant-price">
                             {{ item.final_price | money_with_currency | remove: '.00' }}
                           </span>
                         {% endif %}
-                      {% elsif item.variant.title != 'Default Title' and item.variant.compare_at_price > item.variant.price %}
+                      {%- elsif item.variant.title != 'Default Title' and item.variant.compare_at_price > item.variant.price -%}
                         <span class="item__variant-price">
                           {{- item.variant.title }} /
                           <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
@@ -122,7 +119,7 @@
                           {% assign discount_percentage = discount_percentage | round %}
                           / {{ discount_percentage -}}% Off
                         </span>
-                      {% elsif item.variant.compare_at_price > item.variant.price %}
+                      {%- elsif item.variant.compare_at_price > item.variant.price -%}
                         <span class="item__variant-price">
                           <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
                           <ins>{{ item.variant.price | money_with_currency | remove: '.00' }}</ins>
@@ -131,15 +128,15 @@
                           {% assign discount_percentage = discount_percentage | round %}
                           / {{ discount_percentage -}}% Off
                         </span>
-                      {% elsif item.variant.title != 'Default Title' %}
+                      {%- elsif item.variant.title != 'Default Title' -%}
                         <span class="item__variant-price">
                           {{- item.variant.title }} / {{ item.variant.price | money_with_currency | remove: '.00' -}}
                         </span>
-                      {% else %}
+                      {%- else -%}
                         <span class="item__variant-price">
                           {{ item.variant.price | money_with_currency | remove: '.00' -}}
                         </span>
-                      {% endif %}
+                      {%- endif -%}
                     </p>
                   </a>
 

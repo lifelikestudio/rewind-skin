@@ -110,7 +110,7 @@
 
                   <tbody role="rowgroup">
                     {%- for item in cart.items -%}
-                      <tr id="CartDrawer-Item-{{ item.index | plus: 1 }}" class="cart-item" role="row">
+                      <tr id="CartDrawer-Item-{{ item.index | plus: 1 }}" class="cart-item" role="row" data-key="{{ item.key }}">
                         <td class="cart-item__media" role="cell" headers="CartDrawer-ColumnProductImage">
                           {% if item.image %}
                             {% comment %} Leave empty space due to a:empty CSS display: none rule {% endcomment %}
@@ -136,29 +136,29 @@
                           </a>
 
                           {%- if item.selling_plan_allocation != nil -%}
+                            <p class="product-option subscription-plan">
+                              {{ item.selling_plan_allocation.selling_plan.name }}
+                            </p>
+                          {%- endif -%}
+
+                          {%- if item.original_price != item.final_price -%}
+                            <div class="cart-item__discounted-prices">
+                              <span class="visually-hidden">
+                                {{ 'products.product.price.regular_price' | t }}
+                              </span>
+                              <s class="cart-item__old-price product-option">
+                                {{- item.original_price | money -}}
+                              </s>
+                              <span class="visually-hidden">
+                                {{ 'products.product.price.sale_price' | t }}
+                              </span>
+                              <strong class="cart-item__final-price product-option">
+                                {{ item.final_price | money }}
+                              </strong>
+                            </div>
+                          {%- else -%}
                             <div class="product-option">
-                              <p>{{ item.selling_plan_allocation.selling_plan.name }}</p>
-                              
-                              {%- if item.original_price != item.final_price -%}
-                                <div class="cart-item__discounted-prices">
-                                  <span class="visually-hidden">
-                                    {{ 'products.product.price.regular_price' | t }}
-                                  </span>
-                                  <s class="cart-item__old-price product-option">
-                                    {{- item.original_price | money -}}
-                                  
-                                  <span class="visually-hidden">
-                                    {{ 'products.product.price.sale_price' | t }}
-                                  </span>
-                                  <strong class="cart-item__final-price product-option">
-                                    {{ item.final_price | money }}
-                                  </strong>
-                                </div>
-                              {%- else -%}
-                                <div class="product-option">
-                                  {{ item.final_price | money }}
-                                </div>
-                              {%- endif -%}
+                              {{ item.original_price | money }}
                             </div>
                           {%- endif -%}
 
@@ -202,8 +202,6 @@
                                 {%- endif -%}
                               {%- endfor -%}
                             </dl>
-
-                            <p class="product-option">{{ item.selling_plan_allocation.selling_plan.name }}</p>
                           {%- endif -%}
 
                           <ul
@@ -243,7 +241,7 @@
                                 </span>
                                 <s class="cart-item__old-price price price--end">
                                   {{ item.original_line_price | money }}
-                                
+                                </s>
                                 <span class="visually-hidden">
                                   {{ 'products.product.price.sale_price' | t }}
                                 </span>

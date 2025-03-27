@@ -130,14 +130,27 @@ export async function updateCart() {
     e.stopPropagation();
   });
 
-  // Highlight subscription items with a visual cue if desired
-  const subscriptionItems = document.querySelectorAll(
-    '.product-option:contains("subscription")'
-  );
-  if (subscriptionItems.length > 0) {
-    subscriptionItems.forEach((item) => {
-      item.closest('.cart-item').classList.add('is-subscription');
-    });
+  // Get cart data to check for subscription items
+  try {
+    const cartResponse = await fetch('/cart.js');
+    const cartData = await cartResponse.json();
+
+    // Check each item for selling plan allocations
+    if (cartData.items && cartData.items.length > 0) {
+      cartData.items.forEach((item) => {
+        if (item.selling_plan_allocation) {
+          // Find the corresponding item in the DOM
+          const cartItemElement = document.querySelector(
+            `.cart-item[data-key="${item.key}"]`
+          );
+          if (cartItemElement) {
+            cartItemElement.classList.add('is-subscription');
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error getting cart data:', error);
   }
 
   updateQuantity();
