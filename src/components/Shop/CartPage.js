@@ -81,6 +81,37 @@ async function updateCart() {
   const totalPrice = formatMoney(cartData.total_price, format);
   document.querySelector('#total-price').textContent = totalPrice;
 
+  // Update subscription information for items
+  cartData.items.forEach((item) => {
+    if (item.selling_plan_allocation) {
+      // Find the item element in the cart page
+      const itemElement = document.querySelector(
+        `.drawer-cart__item--cart-page[data-key="${item.key}"]`
+      );
+
+      if (itemElement) {
+        // Get or create a container for subscription info
+        let subscriptionInfo = itemElement.querySelector(
+          '.item__subscription-info'
+        );
+        if (!subscriptionInfo) {
+          subscriptionInfo = document.createElement('div');
+          subscriptionInfo.className = 'item__subscription-info';
+          const itemInfoContainer = itemElement.querySelector(
+            '.item__info--cart-page'
+          );
+          if (itemInfoContainer) {
+            itemInfoContainer.appendChild(subscriptionInfo);
+          }
+        }
+
+        // Display the selling plan name
+        subscriptionInfo.textContent =
+          item.selling_plan_allocation.selling_plan.name;
+      }
+    }
+  });
+
   // Remove items with quantity 0 from the cart page
   cartData.items.forEach((item) => {
     if (item.quantity === 0) {
@@ -231,6 +262,31 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       // Check if the quantity was updated as expected
       if (item.quantity !== quantity) {
         alert('The requested quantity is not in stock.');
+      }
+
+      // Check for selling plan and update UI if needed
+      if (item && item.selling_plan_allocation) {
+        const itemElement = document.querySelector(
+          `.drawer-cart__item--cart-page[data-key="${key}"]`
+        );
+        if (itemElement) {
+          const subscriptionInfo =
+            itemElement.querySelector('.item__subscription-info') ||
+            document.createElement('div');
+          subscriptionInfo.className = 'item__subscription-info';
+          subscriptionInfo.textContent =
+            item.selling_plan_allocation.selling_plan.name;
+
+          const itemInfoContainer = itemElement.querySelector(
+            '.item__info--cart-page'
+          );
+          if (
+            itemInfoContainer &&
+            !itemElement.querySelector('.item__subscription-info')
+          ) {
+            itemInfoContainer.appendChild(subscriptionInfo);
+          }
+        }
       }
 
       // Fetch the updated cart data
