@@ -93,39 +93,48 @@
                   <a href="{{ item.url }}" class="item__info--cart-page">
                     <p class="item__product">
                       <span class="product__title">{{ item.product.title }}</span>
-                      {% if item.variant.title != 'Default Title' and item.variant.compare_at_price > item.variant.price
-                      %}
+                      {% if item.variant.title != 'Default Title' and item.variant.compare_at_price > item.variant.price %}
                         <span class="item__variant-price">
                           {{- item.variant.title }} /
                           <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
                           <ins>{{ item.variant.price | money_with_currency | remove: '.00' }}</ins>
                           {% assign discount = item.variant.compare_at_price | minus: item.variant.price %}
-                          {% assign discount_percentage = discount | times: 100.0 | divided_by: item.variant.compare_at_price
-                          %}
+                          {% assign discount_percentage = discount | times: 100.0 | divided_by: item.variant.compare_at_price %}
                           {% assign discount_percentage = discount_percentage | round %}
-                          /
-                          {{ discount_percentage -}}
-                          % Off
+                          / {{ discount_percentage -}}% Off
+                          {% if item.selling_plan_allocation %}
+                            /
+                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                          {% endif %}
                         </span>
                       {% elsif item.variant.compare_at_price > item.variant.price %}
                         <span class="item__variant-price">
                           <del>{{ item.variant.compare_at_price | money_without_trailing_zeros }}</del>
                           <ins>{{ item.variant.price | money_with_currency | remove: '.00' }}</ins>
                           {% assign discount = item.variant.compare_at_price | minus: item.variant.price %}
-                          {% assign discount_percentage = discount | times: 100.0 | divided_by: item.variant.compare_at_price
-                          %}
+                          {% assign discount_percentage = discount | times: 100.0 | divided_by: item.variant.compare_at_price %}
                           {% assign discount_percentage = discount_percentage | round %}
-                          /
-                          {{ discount_percentage -}}
-                          % Off
+                          / {{ discount_percentage -}}% Off
+                          {% if item.selling_plan_allocation %}
+                            /
+                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                          {% endif %}
                         </span>
                       {% elsif item.variant.title != 'Default Title' %}
                         <span class="item__variant-price">
                           {{- item.variant.title }} / {{ item.variant.price | money_with_currency | remove: '.00' -}}
+                          {% if item.selling_plan_allocation %}
+                            /
+                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                          {% endif %}
                         </span>
                       {% else %}
                         <span class="item__variant-price">
                           {{ item.variant.price | money_with_currency | remove: '.00' -}}
+                          {% if item.selling_plan_allocation %}
+                            /
+                            <span class="subscription-info">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                          {% endif %}
                         </span>
                       {% endif %}
                     </p>
