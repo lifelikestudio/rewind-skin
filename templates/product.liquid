@@ -558,7 +558,7 @@
         }
         
         // Function to update button price based on selected selling plan
-        function updateButtonPrice(sellingPlanId) {
+        function updateButtonPrice(sellingPlanId, formattedPlanName) {
           console.log("updateButtonPrice called with selling plan:", sellingPlanId);
         
         const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
@@ -600,11 +600,24 @@
               // Update the price display
           if (pricingData.compare_at_price && pricingData.compare_at_price > pricingData.price) {
             const formattedComparePrice = formatMoney(pricingData.compare_at_price);
-            priceSpan.innerHTML = `
-              <del>${formattedComparePrice}</del>
-              <ins>${formattedPrice}</ins>
-            `;
+            if (formattedPlanName && sellingPlanId) {
+              // For sale items with subscription
+              priceSpan.innerHTML = `
+                <del>${formattedComparePrice}</del>
+                <ins>${formattedPrice}${formattedPlanName}</ins>
+              `;
+            } else {
+              // Regular sale items
+              priceSpan.innerHTML = `
+                <del>${formattedComparePrice}</del>
+                <ins>${formattedPrice}</ins>
+              `;
+            }
+          } else if (formattedPlanName && sellingPlanId) {
+            // For regular items with subscription
+            priceSpan.innerHTML = `${formattedPrice}${formattedPlanName}`;
           } else {
+            // Regular one-time purchase
             priceSpan.textContent = formattedPrice;
           }
           
@@ -679,26 +692,36 @@
             }
           }
           
-          // Update the button price when selling plan changes
-          // Pass just the ID if selectedSellingPlan is an object with an id property
+          // Get the formatted plan name if available
+          let formattedPlanName = '';
+          if (selectedSellingPlan && selectedSellingPlan.name) {
+            // Format the plan name: "Every 2 weeks" -> "/2 Weeks"
+            formattedPlanName = selectedSellingPlan.name
+              .replace(/^Every\s+/i, '/') // Replace "Every " with "/"
+              .replace(/^\s*/, '')        // Trim leading spaces
+              .replace(/^(\d+)/, '$1')    // Keep the number
+              .replace(/\b\w/g, l => l.toUpperCase()); // Capitalize words
+          }
+          
+          // Update the button price with the formatted plan name
           const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
                                selectedSellingPlan.id : selectedSellingPlan;
-          updateButtonPrice(sellingPlanId);
-          });
-        }
+          updateButtonPrice(sellingPlanId, formattedPlanName);
+        });
+      }
+      
+      // Function to update the variant in the widget
+      function updateSubifyVariant() {
+        if (!window.subifySdk || !isWidgetInitialized) return;
         
-        // Function to update the variant in the widget
-        function updateSubifyVariant() {
-          if (!window.subifySdk || !isWidgetInitialized) return;
-          
-          const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                     document.querySelector('input[name="id"]');
-          const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
-          
-          if (variantId && typeof window.subifySdk.changeVariant === 'function') {
-            window.subifySdk.changeVariant({{ product.id }}, variantId);
-            console.log("Subify variant updated to:", variantId);
-          }
+        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
+                                   document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput ? parseInt(selectedVariantInput.value) : null;
+        
+        if (variantId && typeof window.subifySdk.changeVariant === 'function') {
+          window.subifySdk.changeVariant({{ product.id }}, variantId);
+          console.log("Subify variant updated to:", variantId);
+        }
       }
       
       // Initialize when SDK is loaded
