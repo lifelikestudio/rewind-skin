@@ -333,8 +333,11 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       const item = res.data.items.find((item) => item.key === key);
       document.querySelector('#total-price').textContent = totalPrice;
 
-      // Update the quantity value in the DrawerCart
-      updateDrawerCartQuantity(key, quantity);
+      // Update the quantity value in the DrawerCart and in the current view
+      // Use the actual quantity returned from Shopify (which may be limited by stock)
+      const actualQuantity = item ? item.quantity : 0;
+      updateDrawerCartQuantity(key, actualQuantity);
+      inputElement.value = actualQuantity;
 
       // Find the item element
       const itemElement = document.querySelector(
@@ -399,9 +402,39 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
     })
     .catch((error) => {
       console.error('Error changing item quantity:', error);
-      // Only show generic errors, not stock-related errors
-      // Don't roll back the input value for stock issues
-      alert(error.message);
+
+      // Special handling for 422 status (inventory constraints)
+      if (error.response && error.response.status === 422) {
+        console.log(
+          'Inventory constraint detected - using maximum available quantity'
+        );
+
+        // Get the maximum available quantity from the cart
+        fetch('/cart.js')
+          .then((res) => res.json())
+          .then((cart) => {
+            const currentItem = cart.items.find((item) => item.key === key);
+            if (currentItem) {
+              // Update to the current quantity in the cart
+              inputElement.value = currentItem.quantity;
+              updateDrawerCartQuantity(key, currentItem.quantity);
+            } else {
+              // If item not found, revert to previous value
+              inputElement.value = previousValue;
+            }
+          })
+          .catch((err) => {
+            console.error(
+              'Error fetching cart after inventory constraint:',
+              err
+            );
+            inputElement.value = previousValue;
+          });
+      } else {
+        // For other errors, show the message and revert
+        alert(error.message);
+        inputElement.value = previousValue;
+      }
     });
 }
 
