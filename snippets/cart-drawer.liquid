@@ -11,6 +11,18 @@
   .drawer {
     visibility: hidden;
   }
+
+  .subscription-label {
+    display: block;
+    font-size: 0.85em;
+    margin-top: 4px;
+    color: #4a90e2;
+  }
+  
+  .cart-item__discounted-prices .cart-item__old-price {
+    text-decoration: line-through;
+    color: #999;
+  }
 </style>
 
 <cart-drawer class="drawer{% if cart == empty %} is-empty{% endif %}">
@@ -234,7 +246,25 @@
                           </div>
 
                           <div class="cart-item__price-wrapper">
-                            {%- if item.original_line_price != item.final_line_price -%}
+                            {% if item.selling_plan_allocation != nil %}
+                              <div class="cart-item__discounted-prices">
+                                <span class="visually-hidden">
+                                  {{ 'products.product.price.regular_price' | t }}
+                                </span>
+                                <s class="cart-item__old-price price price--end">
+                                  {{ item.original_line_price | money }}
+                                </s>
+                                <span class="visually-hidden">
+                                  {{ 'products.product.price.sale_price' | t }}
+                                </span>
+                                <span class="price price--end">
+                                  {{ item.final_line_price | money }}
+                                </span>
+                                <small class="subscription-label">
+                                  {{ item.selling_plan_allocation.selling_plan.name }}
+                                </small>
+                              </div>
+                            {% elsif item.original_line_price != item.final_line_price %}
                               <div class="cart-item__discounted-prices">
                                 <span class="visually-hidden">
                                   {{ 'products.product.price.regular_price' | t }}
@@ -249,11 +279,11 @@
                                   {{ item.final_line_price | money }}
                                 </span>
                               </div>
-                            {%- else -%}
+                            {% else %}
                               <span class="price price--end">
                                 {{ item.original_line_price | money }}
                               </span>
-                            {%- endif -%}
+                            {% endif %}
 
                             {%- if item.variant.available and item.unit_price_measurement -%}
                               <div class="unit-price caption">
@@ -491,5 +521,86 @@
         console.log(`Price element ${i}:`, el.innerHTML);
       });
     }, 1000);
+  });
+</script>
+
+<script>
+  // Wait for DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Function to update cart pricing for subscription items
+    function updateCartItemPrices() {
+      fetch('/cart.js')
+        .then(response => response.json())
+        .then(cart => {
+          // Process each item in the cart
+          cart.items.forEach((item, index) => {
+            // Check if this item has a selling plan (subscription)
+            if (item.selling_plan_allocation) {
+              // Find the corresponding DOM element
+              const cartItem = document.querySelector(`[data-key="${item.key}"]`);
+              if (!cartItem) return;
+              
+              // Format prices
+              const formattedFinalPrice = formatMoney(item.final_line_price);
+              const formattedOriginalPrice = formatMoney(item.original_line_price);
+              
+              // Get price container
+              const priceWrapper = cartItem.querySelector('.cart-item__price-wrapper');
+              if (!priceWrapper) return;
+              
+              // Create a proper price display for subscription items
+              priceWrapper.innerHTML = `
+                <div class="cart-item__discounted-prices">
+                  <span class="visually-hidden">Regular price</span>
+                  <s class="cart-item__old-price price price--end">${formattedOriginalPrice}</s>
+                  <span class="visually-hidden">Sale price</span>
+                  <span class="price price--end">${formattedFinalPrice}</span>
+                  <small class="subscription-label">${item.selling_plan_allocation.selling_plan.name}</small>
+                </div>
+              `;
+            }
+          });
+        })
+        .catch(error => console.error('Error fetching cart data:', error));
+    }
+    
+    // Helper function to format money
+    function formatMoney(cents) {
+      const format = document.querySelector('[data-money-format]') 
+        ? document.querySelector('[data-money-format]').getAttribute('data-money-format')
+        : '{{ shop.money_format }}';
+        
+      if (typeof cents === 'string') {
+        cents = cents.replace('.', '');
+      }
+      
+      const value = parseFloat(cents || 0) / 100;
+      const formattedValue = value.toFixed(2);
+      
+      // Simple money format implementation
+      return format.replace(/\{\{\s*amount\s*\}\}/, formattedValue);
+    }
+    
+    // Run on page load
+    updateCartItemPrices();
+    
+    // Also run when cart drawer is opened or refreshed
+    document.addEventListener('cart-drawer:opened', updateCartItemPrices);
+    document.addEventListener('cart:refreshed', updateCartItemPrices);
+    
+    // Dispatch a custom event when a cart item is added
+    const originalFetch = window.fetch;
+    window.fetch = function() {
+      const result = originalFetch.apply(this, arguments);
+      const url = arguments[0];
+      
+      if (typeof url === 'string' && (url.includes('/cart/add') || url.includes('/cart/update'))) {
+        result.then(() => {
+          setTimeout(updateCartItemPrices, 500);
+        });
+      }
+      
+      return result;
+    };
   });
 </script>

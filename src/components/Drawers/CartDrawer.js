@@ -160,6 +160,10 @@ export async function updateCart() {
     // Re-attach event listeners to remove buttons
     removeItems();
   }, 0);
+
+  // Dispatch an event that the cart has been refreshed
+  const cartRefreshedEvent = new CustomEvent('cart:refreshed');
+  document.dispatchEvent(cartRefreshedEvent);
 }
 
 export const attachEventListeners = () => {
@@ -395,3 +399,12 @@ const CartDrawer = () => {
 };
 
 export default CartDrawer;
+
+// When opening the drawer
+function openCartDrawer() {
+  // ... existing code ...
+
+  // Dispatch an event that the cart drawer has been opened
+  const cartOpenedEvent = new CustomEvent('cart-drawer:opened');
+  document.dispatchEvent(cartOpenedEvent);
+}
