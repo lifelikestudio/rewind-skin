@@ -85,8 +85,6 @@ async function updateCart() {
 
   // Update subscription information for each item
   cartData.items.forEach((item) => {
-    console.log('Processing item:', item); // Debug to check item structure
-
     // Find the item element in the cart page
     const itemElement = document.querySelector(
       `.drawer-cart__item--cart-page[data-key="${item.key}"]`
@@ -97,57 +95,43 @@ async function updateCart() {
       return;
     }
 
-    // Clear any existing subscription info to avoid duplicates
-    const existingSubscriptionInfo = itemElement.querySelector(
-      '.item__subscription-info'
-    );
-    if (existingSubscriptionInfo) {
-      existingSubscriptionInfo.remove();
+    // Find the price element
+    const priceElement = itemElement.querySelector('.item__variant-price');
+
+    if (!priceElement) {
+      console.log(`Price element not found for item: ${item.key}`);
+      return;
     }
 
+    // Get the current text of the price element
+    const currentText = priceElement.textContent || '';
+
     // Check if this item has a selling plan
-    if (item.selling_plan_allocation) {
-      console.log('Item has selling plan:', item.selling_plan_allocation);
+    if (
+      item.selling_plan_allocation &&
+      item.selling_plan_allocation.selling_plan
+    ) {
+      const sellingPlanName = item.selling_plan_allocation.selling_plan.name;
 
-      // Create a container for subscription info
-      const subscriptionInfo = document.createElement('div');
-      subscriptionInfo.className = 'item__subscription-info';
-
-      // Create a badge for visual emphasis
-      const subscriptionBadge = document.createElement('span');
-      subscriptionBadge.className = 'subscription-badge';
-      subscriptionBadge.textContent = 'Subscription';
-      subscriptionInfo.appendChild(subscriptionBadge);
-
-      // Add the plan details
-      const planText = document.createElement('span');
-      planText.className = 'subscription-details';
-      planText.textContent = item.selling_plan_allocation.selling_plan.name;
-      subscriptionInfo.appendChild(planText);
-
-      // Find the appropriate container to append to
-      const itemInfoContainer = itemElement.querySelector(
-        '.item__info--cart-page'
-      );
-      if (itemInfoContainer) {
-        // Insert after the item title or after the price
-        const itemTitle =
-          itemInfoContainer.querySelector('.item__title') ||
-          itemInfoContainer.querySelector('.item__price');
-
-        if (itemTitle && itemTitle.nextSibling) {
-          itemInfoContainer.insertBefore(
-            subscriptionInfo,
-            itemTitle.nextSibling
-          );
-        } else {
-          itemInfoContainer.appendChild(subscriptionInfo);
-        }
-      } else {
-        console.log('Item info container not found');
+      // Check if the selling plan info is already in the text
+      if (!currentText.includes(sellingPlanName)) {
+        // Append the selling plan name to the price text
+        priceElement.textContent = `${currentText} / ${sellingPlanName}`;
       }
     } else {
-      console.log('Item has no selling plan');
+      // If there's no selling plan, make sure we're not showing any old subscription info
+      // This handles cases where items might have changed from subscription to one-time
+      if (
+        currentText.includes(' / Every ') ||
+        currentText.includes(' / Monthly ')
+      ) {
+        // This is a rough way to clean up - assumes your format is always "SIZE / PRICE" originally
+        const parts = currentText.split(' / ');
+        if (parts.length > 2) {
+          // Keep just the first two parts (size and price)
+          priceElement.textContent = `${parts[0]} / ${parts[1]}`;
+        }
+      }
     }
   });
 
@@ -321,27 +305,44 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         alert('The requested quantity is not in stock.');
       }
 
-      // Check for selling plan and update UI if needed
-      if (item && item.selling_plan_allocation) {
+      // Check for selling plan and update price display
+      if (item) {
         const itemElement = document.querySelector(
           `.drawer-cart__item--cart-page[data-key="${key}"]`
         );
-        if (itemElement) {
-          const subscriptionInfo =
-            itemElement.querySelector('.item__subscription-info') ||
-            document.createElement('div');
-          subscriptionInfo.className = 'item__subscription-info';
-          subscriptionInfo.textContent =
-            item.selling_plan_allocation.selling_plan.name;
 
-          const itemInfoContainer = itemElement.querySelector(
-            '.item__info--cart-page'
+        if (itemElement) {
+          const priceElement = itemElement.querySelector(
+            '.item__variant-price'
           );
-          if (
-            itemInfoContainer &&
-            !itemElement.querySelector('.item__subscription-info')
-          ) {
-            itemInfoContainer.appendChild(subscriptionInfo);
+
+          if (priceElement) {
+            // Get current text and parse it
+            let currentText = priceElement.textContent || '';
+
+            // Remove any existing subscription info
+            if (
+              currentText.includes(' / Every ') ||
+              currentText.includes(' / Monthly ')
+            ) {
+              const parts = currentText.split(' / ');
+              if (parts.length > 2) {
+                // Keep just the first two parts (size and price)
+                currentText = `${parts[0]} / ${parts[1]}`;
+              }
+            }
+
+            // Add subscription info if it exists
+            if (
+              item.selling_plan_allocation &&
+              item.selling_plan_allocation.selling_plan
+            ) {
+              const sellingPlanName =
+                item.selling_plan_allocation.selling_plan.name;
+              priceElement.textContent = `${currentText} / ${sellingPlanName}`;
+            } else {
+              priceElement.textContent = currentText;
+            }
           }
         }
       }
