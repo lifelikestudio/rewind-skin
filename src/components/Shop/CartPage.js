@@ -85,6 +85,23 @@ async function updateCart() {
 
   // Update subscription information for each item
   cartData.items.forEach((item) => {
+    console.log('Processing item:', item.key);
+    console.log('Item variant title:', item.variant_title);
+    console.log('Item price:', item.price);
+
+    // Log the full selling plan details
+    if (item.selling_plan_allocation) {
+      console.log('Selling plan details:', {
+        id: item.selling_plan_allocation.selling_plan.id,
+        name: item.selling_plan_allocation.selling_plan.name,
+        price: item.selling_plan_allocation.price,
+        compareAtPrice: item.selling_plan_allocation.compare_at_price,
+        perDeliveryPrice: item.selling_plan_allocation.per_delivery_price,
+      });
+    } else {
+      console.log('No selling plan for this item');
+    }
+
     // Find the item element in the cart page
     const itemElement = document.querySelector(
       `.drawer-cart__item--cart-page[data-key="${item.key}"]`
@@ -95,13 +112,14 @@ async function updateCart() {
       return;
     }
 
-    // Find the price element
+    // Find the price element and log its current state
     const priceElement = itemElement.querySelector('.item__variant-price');
-
     if (!priceElement) {
       console.log(`Price element not found for item: ${item.key}`);
       return;
     }
+
+    console.log('Current price element text:', priceElement.textContent);
 
     // Get the current text of the price element
     const currentText = priceElement.textContent || '';
@@ -113,23 +131,43 @@ async function updateCart() {
     ) {
       const sellingPlanName = item.selling_plan_allocation.selling_plan.name;
 
-      // Check if the selling plan info is already in the text
-      if (!currentText.includes(sellingPlanName)) {
-        // Append the selling plan name to the price text
-        priceElement.textContent = `${currentText} / ${sellingPlanName}`;
+      // Force a complete rebuild of the price text instead of trying to append
+      // This ensures correct format even if previous attempts were partially successful
+
+      // Parse the current text to extract the size and price components
+      let size = '';
+      let price = '';
+
+      // First, try to extract based on standard format
+      const parts = currentText.split(' / ');
+      if (parts.length >= 2) {
+        size = parts[0];
+
+        // For the price part, make sure we don't include any subscription info
+        price = parts[1].split(' / ')[0]; // Take only the first part of price segment
+      } else {
+        // Fallback if format doesn't match expectations
+        console.log('Unexpected price format, using full text as base');
+        size = item.variant_title || '';
+        price = formatMoney(item.price, format);
       }
+
+      // Create a fresh price string with the subscription info
+      priceElement.textContent = `${size} / ${price} / ${sellingPlanName}`;
+      console.log('Updated price element text:', priceElement.textContent);
     } else {
-      // If there's no selling plan, make sure we're not showing any old subscription info
-      // This handles cases where items might have changed from subscription to one-time
+      // Handle one-time purchase items
+      // If there's subscription info in the text, clean it up
       if (
         currentText.includes(' / Every ') ||
-        currentText.includes(' / Monthly ')
+        currentText.includes(' / Monthly ') ||
+        currentText.split(' / ').length > 2
       ) {
-        // This is a rough way to clean up - assumes your format is always "SIZE / PRICE" originally
         const parts = currentText.split(' / ');
-        if (parts.length > 2) {
+        if (parts.length >= 2) {
           // Keep just the first two parts (size and price)
           priceElement.textContent = `${parts[0]} / ${parts[1]}`;
+          console.log('Cleaned up price text:', priceElement.textContent);
         }
       }
     }
@@ -306,44 +344,47 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       }
 
       // Check for selling plan and update price display
-      if (item) {
-        const itemElement = document.querySelector(
-          `.drawer-cart__item--cart-page[data-key="${key}"]`
-        );
+      if (itemElement) {
+        const priceElement = itemElement.querySelector('.item__variant-price');
 
-        if (itemElement) {
-          const priceElement = itemElement.querySelector(
-            '.item__variant-price'
-          );
+        if (priceElement) {
+          console.log('Updating price for item after quantity change:', key);
 
-          if (priceElement) {
-            // Get current text and parse it
-            let currentText = priceElement.textContent || '';
+          // Get current text and log it
+          let currentText = priceElement.textContent || '';
+          console.log('Current price text:', currentText);
 
-            // Remove any existing subscription info
-            if (
-              currentText.includes(' / Every ') ||
-              currentText.includes(' / Monthly ')
-            ) {
-              const parts = currentText.split(' / ');
-              if (parts.length > 2) {
-                // Keep just the first two parts (size and price)
-                currentText = `${parts[0]} / ${parts[1]}`;
-              }
-            }
+          // Parse the current text to extract components
+          let size = '';
+          let price = '';
 
-            // Add subscription info if it exists
-            if (
-              item.selling_plan_allocation &&
-              item.selling_plan_allocation.selling_plan
-            ) {
-              const sellingPlanName =
-                item.selling_plan_allocation.selling_plan.name;
-              priceElement.textContent = `${currentText} / ${sellingPlanName}`;
-            } else {
-              priceElement.textContent = currentText;
-            }
+          const parts = currentText.split(' / ');
+          if (parts.length >= 2) {
+            size = parts[0];
+            // For the price part, make sure we don't include any subscription info
+            price = parts[1].split(' / ')[0]; // Take only the first part of price segment
+          } else {
+            // Fallback
+            size = item.variant_title || '';
+            price = formatMoney(item.price, format);
           }
+
+          // Build the updated price text based on whether there's a selling plan
+          if (
+            item.selling_plan_allocation &&
+            item.selling_plan_allocation.selling_plan
+          ) {
+            const sellingPlanName =
+              item.selling_plan_allocation.selling_plan.name;
+            priceElement.textContent = `${size} / ${price} / ${sellingPlanName}`;
+          } else {
+            priceElement.textContent = `${size} / ${price}`;
+          }
+
+          console.log(
+            'Updated price text after quantity change:',
+            priceElement.textContent
+          );
         }
       }
 
