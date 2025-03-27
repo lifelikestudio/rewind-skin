@@ -226,18 +226,6 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       const item = res.data.items.find((item) => item.key === key);
       document.querySelector('#total-price').textContent = totalPrice;
 
-      // If the item has a selling plan, make sure we're displaying the correct price
-      if (item.selling_plan_allocation) {
-        const itemPriceElement = document.querySelector(
-          `.drawer-cart__item--cart-page[data-key="${key}"] .item__variant-price`
-        );
-        if (itemPriceElement) {
-          // Update price display for subscription items
-          const formattedPrice = formatMoney(item.final_line_price, format);
-          itemPriceElement.textContent = formattedPrice;
-        }
-      }
-
       // Update the quantity value in the DrawerCart
       updateDrawerCartQuantity(key, quantity);
       // Check if the quantity was updated as expected

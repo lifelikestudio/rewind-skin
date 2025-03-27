@@ -136,51 +136,6 @@ export async function updateCart() {
   setTimeout(() => {
     // Re-attach event listeners to remove buttons
     removeItems();
-
-    // NEW CODE: Fetch cart data directly to get accurate subscription info
-    fetch('/cart.js')
-      .then((response) => response.json())
-      .then((cartData) => {
-        // For each cart item with a selling plan, ensure price is displayed correctly
-        cartData.items.forEach((item) => {
-          if (item.selling_plan_allocation) {
-            const cartItemRow = document.querySelector(
-              `[data-key="${item.key}"]`
-            );
-            if (!cartItemRow) return;
-
-            // Update price displays
-            const priceWrapper = cartItemRow.querySelector(
-              '.cart-item__price-wrapper'
-            );
-            if (priceWrapper) {
-              // Format money values
-              const formatMoney = function (cents) {
-                if (typeof cents === 'string') cents = cents.replace('.', '');
-                const value = parseFloat(cents || 0) / 100;
-                return '$' + value.toFixed(2); // Basic formatting - customize as needed
-              };
-
-              const originalPrice = formatMoney(item.original_line_price);
-              const finalPrice = formatMoney(item.final_line_price);
-
-              // Update the price display
-              priceWrapper.innerHTML = `
-                <div class="cart-item__discounted-prices">
-                  <span class="visually-hidden">Regular price</span>
-                  <s class="cart-item__old-price price price--end">${originalPrice}</s>
-                  <span class="visually-hidden">Sale price</span>
-                  <span class="price price--end">${finalPrice}</span>
-                  <small class="subscription-label">${item.selling_plan_allocation.selling_plan.name}</small>
-                </div>
-              `;
-            }
-          }
-        });
-      })
-      .catch((error) =>
-        console.error('Error updating subscription prices:', error)
-      );
   }, 0);
 }
 
@@ -417,12 +372,3 @@ const CartDrawer = () => {
 };
 
 export default CartDrawer;
-
-// When opening the drawer
-function openCartDrawer() {
-  // ... existing code ...
-
-  // Dispatch an event that the cart drawer has been opened
-  const cartOpenedEvent = new CustomEvent('cart-drawer:opened');
-  document.dispatchEvent(cartOpenedEvent);
-}
