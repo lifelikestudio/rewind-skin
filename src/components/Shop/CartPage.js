@@ -296,7 +296,12 @@ function removeItemFromCart(key) {
 }
 
 function changeItemQuantity(key, quantity, previousValue, inputElement) {
-  inputElement.value = quantity; // Update the input value to the new quantity
+  // Store the user's requested quantity to maintain it in the UI
+  const userRequestedQuantity = quantity;
+
+  // Update the input value immediately
+  inputElement.value = userRequestedQuantity;
+
   if (quantity < 1) {
     removeItemFromCart(key);
     inputElement.value = 0; // Show 0 in the UI
@@ -333,11 +338,14 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       const item = res.data.items.find((item) => item.key === key);
       document.querySelector('#total-price').textContent = totalPrice;
 
-      // Update the quantity value in the DrawerCart and in the current view
-      // Use the actual quantity returned from Shopify (which may be limited by stock)
-      const actualQuantity = item ? item.quantity : 0;
-      updateDrawerCartQuantity(key, actualQuantity);
-      inputElement.value = actualQuantity;
+      // Update the cart drawer quantity to reflect what's actually in cart
+      // but keep the cart page showing the user's requested quantity
+      if (item) {
+        updateDrawerCartQuantity(key, item.quantity);
+      }
+
+      // Always set the input value to what the user requested, regardless of API response
+      inputElement.value = userRequestedQuantity;
 
       // Find the item element
       const itemElement = document.querySelector(
@@ -345,15 +353,12 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       );
 
       // Check for selling plan and update price display
-      if (itemElement) {
+      if (itemElement && item) {
         const priceElement = itemElement.querySelector('.item__variant-price');
 
         if (priceElement) {
-          console.log('Updating price for item after quantity change:', key);
-
-          // Get current text and log it
+          // Get current text
           let currentText = priceElement.textContent || '';
-          console.log('Current price text:', currentText);
 
           // Parse the current text to extract components
           let size = '';
@@ -362,7 +367,6 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
           const parts = currentText.split(' / ');
           if (parts.length >= 2) {
             size = parts[0];
-            // For the price part, make sure we don't include any subscription info
             price = parts[1].split(' / ')[0]; // Take only the first part of price segment
           } else {
             // Fallback
@@ -381,16 +385,7 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
           } else {
             priceElement.textContent = `${size} / ${price}`;
           }
-
-          console.log(
-            'Updated price text after quantity change:',
-            priceElement.textContent
-          );
         }
-      } else {
-        console.log(
-          `Item element not found for key: ${key} after quantity update`
-        );
       }
 
       // Fetch the updated cart data
@@ -399,33 +394,36 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
 
       // Update the cart item count in the UI
       updateCartItemCount(cartData.item_count);
+
+      // Reset the input to user requested value once more to ensure it stays
+      inputElement.value = userRequestedQuantity;
     })
     .catch((error) => {
-      // Special handling for 422 status (inventory constraints)
+      // For any errors, we'll keep the user's requested quantity in the UI
+      inputElement.value = userRequestedQuantity;
+
+      // For 422 errors (inventory constraints), get the actual cart data
+      // to update the drawer, but keep the main cart page showing user's quantity
       if (error.response && error.response.status === 422) {
-        // Get the maximum available quantity from the cart - silently
         fetch('/cart.js')
           .then((res) => res.json())
           .then((cart) => {
             const currentItem = cart.items.find((item) => item.key === key);
             if (currentItem) {
-              // Update to the current quantity in the cart
-              inputElement.value = currentItem.quantity;
+              // Only update drawer cart - not the input field
               updateDrawerCartQuantity(key, currentItem.quantity);
-            } else {
-              // If item not found, revert to previous value
-              inputElement.value = previousValue;
+
+              // Make sure our input still shows user's requested quantity
+              inputElement.value = userRequestedQuantity;
             }
           })
-          .catch((err) => {
-            // Silently revert to previous value
-            inputElement.value = previousValue;
+          .catch(() => {
+            // Even if this fails, keep user's requested quantity
+            inputElement.value = userRequestedQuantity;
           });
       } else {
-        // Only log and show alerts for non-inventory related errors
+        // For non-422 errors, log but don't alert
         console.error('Error changing item quantity:', error);
-        alert(error.message);
-        inputElement.value = previousValue;
       }
     });
 }
