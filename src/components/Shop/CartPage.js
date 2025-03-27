@@ -296,34 +296,11 @@ function removeItemFromCart(key) {
 }
 
 function changeItemQuantity(key, quantity, previousValue, inputElement) {
-  // Handle removal (quantity < 1)
+  inputElement.value = quantity; // Update the input value to the new quantity
   if (quantity < 1) {
-    console.log('Removing item from cart:', key);
-
-    // Show a visual indication that removal is in progress
-    inputElement.value = 0;
-
-    // Find the parent item element
-    const itemElement = inputElement.closest('.drawer-cart__item--cart-page');
-    if (itemElement) {
-      // Add a fading out effect
-      itemElement.style.opacity = '0.5';
-      itemElement.style.transition = 'opacity 0.3s ease';
-    }
-
-    // Actually remove the item
     removeItemFromCart(key);
+    inputElement.value = 0; // Show 0 in the UI
     return;
-  }
-
-  // Update input value immediately for better UX
-  inputElement.value = quantity;
-
-  // Show loading state
-  const itemElement = inputElement.closest('.drawer-cart__item--cart-page');
-  if (itemElement) {
-    // Add a visual indication that update is in progress
-    itemElement.classList.add('updating');
   }
 
   // First fetch the current cart to get the selling plan ID if any
@@ -331,11 +308,6 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
     .then((res) => res.json())
     .then((cartData) => {
       const item = cartData.items.find((item) => item.key === key);
-      if (!item) {
-        console.warn(`Item with key ${key} not found in cart`);
-        throw new Error('Item not found in cart');
-      }
-
       const sellingPlanId =
         item && item.selling_plan_allocation
           ? item.selling_plan_allocation.selling_plan.id
@@ -354,79 +326,38 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       return axios.post('/cart/change.js', updateData);
     })
     .then(async (res) => {
-      // Remove loading state
-      if (itemElement) {
-        itemElement.classList.remove('updating');
+      if (res.status === 422) {
+        throw new Error('The requested quantity is not in stock.');
       }
-
       const format = document
         .querySelector('[data-money-format]')
         .getAttribute('data-money-format');
       const totalPrice = formatMoney(res.data.total_price, format);
-
-      // Update the total price
+      const item = res.data.items.find((item) => item.key === key);
       document.querySelector('#total-price').textContent = totalPrice;
 
-      // Find the updated item in the response
-      const item = res.data.items.find((item) => item.key === key);
-
-      // Handle case where item is no longer in the cart (might have been removed by another process)
-      if (!item) {
-        console.log('Item no longer in cart, removing from UI');
-        if (itemElement) {
-          itemElement.remove();
-        }
-        return;
-      }
-
       // Update the quantity value in the DrawerCart
-      updateDrawerCartQuantity(key, item.quantity);
-
+      updateDrawerCartQuantity(key, quantity);
       // Check if the quantity was updated as expected
       if (item.quantity !== quantity) {
-        console.log(
-          `Requested quantity (${quantity}) adjusted to ${item.quantity} due to stock limitations`
-        );
-
-        // Update the input to show the actual quantity (instead of alerting)
-        inputElement.value = item.quantity;
-
-        // Show a gentle notification instead of an alert
-        const stockNotice = document.createElement('div');
-        stockNotice.className = 'stock-notice';
-        stockNotice.textContent = `Only ${item.quantity} available`;
-        stockNotice.style.cssText =
-          'color: #e85c41; font-size: 0.8em; margin-top: 5px; animation: fadeOut 2s forwards 3s;';
-
-        // Add a style for the animation
-        const style = document.createElement('style');
-        style.textContent = `
-          @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; visibility: hidden; }
-          }
-        `;
-        document.head.appendChild(style);
-
-        // Insert the notice after the quantity controls
-        const quantityContainer = inputElement.closest('.cart__quantity');
-        if (quantityContainer) {
-          quantityContainer.appendChild(stockNotice);
-
-          // Remove the notice after animation completes
-          setTimeout(() => {
-            stockNotice.remove();
-          }, 5000);
-        }
+        alert('The requested quantity is not in stock.');
       }
+
+      // Find the item element
+      const itemElement = document.querySelector(
+        `.drawer-cart__item--cart-page[data-key="${key}"]`
+      );
 
       // Check for selling plan and update price display
       if (itemElement) {
         const priceElement = itemElement.querySelector('.item__variant-price');
 
         if (priceElement) {
-          // Get current text
+          console.log('Updating price for item after quantity change:', key);
+
+          // Get current text and log it
           let currentText = priceElement.textContent || '';
+          console.log('Current price text:', currentText);
 
           // Parse the current text to extract components
           let size = '';
@@ -454,7 +385,16 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
           } else {
             priceElement.textContent = `${size} / ${price}`;
           }
+
+          console.log(
+            'Updated price text after quantity change:',
+            priceElement.textContent
+          );
         }
+      } else {
+        console.log(
+          `Item element not found for key: ${key} after quantity update`
+        );
       }
 
       // Fetch the updated cart data
@@ -466,30 +406,12 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
     })
     .catch((error) => {
       console.error('Error changing item quantity:', error);
-
-      // Remove loading state
-      if (itemElement) {
-        itemElement.classList.remove('updating');
-      }
-
-      // Revert input to previous value
-      inputElement.value = previousValue;
-
-      // Show error message (non-blocking, better UX)
-      const errorMessage = document.createElement('div');
-      errorMessage.className = 'quantity-error';
-      errorMessage.textContent = 'Could not update quantity';
-      errorMessage.style.cssText =
-        'color: #e85c41; font-size: 0.8em; margin-top: 5px; animation: fadeOut 2s forwards 3s;';
-
-      const quantityContainer = inputElement.closest('.cart__quantity');
-      if (quantityContainer) {
-        quantityContainer.appendChild(errorMessage);
-
-        // Remove the error message after a delay
-        setTimeout(() => {
-          errorMessage.remove();
-        }, 5000);
+      if (error.response && error.response.status === 422) {
+        alert('The requested quantity is not in stock.');
+        // Roll back the quantity to the previous value
+        inputElement.value = previousValue;
+      } else {
+        alert(error.message);
       }
     });
 }
