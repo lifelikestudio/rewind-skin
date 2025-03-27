@@ -326,9 +326,6 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       return axios.post('/cart/change.js', updateData);
     })
     .then(async (res) => {
-      if (res.status === 422) {
-        throw new Error('The requested quantity is not in stock.');
-      }
       const format = document
         .querySelector('[data-money-format]')
         .getAttribute('data-money-format');
@@ -338,10 +335,6 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
 
       // Update the quantity value in the DrawerCart
       updateDrawerCartQuantity(key, quantity);
-      // Check if the quantity was updated as expected
-      if (item.quantity !== quantity) {
-        alert('The requested quantity is not in stock.');
-      }
 
       // Find the item element
       const itemElement = document.querySelector(
@@ -406,13 +399,9 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
     })
     .catch((error) => {
       console.error('Error changing item quantity:', error);
-      if (error.response && error.response.status === 422) {
-        alert('The requested quantity is not in stock.');
-        // Roll back the quantity to the previous value
-        inputElement.value = previousValue;
-      } else {
-        alert(error.message);
-      }
+      // Only show generic errors, not stock-related errors
+      // Don't roll back the input value for stock issues
+      alert(error.message);
     });
 }
 
