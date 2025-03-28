@@ -240,7 +240,7 @@ const quantityHandler = () => {
         let newValue;
         if (isPlus) {
           newValue = value + 1;
-        } else if (value > 1) {
+        } else {
           newValue = value - 1;
         }
         changeItemQuantity(key, newValue, value, input);
