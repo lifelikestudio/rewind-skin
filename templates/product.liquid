@@ -693,20 +693,20 @@
           }
           
           // Get the formatted plan name if available
-          let formattedPlanName = '';
-          if (selectedSellingPlan && selectedSellingPlan.name) {
-            // Format the plan name: "Every 2 weeks" -> "/2 Weeks"
-            formattedPlanName = selectedSellingPlan.name
-              .replace(/^Every\s+/i, '/') // Replace "Every " with "/"
-              .replace(/^\s*/, '')        // Trim leading spaces
-              .replace(/^(\d+)/, '$1')    // Keep the number
-              .replace(/\b\w/g, l => l.toUpperCase()); // Capitalize words
-          }
+          // let formattedPlanName = '';
+          // if (selectedSellingPlan && selectedSellingPlan.name) {
+          //   // Format the plan name: "Every 2 weeks" -> "/2 Weeks"
+          //   formattedPlanName = selectedSellingPlan.name
+          //     .replace(/^Every\s+/i, '/') // Replace "Every " with "/"
+          //     .replace(/^\s*/, '')        // Trim leading spaces
+          //     .replace(/^(\d+)/, '$1')    // Keep the number
+          //     .replace(/\b\w/g, l => l.toUpperCase()); // Capitalize words
+          // }
           
-          // Update the button price with the formatted plan name
-          const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
-                               selectedSellingPlan.id : selectedSellingPlan;
-          updateButtonPrice(sellingPlanId, formattedPlanName);
+          // // Update the button price with the formatted plan name
+          // const sellingPlanId = selectedSellingPlan && selectedSellingPlan.id ? 
+          //                      selectedSellingPlan.id : selectedSellingPlan;
+          // updateButtonPrice(sellingPlanId, formattedPlanName);
         });
       }
       
