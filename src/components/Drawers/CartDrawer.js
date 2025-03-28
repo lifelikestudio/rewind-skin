@@ -43,7 +43,8 @@ function removeItems() {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
 
-      const variantId = btn.dataset.variantId;
+      // Use line item key instead of variant ID
+      const lineItemKey = btn.dataset.lineItemKey;
 
       await fetch(`/cart/change.js`, {
         method: 'post',
@@ -51,7 +52,8 @@ function removeItems() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: variantId,
+          // Use the line item key to target the specific item
+          id: lineItemKey,
           quantity: 0,
         }),
       });
