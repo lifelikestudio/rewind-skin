@@ -278,12 +278,17 @@ function removeItemFromCart(key) {
       // Update the cart item count in the UI
       updateCartItemCount(cartData.item_count);
 
-      // Remove the item from the UI
-      const itemElement = document.querySelector(
-        `.drawer-cart__item--cart-page[data-key="${key}"]`
-      );
-      if (itemElement) {
-        itemElement.remove();
+      // If this was the last item, update the entire cart view
+      if (cartData.items.length === 0) {
+        updateCart();
+      } else {
+        // Otherwise just remove the specific item
+        const itemElement = document.querySelector(
+          `.drawer-cart__item--cart-page[data-key="${key}"]`
+        );
+        if (itemElement) {
+          itemElement.remove();
+        }
       }
 
       // Update the quantity value in the DrawerCart
