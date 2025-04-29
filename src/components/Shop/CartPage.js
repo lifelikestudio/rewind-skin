@@ -539,7 +539,8 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
           } else {
             // Fallback
             size = item.variant_title || '';
-            price = formatMoney(item.price, format);
+            // Use our new formatting function
+            price = moneyWithCurrency(item.price, currency);
           }
 
           // Build the updated price text based on whether there's a selling plan
@@ -564,9 +565,6 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
           `Item element not found for key: ${key} after quantity update`
         );
       }
-
-      // Update the cart item count in the UI
-      updateCartItemCount(freshCartData.item_count);
 
       // Check for subscription status to update Sezzle visibility
       checkCartForSubscriptions();
