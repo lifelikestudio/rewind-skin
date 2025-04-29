@@ -253,6 +253,13 @@ function updateQuantity() {
             `;
           }
 
+          // Get the current drawer element directly from DOM
+          const drawerCartElement = document.querySelector('#drawer-cart');
+
+          // Save active state before changing content
+          const isActive =
+            drawerCartElement.classList.contains('drawer--active');
+
           // Update drawer cart to empty state WITHOUT closing it
           const drawerCartContent = document.querySelector(
             '.drawer__container--cart'
@@ -266,11 +273,37 @@ function updateQuantity() {
             `;
           }
 
+          // Make sure the drawer header is still present with the close button
+          const drawerHeader = document.querySelector(
+            '#drawer-cart .drawer__header'
+          );
+          if (!drawerHeader) {
+            drawerCartElement.innerHTML = `
+              <div class="drawer__header">
+                <h2 class="drawer__top-level-heading">Bag</h2>
+                <button class="all-caps drawer__header-action" id="cart-close">Close</button>
+              </div>
+              <div class="drawer__container drawer__container--cart">
+                <div class="drawer-cart__empty">
+                  <h3 class="drawer-cart__empty-message">Your bag is empty.</h3>
+                  <a href="/collections/all" class="btn btn--secondary all-caps drawer-cart__empty-continue">Continue Shopping</a>
+                </div>
+              </div>
+            `;
+          }
+
+          // Re-add active class if it was active before
+          if (isActive) {
+            drawerCartElement.classList.add('drawer--active');
+          }
+
           // Re-attach event listener to close button
           const closeButton = document.querySelector('#cart-close');
           if (closeButton) {
             closeButton.addEventListener('click', (e) => {
-              closeDrawer(drawerCart, '100%');
+              // Get the drawer element directly from the DOM to avoid stale references
+              const drawer = document.querySelector('#drawer-cart');
+              closeDrawer(drawer, '100%');
               e.stopPropagation();
             });
           }
@@ -471,18 +504,24 @@ export async function updateCart() {
   const updatedDrawerContainer = html.querySelector(drawerCartEl).innerHTML;
 
   // Check if the drawer is currently open before updating its content
-  const isDrawerOpen = document
-    .querySelector(drawerCartEl)
-    .classList.contains('drawer--active');
+  // Use direct DOM query to avoid issues with references
+  const drawerElement = document.querySelector(drawerCartEl);
+  const isDrawerOpen = drawerElement.classList.contains('drawer--active');
+  console.log('Is drawer open before update:', isDrawerOpen);
+
+  // Update the drawer content - temporarily store the drawer's classList
+  const classListArray = Array.from(drawerElement.classList);
 
   // Update the drawer content
-  document.querySelector(drawerCartEl).innerHTML = updatedDrawerContainer;
+  drawerElement.innerHTML = updatedDrawerContainer;
 
   // Re-attach event listener to close button
   const closeButton = document.querySelector('#cart-close');
   if (closeButton) {
     closeButton.addEventListener('click', (e) => {
-      closeDrawer(drawerCart, '100%');
+      // Get the drawer element directly to avoid stale references
+      const drawer = document.querySelector(drawerCartEl);
+      closeDrawer(drawer, '100%');
       e.stopPropagation();
     });
   }
@@ -495,7 +534,16 @@ export async function updateCart() {
 
   // Make sure the drawer is still open if it was open before
   if (isDrawerOpen) {
-    drawerCart.classList.add('drawer--active');
+    console.log('Restoring drawer active state');
+    drawerElement.classList.add('drawer--active');
+
+    // Also restore any other classes it might have had
+    classListArray.forEach((cls) => {
+      if (cls !== 'drawer--active') {
+        // avoid adding it twice
+        drawerElement.classList.add(cls);
+      }
+    });
   }
 
   updateQuantity();
@@ -507,6 +555,15 @@ export async function updateCart() {
 
     // Re-check after a short delay to ensure all DOM elements are fully loaded
     setTimeout(checkCartForSubscriptions, 100);
+
+    // Double-check drawer state to ensure it stays open if it should be
+    if (isDrawerOpen) {
+      const drawer = document.querySelector(drawerCartEl);
+      if (!drawer.classList.contains('drawer--active')) {
+        console.log('Re-adding drawer active state');
+        drawer.classList.add('drawer--active');
+      }
+    }
   }, 0);
 }
 

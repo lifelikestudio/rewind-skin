@@ -361,6 +361,10 @@ export function removeItemFromCart(key) {
         // Update drawer cart to empty state WITHOUT closing it
         const drawerCart = document.querySelector('#drawer-cart');
         if (drawerCart) {
+          // IMPORTANT: Save the active state to reapply it after updating content
+          const isActive = drawerCart.classList.contains('drawer--active');
+
+          // Update drawer content
           drawerCart.innerHTML = `
             <div class="drawer__header">
               <h2 class="drawer__top-level-heading">Bag</h2>
@@ -374,15 +378,19 @@ export function removeItemFromCart(key) {
             </div>
           `;
 
+          // Re-add the active class if it was active before
+          if (isActive) {
+            drawerCart.classList.add('drawer--active');
+          }
+
           // Re-attach event listener to close button
           const closeButton = document.querySelector('#cart-close');
           if (closeButton) {
             closeButton.addEventListener('click', (e) => {
-              if (
-                typeof closeDrawer === 'function' &&
-                typeof drawerCart === 'object'
-              ) {
-                closeDrawer(drawerCart, '100%');
+              if (typeof closeDrawer === 'function') {
+                // Get direct DOM reference instead of possibly stale object
+                const drawer = document.querySelector('#drawer-cart');
+                closeDrawer(drawer, '100%');
                 e.stopPropagation();
               }
             });
