@@ -27,8 +27,9 @@ export function updateCartItemCount(count) {
   });
 }
 
-// Cache loading template for better performance
-const LOADING_TEMPLATE = `
+function showLoadingInCart() {
+  const cartItemsContainer = document.querySelector('.drawer__container--cart');
+  cartItemsContainer.innerHTML = `
   <div class="fill-loader fill-loader--v1" role="alert">
     <p class="fill-loader__label">Content is loading...</p>
     <div aria-hidden="true">
@@ -36,33 +37,22 @@ const LOADING_TEMPLATE = `
       <div class="fill-loader__fill"></div>
     </div>
   </div>
-`;
-
-function showLoadingInCart() {
-  const cartItemsContainer = document.querySelector('.drawer__container--cart');
-  cartItemsContainer.innerHTML = LOADING_TEMPLATE;
+  `;
 }
 
 function removeItems() {
-  // Use event delegation instead of attaching listeners to each button
-  const drawerElement = document.querySelector(drawerCartEl);
-  if (!drawerElement) return;
+  const removeItemButtons = document.querySelectorAll('.item__remove');
+  removeItemButtons.forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
 
-  // Remove any existing handler first to avoid duplicates
-  drawerElement.removeEventListener('click', handleRemoveItem);
-  drawerElement.addEventListener('click', handleRemoveItem);
-}
+      // Use line item key instead of variant ID
+      const lineItemKey = btn.dataset.lineItemKey;
 
-// Separate handler function for remove item clicks
-function handleRemoveItem(e) {
-  // Only proceed if a remove button was clicked
-  if (!e.target.matches('.item__remove')) return;
-
-  e.preventDefault();
-  const lineItemKey = e.target.dataset.lineItemKey;
-  if (lineItemKey) {
-    removeItemFromCart(lineItemKey);
-  }
+      // Use the imported removeItemFromCart function to properly sync cart instances
+      removeItemFromCart(lineItemKey);
+    });
+  });
 }
 
 function updateCartPageQuantity(key, quantity) {
@@ -71,18 +61,26 @@ function updateCartPageQuantity(key, quantity) {
     `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
   );
 
+  console.log(`Updating cart page quantity for item ${key} to ${quantity}`);
+
   // Update its quantity value
   if (cartPageItem) {
     const quantityInput = cartPageItem.querySelector('.cart__quantity input');
     if (quantityInput) {
       quantityInput.value = quantity;
+      console.log(`Updated cart page quantity input to ${quantity}`);
 
       // After updating quantity, also update subtotal
       updateCartPageSubtotal();
+    } else {
+      console.log('Cart page quantity input not found');
     }
   } else {
+    console.log('Cart page item not found');
+
     // If we're on the cart page and the item isn't found, try to reload the cart
     if (document.querySelector('.cart-page')) {
+      console.log('On cart page, refreshing');
       // If the updateCart function exists in the global scope
       if (typeof window.updateCart === 'function') {
         window.updateCart();
@@ -188,50 +186,49 @@ function moneyWithCurrency(amount, currency) {
 }
 
 function updateQuantity() {
-  // Use a single event listener with delegation for better performance
-  const cartDrawerSection = document.querySelector(
-    '#shopify-section-cart-drawer'
+  // Update quantity with btns
+  const quantityBtns = document.querySelectorAll(
+    '#shopify-section-cart-drawer .cart__quantity button'
   );
-  if (!cartDrawerSection) return;
+  quantityBtns.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const rootItem = btn.parentElement.parentElement.parentElement;
+      const key = rootItem.getAttribute('data-line-item-key');
+      const currentQuantity = Number(
+        btn.parentElement.querySelector('input').value
+      );
+      // Update the quantity value in the CartPage
+      const isUp = btn.classList.contains('quantity__increment');
+      const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
 
-  cartDrawerSection.addEventListener('click', async (event) => {
-    // Only proceed if a quantity button was clicked
-    if (!event.target.matches('.cart__quantity button')) return;
+      // Special handling for zero quantity
+      if (newQuantity <= 0) {
+        console.log('Removing item with key:', key);
 
-    const btn = event.target;
-    const parentElement = btn.closest('.drawer-cart__item');
-    if (!parentElement) return;
-
-    const key = parentElement.getAttribute('data-line-item-key');
-    if (!key) return;
-
-    const inputElement = btn.parentElement.querySelector('input');
-    const currentQuantity = Number(inputElement.value);
-    const isUp = btn.classList.contains('quantity__increment');
-    const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
-
-    // Special handling for zero quantity
-    if (newQuantity <= 0) {
-      removeItemFromCart(key);
-      return;
-    }
-
-    // Optimistic UI update
-    inputElement.value = newQuantity;
-
-    // Also update the cart page input if it exists
-    const cartPageItem = document.querySelector(
-      `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
-    );
-    if (cartPageItem) {
-      const cartPageInput = cartPageItem.querySelector('.cart__quantity input');
-      if (cartPageInput) {
-        cartPageInput.value = newQuantity;
+        // Use the same removeItemFromCart function that works when clicking "Remove Item"
+        // This ensures consistent behavior between both removal methods
+        removeItemFromCart(key);
+        return;
       }
-    }
 
-    try {
-      // Update the cart on the server
+      // For positive quantities - optimistic UI update first
+      const inputElement = btn.parentElement.querySelector('input');
+      inputElement.value = newQuantity; // Update UI immediately
+
+      // Also update the corresponding input in cart page for better perceived performance
+      const cartPageItem = document.querySelector(
+        `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
+      );
+      if (cartPageItem) {
+        const cartPageInput = cartPageItem.querySelector(
+          '.cart__quantity input'
+        );
+        if (cartPageInput) {
+          cartPageInput.value = newQuantity;
+        }
+      }
+
+      // Then send the update to the server
       const response = await fetch('/cart/update.js', {
         method: 'post',
         headers: {
@@ -240,69 +237,61 @@ function updateQuantity() {
         },
         body: JSON.stringify({ updates: { [key]: newQuantity } }),
       });
-
       const freshCartData = await response.json();
+
+      // IMPORTANT: Update drawer subtotal immediately
       const currency = freshCartData.currency || 'USD';
 
-      // Format the price
+      // Format the price with correct currency using our improved function
       let totalPrice = moneyWithCurrency(freshCartData.total_price, currency);
 
-      // Update the subtotal
+      // Update the drawer subtotal immediately
       const drawerSubtotal = document.querySelector(
         '.drawer-cart__footer .subtotal__total'
       );
       if (drawerSubtotal) {
+        console.log('Updating drawer subtotal to:', totalPrice);
         drawerSubtotal.textContent = totalPrice;
       }
 
-      // Update all necessary elements
+      // Update Sezzle in the drawer
       updateAllSezzlePayments(freshCartData.total_price, currency);
-      updateFromCartData(freshCartData, key, newQuantity);
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      // Revert UI to previous state on error
-      inputElement.value = currentQuantity;
 
-      if (cartPageItem) {
-        const cartPageInput = cartPageItem.querySelector(
-          '.cart__quantity input'
-        );
-        if (cartPageInput) {
-          cartPageInput.value = currentQuantity;
-        }
-      }
-    }
+      // Use the response data we already have instead of making another fetch
+      updateFromCartData(freshCartData, key, newQuantity);
+    });
   });
 }
 
 // Update the updateAllSezzlePayments function to use our improved formatting
 function updateAllSezzlePayments(cartTotal, currency) {
-  try {
-    // Get all Sezzle payment elements
-    const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
-    if (!sezzleElements.length) return;
+  // Get all Sezzle payment elements
+  const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
 
-    // Calculate the divided price once
-    const dividedPrice = Math.round(cartTotal / 4);
-    let formattedDividedPrice = moneyWithCurrency(dividedPrice, currency);
+  // Calculate the divided price once
+  const dividedPrice = Math.round(cartTotal / 4);
+  let formattedDividedPrice = moneyWithCurrency(dividedPrice, currency);
 
-    // Update all Sezzle elements found
-    sezzleElements.forEach((element) => {
-      // Get the text structure so we can preserve it
-      const sezzleTextParts = element.textContent.split('of ');
-      if (sezzleTextParts.length > 1) {
-        const prefix = sezzleTextParts[0];
+  // Update all Sezzle elements found
+  sezzleElements.forEach((element) => {
+    console.log(
+      'Updating Sezzle element with divided price:',
+      formattedDividedPrice
+    );
 
-        // Extract the "with Sezzle" part
-        const withPart = sezzleTextParts[1].split(' with')[1] || '';
+    // Get the text structure so we can preserve it
+    const sezzleTextParts = element.textContent.split('of ');
+    if (sezzleTextParts.length > 1) {
+      const prefix = sezzleTextParts[0];
 
-        // Update with the new amount
-        element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
-      }
-    });
-  } catch (error) {
-    console.error('Error updating Sezzle payments:', error);
-  }
+      // Extract the "with Sezzle" part
+      const withPart = sezzleTextParts[1].split(' with')[1] || '';
+
+      // Update with the new amount
+      element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
+      console.log('Updated Sezzle text:', element.textContent);
+    }
+  });
 }
 
 // Update all other functions to use the new moneyWithCurrency function
@@ -453,86 +442,63 @@ export async function updateCart() {
   }
 }
 
-// Add a debounce helper to reduce frequency of API calls
-function debounce(func, wait) {
-  let timeout;
-  return function (...args) {
-    const context = this;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(context, args), wait);
-  };
-}
-
-// Last known subscription state to avoid unnecessary updates
-let lastKnownSubscriptionState = null;
-
 // Function to check if the cart has subscription items
 // and update Sezzle UI visibility accordingly
 function checkCartForSubscriptions() {
   fetch('/cart.js')
     .then((res) => res.json())
     .then((cart) => {
+      console.log('Drawer checking for subscriptions:', cart.items);
+
       // Check if any items have subscriptions
       let hasSubscriptionItems = false;
       for (const item of cart.items) {
         if (item.selling_plan_allocation) {
           hasSubscriptionItems = true;
-          break; // No need to check further
+          console.log('Drawer found subscription item:', item);
+          break;
         }
       }
 
-      // Only update if state has changed
-      if (lastKnownSubscriptionState !== hasSubscriptionItems) {
-        lastKnownSubscriptionState = hasSubscriptionItems;
+      // Update Sezzle UI visibility
+      updateSezzleVisibility(hasSubscriptionItems);
 
-        // Update Sezzle UI visibility
-        updateSezzleVisibility(hasSubscriptionItems);
-
-        // Trigger an event so other components can respond
-        document.dispatchEvent(
-          new CustomEvent('cart:updated', {
-            detail: { hasSubscriptionItems },
-          })
-        );
-      }
+      // Trigger an event so other components can respond
+      document.dispatchEvent(
+        new CustomEvent('cart:updated', {
+          detail: { hasSubscriptionItems },
+        })
+      );
     })
     .catch((error) => console.error('Error checking cart in drawer:', error));
 }
 
-// Create a debounced version for frequent calls
-const debouncedCheckCartForSubscriptions = debounce(
-  checkCartForSubscriptions,
-  300
-);
-export { debouncedCheckCartForSubscriptions };
-
 // Function to update Sezzle visibility in cart drawer
 function updateSezzleVisibility(hasSubscriptionItems) {
-  try {
-    // Find all Sezzle payment plan elements using the class - cache the NodeList
-    const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
-    if (!sezzleElements.length) return;
+  // Find all Sezzle payment plan elements using the class
+  const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
 
-    // Use display style directly without logging for better performance
-    const displayStyle = hasSubscriptionItems ? 'none' : 'block';
+  sezzleElements.forEach((element) => {
+    // Show Sezzle ONLY when there are NO subscription items
+    if (!hasSubscriptionItems) {
+      element.style.display = 'block';
+      console.log('Showing Sezzle payment plan');
+    } else {
+      element.style.display = 'none';
+      console.log('Hiding Sezzle payment plan');
+    }
+  });
 
-    sezzleElements.forEach((element) => {
-      element.style.display = displayStyle;
-    });
-  } catch (error) {
-    console.error('Error updating Sezzle visibility:', error);
-  }
+  console.log(
+    'Updated all Sezzle elements, subscription items present:',
+    hasSubscriptionItems
+  );
 }
 
 // Check on document ready
 document.addEventListener('DOMContentLoaded', function () {
   // Immediate check on page load
   checkCartForSubscriptions();
-
-  // Use debounced version for the cart:updated event
-  document.addEventListener('cart:updated', function () {
-    debouncedCheckCartForSubscriptions();
-  });
 });
 
 export const attachEventListeners = () => {

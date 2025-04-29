@@ -1,8 +1,5 @@
 import axios from 'axios';
-import {
-  updateCartItemCount,
-  debouncedCheckCartForSubscriptions,
-} from '../Drawers/CartDrawer.js';
+import { updateCartItemCount } from '../Drawers/CartDrawer.js';
 
 // Helper function to safely get the money format
 function getMoneyFormat() {
@@ -658,8 +655,25 @@ const CartPage = () => {
 // Function to specifically check if the cart has subscription items
 // and update Sezzle UI visibility accordingly
 function checkCartForSubscriptions() {
-  // Use the debounced function from CartDrawer for better performance
-  debouncedCheckCartForSubscriptions();
+  fetch('/cart.js')
+    .then((res) => res.json())
+    .then((cart) => {
+      console.log('Checking cart for subscriptions on load:', cart.items);
+
+      // Check if any items have subscriptions
+      let hasSubscriptionItems = false;
+      for (const item of cart.items) {
+        if (item.selling_plan_allocation) {
+          hasSubscriptionItems = true;
+          console.log('Found subscription item on page load:', item);
+          break;
+        }
+      }
+
+      // Hide Sezzle both in cart page and drawer
+      updateSezzleVisibility(hasSubscriptionItems);
+    })
+    .catch((error) => console.error('Error checking cart on load:', error));
 }
 
 // Unified function to update Sezzle visibility in both cart page and drawer
