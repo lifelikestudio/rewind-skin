@@ -286,9 +286,71 @@ function updateQuantity() {
       });
       const freshCartData = await response.json();
 
+      // IMPORTANT: Update drawer subtotal immediately
+      const format = document
+        .querySelector('[data-money-format]')
+        ?.getAttribute('data-money-format');
+      const currency = freshCartData.currency || 'USD';
+
+      // Format the price with correct currency
+      let totalPrice = formatMoney(freshCartData.total_price, format);
+
+      // Ensure currency is included
+      if (!totalPrice.includes(currency)) {
+        totalPrice = `${totalPrice} ${currency}`;
+      }
+
+      // Update the drawer subtotal immediately
+      const drawerSubtotal = document.querySelector(
+        '.drawer-cart__footer .subtotal__total'
+      );
+      if (drawerSubtotal) {
+        console.log('Updating drawer subtotal to:', totalPrice);
+        drawerSubtotal.textContent = totalPrice;
+      }
+
+      // Update Sezzle in the drawer
+      updateAllSezzlePayments(freshCartData.total_price, format, currency);
+
       // Use the response data we already have instead of making another fetch
       updateFromCartData(freshCartData, key, newQuantity);
     });
+  });
+}
+
+// Helper function to update all Sezzle payment elements
+function updateAllSezzlePayments(cartTotal, format, currency) {
+  // Get all Sezzle payment elements
+  const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+
+  // Calculate the divided price once
+  const dividedPrice = Math.round(cartTotal / 4);
+  let formattedDividedPrice = formatMoney(dividedPrice, format);
+
+  // Ensure currency is included
+  if (!formattedDividedPrice.includes(currency)) {
+    formattedDividedPrice = `${formattedDividedPrice} ${currency}`;
+  }
+
+  // Update all Sezzle elements found
+  sezzleElements.forEach((element) => {
+    console.log(
+      'Updating Sezzle element with divided price:',
+      formattedDividedPrice
+    );
+
+    // Get the text structure so we can preserve it
+    const sezzleTextParts = element.textContent.split('of ');
+    if (sezzleTextParts.length > 1) {
+      const prefix = sezzleTextParts[0];
+
+      // Extract the "with Sezzle" part
+      const withPart = sezzleTextParts[1].split(' with')[1] || '';
+
+      // Update with the new amount
+      element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
+      console.log('Updated Sezzle text:', element.textContent);
+    }
   });
 }
 
