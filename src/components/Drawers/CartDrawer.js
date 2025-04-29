@@ -2,11 +2,7 @@ import { openDrawer, closeDrawer } from './DrawerHandlers';
 import { drawerCart } from './Drawers.js';
 
 // Import formatMoney function from CartPage.js
-import {
-  formatMoney,
-  updateCartItemCount,
-  removeItemFromCart,
-} from '../Shop/CartPage.js';
+import { formatMoney, removeItemFromCart } from '../Shop/CartPage.js';
 
 // Selectors
 const addToCart = document.querySelectorAll('form[action="/cart/add"]');
