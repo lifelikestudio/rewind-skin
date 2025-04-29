@@ -269,6 +269,23 @@ const Products = () => {
       );
       if (selectedVariantSection) {
         selectedVariantSection.style.display = 'flex';
+
+        // Check if the selected variant is out of stock
+        const isOutOfStock = selectedVariantSection.classList.contains(
+          'product-page__sold-out-group'
+        );
+
+        // Hide or show the Subi widget based on stock availability
+        const subiWidget = document.getElementById('subi-widget-wrapper');
+        const subifyWidget = document.getElementById('subify-widget-wrapper');
+
+        if (subiWidget) {
+          subiWidget.style.display = isOutOfStock ? 'none' : 'block';
+        }
+
+        if (subifyWidget) {
+          subifyWidget.style.display = isOutOfStock ? 'none' : 'block';
+        }
       }
 
       // Update UI for the selected variant
@@ -320,6 +337,23 @@ const Products = () => {
     const singleVariantSection = document.querySelector('.variant-section');
     if (singleVariantSection) {
       singleVariantSection.style.display = 'flex';
+
+      // Check if the single variant is out of stock
+      const isOutOfStock = singleVariantSection.classList.contains(
+        'product-page__sold-out-group'
+      );
+
+      // Hide or show the Subi widget based on stock availability
+      const subiWidget = document.getElementById('subi-widget-wrapper');
+      const subifyWidget = document.getElementById('subify-widget-wrapper');
+
+      if (subiWidget) {
+        subiWidget.style.display = isOutOfStock ? 'none' : 'block';
+      }
+
+      if (subifyWidget) {
+        subifyWidget.style.display = isOutOfStock ? 'none' : 'block';
+      }
     }
     // Get the variant ID from the product form
     const productForm = document.querySelector('form[action="/cart/add"]');
@@ -348,6 +382,23 @@ const Products = () => {
     );
     if (selectedVariantSection) {
       selectedVariantSection.style.display = 'flex';
+
+      // Check if the initially selected variant is out of stock
+      const isOutOfStock = selectedVariantSection.classList.contains(
+        'product-page__sold-out-group'
+      );
+
+      // Hide or show the Subi widget based on stock availability
+      const subiWidget = document.getElementById('subi-widget-wrapper');
+      const subifyWidget = document.getElementById('subify-widget-wrapper');
+
+      if (subiWidget) {
+        subiWidget.style.display = isOutOfStock ? 'none' : 'block';
+      }
+
+      if (subifyWidget) {
+        subifyWidget.style.display = isOutOfStock ? 'none' : 'block';
+      }
     }
   }
 };
