@@ -1,6 +1,19 @@
 import axios from 'axios';
 import { updateCartItemCount } from '../Drawers/CartDrawer.js';
 
+// Helper function to safely get the money format
+function getMoneyFormat() {
+  // First try to find the data-money-format attribute
+  const formatElement = document.querySelector('[data-money-format]');
+  if (formatElement) {
+    return formatElement.getAttribute('data-money-format');
+  }
+
+  // If not found, use a fallback format
+  // This is the standard Shopify money format with currency
+  return '{{amount_with_comma_separator}} {{currency}}';
+}
+
 export function formatMoney(cents, format) {
   if (typeof cents == 'string') {
     cents = cents.replace('.', '');
@@ -85,9 +98,7 @@ async function updateCart() {
   ).textContent = `(${cartData.item_count})`;
 
   // Update total price
-  const format = document
-    .querySelector('[data-money-format]')
-    .getAttribute('data-money-format');
+  const format = getMoneyFormat();
   const totalPrice = formatMoney(cartData.total_price, format);
   document.querySelector('#total-price').textContent = totalPrice;
 
@@ -386,9 +397,7 @@ function removeItemFromCart(key) {
       updateDrawerCartQuantity(key, 0);
 
       // Update the subtotals in both drawer and cart page
-      const format = document
-        .querySelector('[data-money-format]')
-        .getAttribute('data-money-format');
+      const format = getMoneyFormat();
       const currency = cartData.currency || 'USD';
 
       let totalPrice = formatMoney(cartData.total_price, format);
@@ -453,9 +462,7 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       const freshCartData = await freshCartRes.json();
 
       // Get the money format and store currency from the cart data
-      const format = document
-        .querySelector('[data-money-format]')
-        .getAttribute('data-money-format');
+      const format = getMoneyFormat();
 
       // Get the active currency directly from the cart data
       const currency = freshCartData.currency || 'USD';
@@ -710,6 +717,11 @@ document.addEventListener('DOMContentLoaded', function () {
 function updateAllSezzlePayments(cartTotal, format, currency) {
   // Get all Sezzle payment elements
   const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+
+  // If format wasn't provided, get it
+  if (!format) {
+    format = getMoneyFormat();
+  }
 
   // Calculate the divided price once
   const dividedPrice = Math.round(cartTotal / 4);

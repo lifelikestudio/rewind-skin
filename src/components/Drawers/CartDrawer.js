@@ -177,6 +177,19 @@ async function updateCartPageSubtotal() {
   }
 }
 
+// Helper function to safely get the money format
+function getMoneyFormat() {
+  // First try to find the data-money-format attribute
+  const formatElement = document.querySelector('[data-money-format]');
+  if (formatElement) {
+    return formatElement.getAttribute('data-money-format');
+  }
+
+  // If not found, use a fallback format
+  // This is the standard Shopify money format with currency
+  return '{{amount_with_comma_separator}} {{currency}}';
+}
+
 function updateQuantity() {
   // Update quantity with btns
   const quantityBtns = document.querySelectorAll(
@@ -287,9 +300,7 @@ function updateQuantity() {
       const freshCartData = await response.json();
 
       // IMPORTANT: Update drawer subtotal immediately
-      const format = document
-        .querySelector('[data-money-format]')
-        ?.getAttribute('data-money-format');
+      const format = getMoneyFormat(); // Use our safe helper function
       const currency = freshCartData.currency || 'USD';
 
       // Format the price with correct currency
@@ -322,6 +333,11 @@ function updateQuantity() {
 function updateAllSezzlePayments(cartTotal, format, currency) {
   // Get all Sezzle payment elements
   const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+
+  // If format wasn't provided, get it
+  if (!format) {
+    format = getMoneyFormat();
+  }
 
   // Calculate the divided price once
   const dividedPrice = Math.round(cartTotal / 4);
@@ -357,9 +373,7 @@ function updateAllSezzlePayments(cartTotal, format, currency) {
 // New helper function to update UI from cart data (avoiding duplicate fetches)
 function updateFromCartData(cartData, key, quantity) {
   // Get the money format
-  const format = document
-    .querySelector('[data-money-format]')
-    ?.getAttribute('data-money-format');
+  const format = getMoneyFormat();
   const currency = cartData.currency || 'USD';
 
   if (format && cartData.total_price !== undefined) {
@@ -444,9 +458,7 @@ function updateSezzleElement(element, formattedAmount) {
 
 // Function to update drawer cart subtotal from cart data
 function updateDrawerCartSubtotal(cartData) {
-  const format = document
-    .querySelector('[data-money-format]')
-    ?.getAttribute('data-money-format');
+  const format = getMoneyFormat();
   if (!format) return;
 
   const currency = cartData.currency || 'USD';
