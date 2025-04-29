@@ -83,15 +83,42 @@ async function updateCart() {
   const totalPrice = formatMoney(cartData.total_price, format);
   document.querySelector('#total-price').textContent = totalPrice;
 
-  // Check if any items in the cart have a subscription
-  const hasSubscriptionItems = cartData.items.some(
-    (item) => item.selling_plan_allocation
-  );
+  // Enhanced check for subscription items
+  let hasSubscriptionItems = false;
 
-  // Hide or show payment plan based on subscription items
+  // Log all items for debugging
+  console.log('All cart items:', cartData.items);
+
+  // Check each item for a selling plan allocation
+  for (const item of cartData.items) {
+    console.log(
+      `Checking item ${item.key} for subscription:`,
+      item.selling_plan_allocation
+    );
+    if (item.selling_plan_allocation) {
+      hasSubscriptionItems = true;
+      console.log('Found subscription item:', item);
+      break; // No need to check further
+    }
+  }
+
+  // Handle Sezzle payment plan visibility
   const paymentPlanElement = document.querySelector('.subtotal__payment-plan');
   if (paymentPlanElement) {
-    paymentPlanElement.style.display = hasSubscriptionItems ? 'none' : 'block';
+    console.log(
+      'Payment plan element found, subscription items present:',
+      hasSubscriptionItems
+    );
+    // Only show Sezzle if NO subscription items are in the cart
+    if (hasSubscriptionItems) {
+      paymentPlanElement.style.display = 'none';
+      console.log('Hiding Sezzle payment plan');
+    } else {
+      paymentPlanElement.style.display = 'block';
+      console.log('Showing Sezzle payment plan');
+    }
+  } else {
+    console.log('Payment plan element not found');
   }
 
   // Update subscription information for each item

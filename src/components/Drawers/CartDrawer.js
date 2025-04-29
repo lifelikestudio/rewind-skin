@@ -136,24 +136,50 @@ export async function updateCart() {
   fetch('/cart.js')
     .then((res) => res.json())
     .then((cart) => {
-      // Check if any items have a subscription
-      const hasSubscriptionItems = cart.items.some(
-        (item) => item.selling_plan_allocation
-      );
+      console.log('Drawer cart contents:', cart.items);
 
-      // Hide payment plan element if subscription items exist
+      // Enhanced check for subscriptions
+      let hasSubscriptionItems = false;
+
+      // Check each item separately for better debugging
+      for (const item of cart.items) {
+        console.log(
+          `Drawer checking item ${item.key}:`,
+          item.selling_plan_allocation
+        );
+        if (item.selling_plan_allocation) {
+          hasSubscriptionItems = true;
+          console.log('Drawer found subscription item:', item.key);
+          break;
+        }
+      }
+
+      // Find payment plan element
       const paymentPlanElement = document.querySelector(
         '.drawer-cart__footer .subtotal__payment-plan'
       );
       if (paymentPlanElement) {
-        paymentPlanElement.style.display = hasSubscriptionItems
-          ? 'none'
-          : 'block';
+        console.log(
+          'Drawer payment plan element found, subscription items:',
+          hasSubscriptionItems
+        );
+
+        // Show Sezzle ONLY if there are NO subscription items
+        if (hasSubscriptionItems) {
+          paymentPlanElement.style.display = 'none';
+          console.log('Drawer hiding Sezzle payment plan');
+        } else {
+          paymentPlanElement.style.display = 'block';
+          console.log('Drawer showing Sezzle payment plan');
+        }
+      } else {
+        console.log('Drawer payment plan element not found');
       }
     })
-    .catch((error) =>
-      console.error('Error checking cart for subscriptions:', error)
-    );
+    .catch((error) => {
+      console.error('Error checking cart for subscriptions:', error);
+      // If there's an error, don't change the visibility to avoid breaking the UI
+    });
 
   updateQuantity();
 
