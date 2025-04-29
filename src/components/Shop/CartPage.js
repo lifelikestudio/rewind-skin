@@ -409,6 +409,9 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         }
       }
 
+      // UPDATE: Also update the drawer cart subtotal
+      updateDrawerCartSubtotal(freshCartData, format, currency);
+
       const item = freshCartData.items.find((item) => item.key === key);
 
       // Update the quantity value in the DrawerCart and in the current view
@@ -505,6 +508,40 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         inputElement.value = previousValue;
       }
     });
+}
+
+// New function to update the drawer cart subtotal
+function updateDrawerCartSubtotal(cartData, format, currency) {
+  // Find the subtotal element in the drawer cart
+  const drawerSubtotalEl = document.querySelector(
+    '.drawer-cart__footer .subtotal__total'
+  );
+  if (drawerSubtotalEl) {
+    // Format the price correctly with currency
+    let totalPrice = formatMoney(cartData.total_price, format);
+    if (!totalPrice.includes(currency)) {
+      totalPrice = `${totalPrice} ${currency}`;
+    }
+    drawerSubtotalEl.textContent = totalPrice;
+
+    // Also update the Sezzle amount in the drawer if present
+    const drawerSezzleEl = document.querySelector(
+      '.drawer-cart__footer .subtotal__payment-plan'
+    );
+    if (drawerSezzleEl) {
+      const dividedPrice = Math.round(cartData.total_price / 4);
+      let formattedDividedPrice = formatMoney(dividedPrice, format);
+      if (!formattedDividedPrice.includes(currency)) {
+        formattedDividedPrice = `${formattedDividedPrice} ${currency}`;
+      }
+
+      const sezzleTextParts = drawerSezzleEl.textContent.split('of ');
+      if (sezzleTextParts.length > 1) {
+        const restOfText = sezzleTextParts[1].split(' with')[1] || '';
+        drawerSezzleEl.textContent = `${sezzleTextParts[0]}of ${formattedDividedPrice} with${restOfText}`;
+      }
+    }
+  }
 }
 
 const CartPage = () => {

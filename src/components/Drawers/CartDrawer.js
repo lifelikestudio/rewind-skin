@@ -197,17 +197,7 @@ function updateQuantity() {
       if (newQuantity <= 0) {
         console.log('Removing item with key:', key);
 
-        // Use cart/change.js to set quantity to 0 which removes the item
-        await fetch('/cart/change.js', {
-          method: 'post',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: key, quantity: 0 }),
-        });
-
-        // Remove the item from both drawer and cart page UI
+        // Optimistically update UI first for better perceived performance
         const drawerItem = document.querySelector(
           `.drawer-cart__item[data-line-item-key="${key}"]`
         );
@@ -222,9 +212,16 @@ function updateQuantity() {
           cartPageItem.remove();
         }
 
-        // Get the updated cart data
-        const freshCartRes = await fetch('/cart.js');
-        const freshCartData = await freshCartRes.json();
+        // Now update the server (in parallel with UI updates)
+        const response = await fetch('/cart/change.js', {
+          method: 'post',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: key, quantity: 0 }),
+        });
+        const freshCartData = await response.json();
 
         // Check if cart is empty after removal
         if (freshCartData.items.length === 0) {
@@ -246,11 +243,14 @@ function updateQuantity() {
           }
         }
 
-        // Update the entire cart to reflect the removal
-        await updateCart();
-
-        // Update cart count
+        // Update cart count immediately using the data we already have
         updateCartItemCount(freshCartData.item_count);
+
+        // Update the drawer cart subtotal using the data we already have
+        updateDrawerCartSubtotal(freshCartData);
+
+        // Update the entire drawer cart
+        updateCart();
 
         // Check for subscriptions
         checkCartForSubscriptions();
@@ -258,8 +258,25 @@ function updateQuantity() {
         return;
       }
 
-      // For positive quantities
-      await fetch('/cart/update.js', {
+      // For positive quantities - optimistic UI update first
+      const inputElement = btn.parentElement.querySelector('input');
+      inputElement.value = newQuantity; // Update UI immediately
+
+      // Also update the corresponding input in cart page for better perceived performance
+      const cartPageItem = document.querySelector(
+        `.drawer-cart__item--cart-page[data-key="${key}"]`
+      );
+      if (cartPageItem) {
+        const cartPageInput = cartPageItem.querySelector(
+          '.cart__quantity input'
+        );
+        if (cartPageInput) {
+          cartPageInput.value = newQuantity;
+        }
+      }
+
+      // Then send the update to the server
+      const response = await fetch('/cart/update.js', {
         method: 'post',
         headers: {
           Accept: 'application/json',
@@ -267,66 +284,119 @@ function updateQuantity() {
         },
         body: JSON.stringify({ updates: { [key]: newQuantity } }),
       });
+      const freshCartData = await response.json();
 
-      // Always fetch a fresh cart to ensure accurate totals
-      const freshCartRes = await fetch('/cart.js');
-      const freshCartData = await freshCartRes.json();
-
-      // Get the money format and currency directly from the cart data
-      const format = document
-        .querySelector('[data-money-format]')
-        ?.getAttribute('data-money-format');
-      const currency = freshCartData.currency || 'USD';
-
-      if (format && freshCartData.total_price !== undefined) {
-        // Format the price
-        let totalPrice = formatMoney(freshCartData.total_price, format);
-
-        // Ensure currency is included
-        if (!totalPrice.includes(currency)) {
-          totalPrice = `${totalPrice} ${currency}`;
-        }
-
-        // Update the DOM
-        const subtotalElement = document.querySelector('.subtotal__total');
-        if (subtotalElement) {
-          subtotalElement.textContent = totalPrice;
-        }
-
-        // Also update Sezzle payment amount if present
-        const sezzleElement = document.querySelector(
-          '.drawer-cart__footer .subtotal__payment-plan'
-        );
-        if (sezzleElement) {
-          const dividedPrice = Math.round(freshCartData.total_price / 4);
-          let dividedPriceFormatted = formatMoney(dividedPrice, format);
-
-          // Ensure currency is included in Sezzle amount
-          if (!dividedPriceFormatted.includes(currency)) {
-            dividedPriceFormatted = `${dividedPriceFormatted} ${currency}`;
-          }
-
-          const sezzleTextParts = sezzleElement.textContent.split('of ');
-          if (sezzleTextParts.length > 1) {
-            const restOfText = sezzleTextParts[1].split(' with')[1] || '';
-            sezzleElement.textContent = `${sezzleTextParts[0]}of ${dividedPriceFormatted} with${restOfText}`;
-          }
-        }
-      }
-
-      // Update drawer cart
-      await updateCart();
-
-      // Update cart page quantity if it exists
-      updateCartPageQuantity(key, newQuantity);
-
-      // Update cart count
-      updateCartItemCount(freshCartData.item_count);
-
-      // Check subscription status
-      checkCartForSubscriptions();
+      // Use the response data we already have instead of making another fetch
+      updateFromCartData(freshCartData, key, newQuantity);
     });
   });
+}
+
+// New helper function to update UI from cart data (avoiding duplicate fetches)
+function updateFromCartData(cartData, key, quantity) {
+  // Get the money format
+  const format = document
+    .querySelector('[data-money-format]')
+    ?.getAttribute('data-money-format');
+  const currency = cartData.currency || 'USD';
+
+  if (format && cartData.total_price !== undefined) {
+    // Format the price
+    let totalPrice = formatMoney(cartData.total_price, format);
+
+    // Ensure currency is included
+    if (!totalPrice.includes(currency)) {
+      totalPrice = `${totalPrice} ${currency}`;
+    }
+
+    // Update subtotals in both drawer and cart page
+    updateSubtotals(cartData, totalPrice);
+  }
+
+  // Update cart page quantity if it exists
+  updateCartPageQuantity(key, quantity);
+
+  // Update cart count
+  updateCartItemCount(cartData.item_count);
+
+  // Check subscription status
+  checkCartForSubscriptions();
+}
+
+// Helper function to update all subtotals
+function updateSubtotals(cartData, formattedTotal) {
+  // Update drawer subtotal
+  const drawerSubtotal = document.querySelector('.subtotal__total');
+  if (drawerSubtotal) {
+    drawerSubtotal.textContent = formattedTotal;
+  }
+
+  // Update cart page subtotal if it exists
+  const pageSubtotal = document.querySelector('#total-price');
+  if (pageSubtotal) {
+    pageSubtotal.textContent = formattedTotal;
+  }
+
+  // Update Sezzle in both places
+  updateSezzleAmounts(cartData);
+}
+
+// Helper to update Sezzle amounts
+function updateSezzleAmounts(cartData) {
+  const format = document
+    .querySelector('[data-money-format]')
+    ?.getAttribute('data-money-format');
+  const currency = cartData.currency || 'USD';
+
+  if (!format) return;
+
+  const dividedPrice = Math.round(cartData.total_price / 4);
+  let formattedDividedPrice = formatMoney(dividedPrice, format);
+  if (!formattedDividedPrice.includes(currency)) {
+    formattedDividedPrice = `${formattedDividedPrice} ${currency}`;
+  }
+
+  // Update in drawer
+  const drawerSezzle = document.querySelector(
+    '.drawer-cart__footer .subtotal__payment-plan'
+  );
+  updateSezzleElement(drawerSezzle, formattedDividedPrice);
+
+  // Update in cart page
+  const pageSezzle = document.querySelector(
+    '.cart-page .subtotal__payment-plan'
+  );
+  updateSezzleElement(pageSezzle, formattedDividedPrice);
+}
+
+// Helper to update a single Sezzle element
+function updateSezzleElement(element, formattedAmount) {
+  if (!element) return;
+
+  const sezzleTextParts = element.textContent.split('of ');
+  if (sezzleTextParts.length > 1) {
+    const restOfText = sezzleTextParts[1].split(' with')[1] || '';
+    element.textContent = `${sezzleTextParts[0]}of ${formattedAmount} with${restOfText}`;
+  }
+}
+
+// Function to update drawer cart subtotal from cart data
+function updateDrawerCartSubtotal(cartData) {
+  const format = document
+    .querySelector('[data-money-format]')
+    ?.getAttribute('data-money-format');
+  if (!format) return;
+
+  const currency = cartData.currency || 'USD';
+  let totalPrice = formatMoney(cartData.total_price, format);
+
+  // Ensure currency is included
+  if (!totalPrice.includes(currency)) {
+    totalPrice = `${totalPrice} ${currency}`;
+  }
+
+  // Update subtotals in both places
+  updateSubtotals(cartData, totalPrice);
 }
 
 export async function updateCart() {
