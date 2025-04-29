@@ -402,6 +402,9 @@ function removeItemFromCart(key) {
         totalPriceElement.textContent = totalPrice;
       }
 
+      // Update all Sezzle payments
+      updateAllSezzlePayments(cartData.total_price, format, currency);
+
       // Update drawer cart subtotal
       updateDrawerCartSubtotal(cartData, format, currency);
 
@@ -471,24 +474,8 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         }
       }
 
-      // Also update the sezzle payment amount if present
-      const sezzleElement = document.querySelector('.subtotal__payment-plan');
-      if (sezzleElement) {
-        const dividedPrice = Math.round(freshCartData.total_price / 4);
-        const dividedPriceFormatted = formatMoney(dividedPrice, format);
-
-        // Ensure currency is included in Sezzle amount
-        let formattedSezzleAmount = dividedPriceFormatted;
-        if (!formattedSezzleAmount.includes(currency)) {
-          formattedSezzleAmount = `${formattedSezzleAmount} ${currency}`;
-        }
-
-        const sezzleTextParts = sezzleElement.textContent.split('of ');
-        if (sezzleTextParts.length > 1) {
-          const restOfText = sezzleTextParts[1].split(' with')[1] || '';
-          sezzleElement.textContent = `${sezzleTextParts[0]}of ${formattedSezzleAmount} with${restOfText}`;
-        }
-      }
+      // Use the unified function to update all Sezzle payments
+      updateAllSezzlePayments(freshCartData.total_price, format, currency);
 
       // UPDATE: Also update the drawer cart subtotal
       updateDrawerCartSubtotal(freshCartData, format, currency);
@@ -718,5 +705,41 @@ document.addEventListener('DOMContentLoaded', function () {
     checkCartForSubscriptions();
   });
 });
+
+// New unified function to update all Sezzle payment elements consistently
+function updateAllSezzlePayments(cartTotal, format, currency) {
+  // Get all Sezzle payment elements
+  const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+
+  // Calculate the divided price once
+  const dividedPrice = Math.round(cartTotal / 4);
+  let formattedDividedPrice = formatMoney(dividedPrice, format);
+
+  // Ensure currency is included
+  if (!formattedDividedPrice.includes(currency)) {
+    formattedDividedPrice = `${formattedDividedPrice} ${currency}`;
+  }
+
+  // Update all Sezzle elements found
+  sezzleElements.forEach((element) => {
+    console.log(
+      'Updating Sezzle element with divided price:',
+      formattedDividedPrice
+    );
+
+    // Get the text structure so we can preserve it
+    const sezzleTextParts = element.textContent.split('of ');
+    if (sezzleTextParts.length > 1) {
+      const prefix = sezzleTextParts[0];
+
+      // Extract the "with Sezzle" part
+      const withPart = sezzleTextParts[1].split(' with')[1] || '';
+
+      // Update with the new amount
+      element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
+      console.log('Updated Sezzle text:', element.textContent);
+    }
+  });
+}
 
 export default CartPage;
