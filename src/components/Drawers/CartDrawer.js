@@ -137,7 +137,9 @@ function updateQuantity() {
       // Special handling for zero quantity
       if (newQuantity <= 0) {
         console.log('Removing item with key:', key);
-        const res = await fetch('/cart/change.js', {
+
+        // Use cart/change.js to set quantity to 0 which removes the item
+        await fetch('/cart/change.js', {
           method: 'post',
           headers: {
             Accept: 'application/json',
@@ -145,13 +147,39 @@ function updateQuantity() {
           },
           body: JSON.stringify({ id: key, quantity: 0 }),
         });
-        const json = await res.json();
 
-        // Update cart drawer to reflect removal
+        // Remove the item from both drawer and cart page UI
+        const drawerItem = document.querySelector(
+          `.drawer-cart__item[data-line-item-key="${key}"]`
+        );
+        if (drawerItem) {
+          drawerItem.remove();
+        }
+
+        const cartPageItem = document.querySelector(
+          `.drawer-cart__item--cart-page[data-key="${key}"]`
+        );
+        if (cartPageItem) {
+          cartPageItem.remove();
+        }
+
+        // Update the entire cart to reflect the removal
         await updateCart();
 
+        // Also re-render the cart page if we're on it
+        if (
+          document.querySelector('.cart-page') &&
+          typeof window.updateCart === 'function'
+        ) {
+          window.updateCart();
+        }
+
+        // Get the updated cart data
+        const freshCartRes = await fetch('/cart.js');
+        const freshCartData = await freshCartRes.json();
+
         // Update cart count
-        updateCartItemCount(json.item_count);
+        updateCartItemCount(freshCartData.item_count);
 
         // Check for subscriptions
         checkCartForSubscriptions();
@@ -173,12 +201,22 @@ function updateQuantity() {
       const freshCartRes = await fetch('/cart.js');
       const freshCartData = await freshCartRes.json();
 
-      // Update the subtotal price with proper formatting
+      // Get the money format and currency directly from the cart data
       const format = document
         .querySelector('[data-money-format]')
         ?.getAttribute('data-money-format');
+      const currency = freshCartData.currency || 'USD';
+
       if (format && freshCartData.total_price !== undefined) {
-        const totalPrice = formatMoney(freshCartData.total_price, format);
+        // Format the price
+        let totalPrice = formatMoney(freshCartData.total_price, format);
+
+        // Ensure currency is included
+        if (!totalPrice.includes(currency)) {
+          totalPrice = `${totalPrice} ${currency}`;
+        }
+
+        // Update the DOM
         const subtotalElement = document.querySelector('.subtotal__total');
         if (subtotalElement) {
           subtotalElement.textContent = totalPrice;
@@ -190,7 +228,13 @@ function updateQuantity() {
         );
         if (sezzleElement) {
           const dividedPrice = Math.round(freshCartData.total_price / 4);
-          const dividedPriceFormatted = formatMoney(dividedPrice, format);
+          let dividedPriceFormatted = formatMoney(dividedPrice, format);
+
+          // Ensure currency is included in Sezzle amount
+          if (!dividedPriceFormatted.includes(currency)) {
+            dividedPriceFormatted = `${dividedPriceFormatted} ${currency}`;
+          }
+
           const sezzleTextParts = sezzleElement.textContent.split('of ');
           if (sezzleTextParts.length > 1) {
             const restOfText = sezzleTextParts[1].split(' with')[1] || '';
@@ -229,37 +273,8 @@ export async function updateCart() {
     e.stopPropagation();
   });
 
-  // Ensure prices are properly formatted
-  const format = document
-    .querySelector('[data-money-format]')
-    ?.getAttribute('data-money-format');
-
-  if (format) {
-    // Get the latest cart data for accurate price information
-    const cartRes = await fetch('/cart.js');
-    const cartData = await cartRes.json();
-
-    // Update the subtotal with proper formatting
-    const subtotalElement = document.querySelector('.subtotal__total');
-    if (subtotalElement && cartData.total_price !== undefined) {
-      const totalPrice = formatMoney(cartData.total_price, format);
-      subtotalElement.textContent = totalPrice;
-    }
-
-    // Update Sezzle payment amount if present
-    const sezzleElement = document.querySelector(
-      '.drawer-cart__footer .subtotal__payment-plan'
-    );
-    if (sezzleElement && cartData.total_price !== undefined) {
-      const dividedPrice = Math.round(cartData.total_price / 4);
-      const dividedPriceFormatted = formatMoney(dividedPrice, format);
-      const sezzleTextParts = sezzleElement.textContent.split('of ');
-      if (sezzleTextParts.length > 1) {
-        const restOfText = sezzleTextParts[1].split(' with')[1] || '';
-        sezzleElement.textContent = `${sezzleTextParts[0]}of ${dividedPriceFormatted} with${restOfText}`;
-      }
-    }
-  }
+  // Ensure prices are properly formatted - though this section uses server-rendered HTML
+  // which should already have correct formatting, we ensure consistency
 
   // Check for subscription items and hide payment plans if needed - call immediately
   checkCartForSubscriptions();

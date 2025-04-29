@@ -12,9 +12,9 @@ export function formatMoney(cents, format) {
   // Special handling to ensure currency code is included like money_with_currency filter
   const isMissingCurrency = !formatString.includes('currency');
   if (isMissingCurrency && formatString.includes('amount')) {
-    // Add USD or the shop's currency at the end to mimic money_with_currency
-    // This assumes your shop uses USD; adjust if needed
-    formatString = formatString + ' USD';
+    // Don't add hard-coded currency - use the existing format
+    // and allow Shopify's templates to handle the currency
+    // This will preserve the original format and let Liquid handle currency
   }
 
   function defaultOption(opt, def) {
@@ -368,30 +368,48 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       const freshCartRes = await fetch('/cart.js');
       const freshCartData = await freshCartRes.json();
 
+      // Get the money format and store currency from the cart data
       const format = document
         .querySelector('[data-money-format]')
         .getAttribute('data-money-format');
 
-      // Use the cart data's total_price rather than the response data
+      // Get the active currency directly from the cart data
+      const currency = freshCartData.currency || 'USD';
+
+      // Format total price with correct currency
       const totalPrice = formatMoney(freshCartData.total_price, format);
 
-      // Find the item from the fresh cart data to get the correct quantity
-      const item = freshCartData.items.find((item) => item.key === key);
-
-      // Update the total price - ensure the currency symbol is included
-      document.querySelector('#total-price').textContent = totalPrice;
+      // Update the total price and ensure currency is displayed
+      const totalPriceEl = document.querySelector('#total-price');
+      if (totalPriceEl) {
+        // If total price doesn't already include currency, add it
+        if (!totalPrice.includes(currency)) {
+          totalPriceEl.textContent = `${totalPrice} ${currency}`;
+        } else {
+          totalPriceEl.textContent = totalPrice;
+        }
+      }
 
       // Also update the sezzle payment amount if present
       const sezzleElement = document.querySelector('.subtotal__payment-plan');
       if (sezzleElement) {
         const dividedPrice = Math.round(freshCartData.total_price / 4);
         const dividedPriceFormatted = formatMoney(dividedPrice, format);
+
+        // Ensure currency is included in Sezzle amount
+        let formattedSezzleAmount = dividedPriceFormatted;
+        if (!formattedSezzleAmount.includes(currency)) {
+          formattedSezzleAmount = `${formattedSezzleAmount} ${currency}`;
+        }
+
         const sezzleTextParts = sezzleElement.textContent.split('of ');
         if (sezzleTextParts.length > 1) {
           const restOfText = sezzleTextParts[1].split(' with')[1] || '';
-          sezzleElement.textContent = `${sezzleTextParts[0]}of ${dividedPriceFormatted} with${restOfText}`;
+          sezzleElement.textContent = `${sezzleTextParts[0]}of ${formattedSezzleAmount} with${restOfText}`;
         }
       }
+
+      const item = freshCartData.items.find((item) => item.key === key);
 
       // Update the quantity value in the DrawerCart and in the current view
       // Use the actual quantity returned from Shopify (which may be limited by stock)
