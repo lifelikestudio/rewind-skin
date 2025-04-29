@@ -119,10 +119,8 @@ async function updateCart() {
     return;
   }
 
-  // Update cart item count
-  document.querySelector(
-    '.cart-action__count'
-  ).textContent = `(${cartData.item_count})`;
+  // Update cart item count - use the imported function to update ALL count elements
+  updateCartItemCount(cartData.item_count);
 
   // Update total price
   const format = getMoneyFormat();
@@ -486,6 +484,9 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
 
       // Get the currency directly from the cart data
       const currency = freshCartData.currency || 'USD';
+
+      // Update cart item count
+      updateCartItemCount(freshCartData.item_count);
 
       // Format total price with correct currency using our improved function
       const totalPrice = moneyWithCurrency(freshCartData.total_price, currency);
