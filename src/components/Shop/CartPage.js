@@ -9,9 +9,36 @@ function getMoneyFormat() {
     return formatElement.getAttribute('data-money-format');
   }
 
-  // If not found, use a fallback format
-  // This is the standard Shopify money format with currency
-  return '{{amount_with_comma_separator}} {{currency}}';
+  // If not found, use a fallback format that works with JS
+  // Don't use liquid syntax as it won't get parsed client-side
+  return '${{amount}}'; // Simple dollar format as fallback
+}
+
+// Improved formatMoney with direct currency handling
+function moneyWithCurrency(amount, currency) {
+  // First try to use formatMoney with the format
+  const format = getMoneyFormat();
+  let formatted = formatMoney(amount, format);
+
+  // If the formatted amount still contains liquid syntax, replace with a clean format
+  if (formatted.includes('{{')) {
+    // Create a clean JS-friendly format based on locale
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency || 'USD',
+      minimumFractionDigits: 2,
+    });
+
+    // Format the amount properly
+    formatted = formatter.format(amount / 100);
+  }
+
+  // If the formatted amount doesn't include the currency code, add it
+  if (!formatted.includes(currency)) {
+    formatted = `${formatted} ${currency}`;
+  }
+
+  return formatted;
 }
 
 export function formatMoney(cents, format) {
@@ -397,13 +424,10 @@ function removeItemFromCart(key) {
       updateDrawerCartQuantity(key, 0);
 
       // Update the subtotals in both drawer and cart page
-      const format = getMoneyFormat();
       const currency = cartData.currency || 'USD';
 
-      let totalPrice = formatMoney(cartData.total_price, format);
-      if (!totalPrice.includes(currency)) {
-        totalPrice = `${totalPrice} ${currency}`;
-      }
+      // Format with improved function
+      let totalPrice = moneyWithCurrency(cartData.total_price, currency);
 
       // Update cart page subtotal
       const totalPriceElement = document.querySelector('#total-price');
@@ -411,11 +435,11 @@ function removeItemFromCart(key) {
         totalPriceElement.textContent = totalPrice;
       }
 
-      // Update all Sezzle payments
-      updateAllSezzlePayments(cartData.total_price, format, currency);
+      // Update all Sezzle payment amounts
+      updateAllSezzlePayments(cartData.total_price, currency);
 
       // Update drawer cart subtotal
-      updateDrawerCartSubtotal(cartData, format, currency);
+      updateDrawerCartSubtotal(cartData, currency);
 
       // Check for subscription status to update Sezzle visibility
       checkCartForSubscriptions();
@@ -461,31 +485,23 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       const freshCartRes = await fetch('/cart.js');
       const freshCartData = await freshCartRes.json();
 
-      // Get the money format and store currency from the cart data
-      const format = getMoneyFormat();
-
-      // Get the active currency directly from the cart data
+      // Get the currency directly from the cart data
       const currency = freshCartData.currency || 'USD';
 
-      // Format total price with correct currency
-      const totalPrice = formatMoney(freshCartData.total_price, format);
+      // Format total price with correct currency using our improved function
+      const totalPrice = moneyWithCurrency(freshCartData.total_price, currency);
 
-      // Update the total price and ensure currency is displayed
+      // Update the total price
       const totalPriceEl = document.querySelector('#total-price');
       if (totalPriceEl) {
-        // If total price doesn't already include currency, add it
-        if (!totalPrice.includes(currency)) {
-          totalPriceEl.textContent = `${totalPrice} ${currency}`;
-        } else {
-          totalPriceEl.textContent = totalPrice;
-        }
+        totalPriceEl.textContent = totalPrice;
       }
 
       // Use the unified function to update all Sezzle payments
-      updateAllSezzlePayments(freshCartData.total_price, format, currency);
+      updateAllSezzlePayments(freshCartData.total_price, currency);
 
       // UPDATE: Also update the drawer cart subtotal
-      updateDrawerCartSubtotal(freshCartData, format, currency);
+      updateDrawerCartSubtotal(freshCartData, currency);
 
       const item = freshCartData.items.find((item) => item.key === key);
 
@@ -586,17 +602,15 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
 }
 
 // New function to update the drawer cart subtotal
-function updateDrawerCartSubtotal(cartData, format, currency) {
+function updateDrawerCartSubtotal(cartData, currency) {
+  // Format with improved function
+  let totalPrice = moneyWithCurrency(cartData.total_price, currency);
+
   // Find the subtotal element in the drawer cart
   const drawerSubtotalEl = document.querySelector(
     '.drawer-cart__footer .subtotal__total'
   );
   if (drawerSubtotalEl) {
-    // Format the price correctly with currency
-    let totalPrice = formatMoney(cartData.total_price, format);
-    if (!totalPrice.includes(currency)) {
-      totalPrice = `${totalPrice} ${currency}`;
-    }
     drawerSubtotalEl.textContent = totalPrice;
 
     // Also update the Sezzle amount in the drawer if present
@@ -605,10 +619,7 @@ function updateDrawerCartSubtotal(cartData, format, currency) {
     );
     if (drawerSezzleEl) {
       const dividedPrice = Math.round(cartData.total_price / 4);
-      let formattedDividedPrice = formatMoney(dividedPrice, format);
-      if (!formattedDividedPrice.includes(currency)) {
-        formattedDividedPrice = `${formattedDividedPrice} ${currency}`;
-      }
+      let formattedDividedPrice = moneyWithCurrency(dividedPrice, currency);
 
       const sezzleTextParts = drawerSezzleEl.textContent.split('of ');
       if (sezzleTextParts.length > 1) {
@@ -714,23 +725,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // New unified function to update all Sezzle payment elements consistently
-function updateAllSezzlePayments(cartTotal, format, currency) {
+function updateAllSezzlePayments(cartTotal, currency) {
   // Get all Sezzle payment elements
   const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
 
-  // If format wasn't provided, get it
-  if (!format) {
-    format = getMoneyFormat();
-  }
-
   // Calculate the divided price once
   const dividedPrice = Math.round(cartTotal / 4);
-  let formattedDividedPrice = formatMoney(dividedPrice, format);
-
-  // Ensure currency is included
-  if (!formattedDividedPrice.includes(currency)) {
-    formattedDividedPrice = `${formattedDividedPrice} ${currency}`;
-  }
+  let formattedDividedPrice = moneyWithCurrency(dividedPrice, currency);
 
   // Update all Sezzle elements found
   sezzleElements.forEach((element) => {
