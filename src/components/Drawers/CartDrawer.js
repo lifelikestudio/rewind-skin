@@ -101,6 +101,9 @@ function updateCartPageQuantity(key, quantity) {
     if (quantityInput) {
       quantityInput.value = quantity;
       console.log(`Updated cart page quantity input to ${quantity}`);
+
+      // After updating quantity, also update subtotal
+      updateCartPageSubtotal();
     } else {
       console.log('Cart page quantity input not found');
     }
@@ -115,6 +118,62 @@ function updateCartPageQuantity(key, quantity) {
         window.updateCart();
       }
     }
+  }
+}
+
+// New function to update cart page subtotal
+async function updateCartPageSubtotal() {
+  // Only proceed if we're on the cart page
+  if (!document.querySelector('.cart-page')) {
+    return;
+  }
+
+  try {
+    // Get fresh cart data for accurate subtotal
+    const freshCartRes = await fetch('/cart.js');
+    const freshCartData = await freshCartRes.json();
+
+    // Format the total price with the correct currency
+    const format = document
+      .querySelector('[data-money-format]')
+      ?.getAttribute('data-money-format');
+    const currency = freshCartData.currency || 'USD';
+
+    if (format && freshCartData.total_price !== undefined) {
+      // Format the price
+      let totalPrice = formatMoney(freshCartData.total_price, format);
+
+      // Ensure currency is included
+      if (!totalPrice.includes(currency)) {
+        totalPrice = `${totalPrice} ${currency}`;
+      }
+
+      // Update the subtotal in the cart page
+      const totalPriceElement = document.querySelector('#total-price');
+      if (totalPriceElement) {
+        totalPriceElement.textContent = totalPrice;
+      }
+
+      // Also update Sezzle payment amount if present
+      const sezzleElement = document.querySelector('.subtotal__payment-plan');
+      if (sezzleElement) {
+        const dividedPrice = Math.round(freshCartData.total_price / 4);
+        let dividedPriceFormatted = formatMoney(dividedPrice, format);
+
+        // Ensure currency is included in Sezzle amount
+        if (!dividedPriceFormatted.includes(currency)) {
+          dividedPriceFormatted = `${dividedPriceFormatted} ${currency}`;
+        }
+
+        const sezzleTextParts = sezzleElement.textContent.split('of ');
+        if (sezzleTextParts.length > 1) {
+          const restOfText = sezzleTextParts[1].split(' with')[1] || '';
+          sezzleElement.textContent = `${sezzleTextParts[0]}of ${dividedPriceFormatted} with${restOfText}`;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error updating cart page subtotal:', error);
   }
 }
 
@@ -163,20 +222,32 @@ function updateQuantity() {
           cartPageItem.remove();
         }
 
-        // Update the entire cart to reflect the removal
-        await updateCart();
-
-        // Also re-render the cart page if we're on it
-        if (
-          document.querySelector('.cart-page') &&
-          typeof window.updateCart === 'function'
-        ) {
-          window.updateCart();
-        }
-
         // Get the updated cart data
         const freshCartRes = await fetch('/cart.js');
         const freshCartData = await freshCartRes.json();
+
+        // Check if cart is empty after removal
+        if (freshCartData.items.length === 0) {
+          console.log('Cart is now empty, updating cart page to empty state');
+          // If we're on the cart page, update it to show the empty state
+          const cartPage = document.querySelector('.cart-page');
+          if (cartPage) {
+            cartPage.innerHTML = `
+              <div class="drawer__header drawer__header--cart-page">
+                <div class="wrapper wrapper--sm"><h1 class="drawer__top-level-heading">Bag</h1></div>
+              </div>
+              <div class="drawer__container drawer__container--cart drawer__container--cart-page">
+                <div class="wrapper wrapper--sm drawer-cart__empty drawer-cart__empty--cart-page">
+                  <h3 class="drawer-cart__empty-message">Your bag is empty.</h3>
+                  <a href="/collections/all" class="btn btn--secondary all-caps drawer-cart__empty-continue">Continue Shopping</a>
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        // Update the entire cart to reflect the removal
+        await updateCart();
 
         // Update cart count
         updateCartItemCount(freshCartData.item_count);
