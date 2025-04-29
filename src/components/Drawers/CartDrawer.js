@@ -114,6 +114,7 @@ function updateQuantity() {
       // Update the quantity value in the CartPage
       const isUp = btn.classList.contains('quantity__increment');
       const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
+
       const res = await fetch('/cart/update.js', {
         method: 'post',
         headers: {
@@ -126,6 +127,9 @@ function updateQuantity() {
       updateCart();
       updateCartPageQuantity(key, newQuantity);
       updateCartItemCount(json.item_count);
+
+      // Check subscription status after cart update
+      checkCartForSubscriptions();
     });
   });
 }
