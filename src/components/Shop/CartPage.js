@@ -301,6 +301,22 @@ function removeItemFromCart(key) {
       quantity: 0,
     })
     .then(async (res) => {
+      // Remove the item from drawer cart UI immediately
+      const drawerItem = document.querySelector(
+        `.drawer-cart__item[data-line-item-key="${key}"]`
+      );
+      if (drawerItem) {
+        drawerItem.remove();
+      }
+
+      // Also remove the item from the cart page UI
+      const cartPageItem = document.querySelector(
+        `.drawer-cart__item--cart-page[data-key="${key}"]`
+      );
+      if (cartPageItem) {
+        cartPageItem.remove();
+      }
+
       // Fetch the updated cart data
       const cartRes = await fetch('/cart.js');
       const cartData = await cartRes.json();
@@ -311,6 +327,22 @@ function removeItemFromCart(key) {
       // If this was the last item, update the entire cart view
       if (cartData.items.length === 0) {
         updateCart();
+
+        // Also update the cart page to show empty state if we're on it
+        const cartPage = document.querySelector('.cart-page');
+        if (cartPage) {
+          cartPage.innerHTML = `
+            <div class="drawer__header drawer__header--cart-page">
+              <div class="wrapper wrapper--sm"><h1 class="drawer__top-level-heading">Bag</h1></div>
+            </div>
+            <div class="drawer__container drawer__container--cart drawer__container--cart-page">
+              <div class="wrapper wrapper--sm drawer-cart__empty drawer-cart__empty--cart-page">
+                <h3 class="drawer-cart__empty-message">Your bag is empty.</h3>
+                <a href="/collections/all" class="btn btn--secondary all-caps drawer-cart__empty-continue">Continue Shopping</a>
+              </div>
+            </div>
+          `;
+        }
       } else {
         // Otherwise just remove the specific item
         const itemElement = document.querySelector(
@@ -323,6 +355,26 @@ function removeItemFromCart(key) {
 
       // Update the quantity value in the DrawerCart
       updateDrawerCartQuantity(key, 0);
+
+      // Update the subtotals in both drawer and cart page
+      const format = document
+        .querySelector('[data-money-format]')
+        .getAttribute('data-money-format');
+      const currency = cartData.currency || 'USD';
+
+      let totalPrice = formatMoney(cartData.total_price, format);
+      if (!totalPrice.includes(currency)) {
+        totalPrice = `${totalPrice} ${currency}`;
+      }
+
+      // Update cart page subtotal
+      const totalPriceElement = document.querySelector('#total-price');
+      if (totalPriceElement) {
+        totalPriceElement.textContent = totalPrice;
+      }
+
+      // Update drawer cart subtotal
+      updateDrawerCartSubtotal(cartData, format, currency);
 
       // Check for subscription status to update Sezzle visibility
       checkCartForSubscriptions();
