@@ -27,9 +27,8 @@ export function updateCartItemCount(count) {
   });
 }
 
-function showLoadingInCart() {
-  const cartItemsContainer = document.querySelector('.drawer__container--cart');
-  cartItemsContainer.innerHTML = `
+// Cache loading template for better performance
+const LOADING_TEMPLATE = `
   <div class="fill-loader fill-loader--v1" role="alert">
     <p class="fill-loader__label">Content is loading...</p>
     <div aria-hidden="true">
@@ -37,22 +36,33 @@ function showLoadingInCart() {
       <div class="fill-loader__fill"></div>
     </div>
   </div>
-  `;
+`;
+
+function showLoadingInCart() {
+  const cartItemsContainer = document.querySelector('.drawer__container--cart');
+  cartItemsContainer.innerHTML = LOADING_TEMPLATE;
 }
 
 function removeItems() {
-  const removeItemButtons = document.querySelectorAll('.item__remove');
-  removeItemButtons.forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      e.preventDefault();
+  // Use event delegation instead of attaching listeners to each button
+  const drawerElement = document.querySelector(drawerCartEl);
+  if (!drawerElement) return;
 
-      // Use line item key instead of variant ID
-      const lineItemKey = btn.dataset.lineItemKey;
+  // Remove any existing handler first to avoid duplicates
+  drawerElement.removeEventListener('click', handleRemoveItem);
+  drawerElement.addEventListener('click', handleRemoveItem);
+}
 
-      // Use the imported removeItemFromCart function to properly sync cart instances
-      removeItemFromCart(lineItemKey);
-    });
-  });
+// Separate handler function for remove item clicks
+function handleRemoveItem(e) {
+  // Only proceed if a remove button was clicked
+  if (!e.target.matches('.item__remove')) return;
+
+  e.preventDefault();
+  const lineItemKey = e.target.dataset.lineItemKey;
+  if (lineItemKey) {
+    removeItemFromCart(lineItemKey);
+  }
 }
 
 function updateCartPageQuantity(key, quantity) {
@@ -61,26 +71,18 @@ function updateCartPageQuantity(key, quantity) {
     `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
   );
 
-  console.log(`Updating cart page quantity for item ${key} to ${quantity}`);
-
   // Update its quantity value
   if (cartPageItem) {
     const quantityInput = cartPageItem.querySelector('.cart__quantity input');
     if (quantityInput) {
       quantityInput.value = quantity;
-      console.log(`Updated cart page quantity input to ${quantity}`);
 
       // After updating quantity, also update subtotal
       updateCartPageSubtotal();
-    } else {
-      console.log('Cart page quantity input not found');
     }
   } else {
-    console.log('Cart page item not found');
-
     // If we're on the cart page and the item isn't found, try to reload the cart
     if (document.querySelector('.cart-page')) {
-      console.log('On cart page, refreshing');
       // If the updateCart function exists in the global scope
       if (typeof window.updateCart === 'function') {
         window.updateCart();
@@ -186,49 +188,50 @@ function moneyWithCurrency(amount, currency) {
 }
 
 function updateQuantity() {
-  // Update quantity with btns
-  const quantityBtns = document.querySelectorAll(
-    '#shopify-section-cart-drawer .cart__quantity button'
+  // Use a single event listener with delegation for better performance
+  const cartDrawerSection = document.querySelector(
+    '#shopify-section-cart-drawer'
   );
-  quantityBtns.forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const rootItem = btn.parentElement.parentElement.parentElement;
-      const key = rootItem.getAttribute('data-line-item-key');
-      const currentQuantity = Number(
-        btn.parentElement.querySelector('input').value
-      );
-      // Update the quantity value in the CartPage
-      const isUp = btn.classList.contains('quantity__increment');
-      const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
+  if (!cartDrawerSection) return;
 
-      // Special handling for zero quantity
-      if (newQuantity <= 0) {
-        console.log('Removing item with key:', key);
+  cartDrawerSection.addEventListener('click', async (event) => {
+    // Only proceed if a quantity button was clicked
+    if (!event.target.matches('.cart__quantity button')) return;
 
-        // Use the same removeItemFromCart function that works when clicking "Remove Item"
-        // This ensures consistent behavior between both removal methods
-        removeItemFromCart(key);
-        return;
+    const btn = event.target;
+    const parentElement = btn.closest('.drawer-cart__item');
+    if (!parentElement) return;
+
+    const key = parentElement.getAttribute('data-line-item-key');
+    if (!key) return;
+
+    const inputElement = btn.parentElement.querySelector('input');
+    const currentQuantity = Number(inputElement.value);
+    const isUp = btn.classList.contains('quantity__increment');
+    const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
+
+    // Special handling for zero quantity
+    if (newQuantity <= 0) {
+      removeItemFromCart(key);
+      return;
+    }
+
+    // Optimistic UI update
+    inputElement.value = newQuantity;
+
+    // Also update the cart page input if it exists
+    const cartPageItem = document.querySelector(
+      `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
+    );
+    if (cartPageItem) {
+      const cartPageInput = cartPageItem.querySelector('.cart__quantity input');
+      if (cartPageInput) {
+        cartPageInput.value = newQuantity;
       }
+    }
 
-      // For positive quantities - optimistic UI update first
-      const inputElement = btn.parentElement.querySelector('input');
-      inputElement.value = newQuantity; // Update UI immediately
-
-      // Also update the corresponding input in cart page for better perceived performance
-      const cartPageItem = document.querySelector(
-        `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
-      );
-      if (cartPageItem) {
-        const cartPageInput = cartPageItem.querySelector(
-          '.cart__quantity input'
-        );
-        if (cartPageInput) {
-          cartPageInput.value = newQuantity;
-        }
-      }
-
-      // Then send the update to the server
+    try {
+      // Update the cart on the server
       const response = await fetch('/cart/update.js', {
         method: 'post',
         headers: {
@@ -237,61 +240,69 @@ function updateQuantity() {
         },
         body: JSON.stringify({ updates: { [key]: newQuantity } }),
       });
-      const freshCartData = await response.json();
 
-      // IMPORTANT: Update drawer subtotal immediately
+      const freshCartData = await response.json();
       const currency = freshCartData.currency || 'USD';
 
-      // Format the price with correct currency using our improved function
+      // Format the price
       let totalPrice = moneyWithCurrency(freshCartData.total_price, currency);
 
-      // Update the drawer subtotal immediately
+      // Update the subtotal
       const drawerSubtotal = document.querySelector(
         '.drawer-cart__footer .subtotal__total'
       );
       if (drawerSubtotal) {
-        console.log('Updating drawer subtotal to:', totalPrice);
         drawerSubtotal.textContent = totalPrice;
       }
 
-      // Update Sezzle in the drawer
+      // Update all necessary elements
       updateAllSezzlePayments(freshCartData.total_price, currency);
-
-      // Use the response data we already have instead of making another fetch
       updateFromCartData(freshCartData, key, newQuantity);
-    });
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      // Revert UI to previous state on error
+      inputElement.value = currentQuantity;
+
+      if (cartPageItem) {
+        const cartPageInput = cartPageItem.querySelector(
+          '.cart__quantity input'
+        );
+        if (cartPageInput) {
+          cartPageInput.value = currentQuantity;
+        }
+      }
+    }
   });
 }
 
 // Update the updateAllSezzlePayments function to use our improved formatting
 function updateAllSezzlePayments(cartTotal, currency) {
-  // Get all Sezzle payment elements
-  const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+  try {
+    // Get all Sezzle payment elements
+    const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+    if (!sezzleElements.length) return;
 
-  // Calculate the divided price once
-  const dividedPrice = Math.round(cartTotal / 4);
-  let formattedDividedPrice = moneyWithCurrency(dividedPrice, currency);
+    // Calculate the divided price once
+    const dividedPrice = Math.round(cartTotal / 4);
+    let formattedDividedPrice = moneyWithCurrency(dividedPrice, currency);
 
-  // Update all Sezzle elements found
-  sezzleElements.forEach((element) => {
-    console.log(
-      'Updating Sezzle element with divided price:',
-      formattedDividedPrice
-    );
+    // Update all Sezzle elements found
+    sezzleElements.forEach((element) => {
+      // Get the text structure so we can preserve it
+      const sezzleTextParts = element.textContent.split('of ');
+      if (sezzleTextParts.length > 1) {
+        const prefix = sezzleTextParts[0];
 
-    // Get the text structure so we can preserve it
-    const sezzleTextParts = element.textContent.split('of ');
-    if (sezzleTextParts.length > 1) {
-      const prefix = sezzleTextParts[0];
+        // Extract the "with Sezzle" part
+        const withPart = sezzleTextParts[1].split(' with')[1] || '';
 
-      // Extract the "with Sezzle" part
-      const withPart = sezzleTextParts[1].split(' with')[1] || '';
-
-      // Update with the new amount
-      element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
-      console.log('Updated Sezzle text:', element.textContent);
-    }
-  });
+        // Update with the new amount
+        element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
+      }
+    });
+  } catch (error) {
+    console.error('Error updating Sezzle payments:', error);
+  }
 }
 
 // Update all other functions to use the new moneyWithCurrency function
@@ -384,78 +395,76 @@ function updateDrawerCartSubtotal(cartData) {
 }
 
 export async function updateCart() {
-  // Get the section content first
-  const res = await fetch('/?section_id=cart-drawer');
-  const text = await res.text();
-  const html = document.createElement('div');
-  html.innerHTML = text;
+  try {
+    // Get the section content first
+    const res = await fetch('/?section_id=cart-drawer');
+    const text = await res.text();
+    const html = document.createElement('div');
+    html.innerHTML = text;
 
-  // Get the drawer content
-  const updatedDrawerContainer = html.querySelector(drawerCartEl).innerHTML;
+    // Get the drawer element and check its state once
+    const drawerElement = document.querySelector(drawerCartEl);
+    const isDrawerOpen = drawerElement.classList.contains('drawer--active');
+    const classListArray = Array.from(drawerElement.classList);
 
-  // Check if the drawer is currently open before updating its content
-  // Use direct DOM query to avoid issues with references
-  const drawerElement = document.querySelector(drawerCartEl);
-  const isDrawerOpen = drawerElement.classList.contains('drawer--active');
-  console.log('Is drawer open before update:', isDrawerOpen);
+    // Get the drawer content
+    const updatedDrawerContainer = html.querySelector(drawerCartEl).innerHTML;
 
-  // Update the drawer content - temporarily store the drawer's classList
-  const classListArray = Array.from(drawerElement.classList);
+    // Update the drawer content
+    drawerElement.innerHTML = updatedDrawerContainer;
 
-  // Update the drawer content
-  drawerElement.innerHTML = updatedDrawerContainer;
-
-  // Re-attach event listener to close button
-  const closeButton = document.querySelector('#cart-close');
-  if (closeButton) {
-    closeButton.addEventListener('click', (e) => {
-      // Get the drawer element directly to avoid stale references
-      const drawer = document.querySelector(drawerCartEl);
-      closeDrawer(drawer, '100%');
-      e.stopPropagation();
-    });
-  }
-
-  // Ensure prices are properly formatted - though this section uses server-rendered HTML
-  // which should already have correct formatting, we ensure consistency
-
-  // Check for subscription items and hide payment plans if needed - call immediately
-  checkCartForSubscriptions();
-
-  // Make sure the drawer is still open if it was open before
-  if (isDrawerOpen) {
-    console.log('Restoring drawer active state');
-    drawerElement.classList.add('drawer--active');
-
-    // Also restore any other classes it might have had
-    classListArray.forEach((cls) => {
-      if (cls !== 'drawer--active') {
-        // avoid adding it twice
-        drawerElement.classList.add(cls);
-      }
-    });
-  }
-
-  updateQuantity();
-
-  // Wait until the new HTML has been rendered
-  setTimeout(() => {
-    // Re-attach event listeners to remove buttons
-    removeItems();
-
-    // Re-check after a short delay to ensure all DOM elements are fully loaded
-    setTimeout(checkCartForSubscriptions, 100);
-
-    // Double-check drawer state to ensure it stays open if it should be
-    if (isDrawerOpen) {
-      const drawer = document.querySelector(drawerCartEl);
-      if (!drawer.classList.contains('drawer--active')) {
-        console.log('Re-adding drawer active state');
-        drawer.classList.add('drawer--active');
-      }
+    // Re-attach event listener to close button in one operation
+    const closeButton = document.querySelector('#cart-close');
+    if (closeButton) {
+      closeButton.addEventListener('click', (e) => {
+        closeDrawer(document.querySelector(drawerCartEl), '100%');
+        e.stopPropagation();
+      });
     }
-  }, 0);
+
+    // Check for subscription items
+    checkCartForSubscriptions();
+
+    // Restore drawer state if it was open
+    if (isDrawerOpen) {
+      drawerElement.classList.add('drawer--active');
+
+      // Restore other classes
+      classListArray.forEach((cls) => {
+        if (cls !== 'drawer--active') drawerElement.classList.add(cls);
+      });
+    }
+
+    // Update quantity handlers in one go
+    updateQuantity();
+
+    // Use requestAnimationFrame for better performance than setTimeout
+    requestAnimationFrame(() => {
+      // Re-attach event listeners to remove buttons
+      removeItems();
+
+      // Ensure drawer state is correct
+      if (isDrawerOpen && !drawerElement.classList.contains('drawer--active')) {
+        drawerElement.classList.add('drawer--active');
+      }
+    });
+  } catch (error) {
+    console.error('Error updating cart:', error);
+  }
 }
+
+// Add a debounce helper to reduce frequency of API calls
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+
+// Last known subscription state to avoid unnecessary updates
+let lastKnownSubscriptionState = null;
 
 // Function to check if the cart has subscription items
 // and update Sezzle UI visibility accordingly
@@ -463,132 +472,146 @@ function checkCartForSubscriptions() {
   fetch('/cart.js')
     .then((res) => res.json())
     .then((cart) => {
-      console.log('Drawer checking for subscriptions:', cart.items);
-
       // Check if any items have subscriptions
       let hasSubscriptionItems = false;
       for (const item of cart.items) {
         if (item.selling_plan_allocation) {
           hasSubscriptionItems = true;
-          console.log('Drawer found subscription item:', item);
-          break;
+          break; // No need to check further
         }
       }
 
-      // Update Sezzle UI visibility
-      updateSezzleVisibility(hasSubscriptionItems);
+      // Only update if state has changed
+      if (lastKnownSubscriptionState !== hasSubscriptionItems) {
+        lastKnownSubscriptionState = hasSubscriptionItems;
 
-      // Trigger an event so other components can respond
-      document.dispatchEvent(
-        new CustomEvent('cart:updated', {
-          detail: { hasSubscriptionItems },
-        })
-      );
+        // Update Sezzle UI visibility
+        updateSezzleVisibility(hasSubscriptionItems);
+
+        // Trigger an event so other components can respond
+        document.dispatchEvent(
+          new CustomEvent('cart:updated', {
+            detail: { hasSubscriptionItems },
+          })
+        );
+      }
     })
     .catch((error) => console.error('Error checking cart in drawer:', error));
 }
 
+// Create a debounced version for frequent calls
+const debouncedCheckCartForSubscriptions = debounce(
+  checkCartForSubscriptions,
+  300
+);
+export { debouncedCheckCartForSubscriptions };
+
 // Function to update Sezzle visibility in cart drawer
 function updateSezzleVisibility(hasSubscriptionItems) {
-  // Find all Sezzle payment plan elements using the class
-  const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+  try {
+    // Find all Sezzle payment plan elements using the class - cache the NodeList
+    const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+    if (!sezzleElements.length) return;
 
-  sezzleElements.forEach((element) => {
-    // Show Sezzle ONLY when there are NO subscription items
-    if (!hasSubscriptionItems) {
-      element.style.display = 'block';
-      console.log('Showing Sezzle payment plan');
-    } else {
-      element.style.display = 'none';
-      console.log('Hiding Sezzle payment plan');
-    }
-  });
+    // Use display style directly without logging for better performance
+    const displayStyle = hasSubscriptionItems ? 'none' : 'block';
 
-  console.log(
-    'Updated all Sezzle elements, subscription items present:',
-    hasSubscriptionItems
-  );
+    sezzleElements.forEach((element) => {
+      element.style.display = displayStyle;
+    });
+  } catch (error) {
+    console.error('Error updating Sezzle visibility:', error);
+  }
 }
 
 // Check on document ready
 document.addEventListener('DOMContentLoaded', function () {
   // Immediate check on page load
   checkCartForSubscriptions();
+
+  // Use debounced version for the cart:updated event
+  document.addEventListener('cart:updated', function () {
+    debouncedCheckCartForSubscriptions();
+  });
 });
 
 export const attachEventListeners = () => {
-  addToCart.forEach((form) => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      console.log('Add to cart button clicked');
-      // Optimistically update UI
-      openDrawer(drawerCart);
-      showLoadingInCart();
-
-      // Delay form submission until after any pending updates to the DOM
-      setTimeout(async () => {
-        // Create a new FormData object
-        const formData = new FormData();
-
-        // Try to select a checked radio button first
-        let variantIdInput = form.querySelector(
-          'input[type=radio][name=id]:checked'
-        );
-
-        // If there's no checked radio button, select the hidden input field
-        if (!variantIdInput) {
-          variantIdInput = form.querySelector('input[type=hidden][name=id]');
-        }
-
-        // Make sure the input field exists before trying to read its value
-        if (variantIdInput) {
-          const variantId = variantIdInput.value;
-          console.log('Variant ID:', variantId);
-          formData.append('id', variantId);
-
-          // Append the quantity
-          const quantityInput = form.querySelector(
-            `input[data-variant-id="${variantId}"]`
-          );
-          const quantity = quantityInput ? quantityInput.value : '1';
-          console.log('Quantity:', quantity);
-          formData.append('quantity', quantity);
-
-          // Check for and append selling plan if present
-          const sellingPlanInput = form.querySelector(
-            'input[name="selling_plan"]'
-          );
-          if (
-            sellingPlanInput &&
-            sellingPlanInput.value &&
-            sellingPlanInput.value.trim() !== ''
-          ) {
-            console.log('Adding selling plan to cart:', sellingPlanInput.value);
-            formData.append('selling_plan', sellingPlanInput.value);
-          }
-
-          // Submit form with AJAX
-          await fetch('/cart/add', {
-            method: 'post',
-            body: formData,
-          });
-
-          // Get cart count
-          const resCart = await fetch('/cart.js');
-          const cartCount = await resCart.json();
-          updateCartItemCount(cartCount.item_count);
-
-          // Update cart without page reload
-          await updateCart();
-          // Open cart drawer
-          openDrawer(drawerCart);
-        } else {
-          console.error('No variant ID input field found');
-        }
-      }, 0);
-    });
-  });
+  addToCart.forEach((form) => attachFormEventListeners(form));
 };
+
+// Shared form event listener logic to avoid duplication
+function attachFormEventListeners(form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Optimistically update UI
+    openDrawer(drawerCart);
+    showLoadingInCart();
+
+    // Process form submission - use a function for this shared code
+    processFormSubmission(form);
+  });
+}
+
+// Centralized form submission handler to avoid code duplication
+async function processFormSubmission(form) {
+  // Create a new FormData object
+  const formData = new FormData();
+
+  // Try to select a checked radio button first
+  let variantIdInput = form.querySelector('input[type=radio][name=id]:checked');
+
+  // If there's no checked radio button, select the hidden input field
+  if (!variantIdInput) {
+    variantIdInput = form.querySelector('input[type=hidden][name=id]');
+  }
+
+  // Make sure the input field exists before trying to read its value
+  if (variantIdInput) {
+    const variantId = variantIdInput.value;
+    formData.append('id', variantId);
+
+    // Append the quantity
+    const quantityInput = form.querySelector(
+      `input[data-variant-id="${variantId}"]`
+    );
+    const quantity = quantityInput ? quantityInput.value : '1';
+    formData.append('quantity', quantity);
+
+    // Check for and append selling plan if present
+    const sellingPlanInput = form.querySelector('input[name="selling_plan"]');
+    if (
+      sellingPlanInput &&
+      sellingPlanInput.value &&
+      sellingPlanInput.value.trim() !== ''
+    ) {
+      formData.append('selling_plan', sellingPlanInput.value);
+    }
+
+    try {
+      // Submit form with AJAX
+      await fetch('/cart/add', {
+        method: 'post',
+        body: formData,
+      });
+
+      // Get cart count
+      const resCart = await fetch('/cart.js');
+      const cartCount = await resCart.json();
+      updateCartItemCount(cartCount.item_count);
+
+      // Update cart without page reload
+      await updateCart();
+
+      // Ensure drawer is open
+      openDrawer(drawerCart);
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+    }
+  } else {
+    console.error('No variant ID input field found');
+  }
+}
 
 export const attachEventListenersToProduct = (productForm) => {
   productForm.addEventListener('submit', async (e) => {
@@ -598,69 +621,8 @@ export const attachEventListenersToProduct = (productForm) => {
     openDrawer(drawerCart);
     showLoadingInCart();
 
-    // Delay form submission until after any pending updates to the DOM
-    setTimeout(async () => {
-      // Create a new FormData object
-      const formData = new FormData();
-
-      // Try to select a checked radio button first
-      let variantIdInput = productForm.querySelector(
-        'input[type=radio][name=id]:checked'
-      );
-
-      // If there's no checked radio button, select the hidden input field
-      if (!variantIdInput) {
-        variantIdInput = productForm.querySelector(
-          'input[type=hidden][name=id]'
-        );
-      }
-
-      // Make sure the input field exists before trying to read its value
-      if (variantIdInput) {
-        const variantId = variantIdInput.value;
-        console.log('Variant ID:', variantId);
-        formData.append('id', variantId);
-
-        // Append the quantity
-        const quantityInput = productForm.querySelector(
-          `input[data-variant-id="${variantId}"]`
-        );
-        const quantity = quantityInput ? quantityInput.value : '1';
-        console.log('Quantity:', quantity);
-        formData.append('quantity', quantity);
-
-        // Check for and append selling plan if present
-        const sellingPlanInput = productForm.querySelector(
-          'input[name="selling_plan"]'
-        );
-        if (
-          sellingPlanInput &&
-          sellingPlanInput.value &&
-          sellingPlanInput.value.trim() !== ''
-        ) {
-          console.log('Adding selling plan to cart:', sellingPlanInput.value);
-          formData.append('selling_plan', sellingPlanInput.value);
-        }
-
-        // Submit form with AJAX
-        await fetch('/cart/add', {
-          method: 'post',
-          body: formData,
-        });
-
-        // Get cart count
-        const resCart = await fetch('/cart.js');
-        const cartCount = await resCart.json();
-        updateCartItemCount(cartCount.item_count);
-
-        // Update cart without page reload
-        await updateCart();
-        // Open cart drawer
-        openDrawer(drawerCart);
-      } else {
-        console.error('No variant ID input field found');
-      }
-    }, 0);
+    // Reuse the same form submission logic
+    processFormSubmission(productForm);
   });
 };
 
@@ -671,82 +633,9 @@ const CartDrawer = () => {
   // Attach event listeners to remove buttons of items already in cart
   removeItems();
 
-  addToCart.forEach((form) => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      console.log('Add to cart button clicked');
-      // Optimistically update UI
-      openDrawer(drawerCart);
-      showLoadingInCart();
+  // Attach events to all "add to cart" forms
+  addToCart.forEach((form) => attachFormEventListeners(form));
 
-      // Delay form submission until after any pending updates to the DOM
-      setTimeout(async () => {
-        // Create a new FormData object
-        const formData = new FormData();
-
-        // Try to select a checked radio button first
-        let variantIdInput = form.querySelector(
-          'input[type=radio][name=id]:checked'
-        );
-
-        // If there's no checked radio button, select the hidden input field
-        if (!variantIdInput) {
-          variantIdInput = form.querySelector('input[type=hidden][name=id]');
-        }
-
-        // Make sure the input field exists before trying to read its value
-        if (variantIdInput) {
-          const variantId = variantIdInput.value;
-          console.log('Variant ID:', variantId);
-          formData.append('id', variantId);
-
-          // Append the quantity
-          const quantityInput = form.querySelector(
-            `input[data-variant-id="${variantId}"]`
-          );
-          const quantity = quantityInput ? quantityInput.value : '1';
-          console.log('Quantity:', quantity);
-          formData.append('quantity', quantity);
-
-          // Check for and append selling plan if present
-          const sellingPlanInput = form.querySelector(
-            'input[name="selling_plan"]'
-          );
-          if (
-            sellingPlanInput &&
-            sellingPlanInput.value &&
-            sellingPlanInput.value.trim() !== ''
-          ) {
-            console.log('Adding selling plan to cart:', sellingPlanInput.value);
-            formData.append('selling_plan', sellingPlanInput.value);
-          }
-
-          // Submit form with AJAX
-          await fetch('/cart/add', {
-            method: 'post',
-            body: formData,
-          });
-
-          // Get cart count
-          const resCart = await fetch('/cart.js');
-          const cartCount = await resCart.json();
-          updateCartItemCount(cartCount.item_count);
-
-          // Update cart without page reload
-          await updateCart();
-          // Open cart drawer
-          openDrawer(drawerCart);
-        } else {
-          console.error('No variant ID input field found');
-        }
-      }, 0);
-    });
-  });
-
-  addToCart.forEach((form) => {
-    attachEventListenersToProduct(form);
-  });
-  attachEventListeners();
   updateCartLinks();
   updateQuantity();
 };
