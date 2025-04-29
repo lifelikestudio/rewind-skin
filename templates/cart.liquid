@@ -185,7 +185,7 @@
                 <p class="subtotal__title">Subtotal</p>
                 <p class="subtotal__total" id="total-price">{{ cart.total_price | money_with_currency }}</p>
               </div>
-              <p class="subtotal__payment-plan">
+              <p class="subtotal__payment-plan sezzle-payment-plan" style="display: none;">
                 or 4 interest-free payments of {% assign divided_price = cart.total_price | divided_by: 4 %}
                 {{ divided_price | money }} with
                 <span class="is--emphasized">Sezzle</span>

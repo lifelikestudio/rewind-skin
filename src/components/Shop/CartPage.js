@@ -102,24 +102,8 @@ async function updateCart() {
     }
   }
 
-  // Handle Sezzle payment plan visibility
-  const paymentPlanElement = document.querySelector('.subtotal__payment-plan');
-  if (paymentPlanElement) {
-    console.log(
-      'Payment plan element found, subscription items present:',
-      hasSubscriptionItems
-    );
-    // Only show Sezzle if NO subscription items are in the cart
-    if (hasSubscriptionItems) {
-      paymentPlanElement.style.display = 'none';
-      console.log('Hiding Sezzle payment plan');
-    } else {
-      paymentPlanElement.style.display = 'block';
-      console.log('Showing Sezzle payment plan');
-    }
-  } else {
-    console.log('Payment plan element not found');
-  }
+  // Use the unified function to update Sezzle visibility in both cart page and drawer
+  updateSezzleVisibility(hasSubscriptionItems);
 
   // Update subscription information for each item
   cartData.items.forEach((item) => {
@@ -474,6 +458,9 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
 }
 
 const CartPage = () => {
+  // Hide Sezzle UI immediately on page load if subscriptions are in cart
+  checkCartForSubscriptions();
+
   quantityHandler();
 
   // Debug to check DOM structure and cart data
@@ -504,5 +491,63 @@ const CartPage = () => {
       }
     });
 };
+
+// Function to specifically check if the cart has subscription items
+// and update Sezzle UI visibility accordingly
+function checkCartForSubscriptions() {
+  fetch('/cart.js')
+    .then((res) => res.json())
+    .then((cart) => {
+      console.log('Checking cart for subscriptions on load:', cart.items);
+
+      // Check if any items have subscriptions
+      let hasSubscriptionItems = false;
+      for (const item of cart.items) {
+        if (item.selling_plan_allocation) {
+          hasSubscriptionItems = true;
+          console.log('Found subscription item on page load:', item);
+          break;
+        }
+      }
+
+      // Hide Sezzle both in cart page and drawer
+      updateSezzleVisibility(hasSubscriptionItems);
+    })
+    .catch((error) => console.error('Error checking cart on load:', error));
+}
+
+// Unified function to update Sezzle visibility in both cart page and drawer
+function updateSezzleVisibility(hasSubscriptionItems) {
+  // Find all Sezzle payment plan elements using the new class
+  const sezzleElements = document.querySelectorAll('.sezzle-payment-plan');
+
+  sezzleElements.forEach((element) => {
+    // Show Sezzle ONLY when there are NO subscription items
+    if (!hasSubscriptionItems) {
+      element.style.display = 'block';
+      console.log('Showing Sezzle payment plan');
+    } else {
+      element.style.display = 'none';
+      console.log('Hiding Sezzle payment plan');
+    }
+  });
+
+  console.log(
+    'Updated all Sezzle elements, subscription items present:',
+    hasSubscriptionItems
+  );
+}
+
+// Add event listener for cart changes from other contexts
+document.addEventListener('DOMContentLoaded', function () {
+  // Check on page load
+  checkCartForSubscriptions();
+
+  // Check when any cart updates happen elsewhere
+  document.addEventListener('cart:updated', function (event) {
+    console.log('Cart updated event detected, checking subscriptions');
+    checkCartForSubscriptions();
+  });
+});
 
 export default CartPage;
