@@ -1,6 +1,9 @@
 import { openDrawer, closeDrawer } from './DrawerHandlers';
 import { drawerCart } from './Drawers.js';
 
+// Import formatMoney function from CartPage.js
+import { formatMoney } from '../Shop/CartPage.js';
+
 // Selectors
 const addToCart = document.querySelectorAll('form[action="/cart/add"]');
 const cartLinks = document.querySelectorAll('a[href="/cart"]');
@@ -90,11 +93,27 @@ function updateCartPageQuantity(key, quantity) {
     `.drawer-cart__item--cart-page[data-key="${key}"]`
   );
 
+  console.log(`Updating cart page quantity for item ${key} to ${quantity}`);
+
   // Update its quantity value
   if (cartPageItem) {
     const quantityInput = cartPageItem.querySelector('.cart__quantity input');
     if (quantityInput) {
       quantityInput.value = quantity;
+      console.log(`Updated cart page quantity input to ${quantity}`);
+    } else {
+      console.log('Cart page quantity input not found');
+    }
+  } else {
+    console.log('Cart page item not found');
+
+    // If we're on the cart page and the item isn't found, try to reload the cart
+    if (document.querySelector('.cart-page')) {
+      console.log('On cart page, refreshing');
+      // If the updateCart function exists in the global scope
+      if (typeof window.updateCart === 'function') {
+        window.updateCart();
+      }
     }
   }
 }
@@ -115,6 +134,32 @@ function updateQuantity() {
       const isUp = btn.classList.contains('quantity__increment');
       const newQuantity = isUp ? currentQuantity + 1 : currentQuantity - 1;
 
+      // Special handling for zero quantity
+      if (newQuantity <= 0) {
+        console.log('Removing item with key:', key);
+        const res = await fetch('/cart/change.js', {
+          method: 'post',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: key, quantity: 0 }),
+        });
+        const json = await res.json();
+
+        // Update cart drawer to reflect removal
+        await updateCart();
+
+        // Update cart count
+        updateCartItemCount(json.item_count);
+
+        // Check for subscriptions
+        checkCartForSubscriptions();
+
+        return;
+      }
+
+      // For positive quantities
       const res = await fetch('/cart/update.js', {
         method: 'post',
         headers: {
@@ -124,11 +169,43 @@ function updateQuantity() {
         body: JSON.stringify({ updates: { [key]: newQuantity } }),
       });
       const json = await res.json();
-      updateCart();
+
+      // Update the subtotal price with proper formatting
+      const format = document
+        .querySelector('[data-money-format]')
+        ?.getAttribute('data-money-format');
+      if (format && json.total_price !== undefined) {
+        const totalPrice = formatMoney(json.total_price, format);
+        const subtotalElement = document.querySelector('.subtotal__total');
+        if (subtotalElement) {
+          subtotalElement.textContent = totalPrice;
+        }
+
+        // Also update Sezzle payment amount if present
+        const sezzleElement = document.querySelector(
+          '.drawer-cart__footer .subtotal__payment-plan'
+        );
+        if (sezzleElement) {
+          const dividedPrice = Math.round(json.total_price / 4);
+          const dividedPriceFormatted = formatMoney(dividedPrice, format);
+          const sezzleTextParts = sezzleElement.textContent.split('of ');
+          if (sezzleTextParts.length > 1) {
+            const restOfText = sezzleTextParts[1].split(' with')[1] || '';
+            sezzleElement.textContent = `${sezzleTextParts[0]}of ${dividedPriceFormatted} with${restOfText}`;
+          }
+        }
+      }
+
+      // Update drawer cart
+      await updateCart();
+
+      // Update cart page quantity if it exists
       updateCartPageQuantity(key, newQuantity);
+
+      // Update cart count
       updateCartItemCount(json.item_count);
 
-      // Check subscription status after cart update
+      // Check subscription status
       checkCartForSubscriptions();
     });
   });
@@ -148,6 +225,38 @@ export async function updateCart() {
     closeDrawer(drawerCart, '100%');
     e.stopPropagation();
   });
+
+  // Ensure prices are properly formatted
+  const format = document
+    .querySelector('[data-money-format]')
+    ?.getAttribute('data-money-format');
+
+  if (format) {
+    // Get the latest cart data for accurate price information
+    const cartRes = await fetch('/cart.js');
+    const cartData = await cartRes.json();
+
+    // Update the subtotal with proper formatting
+    const subtotalElement = document.querySelector('.subtotal__total');
+    if (subtotalElement && cartData.total_price !== undefined) {
+      const totalPrice = formatMoney(cartData.total_price, format);
+      subtotalElement.textContent = totalPrice;
+    }
+
+    // Update Sezzle payment amount if present
+    const sezzleElement = document.querySelector(
+      '.drawer-cart__footer .subtotal__payment-plan'
+    );
+    if (sezzleElement && cartData.total_price !== undefined) {
+      const dividedPrice = Math.round(cartData.total_price / 4);
+      const dividedPriceFormatted = formatMoney(dividedPrice, format);
+      const sezzleTextParts = sezzleElement.textContent.split('of ');
+      if (sezzleTextParts.length > 1) {
+        const restOfText = sezzleTextParts[1].split(' with')[1] || '';
+        sezzleElement.textContent = `${sezzleTextParts[0]}of ${dividedPriceFormatted} with${restOfText}`;
+      }
+    }
+  }
 
   // Check for subscription items and hide payment plans if needed - call immediately
   checkCartForSubscriptions();

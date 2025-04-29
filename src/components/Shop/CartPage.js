@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { updateCartItemCount } from '../Drawers/CartDrawer.js';
 
-function formatMoney(cents, format) {
+export function formatMoney(cents, format) {
   if (typeof cents == 'string') {
     cents = cents.replace('.', '');
   }
@@ -361,7 +361,22 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         .getAttribute('data-money-format');
       const totalPrice = formatMoney(res.data.total_price, format);
       const item = res.data.items.find((item) => item.key === key);
+
+      // Update the total price - ensure the currency symbol is included
+      // To match the Shopify money_with_currency filter behavior
       document.querySelector('#total-price').textContent = totalPrice;
+
+      // Also update the sezzle payment amount if present
+      const sezzleElement = document.querySelector('.subtotal__payment-plan');
+      if (sezzleElement) {
+        const dividedPrice = Math.round(res.data.total_price / 4);
+        const dividedPriceFormatted = formatMoney(dividedPrice, format);
+        const sezzleTextParts = sezzleElement.textContent.split('of ');
+        if (sezzleTextParts.length > 1) {
+          const restOfText = sezzleTextParts[1].split(' with')[1] || '';
+          sezzleElement.textContent = `${sezzleTextParts[0]}of ${dividedPriceFormatted} with${restOfText}`;
+        }
+      }
 
       // Update the quantity value in the DrawerCart and in the current view
       // Use the actual quantity returned from Shopify (which may be limited by stock)
