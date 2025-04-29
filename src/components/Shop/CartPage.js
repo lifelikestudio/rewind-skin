@@ -9,6 +9,14 @@ export function formatMoney(cents, format) {
   var placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
   var formatString = format || this.money_format;
 
+  // Special handling to ensure currency code is included like money_with_currency filter
+  const isMissingCurrency = !formatString.includes('currency');
+  if (isMissingCurrency && formatString.includes('amount')) {
+    // Add USD or the shop's currency at the end to mimic money_with_currency
+    // This assumes your shop uses USD; adjust if needed
+    formatString = formatString + ' USD';
+  }
+
   function defaultOption(opt, def) {
     return typeof opt == 'undefined' ? def : opt;
   }
@@ -356,20 +364,27 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       return axios.post('/cart/change.js', updateData);
     })
     .then(async (res) => {
+      // We'll fetch the full cart data to ensure accuracy of totals
+      const freshCartRes = await fetch('/cart.js');
+      const freshCartData = await freshCartRes.json();
+
       const format = document
         .querySelector('[data-money-format]')
         .getAttribute('data-money-format');
-      const totalPrice = formatMoney(res.data.total_price, format);
-      const item = res.data.items.find((item) => item.key === key);
+
+      // Use the cart data's total_price rather than the response data
+      const totalPrice = formatMoney(freshCartData.total_price, format);
+
+      // Find the item from the fresh cart data to get the correct quantity
+      const item = freshCartData.items.find((item) => item.key === key);
 
       // Update the total price - ensure the currency symbol is included
-      // To match the Shopify money_with_currency filter behavior
       document.querySelector('#total-price').textContent = totalPrice;
 
       // Also update the sezzle payment amount if present
       const sezzleElement = document.querySelector('.subtotal__payment-plan');
       if (sezzleElement) {
-        const dividedPrice = Math.round(res.data.total_price / 4);
+        const dividedPrice = Math.round(freshCartData.total_price / 4);
         const dividedPriceFormatted = formatMoney(dividedPrice, format);
         const sezzleTextParts = sezzleElement.textContent.split('of ');
         if (sezzleTextParts.length > 1) {
@@ -438,12 +453,8 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         );
       }
 
-      // Fetch the updated cart data
-      const cartRes = await fetch('/cart.js');
-      const cartData = await cartRes.json();
-
       // Update the cart item count in the UI
-      updateCartItemCount(cartData.item_count);
+      updateCartItemCount(freshCartData.item_count);
 
       // Check for subscription status to update Sezzle visibility
       checkCartForSubscriptions();
