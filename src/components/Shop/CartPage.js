@@ -293,6 +293,9 @@ function removeItemFromCart(key) {
       quantity: 0,
     })
     .then(async (res) => {
+      // Always update the entire cart view to ensure totals and UI are in sync
+      await updateCart();
+
       // Fetch the updated cart data
       const cartRes = await fetch('/cart.js');
       const cartData = await cartRes.json();
@@ -300,21 +303,11 @@ function removeItemFromCart(key) {
       // Update the cart item count in the UI
       updateCartItemCount(cartData.item_count);
 
-      // If this was the last item, update the entire cart view
-      if (cartData.items.length === 0) {
-        updateCart();
-      } else {
-        // Otherwise just remove the specific item
-        const itemElement = document.querySelector(
-          `.drawer-cart__item--cart-page[data-key="${key}"]`
-        );
-        if (itemElement) {
-          itemElement.remove();
-        }
-      }
-
-      // Update the quantity value in the DrawerCart
+      // Also update the drawer cart quantity
       updateDrawerCartQuantity(key, 0);
+
+      // Check for subscriptions to update Sezzle UI
+      checkCartForSubscriptions();
     })
     .catch((error) => {
       console.error('Error removing item from cart:', error);
@@ -353,12 +346,13 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       return axios.post('/cart/change.js', updateData);
     })
     .then(async (res) => {
+      // Always do a full cart update to ensure all UI elements are in sync
+      await updateCart();
+
       const format = document
         .querySelector('[data-money-format]')
         .getAttribute('data-money-format');
-      const totalPrice = formatMoney(res.data.total_price, format);
       const item = res.data.items.find((item) => item.key === key);
-      document.querySelector('#total-price').textContent = totalPrice;
 
       // Update the quantity value in the DrawerCart and in the current view
       // Use the actual quantity returned from Shopify (which may be limited by stock)
@@ -366,66 +360,8 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
       updateDrawerCartQuantity(key, actualQuantity);
       inputElement.value = actualQuantity;
 
-      // Find the item element
-      const itemElement = document.querySelector(
-        `.drawer-cart__item--cart-page[data-key="${key}"]`
-      );
-
-      // Check for selling plan and update price display
-      if (itemElement) {
-        const priceElement = itemElement.querySelector('.item__variant-price');
-
-        if (priceElement) {
-          console.log('Updating price for item after quantity change:', key);
-
-          // Get current text and log it
-          let currentText = priceElement.textContent || '';
-          console.log('Current price text:', currentText);
-
-          // Parse the current text to extract components
-          let size = '';
-          let price = '';
-
-          const parts = currentText.split(' / ');
-          if (parts.length >= 2) {
-            size = parts[0];
-            // For the price part, make sure we don't include any subscription info
-            price = parts[1].split(' / ')[0]; // Take only the first part of price segment
-          } else {
-            // Fallback
-            size = item.variant_title || '';
-            price = formatMoney(item.price, format);
-          }
-
-          // Build the updated price text based on whether there's a selling plan
-          if (
-            item.selling_plan_allocation &&
-            item.selling_plan_allocation.selling_plan
-          ) {
-            const sellingPlanName =
-              item.selling_plan_allocation.selling_plan.name;
-            priceElement.textContent = `${size} / ${price} / ${sellingPlanName}`;
-          } else {
-            priceElement.textContent = `${size} / ${price}`;
-          }
-
-          console.log(
-            'Updated price text after quantity change:',
-            priceElement.textContent
-          );
-        }
-      } else {
-        console.log(
-          `Item element not found for key: ${key} after quantity update`
-        );
-      }
-
-      // Fetch the updated cart data
-      const cartRes = await fetch('/cart.js');
-      const cartData = await cartRes.json();
-
-      // Update the cart item count in the UI
-      updateCartItemCount(cartData.item_count);
+      // Check for subscriptions to update Sezzle UI
+      checkCartForSubscriptions();
     })
     .catch((error) => {
       // Special handling for 422 status (inventory constraints)
@@ -547,6 +483,20 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('cart:updated', function (event) {
     console.log('Cart updated event detected, checking subscriptions');
     checkCartForSubscriptions();
+  });
+
+  // Listen for item removal events from cart drawer
+  document.addEventListener('cart:item:removed', function (event) {
+    console.log('Item removed event detected:', event.detail.key);
+    // Refresh the entire cart to stay in sync
+    updateCart();
+  });
+
+  // Listen for quantity update events from cart drawer
+  document.addEventListener('cart:item:updated', function (event) {
+    console.log('Item updated event detected:', event.detail);
+    // Refresh the entire cart to stay in sync
+    updateCart();
   });
 });
 

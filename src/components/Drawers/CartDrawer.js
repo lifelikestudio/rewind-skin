@@ -67,6 +67,19 @@ function removeItems() {
 
       // Update cart item count
       updateCartItemCount(cartData.item_count);
+
+      // If this was the last item, update the entire cart view
+      if (cartData.items.length === 0) {
+        updateCart();
+      } else {
+        // Otherwise just remove the specific item
+        const itemElement = document.querySelector(
+          `.drawer-cart__item--cart-page[data-key="${lineItemKey}"]`
+        );
+        if (itemElement) {
+          itemElement.remove();
+        }
+      }
     });
   });
 }
