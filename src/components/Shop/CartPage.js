@@ -324,11 +324,9 @@ function removeItemFromCart(key) {
       // Update the cart item count in the UI
       updateCartItemCount(cartData.item_count);
 
-      // If this was the last item, update the entire cart view
+      // If this was the last item, update both the cart page and drawer cart to empty state
       if (cartData.items.length === 0) {
-        updateCart();
-
-        // Also update the cart page to show empty state if we're on it
+        // Update cart page to empty state if we're on it
         const cartPage = document.querySelector('.cart-page');
         if (cartPage) {
           cartPage.innerHTML = `
@@ -342,6 +340,37 @@ function removeItemFromCart(key) {
               </div>
             </div>
           `;
+        }
+
+        // Update drawer cart to empty state
+        const drawerCart = document.querySelector('#drawer-cart');
+        if (drawerCart) {
+          drawerCart.innerHTML = `
+            <div class="drawer__header">
+              <h2 class="drawer__top-level-heading">Bag</h2>
+              <button class="all-caps drawer__header-action" id="cart-close">Close</button>
+            </div>
+            <div class="drawer__container drawer__container--cart">
+              <div class="drawer-cart__empty">
+                <h3 class="drawer-cart__empty-message">Your bag is empty.</h3>
+                <a href="/collections/all" class="btn btn--secondary all-caps drawer-cart__empty-continue">Continue Shopping</a>
+              </div>
+            </div>
+          `;
+
+          // Re-attach event listener to close button
+          const closeButton = document.querySelector('#cart-close');
+          if (closeButton) {
+            closeButton.addEventListener('click', (e) => {
+              if (
+                typeof closeDrawer === 'function' &&
+                typeof drawerCart === 'object'
+              ) {
+                closeDrawer(drawerCart, '100%');
+                e.stopPropagation();
+              }
+            });
+          }
         }
       } else {
         // Otherwise just remove the specific item
