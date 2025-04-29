@@ -17,7 +17,7 @@
       <div class="drawer__container drawer__container--cart drawer__container--cart-page">
         <div class="wrapper wrapper--sm drawer-cart__items drawer-cart__items--cart-page">
           {% for item in cart.items %}
-            <div class="drawer-cart__item drawer-cart__item--cart-page" data-key="{{ item.key }}">
+            <div class="drawer-cart__item drawer-cart__item--cart-page" data-line-item-key="{{ item.key }}">
               <div class="cart-item__inner">
                 <div class="item__img item__img--cart-page">
                   {% assign variant_value = item.variant.option1 | downcase %}
@@ -160,7 +160,7 @@
                   <a
                     href="{{ item.url_to_remove }}"
                     class="item__remove"
-                    data-variant-id="{{ item.variant.id }}">Remove Item</a>
+                    data-line-item-key="{{ item.key }}">Remove Item</a>
                 </div>
               </div>
               <div class="item__quantity item__quantity--cart-page">

@@ -172,7 +172,7 @@ async function updateCart() {
 
     // Find the item element in the cart page
     const itemElement = document.querySelector(
-      `.drawer-cart__item--cart-page[data-key="${item.key}"]`
+      `.drawer-cart__item--cart-page[data-line-item-key="${item.key}"]`
     );
 
     if (!itemElement) {
@@ -245,7 +245,7 @@ async function updateCart() {
   cartData.items.forEach((item) => {
     if (item.quantity === 0) {
       const itemElement = document.querySelector(
-        `.drawer-cart__item--cart-page[data-key="${item.key}"]`
+        `.drawer-cart__item--cart-page[data-line-item-key="${item.key}"]`
       );
       if (itemElement) {
         itemElement.remove();
@@ -261,7 +261,7 @@ function removeItem(e) {
   if (e.target.matches('.item__info--cart-page .item__remove')) {
     e.preventDefault();
     const item = e.target.closest('.drawer-cart__item--cart-page');
-    const key = item.getAttribute('data-key');
+    const key = e.target.getAttribute('data-line-item-key');
     fetch('/cart/update.js', {
       method: 'post',
       headers: {
@@ -302,9 +302,8 @@ const quantityHandler = () => {
         const input = btn.parentElement.querySelector('input');
         const value = Number(input.value);
         const isPlus = btn.classList.contains('quantity__increment');
-        const key = btn
-          .closest('.drawer-cart__item--cart-page')
-          .getAttribute('data-key');
+        const cartItem = btn.closest('.drawer-cart__item--cart-page');
+        const key = cartItem.getAttribute('data-line-item-key');
         let newValue;
         if (isPlus) {
           newValue = value + 1;
@@ -349,7 +348,7 @@ function removeItemFromCart(key) {
 
       // Also remove the item from the cart page UI
       const cartPageItem = document.querySelector(
-        `.drawer-cart__item--cart-page[data-key="${key}"]`
+        `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
       );
       if (cartPageItem) {
         cartPageItem.remove();
@@ -413,7 +412,7 @@ function removeItemFromCart(key) {
       } else {
         // Otherwise just remove the specific item
         const itemElement = document.querySelector(
-          `.drawer-cart__item--cart-page[data-key="${key}"]`
+          `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
         );
         if (itemElement) {
           itemElement.remove();
@@ -513,7 +512,7 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
 
       // Find the item element
       const itemElement = document.querySelector(
-        `.drawer-cart__item--cart-page[data-key="${key}"]`
+        `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
       );
 
       // Check for selling plan and update price display
@@ -651,7 +650,7 @@ const CartPage = () => {
         // Check if we can find the DOM elements for these items
         cart.items.forEach((item) => {
           const element = document.querySelector(
-            `.drawer-cart__item--cart-page[data-key="${item.key}"]`
+            `.drawer-cart__item--cart-page[data-line-item-key="${item.key}"]`
           );
           console.log(`Item ${item.key}:`, {
             found: !!element,

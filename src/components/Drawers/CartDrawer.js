@@ -77,7 +77,7 @@ function removeItems() {
       } else {
         // Otherwise just remove the specific item
         const itemElement = document.querySelector(
-          `.drawer-cart__item--cart-page[data-key="${lineItemKey}"]`
+          `.drawer-cart__item--cart-page[data-line-item-key="${lineItemKey}"]`
         );
         if (itemElement) {
           itemElement.remove();
@@ -90,7 +90,7 @@ function removeItems() {
 function updateCartPageQuantity(key, quantity) {
   // Find the corresponding item in the CartPage
   const cartPageItem = document.querySelector(
-    `.drawer-cart__item--cart-page[data-key="${key}"]`
+    `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
   );
 
   console.log(`Updating cart page quantity for item ${key} to ${quantity}`);
@@ -246,7 +246,7 @@ function updateQuantity() {
         }
 
         const cartPageItem = document.querySelector(
-          `.drawer-cart__item--cart-page[data-key="${key}"]`
+          `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
         );
         if (cartPageItem) {
           cartPageItem.remove();
@@ -317,7 +317,7 @@ function updateQuantity() {
 
       // Also update the corresponding input in cart page for better perceived performance
       const cartPageItem = document.querySelector(
-        `.drawer-cart__item--cart-page[data-key="${key}"]`
+        `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
       );
       if (cartPageItem) {
         const cartPageInput = cartPageItem.querySelector(
