@@ -132,6 +132,29 @@ export async function updateCart() {
     e.stopPropagation();
   });
 
+  // Check for subscription items and hide payment plans if needed
+  fetch('/cart.js')
+    .then((res) => res.json())
+    .then((cart) => {
+      // Check if any items have a subscription
+      const hasSubscriptionItems = cart.items.some(
+        (item) => item.selling_plan_allocation
+      );
+
+      // Hide payment plan element if subscription items exist
+      const paymentPlanElement = document.querySelector(
+        '.drawer-cart__footer .subtotal__payment-plan'
+      );
+      if (paymentPlanElement) {
+        paymentPlanElement.style.display = hasSubscriptionItems
+          ? 'none'
+          : 'block';
+      }
+    })
+    .catch((error) =>
+      console.error('Error checking cart for subscriptions:', error)
+    );
+
   updateQuantity();
 
   // Wait until the new HTML has been rendered

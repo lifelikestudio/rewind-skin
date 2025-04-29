@@ -83,6 +83,17 @@ async function updateCart() {
   const totalPrice = formatMoney(cartData.total_price, format);
   document.querySelector('#total-price').textContent = totalPrice;
 
+  // Check if any items in the cart have a subscription
+  const hasSubscriptionItems = cartData.items.some(
+    (item) => item.selling_plan_allocation
+  );
+
+  // Hide or show payment plan based on subscription items
+  const paymentPlanElement = document.querySelector('.subtotal__payment-plan');
+  if (paymentPlanElement) {
+    paymentPlanElement.style.display = hasSubscriptionItems ? 'none' : 'block';
+  }
+
   // Update subscription information for each item
   cartData.items.forEach((item) => {
     console.log('Processing item:', item.key);
