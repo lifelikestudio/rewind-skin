@@ -2,7 +2,11 @@ import { openDrawer, closeDrawer } from './DrawerHandlers';
 import { drawerCart } from './Drawers.js';
 
 // Import formatMoney function from CartPage.js
-import { formatMoney } from '../Shop/CartPage.js';
+import {
+  formatMoney,
+  updateCartItemCount,
+  removeItemFromCart,
+} from '../Shop/CartPage.js';
 
 // Selectors
 const addToCart = document.querySelectorAll('form[action="/cart/add"]');
@@ -49,40 +53,8 @@ function removeItems() {
       // Use line item key instead of variant ID
       const lineItemKey = btn.dataset.lineItemKey;
 
-      await fetch(`/cart/change.js`, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // Use the line item key to target the specific item
-          id: lineItemKey,
-          quantity: 0,
-        }),
-      });
-
-      // Update cart
-      await updateCart();
-
-      // Get updated cart data
-      const res = await fetch('/cart.js');
-      const cartData = await res.json();
-
-      // Update cart item count
-      updateCartItemCount(cartData.item_count);
-
-      // If this was the last item, update the entire cart view
-      if (cartData.items.length === 0) {
-        updateCart();
-      } else {
-        // Otherwise just remove the specific item
-        const itemElement = document.querySelector(
-          `.drawer-cart__item--cart-page[data-line-item-key="${lineItemKey}"]`
-        );
-        if (itemElement) {
-          itemElement.remove();
-        }
-      }
+      // Use the imported removeItemFromCart function to properly sync cart instances
+      removeItemFromCart(lineItemKey);
     });
   });
 }

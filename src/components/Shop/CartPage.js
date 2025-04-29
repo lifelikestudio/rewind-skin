@@ -260,28 +260,9 @@ function removeItem(e) {
     e.preventDefault();
     const item = e.target.closest('.drawer-cart__item--cart-page');
     const key = e.target.getAttribute('data-line-item-key');
-    fetch('/cart/update.js', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        updates: { [key]: 0 },
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data); // Log the server response
 
-        // Remove the item from the UI
-        item.remove();
-
-        // Update the cart
-        updateCart();
-      })
-      .catch((error) => {
-        console.error('Error removing item:', error);
-      });
+    // Use the shared removeItemFromCart function which properly updates both cart instances
+    removeItemFromCart(key);
   }
 }
 
@@ -329,7 +310,7 @@ function updateDrawerCartQuantity(key, quantity) {
   }
 }
 
-function removeItemFromCart(key) {
+export function removeItemFromCart(key) {
   axios
     .post('/cart/change.js', {
       id: key,
@@ -377,7 +358,7 @@ function removeItemFromCart(key) {
           `;
         }
 
-        // Update drawer cart to empty state
+        // Update drawer cart to empty state WITHOUT closing it
         const drawerCart = document.querySelector('#drawer-cart');
         if (drawerCart) {
           drawerCart.innerHTML = `
