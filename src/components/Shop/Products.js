@@ -251,6 +251,16 @@ const Products = () => {
     }
   };
 
+  // Function to hide/show Sezzle payment plan based on subscription selection
+  const togglePaymentPlan = (isSubscription) => {
+    const paymentPlans = document.querySelectorAll(
+      '.product-page__payment-plan'
+    );
+    paymentPlans.forEach((plan) => {
+      plan.style.display = isSubscription ? 'none' : 'block';
+    });
+  };
+
   // Attach event listeners to variant radios
   const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
   variantRadios.forEach((radio) => {
@@ -330,6 +340,29 @@ const Products = () => {
     console.log('Not a product page, exiting Products component.');
     return;
   }
+
+  // Set up listener for Subify selling plan changes
+  document.addEventListener('DOMContentLoaded', function () {
+    // Listen for the Subify selling plan change event
+    window.addEventListener('subify:sellingPlanChange', function (event) {
+      const { selectedSellingPlan } = event.detail;
+      // If selectedSellingPlan is truthy and has an id, it's a subscription
+      const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+      togglePaymentPlan(isSubscription);
+    });
+
+    // Also listen for the Subi SDK loaded event to handle initial state
+    window.addEventListener('subify:sdkLoaded', function () {
+      // Check for existing selling plan input
+      setTimeout(() => {
+        const sellingPlanInput = document.querySelector(
+          'input[name="selling_plan"]'
+        );
+        const isSubscription = sellingPlanInput && sellingPlanInput.value;
+        togglePaymentPlan(isSubscription);
+      }, 500); // Short delay to ensure Subi has initialized properly
+    });
+  });
 
   // Determine and show images for the initial variant
   if (variantRadios.length === 0) {
