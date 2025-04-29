@@ -341,28 +341,36 @@ const Products = () => {
     return;
   }
 
-  // Set up listener for Subify selling plan changes
-  document.addEventListener('DOMContentLoaded', function () {
-    // Listen for the Subify selling plan change event
-    window.addEventListener('subify:sellingPlanChange', function (event) {
-      const { selectedSellingPlan } = event.detail;
-      // If selectedSellingPlan is truthy and has an id, it's a subscription
-      const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+  // Set up Subify integration
+  const setupSubifyListeners = () => {
+    // Listen for Subify SDK loaded event
+    window.addEventListener('subify:sdkLoaded', function () {
+      // Once SDK is loaded, we can check for the initial selling plan state
+      const sellingPlanInput = document.querySelector(
+        'input[name="selling_plan"]'
+      );
+      const isSubscription = sellingPlanInput && sellingPlanInput.value;
       togglePaymentPlan(isSubscription);
     });
 
-    // Also listen for the Subi SDK loaded event to handle initial state
-    window.addEventListener('subify:sdkLoaded', function () {
-      // Check for existing selling plan input
-      setTimeout(() => {
-        const sellingPlanInput = document.querySelector(
-          'input[name="selling_plan"]'
-        );
-        const isSubscription = sellingPlanInput && sellingPlanInput.value;
-        togglePaymentPlan(isSubscription);
-      }, 500); // Short delay to ensure Subi has initialized properly
+    // Listen for Subify selling plan change event - this is the official way to detect changes
+    window.addEventListener('subify:sellingPlanChange', function (event) {
+      const { selectedSellingPlan } = event.detail;
+      const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+      togglePaymentPlan(isSubscription);
     });
-  });
+  };
+
+  // Set up listeners when DOM is loaded
+  document.addEventListener('DOMContentLoaded', setupSubifyListeners);
+
+  // Also call the setup immediately in case DOMContentLoaded has already fired
+  if (
+    document.readyState === 'complete' ||
+    document.readyState === 'interactive'
+  ) {
+    setupSubifyListeners();
+  }
 
   // Determine and show images for the initial variant
   if (variantRadios.length === 0) {
