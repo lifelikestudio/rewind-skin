@@ -265,6 +265,15 @@ function updateQuantity() {
               </div>
             `;
           }
+
+          // Re-attach event listener to close button
+          const closeButton = document.querySelector('#cart-close');
+          if (closeButton) {
+            closeButton.addEventListener('click', (e) => {
+              closeDrawer(drawerCart, '100%');
+              e.stopPropagation();
+            });
+          }
         }
 
         // Update cart count immediately using the data we already have
@@ -452,25 +461,42 @@ function updateDrawerCartSubtotal(cartData) {
 }
 
 export async function updateCart() {
+  // Get the section content first
   const res = await fetch('/?section_id=cart-drawer');
   const text = await res.text();
   const html = document.createElement('div');
   html.innerHTML = text;
+
+  // Get the drawer content
   const updatedDrawerContainer = html.querySelector(drawerCartEl).innerHTML;
+
+  // Check if the drawer is currently open before updating its content
+  const isDrawerOpen = document
+    .querySelector(drawerCartEl)
+    .classList.contains('drawer--active');
+
+  // Update the drawer content
   document.querySelector(drawerCartEl).innerHTML = updatedDrawerContainer;
 
   // Re-attach event listener to close button
   const closeButton = document.querySelector('#cart-close');
-  closeButton.addEventListener('click', (e) => {
-    closeDrawer(drawerCart, '100%');
-    e.stopPropagation();
-  });
+  if (closeButton) {
+    closeButton.addEventListener('click', (e) => {
+      closeDrawer(drawerCart, '100%');
+      e.stopPropagation();
+    });
+  }
 
   // Ensure prices are properly formatted - though this section uses server-rendered HTML
   // which should already have correct formatting, we ensure consistency
 
   // Check for subscription items and hide payment plans if needed - call immediately
   checkCartForSubscriptions();
+
+  // Make sure the drawer is still open if it was open before
+  if (isDrawerOpen) {
+    drawerCart.classList.add('drawer--active');
+  }
 
   updateQuantity();
 
