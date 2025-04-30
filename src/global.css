@@ -11113,7 +11113,7 @@ a.order__info--pill {
   height: 2px;
   width: 136px;
   --c: no-repeat linear-gradient(#000 0 0);
-  background: var(--regular-grey), var(--regular-grey), var(--black);
+  background: var(--c), var(--c), var(--regular-grey);
   background-size: 60% 100%;
   animation: l16 3s infinite;
 }
