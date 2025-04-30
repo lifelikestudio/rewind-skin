@@ -125,17 +125,30 @@ function normalizeOption(option) {
 }
 
 function addLoadingState() {
+  // First, remove any existing loading overlays
+  const existingOverlays = document.querySelectorAll('.product-image-loading');
+  existingOverlays.forEach((overlay) => overlay.remove());
+
   const sliderElement = document.getElementById('keen-slider');
   if (!sliderElement) return;
+
+  // Set position relative on parent if not already
+  sliderElement.parentNode.style.position = 'relative';
 
   // Add loading overlay
   const loadingOverlay = document.createElement('div');
   loadingOverlay.className = 'product-image-loading';
   loadingOverlay.innerHTML = '<div class="loading-spinner"></div>';
-  sliderElement.parentNode.appendChild(loadingOverlay);
+
+  // Make sure the overlay is inserted at the right place
+  sliderElement.parentNode.insertBefore(loadingOverlay, sliderElement);
+
+  // Make overlay visible with inline style for debugging
+  loadingOverlay.style.display = 'flex';
 
   // Hide loading when images are loaded
   const hideLoading = () => {
+    console.log('Hiding loading overlay');
     const loadingEl = document.querySelector('.product-image-loading');
     if (loadingEl) {
       loadingEl.classList.add('fade-out');
@@ -143,33 +156,40 @@ function addLoadingState() {
     }
   };
 
-  // Check if images are loaded
-  let imagesLoaded = 0;
-  const images = sliderElement.querySelectorAll('img');
-  const totalImages = images.length;
+  // Add a small delay to ensure the DOM has updated with the new images
+  setTimeout(() => {
+    const images = sliderElement.querySelectorAll('img');
+    const totalImages = images.length;
+    console.log(`Found ${totalImages} images to load`);
 
-  if (totalImages === 0) {
-    hideLoading();
-    return;
-  }
-
-  images.forEach((img) => {
-    if (img.complete) {
-      imagesLoaded++;
-      if (imagesLoaded === totalImages) hideLoading();
-    } else {
-      img.addEventListener('load', () => {
-        imagesLoaded++;
-        if (imagesLoaded === totalImages) hideLoading();
-      });
-      img.addEventListener('error', () => {
-        imagesLoaded++;
-        if (imagesLoaded === totalImages) hideLoading();
-      });
+    if (totalImages === 0) {
+      hideLoading();
+      return;
     }
-  });
 
-  // Fallback - hide loading after 5 seconds regardless
+    let imagesLoaded = 0;
+
+    images.forEach((img) => {
+      if (img.complete) {
+        imagesLoaded++;
+        console.log(`Image already loaded: ${imagesLoaded}/${totalImages}`);
+        if (imagesLoaded === totalImages) hideLoading();
+      } else {
+        img.addEventListener('load', () => {
+          imagesLoaded++;
+          console.log(`Image loaded: ${imagesLoaded}/${totalImages}`);
+          if (imagesLoaded === totalImages) hideLoading();
+        });
+        img.addEventListener('error', () => {
+          imagesLoaded++;
+          console.log(`Image error: ${imagesLoaded}/${totalImages}`);
+          if (imagesLoaded === totalImages) hideLoading();
+        });
+      }
+    });
+  }, 100);
+
+  // Fallback - hide loading after a reasonable time
   setTimeout(hideLoading, 5000);
 }
 
