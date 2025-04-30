@@ -135,20 +135,25 @@ function addLoadingState() {
   // Set position relative on parent if not already
   sliderElement.parentNode.style.position = 'relative';
 
-  // Add loading overlay
+  // Add loading overlay with custom loader
   const loadingOverlay = document.createElement('div');
   loadingOverlay.className = 'product-image-loading';
-  loadingOverlay.innerHTML = '<div class="loading-spinner"></div>';
 
-  // Make sure the overlay is inserted at the right place
+  // Create the blob loader element
+  const loader = document.createElement('div');
+  loader.className = 'loader';
+  loadingOverlay.appendChild(loader);
+
+  // Add a visually hidden loading text for accessibility
+  const srText = document.createElement('span');
+  srText.className = 'sr-only';
+  srText.textContent = 'Loading product images...';
+  loadingOverlay.appendChild(srText);
+
   sliderElement.parentNode.insertBefore(loadingOverlay, sliderElement);
-
-  // Make overlay visible with inline style for debugging
-  loadingOverlay.style.display = 'flex';
 
   // Hide loading when images are loaded
   const hideLoading = () => {
-    // console.log('Hiding loading overlay');
     const loadingEl = document.querySelector('.product-image-loading');
     if (loadingEl) {
       loadingEl.classList.add('fade-out');
@@ -156,11 +161,10 @@ function addLoadingState() {
     }
   };
 
-  // Add a small delay to ensure the DOM has updated with the new images
+  // Track image loading
   setTimeout(() => {
     const images = sliderElement.querySelectorAll('img');
     const totalImages = images.length;
-    // console.log(`Found ${totalImages} images to load`);
 
     if (totalImages === 0) {
       hideLoading();
@@ -172,17 +176,14 @@ function addLoadingState() {
     images.forEach((img) => {
       if (img.complete) {
         imagesLoaded++;
-        // console.log(`Image already loaded: ${imagesLoaded}/${totalImages}`);
         if (imagesLoaded === totalImages) hideLoading();
       } else {
         img.addEventListener('load', () => {
           imagesLoaded++;
-          // console.log(`Image loaded: ${imagesLoaded}/${totalImages}`);
           if (imagesLoaded === totalImages) hideLoading();
         });
         img.addEventListener('error', () => {
           imagesLoaded++;
-          // console.log(`Image error: ${imagesLoaded}/${totalImages}`);
           if (imagesLoaded === totalImages) hideLoading();
         });
       }

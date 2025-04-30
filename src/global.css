@@ -5437,7 +5437,7 @@ a.drawer-cart__empty-continue::after {
     margin-top: -0.4143em;
   }
 
-  .concerns-section__card--product.embla__slide,
+  .concerns-section__card--product.embla__slide .product-card__btn,
   .concerns-section__card--treatment.embla__slide .treatment-card__btn {
     font-size: 1rem;
     line-height: 6.94px;
@@ -11101,32 +11101,51 @@ a.order__info--pill {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.9);
-  display: flex !important;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
-  pointer-events: none;
+  z-index: 10;
 }
 
-.loading-spinner {
-  width: 50px;
+/* Blob loader animation */
+.loader {
   height: 50px;
-  border: 4px solid rgba(0, 0, 0, 0.2);
-  border-radius: 50%;
-  border-top-color: #000;
-  animation: spin 1s ease-in-out infinite;
+  aspect-ratio: 2;
+  border: 10px solid #000;
+  box-sizing: border-box;
+  background: radial-gradient(farthest-side, #fff 98%, #0000) left/20px 20px,
+    radial-gradient(farthest-side, #fff 98%, #0000) left/20px 20px,
+    radial-gradient(farthest-side, #fff 98%, #0000) center/20px 20px,
+    radial-gradient(farthest-side, #fff 98%, #0000) right/20px 20px, #000;
+  background-repeat: no-repeat;
+  filter: blur(4px) contrast(10);
+  animation: l14 1s infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@keyframes l14 {
+  100% {
+    background-position: right, left, center, right;
   }
 }
 
+/* Fade out animation */
 .fade-out {
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.5s ease;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .keen-slider {
