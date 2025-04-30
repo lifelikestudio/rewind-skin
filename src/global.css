@@ -1768,7 +1768,7 @@ button.drawer__header-action {
 .drawer-cart__footer .drawer-cart__subtotal {
   display: flex;
   flex-direction: column;
-  row-gap: 18px;
+  /* row-gap: 18px; */
   padding: 0 10px;
 }
 
@@ -1818,6 +1818,8 @@ button.drawer__header-action {
   font-size: 1.6rem;
   line-height: 24px;
   text-align: left;
+  margin-top: 18px;
+  margin-bottom: 18px;
 }
 
 .drawer-cart__footer .drawer-cart__subtotal .subtotal__payment-plan::before {
