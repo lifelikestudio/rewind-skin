@@ -5437,7 +5437,7 @@ a.drawer-cart__empty-continue::after {
     margin-top: -0.4143em;
   }
 
-  .concerns-section__card--product.embla__slide,
+  .concerns-section__card--product.embla__slide .product-card__btn,
   .concerns-section__card--treatment.embla__slide .treatment-card__btn {
     font-size: 1rem;
     line-height: 6.94px;
