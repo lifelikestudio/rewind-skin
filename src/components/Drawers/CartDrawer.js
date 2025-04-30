@@ -61,26 +61,26 @@ function updateCartPageQuantity(key, quantity) {
     `.drawer-cart__item--cart-page[data-line-item-key="${key}"]`
   );
 
-  console.log(`Updating cart page quantity for item ${key} to ${quantity}`);
+  // console.log(`Updating cart page quantity for item ${key} to ${quantity}`);
 
   // Update its quantity value
   if (cartPageItem) {
     const quantityInput = cartPageItem.querySelector('.cart__quantity input');
     if (quantityInput) {
       quantityInput.value = quantity;
-      console.log(`Updated cart page quantity input to ${quantity}`);
+      // console.log(`Updated cart page quantity input to ${quantity}`);
 
       // After updating quantity, also update subtotal
       updateCartPageSubtotal();
     } else {
-      console.log('Cart page quantity input not found');
+      // console.log('Cart page quantity input not found');
     }
   } else {
-    console.log('Cart page item not found');
+    // console.log('Cart page item not found');
 
     // If we're on the cart page and the item isn't found, try to reload the cart
     if (document.querySelector('.cart-page')) {
-      console.log('On cart page, refreshing');
+      // console.log('On cart page, refreshing');
       // If the updateCart function exists in the global scope
       if (typeof window.updateCart === 'function') {
         window.updateCart();
@@ -203,7 +203,7 @@ function updateQuantity() {
 
       // Special handling for zero quantity
       if (newQuantity <= 0) {
-        console.log('Removing item with key:', key);
+        // console.log('Removing item with key:', key);
 
         // Use the same removeItemFromCart function that works when clicking "Remove Item"
         // This ensures consistent behavior between both removal methods
@@ -250,7 +250,7 @@ function updateQuantity() {
         '.drawer-cart__footer .subtotal__total'
       );
       if (drawerSubtotal) {
-        console.log('Updating drawer subtotal to:', totalPrice);
+        // console.log('Updating drawer subtotal to:', totalPrice);
         drawerSubtotal.textContent = totalPrice;
       }
 
@@ -274,10 +274,10 @@ function updateAllSezzlePayments(cartTotal, currency) {
 
   // Update all Sezzle elements found
   sezzleElements.forEach((element) => {
-    console.log(
-      'Updating Sezzle element with divided price:',
-      formattedDividedPrice
-    );
+    // console.log(
+    //   'Updating Sezzle element with divided price:',
+    //   formattedDividedPrice
+    // );
 
     // Get the text structure so we can preserve it
     const sezzleTextParts = element.textContent.split('of ');
@@ -289,7 +289,7 @@ function updateAllSezzlePayments(cartTotal, currency) {
 
       // Update with the new amount
       element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
-      console.log('Updated Sezzle text:', element.textContent);
+      // console.log('Updated Sezzle text:', element.textContent);
     }
   });
 }
@@ -448,14 +448,14 @@ function checkCartForSubscriptions() {
   fetch('/cart.js')
     .then((res) => res.json())
     .then((cart) => {
-      console.log('Drawer checking for subscriptions:', cart.items);
+      // console.log('Drawer checking for subscriptions:', cart.items);
 
       // Check if any items have subscriptions
       let hasSubscriptionItems = false;
       for (const item of cart.items) {
         if (item.selling_plan_allocation) {
           hasSubscriptionItems = true;
-          console.log('Drawer found subscription item:', item);
+          // console.log('Drawer found subscription item:', item);
           break;
         }
       }
@@ -482,17 +482,17 @@ function updateSezzleVisibility(hasSubscriptionItems) {
     // Show Sezzle ONLY when there are NO subscription items
     if (!hasSubscriptionItems) {
       element.style.display = 'block';
-      console.log('Showing Sezzle payment plan');
+      // console.log('Showing Sezzle payment plan');
     } else {
       element.style.display = 'none';
-      console.log('Hiding Sezzle payment plan');
+      // console.log('Hiding Sezzle payment plan');
     }
   });
 
-  console.log(
-    'Updated all Sezzle elements, subscription items present:',
-    hasSubscriptionItems
-  );
+  // console.log(
+  //   'Updated all Sezzle elements, subscription items present:',
+  //   hasSubscriptionItems
+  // );
 }
 
 // Check on document ready

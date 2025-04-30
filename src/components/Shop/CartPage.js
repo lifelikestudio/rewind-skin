@@ -101,7 +101,7 @@ async function updateCart() {
   const res = await fetch('/cart.js');
   const cartData = await res.json();
 
-  console.log('Cart data:', cartData); // Debug to see the structure
+  // console.log('Cart data:', cartData); // Debug to see the structure
 
   // If there are no items left in the cart, display the "empty cart" message
   if (cartData.items.length === 0) {
@@ -131,17 +131,17 @@ async function updateCart() {
   let hasSubscriptionItems = false;
 
   // Log all items for debugging
-  console.log('All cart items:', cartData.items);
+  // console.log('All cart items:', cartData.items);
 
   // Check each item for a selling plan allocation
   for (const item of cartData.items) {
-    console.log(
-      `Checking item ${item.key} for subscription:`,
-      item.selling_plan_allocation
-    );
+    // console.log(
+    //   `Checking item ${item.key} for subscription:`,
+    //   item.selling_plan_allocation
+    // );
     if (item.selling_plan_allocation) {
       hasSubscriptionItems = true;
-      console.log('Found subscription item:', item);
+      // console.log('Found subscription item:', item);
       break; // No need to check further
     }
   }
@@ -151,21 +151,21 @@ async function updateCart() {
 
   // Update subscription information for each item
   cartData.items.forEach((item) => {
-    console.log('Processing item:', item.key);
-    console.log('Item variant title:', item.variant_title);
-    console.log('Item price:', item.price);
+    // console.log('Processing item:', item.key);
+    // console.log('Item variant title:', item.variant_title);
+    // console.log('Item price:', item.price);
 
     // Log the full selling plan details
     if (item.selling_plan_allocation) {
-      console.log('Selling plan details:', {
-        id: item.selling_plan_allocation.selling_plan.id,
-        name: item.selling_plan_allocation.selling_plan.name,
-        price: item.selling_plan_allocation.price,
-        compareAtPrice: item.selling_plan_allocation.compare_at_price,
-        perDeliveryPrice: item.selling_plan_allocation.per_delivery_price,
-      });
+      // console.log('Selling plan details:', {
+      //   id: item.selling_plan_allocation.selling_plan.id,
+      //   name: item.selling_plan_allocation.selling_plan.name,
+      //   price: item.selling_plan_allocation.price,
+      //   compareAtPrice: item.selling_plan_allocation.compare_at_price,
+      //   perDeliveryPrice: item.selling_plan_allocation.per_delivery_price,
+      // });
     } else {
-      console.log('No selling plan for this item');
+      // console.log('No selling plan for this item');
     }
 
     // Find the item element in the cart page
@@ -174,18 +174,18 @@ async function updateCart() {
     );
 
     if (!itemElement) {
-      console.log(`Item element not found for key: ${item.key}`);
+      // console.log(`Item element not found for key: ${item.key}`);
       return;
     }
 
     // Find the price element and log its current state
     const priceElement = itemElement.querySelector('.item__variant-price');
     if (!priceElement) {
-      console.log(`Price element not found for item: ${item.key}`);
+      // console.log(`Price element not found for item: ${item.key}`);
       return;
     }
 
-    console.log('Current price element text:', priceElement.textContent);
+    // console.log('Current price element text:', priceElement.textContent);
 
     // Get the current text of the price element
     const currentText = priceElement.textContent || '';
@@ -213,14 +213,14 @@ async function updateCart() {
         price = parts[1].split(' / ')[0]; // Take only the first part of price segment
       } else {
         // Fallback if format doesn't match expectations
-        console.log('Unexpected price format, using full text as base');
+        // console.log('Unexpected price format, using full text as base');
         size = item.variant_title || '';
         price = formatMoney(item.price, format);
       }
 
       // Create a fresh price string with the subscription info
       priceElement.textContent = `${size} / ${price} / ${sellingPlanName}`;
-      console.log('Updated price element text:', priceElement.textContent);
+      // console.log('Updated price element text:', priceElement.textContent);
     } else {
       // Handle one-time purchase items
       // If there's subscription info in the text, clean it up
@@ -233,7 +233,7 @@ async function updateCart() {
         if (parts.length >= 2) {
           // Keep just the first two parts (size and price)
           priceElement.textContent = `${parts[0]} / ${parts[1]}`;
-          console.log('Cleaned up price text:', priceElement.textContent);
+          // console.log('Cleaned up price text:', priceElement.textContent);
         }
       }
     }
@@ -510,11 +510,11 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
         const priceElement = itemElement.querySelector('.item__variant-price');
 
         if (priceElement) {
-          console.log('Updating price for item after quantity change:', key);
+          // console.log('Updating price for item after quantity change:', key);
 
           // Get current text and log it
           let currentText = priceElement.textContent || '';
-          console.log('Current price text:', currentText);
+          // console.log('Current price text:', currentText);
 
           // Parse the current text to extract components
           let size = '';
@@ -544,15 +544,15 @@ function changeItemQuantity(key, quantity, previousValue, inputElement) {
             priceElement.textContent = `${size} / ${price}`;
           }
 
-          console.log(
-            'Updated price text after quantity change:',
-            priceElement.textContent
-          );
+          // console.log(
+          //   'Updated price text after quantity change:',
+          //   priceElement.textContent
+          // );
         }
       } else {
-        console.log(
-          `Item element not found for key: ${key} after quantity update`
-        );
+        // console.log(
+        //   `Item element not found for key: ${key} after quantity update`
+        // );
       }
 
       // Check for subscription status to update Sezzle visibility
@@ -624,29 +624,29 @@ const CartPage = () => {
   quantityHandler();
 
   // Debug to check DOM structure and cart data
-  console.log('CartPage initialized');
+  // console.log('CartPage initialized');
   fetch('/cart.js')
     .then((res) => res.json())
     .then((cart) => {
-      console.log('Current cart:', cart);
+      // console.log('Current cart:', cart);
 
       if (cart.items.length > 0) {
         // Check if any items have selling plans
         const itemsWithSellingPlans = cart.items.filter(
           (item) => item.selling_plan_allocation
         );
-        console.log('Items with selling plans:', itemsWithSellingPlans);
+        // console.log('Items with selling plans:', itemsWithSellingPlans);
 
         // Check if we can find the DOM elements for these items
         cart.items.forEach((item) => {
           const element = document.querySelector(
             `.drawer-cart__item--cart-page[data-line-item-key="${item.key}"]`
           );
-          console.log(`Item ${item.key}:`, {
-            found: !!element,
-            element: element,
-            sellingPlan: item.selling_plan_allocation,
-          });
+          // console.log(`Item ${item.key}:`, {
+          //   found: !!element,
+          //   element: element,
+          //   sellingPlan: item.selling_plan_allocation,
+          // });
         });
       }
     });
@@ -658,14 +658,14 @@ function checkCartForSubscriptions() {
   fetch('/cart.js')
     .then((res) => res.json())
     .then((cart) => {
-      console.log('Checking cart for subscriptions on load:', cart.items);
+      // console.log('Checking cart for subscriptions on load:', cart.items);
 
       // Check if any items have subscriptions
       let hasSubscriptionItems = false;
       for (const item of cart.items) {
         if (item.selling_plan_allocation) {
           hasSubscriptionItems = true;
-          console.log('Found subscription item on page load:', item);
+          // console.log('Found subscription item on page load:', item);
           break;
         }
       }
@@ -685,17 +685,17 @@ function updateSezzleVisibility(hasSubscriptionItems) {
     // Show Sezzle ONLY when there are NO subscription items
     if (!hasSubscriptionItems) {
       element.style.display = 'block';
-      console.log('Showing Sezzle payment plan');
+      // console.log('Showing Sezzle payment plan');
     } else {
       element.style.display = 'none';
-      console.log('Hiding Sezzle payment plan');
+      // console.log('Hiding Sezzle payment plan');
     }
   });
 
-  console.log(
-    'Updated all Sezzle elements, subscription items present:',
-    hasSubscriptionItems
-  );
+  // console.log(
+  //   'Updated all Sezzle elements, subscription items present:',
+  //   hasSubscriptionItems
+  // );
 }
 
 // Add event listener for cart changes from other contexts
@@ -705,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Check when any cart updates happen elsewhere
   document.addEventListener('cart:updated', function (event) {
-    console.log('Cart updated event detected, checking subscriptions');
+    // console.log('Cart updated event detected, checking subscriptions');
     // Only update Sezzle visibility, don't modify the cart
     checkCartForSubscriptions();
   });
@@ -722,10 +722,10 @@ function updateAllSezzlePayments(cartTotal, currency) {
 
   // Update all Sezzle elements found
   sezzleElements.forEach((element) => {
-    console.log(
-      'Updating Sezzle element with divided price:',
-      formattedDividedPrice
-    );
+    // console.log(
+    //   'Updating Sezzle element with divided price:',
+    //   formattedDividedPrice
+    // );
 
     // Get the text structure so we can preserve it
     const sezzleTextParts = element.textContent.split('of ');
@@ -737,7 +737,7 @@ function updateAllSezzlePayments(cartTotal, currency) {
 
       // Update with the new amount
       element.textContent = `${prefix}of ${formattedDividedPrice} with${withPart}`;
-      console.log('Updated Sezzle text:', element.textContent);
+      // console.log('Updated Sezzle text:', element.textContent);
     }
   });
 }

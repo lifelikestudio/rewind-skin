@@ -337,7 +337,7 @@ const Products = () => {
 
   // Exit early if not on a product page
   if (!isProductPage()) {
-    console.log('Not a product page, exiting Products component.');
+    // console.log('Not a product page, exiting Products component.');
     return;
   }
 
@@ -449,13 +449,13 @@ const Products = () => {
 
 // Add this function to handle Subify integration
 function initializeSubify() {
-  console.log('🔍 Starting Subify initialization check');
+  // console.log('🔍 Starting Subify initialization check');
   const hasSubiPlans = document.getElementById('selling-plan-data') !== null;
 
-  console.log('✅ Subify selling plans detected:', hasSubiPlans);
+  // console.log('✅ Subify selling plans detected:', hasSubiPlans);
 
   if (!hasSubiPlans) {
-    console.log('❌ No Subify plans found, skipping initialization');
+    // console.log('❌ No Subify plans found, skipping initialization');
     return;
   }
 
@@ -501,7 +501,7 @@ function initializeSubify() {
         (v) => v.id === parseInt(variantId)
       );
       if (!variant) {
-        console.log('Variant not found in selling plan data:', variantId);
+        // console.log('Variant not found in selling plan data:', variantId);
         return null;
       }
 
@@ -520,9 +520,9 @@ function initializeSubify() {
       });
 
       if (!allocation) {
-        console.log(
-          'Allocation not found for selling plan in pre-rendered data'
-        );
+        // console.log(
+        //   'Allocation not found for selling plan in pre-rendered data'
+        // );
 
         // Fallback to calculating price from selling plan groups
         const sellingPlanGroups = sellingPlanData.selling_plan_groups || [];
@@ -586,7 +586,7 @@ function initializeSubify() {
         document.querySelector('input[name="id"]:checked') ||
         document.querySelector('input[name="id"]');
       if (!selectedVariantInput) {
-        console.log('No variant selected');
+        // console.log('No variant selected');
         return;
       }
 
@@ -594,7 +594,7 @@ function initializeSubify() {
 
       const pricingData = getSellingPlanPrice(variantId, sellingPlanId);
       if (!pricingData) {
-        console.log('Pricing data not found');
+        // console.log('Pricing data not found');
         return;
       }
 
@@ -602,7 +602,7 @@ function initializeSubify() {
         `.variant-section-${variantId}`
       );
       if (!variantSection) {
-        console.log('Variant section not found');
+        // console.log('Variant section not found');
         return;
       }
 
@@ -612,7 +612,7 @@ function initializeSubify() {
       const priceSpan = checkoutButton.querySelector('span:last-child');
 
       if (!priceSpan) {
-        console.log('Price span not found');
+        // console.log('Price span not found');
         return;
       }
 
@@ -653,9 +653,9 @@ function initializeSubify() {
 
     // Initialize or re-initialize the widget
     function initSubifyWidget() {
-      console.log('🔄 Initializing Subify widget');
+      // console.log('🔄 Initializing Subify widget');
       if (!window.subifySdk) {
-        console.log('❌ Subify SDK not available yet');
+        // console.log('❌ Subify SDK not available yet');
         return;
       }
 
@@ -689,8 +689,8 @@ function initializeSubify() {
           )
           .then(() => {
             isWidgetInitialized = true;
-            console.log('✅ Subify widget initialized successfully');
-            console.log('🔄 Setting up Subify cart integration');
+            // console.log('✅ Subify widget initialized successfully');
+            // console.log('🔄 Setting up Subify cart integration');
             // Setup cart integration
             setupCartIntegration();
           })
@@ -704,10 +704,10 @@ function initializeSubify() {
 
     // Set up event listeners for selling plan changes
     function setupCartIntegration() {
-      console.log('🔄 Adding Subify selling plan change listener');
+      // console.log('🔄 Adding Subify selling plan change listener');
       window.addEventListener('subify:sellingPlanChange', function (event) {
         const { selectedSellingPlan } = event.detail;
-        console.log('🔄 Subify plan changed:', selectedSellingPlan);
+        // console.log('🔄 Subify plan changed:', selectedSellingPlan);
 
         const selectedVariantInput =
           document.querySelector('input[name="id"]:checked') ||
@@ -745,15 +745,15 @@ function initializeSubify() {
           plan.style.display = isSubscription ? 'none' : 'block';
         });
 
-        console.log('✅ Button price updated for selling plan:', sellingPlanId);
+        // console.log('✅ Button price updated for selling plan:', sellingPlanId);
       });
     }
 
     // Update the variant in the widget
     function updateSubifyVariant() {
-      console.log('🔄 Updating Subify variant');
+      // console.log('🔄 Updating Subify variant');
       if (!window.subifySdk || !isWidgetInitialized) {
-        console.log('❌ Subify not ready for variant update');
+        // console.log('❌ Subify not ready for variant update');
         return;
       }
 
@@ -765,7 +765,7 @@ function initializeSubify() {
         : null;
 
       if (variantId && typeof window.subifySdk.changeVariant === 'function') {
-        console.log('🔄 Calling Subify changeVariant with:', variantId);
+        // console.log('🔄 Calling Subify changeVariant with:', variantId);
         window.subifySdk.changeVariant(
           JSON.parse(
             document.getElementById('ProductJson-product-template')
@@ -773,7 +773,7 @@ function initializeSubify() {
           ).id,
           variantId
         );
-        console.log('Subify variant updated to:', variantId);
+        // console.log('Subify variant updated to:', variantId);
       }
     }
 
@@ -804,7 +804,7 @@ function initializeSubify() {
   }
 
   // At the end of the initialization
-  console.log('✅ Subify integration setup complete');
+  // console.log('✅ Subify integration setup complete');
 }
 
 export default Products;
