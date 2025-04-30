@@ -272,7 +272,7 @@
                       productData.selling_plan_groups.some(group => 
                         group.app_id === 'subi' || group.app_id === 'subify'
                       );
-  console.log("Product has Subi selling plans:", hasSubiPlans);
+  // console.log("Product has Subi selling plans:", hasSubiPlans);
 </script>
 
 {% if hasSubiPlans %}
@@ -281,7 +281,7 @@
 
   <!-- Subi SDK script -->
   <script>
-    console.log("Loading Subi SDK...");
+    // console.log("Loading Subi SDK...");
   </script>
   <script
     src="https://cdn.hengam.io/subify/subify-sdk.js"
@@ -312,98 +312,7 @@
     #subi-widget-wrapper {
       order: 2;
     }
-  </style>
-
-  <!-- Subi initialization script -->
-  <script type="text/javascript">
-    console.log("Subi init script running");
-    
-    (function() {
-      let isWidgetInitialized = false;
-      
-      function initSubi() {
-        console.log("initSubi function called");
-        if (isWidgetInitialized) {
-          console.log("Widget already initialized, skipping");
-          return;
-        }
-        
-        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                   document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput ? selectedVariantInput.value : null;
-        console.log("Selected variant for Subi:", variantId);
-        
-        if (window.subifySdk && variantId) {
-          console.log("Subi SDK found in window");
-          
-          try {
-            console.log("Attempting to render Subi widget");
-            window.subifySdk.renderWidget(
-              {{ product | json }}, 
-              {
-                renderPosition: {
-                  wrapper: "#subi-widget-wrapper",
-                  position: "APPEND"
-                },
-                sellingPlanInput: {
-                  wrapper: "form.product-page__checkout-form",
-                  id: "selling-plan-input"
-                },
-                selectedVariantId: variantId
-              }
-            ).then(() => {
-              console.log("Subi widget rendered successfully");
-              isWidgetInitialized = true;
-            }).catch(error => {
-              console.error("Error initializing Subi widget:", error);
-            });
-          } catch (error) {
-            console.error("Error during Subi initialization:", error);
-          }
-        } else {
-          console.error("Subi SDK not found or variant ID missing");
-        }
-      }
-      
-      function updateVariant() {
-        const selectedVariantInput = document.querySelector('input[name="id"]:checked') || 
-                                   document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput ? selectedVariantInput.value : null;
-        
-        if (window.subifySdk && variantId && typeof window.subifySdk.changeVariant === 'function') {
-          console.log("Updating Subi variant to:", variantId);
-          window.subifySdk.changeVariant({{ product.id }}, variantId);
-        }
-      }
-      
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded, checking for Subi SDK");
-        if (window.subifySdk) {
-          console.log("Subi SDK already available at DOMContentLoaded");
-          initSubi();
-        } else {
-          console.log("Waiting for Subi SDK to load...");
-          window.addEventListener("subify:sdkLoaded", function() {
-            console.log("Subi SDK loaded event fired");
-            initSubi();
-          });
-          
-          // Fallback: check once after a delay
-          setTimeout(function() {
-            if (!isWidgetInitialized && window.subifySdk) {
-              console.log("Subi SDK found through timeout check");
-              initSubi();
-            }
-          }, 2000);
-        }
-        
-        // Add change listeners to variant selectors
-        document.querySelectorAll('input[name="id"]').forEach(input => {
-          input.addEventListener('change', updateVariant);
-        });
-      });
-    })();
-  </script>{% endif %}
+  </style>{% endif %}
 
 {% comment %} Implement Subify subscription widget {% endcomment %}
 {% assign has_subify_plans = false %}
