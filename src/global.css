@@ -1819,7 +1819,7 @@ button.drawer__header-action {
   line-height: 24px;
   text-align: left;
   margin-top: 18px;
-  margin-bottom: 18px;
+  margin-bottom: 6px;
 }
 
 .drawer-cart__footer .drawer-cart__subtotal .subtotal__payment-plan::before {
@@ -1887,6 +1887,7 @@ button.drawer__header-action {
   font-size: 1.2rem;
   line-height: 16px;
   text-align: left;
+  margin-top: 12px;
 }
 
 .drawer-cart__footer .drawer-cart__subtotal .subtotal__shipping::before {
