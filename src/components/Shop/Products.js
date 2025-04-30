@@ -449,9 +449,15 @@ const Products = () => {
 
 // Add this function to handle Subify integration
 function initializeSubify() {
+  console.log('🔍 Starting Subify initialization check');
   const hasSubiPlans = document.getElementById('selling-plan-data') !== null;
 
-  if (!hasSubiPlans) return;
+  console.log('✅ Subify selling plans detected:', hasSubiPlans);
+
+  if (!hasSubiPlans) {
+    console.log('❌ No Subify plans found, skipping initialization');
+    return;
+  }
 
   let isWidgetInitialized = false;
 
@@ -647,7 +653,11 @@ function initializeSubify() {
 
     // Initialize or re-initialize the widget
     function initSubifyWidget() {
-      if (!window.subifySdk) return;
+      console.log('🔄 Initializing Subify widget');
+      if (!window.subifySdk) {
+        console.log('❌ Subify SDK not available yet');
+        return;
+      }
 
       const selectedVariantInput =
         document.querySelector('input[name="id"]:checked') ||
@@ -679,8 +689,8 @@ function initializeSubify() {
           )
           .then(() => {
             isWidgetInitialized = true;
-            console.log('Subify widget initialized successfully');
-
+            console.log('✅ Subify widget initialized successfully');
+            console.log('🔄 Setting up Subify cart integration');
             // Setup cart integration
             setupCartIntegration();
           })
@@ -694,9 +704,10 @@ function initializeSubify() {
 
     // Set up event listeners for selling plan changes
     function setupCartIntegration() {
+      console.log('🔄 Adding Subify selling plan change listener');
       window.addEventListener('subify:sellingPlanChange', function (event) {
         const { selectedSellingPlan } = event.detail;
-        console.log('Subify selling plan changed to:', selectedSellingPlan);
+        console.log('🔄 Subify plan changed:', selectedSellingPlan);
 
         const selectedVariantInput =
           document.querySelector('input[name="id"]:checked') ||
@@ -733,12 +744,18 @@ function initializeSubify() {
         paymentPlans.forEach((plan) => {
           plan.style.display = isSubscription ? 'none' : 'block';
         });
+
+        console.log('✅ Button price updated for selling plan:', sellingPlanId);
       });
     }
 
     // Update the variant in the widget
     function updateSubifyVariant() {
-      if (!window.subifySdk || !isWidgetInitialized) return;
+      console.log('🔄 Updating Subify variant');
+      if (!window.subifySdk || !isWidgetInitialized) {
+        console.log('❌ Subify not ready for variant update');
+        return;
+      }
 
       const selectedVariantInput =
         document.querySelector('input[name="id"]:checked') ||
@@ -748,6 +765,7 @@ function initializeSubify() {
         : null;
 
       if (variantId && typeof window.subifySdk.changeVariant === 'function') {
+        console.log('🔄 Calling Subify changeVariant with:', variantId);
         window.subifySdk.changeVariant(
           JSON.parse(
             document.getElementById('ProductJson-product-template')
@@ -784,6 +802,9 @@ function initializeSubify() {
   } catch (error) {
     console.error('Error in Subify initialization:', error);
   }
+
+  // At the end of the initialization
+  console.log('✅ Subify integration setup complete');
 }
 
 export default Products;
