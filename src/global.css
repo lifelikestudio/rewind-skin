@@ -7806,11 +7806,11 @@ a.drawer-cart__empty-continue::after {
   margin: 0;
 }
 
-.product-page__checkout-btn > .checkout-btn__sale-price ins {
+.product-page__checkout-btn .checkout-btn__sale-price ins {
   text-decoration: none;
 }
 
-.product-page__checkout-btn > .checkout-btn__sale-price del {
+.product-page__checkout-btn .checkout-btn__sale-price del {
   color: var(--dark-grey);
 }
 
