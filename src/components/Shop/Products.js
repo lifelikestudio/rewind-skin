@@ -124,6 +124,55 @@ function normalizeOption(option) {
     .replace(/^-+|-+$/g, ''); // Trim leading and trailing dashes
 }
 
+function addLoadingState() {
+  const sliderElement = document.getElementById('keen-slider');
+  if (!sliderElement) return;
+
+  // Add loading overlay
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'product-image-loading';
+  loadingOverlay.innerHTML = '<div class="loading-spinner"></div>';
+  sliderElement.parentNode.appendChild(loadingOverlay);
+
+  // Hide loading when images are loaded
+  const hideLoading = () => {
+    const loadingEl = document.querySelector('.product-image-loading');
+    if (loadingEl) {
+      loadingEl.classList.add('fade-out');
+      setTimeout(() => loadingEl.remove(), 500);
+    }
+  };
+
+  // Check if images are loaded
+  let imagesLoaded = 0;
+  const images = sliderElement.querySelectorAll('img');
+  const totalImages = images.length;
+
+  if (totalImages === 0) {
+    hideLoading();
+    return;
+  }
+
+  images.forEach((img) => {
+    if (img.complete) {
+      imagesLoaded++;
+      if (imagesLoaded === totalImages) hideLoading();
+    } else {
+      img.addEventListener('load', () => {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) hideLoading();
+      });
+      img.addEventListener('error', () => {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) hideLoading();
+      });
+    }
+  });
+
+  // Fallback - hide loading after 5 seconds regardless
+  setTimeout(hideLoading, 5000);
+}
+
 function navigation(slider) {
   let wrapper, dots;
 
@@ -808,56 +857,6 @@ function initializeSubify() {
 
   // At the end of the initialization
   // console.log('✅ Subify integration setup complete');
-}
-
-// Add after initializeSlider function
-function addLoadingState() {
-  const sliderElement = document.getElementById('keen-slider');
-  if (!sliderElement) return;
-
-  // Add loading overlay
-  const loadingOverlay = document.createElement('div');
-  loadingOverlay.className = 'product-image-loading';
-  loadingOverlay.innerHTML = '<div class="loading-spinner"></div>';
-  sliderElement.parentNode.appendChild(loadingOverlay);
-
-  // Hide loading when images are loaded
-  const hideLoading = () => {
-    const loadingEl = document.querySelector('.product-image-loading');
-    if (loadingEl) {
-      loadingEl.classList.add('fade-out');
-      setTimeout(() => loadingEl.remove(), 500);
-    }
-  };
-
-  // Check if images are loaded
-  let imagesLoaded = 0;
-  const images = sliderElement.querySelectorAll('img');
-  const totalImages = images.length;
-
-  if (totalImages === 0) {
-    hideLoading();
-    return;
-  }
-
-  images.forEach((img) => {
-    if (img.complete) {
-      imagesLoaded++;
-      if (imagesLoaded === totalImages) hideLoading();
-    } else {
-      img.addEventListener('load', () => {
-        imagesLoaded++;
-        if (imagesLoaded === totalImages) hideLoading();
-      });
-      img.addEventListener('error', () => {
-        imagesLoaded++;
-        if (imagesLoaded === totalImages) hideLoading();
-      });
-    }
-  });
-
-  // Fallback - hide loading after 5 seconds regardless
-  setTimeout(hideLoading, 5000);
 }
 
 export default Products;
