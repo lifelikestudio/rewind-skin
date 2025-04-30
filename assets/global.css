@@ -11112,7 +11112,7 @@ a.order__info--pill {
 .loader {
   height: 2px;
   width: 136px;
-  --c: no-repeat linear-gradient(#000 0 0);
+  --c: no-repeat linear-gradient(var(--black) 0 0);
   background: var(--c), var(--c), var(--regular-grey);
   background-size: 60% 100%;
   animation: l16 3s infinite;
