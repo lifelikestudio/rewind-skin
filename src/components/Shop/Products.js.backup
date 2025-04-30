@@ -1,9 +1,6 @@
 import 'keen-slider/keen-slider.min.css';
 import KeenSlider from 'keen-slider';
 
-// Feature flag to control Subify implementation
-const USE_JS_IMPLEMENTATION = false; // Set to false initially to keep using the template version
-
 let url = window.location.href;
 let variantIdUrl = null;
 let match = url.match(/variant=([^&]*)/);
@@ -228,83 +225,7 @@ const initializeSlider = () => {
 
 let slider = null; // Holds the current slider instance
 
-// Function to handle Subify integration
-const setupSubifyListeners = () => {
-  console.log('[DEBUG] Subify listeners setup from Products.js');
-
-  // Skip if using the template implementation
-  if (!USE_JS_IMPLEMENTATION) {
-    console.log(
-      '[DEBUG] Using template implementation for Subify, skipping JS setup'
-    );
-    return;
-  }
-
-  // Listen for Subify SDK loaded event
-  window.addEventListener('subify:sdkLoaded', function () {
-    // Once SDK is loaded, we can check for the initial selling plan state
-    const sellingPlanInput = document.querySelector(
-      'input[name="selling_plan"]'
-    );
-    const isSubscription = sellingPlanInput && sellingPlanInput.value;
-    togglePaymentPlan(isSubscription);
-  });
-
-  // Listen for Subify selling plan change event - this is the official way to detect changes
-  window.addEventListener('subify:sellingPlanChange', function (event) {
-    const { selectedSellingPlan } = event.detail;
-    const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
-    togglePaymentPlan(isSubscription);
-  });
-};
-
-// Handle subscription functionality
-const initializeSubscriptionFeatures = () => {
-  console.log('[DEBUG] initializeSubscriptionFeatures called');
-
-  // Skip if using the template implementation
-  if (!USE_JS_IMPLEMENTATION) {
-    console.log(
-      '[DEBUG] Using template implementation for Subify, skipping JS implementation'
-    );
-    return;
-  }
-
-  // This will be implemented in later steps
-  console.log('[DEBUG] JS implementation for Subify would run here');
-};
-
 const Products = () => {
-  // Robust check for product page
-  const isProductPage = () => {
-    // Check URL path
-    const isProductPath = window.location.pathname.includes('/products/');
-
-    // Check for product-specific elements
-    const hasProductForm = !!document.querySelector('form[action="/cart/add"]');
-    const hasVariantRadios = !!document.querySelectorAll(
-      'input[type=radio][name=id]'
-    ).length;
-    const hasProductImages = !!document.getElementById('keen-slider');
-
-    // Check for product JSON
-    const hasProductJSON = !!document.getElementById(
-      'ProductJson-product-template'
-    );
-
-    // Combine all checks
-    return (
-      isProductPath &&
-      (hasProductForm || hasVariantRadios || hasProductImages || hasProductJSON)
-    );
-  };
-
-  // Exit early if not on a product page
-  if (!isProductPage()) {
-    console.log('Not a product page, exiting Products component.');
-    return;
-  }
-
   // Handle variant selection
   const handleVariantSelection = (variantId) => {
     const url = new URL(window.location.href);
@@ -390,8 +311,55 @@ const Products = () => {
     });
   });
 
-  // Initialize subscription features
-  initializeSubscriptionFeatures();
+  // Robust check for product page
+  const isProductPage = () => {
+    // Check URL path
+    const isProductPath = window.location.pathname.includes('/products/');
+
+    // Check for product-specific elements
+    const hasProductForm = !!document.querySelector('form[action="/cart/add"]');
+    const hasVariantRadios = !!document.querySelectorAll(
+      'input[type=radio][name=id]'
+    ).length;
+    const hasProductImages = !!document.getElementById('keen-slider');
+
+    // Check for product JSON
+    const hasProductJSON = !!document.getElementById(
+      'ProductJson-product-template'
+    );
+
+    // Combine all checks
+    return (
+      isProductPath &&
+      (hasProductForm || hasVariantRadios || hasProductImages || hasProductJSON)
+    );
+  };
+
+  // Exit early if not on a product page
+  if (!isProductPage()) {
+    console.log('Not a product page, exiting Products component.');
+    return;
+  }
+
+  // Set up Subify integration
+  const setupSubifyListeners = () => {
+    // Listen for Subify SDK loaded event
+    window.addEventListener('subify:sdkLoaded', function () {
+      // Once SDK is loaded, we can check for the initial selling plan state
+      const sellingPlanInput = document.querySelector(
+        'input[name="selling_plan"]'
+      );
+      const isSubscription = sellingPlanInput && sellingPlanInput.value;
+      togglePaymentPlan(isSubscription);
+    });
+
+    // Listen for Subify selling plan change event - this is the official way to detect changes
+    window.addEventListener('subify:sellingPlanChange', function (event) {
+      const { selectedSellingPlan } = event.detail;
+      const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+      togglePaymentPlan(isSubscription);
+    });
+  };
 
   // Set up listeners when DOM is loaded
   document.addEventListener('DOMContentLoaded', setupSubifyListeners);
