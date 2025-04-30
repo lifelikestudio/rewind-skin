@@ -11188,3 +11188,82 @@ a.order__info--pill {
 @media screen and (max-width: 374px) {
   /* Styles go here */
 }
+
+/* Replace or update the product-image-loading styles */
+.product-image-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+/* Add styles for the fill-loader in the product image context */
+.fill-loader--image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.fill-loader--image .fill-loader__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.fill-loader--image .fill-loader__base {
+  width: 50%;
+  height: 4px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.fill-loader--image .fill-loader__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+  animation: fill-animation 2s infinite ease-in-out;
+  transform-origin: left center;
+}
+
+@keyframes fill-animation {
+  0% {
+    transform: scaleX(0);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: right center;
+  }
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.keen-slider {
+  position: relative;
+}
