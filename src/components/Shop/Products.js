@@ -353,12 +353,15 @@ const Products = () => {
       togglePaymentPlan(isSubscription);
     });
 
-    // Listen for Subify selling plan change event - this is the official way to detect changes
+    // Listen for Subify selling plan change event
     window.addEventListener('subify:sellingPlanChange', function (event) {
       const { selectedSellingPlan } = event.detail;
       const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
       togglePaymentPlan(isSubscription);
     });
+
+    // Initialize Subify functionality
+    initializeSubify();
   };
 
   // Set up listeners when DOM is loaded
@@ -443,5 +446,344 @@ const Products = () => {
     }
   }
 };
+
+// Add this function to handle Subify integration
+function initializeSubify() {
+  const hasSubiPlans = document.getElementById('selling-plan-data') !== null;
+
+  if (!hasSubiPlans) return;
+
+  let isWidgetInitialized = false;
+
+  // Get selling plan data from pre-rendered JSON
+  try {
+    const sellingPlanData = JSON.parse(
+      document.getElementById('selling-plan-data').textContent
+    );
+
+    // Format money with currency using Shopify's format
+    function formatMoney(cents) {
+      if (typeof cents == 'string') cents = cents.replace('.', '');
+      cents = parseInt(cents);
+      const format = sellingPlanData.money_format;
+
+      function formatWithDelimiters(number, precision, thousands, decimal) {
+        precision = precision || 2;
+        thousands = thousands || ',';
+        decimal = decimal || '.';
+        if (isNaN(number) || number == null) return '0';
+        number = (number / 100.0).toFixed(precision);
+        if (parseFloat(number) === parseInt(number)) {
+          number = parseInt(number);
+        }
+        let parts = String(number).split('.');
+        const dollars = parts[0].replace(
+          /(\d)(?=(\d\d\d)+(?!\d))/g,
+          '$1' + thousands
+        );
+        const cents = parts.length > 1 ? decimal + parts[1] : '';
+        return dollars + cents;
+      }
+
+      const formatted = formatWithDelimiters(cents);
+      return format.replace(/\{\{\s*amount\s*\}\}/, formatted);
+    }
+
+    // Get selling plan price from pre-rendered data
+    function getSellingPlanPrice(variantId, sellingPlanId) {
+      const variant = sellingPlanData.variants.find(
+        (v) => v.id === parseInt(variantId)
+      );
+      if (!variant) {
+        console.log('Variant not found in selling plan data:', variantId);
+        return null;
+      }
+
+      if (!sellingPlanId) {
+        return {
+          price: variant.price,
+          compare_at_price: variant.compare_at_price,
+        };
+      }
+
+      const allocation = variant.selling_plan_allocations.find((a) => {
+        if (a.selling_plan_id === sellingPlanId.toString()) return true;
+        if (parseInt(a.selling_plan_id) === parseInt(sellingPlanId))
+          return true;
+        return false;
+      });
+
+      if (!allocation) {
+        console.log(
+          'Allocation not found for selling plan in pre-rendered data'
+        );
+
+        // Fallback to calculating price from selling plan groups
+        const sellingPlanGroups = sellingPlanData.selling_plan_groups || [];
+        let selectedPlan = null;
+
+        for (const group of sellingPlanGroups) {
+          if (!group.selling_plans) continue;
+
+          for (const plan of group.selling_plans) {
+            if (
+              plan.id.toString() === sellingPlanId.toString() ||
+              parseInt(plan.id) === parseInt(sellingPlanId)
+            ) {
+              selectedPlan = plan;
+              break;
+            }
+          }
+          if (selectedPlan) break;
+        }
+
+        if (
+          selectedPlan &&
+          selectedPlan.price_adjustments &&
+          selectedPlan.price_adjustments.length > 0
+        ) {
+          const priceAdjust = selectedPlan.price_adjustments[0];
+          let adjustedPrice;
+
+          if (priceAdjust.value_type === 'percentage') {
+            adjustedPrice = variant.price * (1 - priceAdjust.value / 100);
+          } else if (priceAdjust.value_type === 'fixed_amount') {
+            adjustedPrice = variant.price - priceAdjust.value;
+          } else if (priceAdjust.value_type === 'price') {
+            adjustedPrice = priceAdjust.value;
+          } else {
+            adjustedPrice = variant.price;
+          }
+
+          return {
+            price: Math.round(adjustedPrice),
+            compare_at_price: variant.compare_at_price,
+          };
+        }
+
+        return {
+          price: variant.price,
+          compare_at_price: variant.compare_at_price,
+        };
+      }
+
+      return {
+        price: allocation.price,
+        compare_at_price:
+          allocation.compare_at_price || variant.compare_at_price,
+      };
+    }
+
+    // Update button price based on selected selling plan
+    function updateButtonPrice(sellingPlanId, formattedPlanName) {
+      const selectedVariantInput =
+        document.querySelector('input[name="id"]:checked') ||
+        document.querySelector('input[name="id"]');
+      if (!selectedVariantInput) {
+        console.log('No variant selected');
+        return;
+      }
+
+      const variantId = parseInt(selectedVariantInput.value);
+
+      const pricingData = getSellingPlanPrice(variantId, sellingPlanId);
+      if (!pricingData) {
+        console.log('Pricing data not found');
+        return;
+      }
+
+      const variantSection = document.querySelector(
+        `.variant-section-${variantId}`
+      );
+      if (!variantSection) {
+        console.log('Variant section not found');
+        return;
+      }
+
+      const checkoutButton = variantSection.querySelector(
+        '.product-page__checkout-btn'
+      );
+      const priceSpan = checkoutButton.querySelector('span:last-child');
+
+      if (!priceSpan) {
+        console.log('Price span not found');
+        return;
+      }
+
+      const formattedPrice = formatMoney(pricingData.price);
+
+      if (
+        pricingData.compare_at_price &&
+        pricingData.compare_at_price > pricingData.price
+      ) {
+        const formattedComparePrice = formatMoney(pricingData.compare_at_price);
+        if (formattedPlanName && sellingPlanId) {
+          priceSpan.innerHTML = `
+            <del>${formattedComparePrice}</del>
+            <ins>${formattedPrice}${formattedPlanName}</ins>
+          `;
+        } else {
+          priceSpan.innerHTML = `
+            <del>${formattedComparePrice}</del>
+            <ins>${formattedPrice}</ins>
+          `;
+        }
+      } else if (formattedPlanName && sellingPlanId) {
+        priceSpan.innerHTML = `${formattedPrice}${formattedPlanName}`;
+      } else {
+        priceSpan.textContent = formattedPrice;
+      }
+
+      // Update Sezzle payments
+      const paymentPlanElement = variantSection.querySelector(
+        '.product-page__payment-plan'
+      );
+      if (paymentPlanElement) {
+        const dividedPrice = Math.round(pricingData.price / 4);
+        const formattedDividedPrice = formatMoney(dividedPrice);
+        paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
+      }
+    }
+
+    // Initialize or re-initialize the widget
+    function initSubifyWidget() {
+      if (!window.subifySdk) return;
+
+      const selectedVariantInput =
+        document.querySelector('input[name="id"]:checked') ||
+        document.querySelector('input[name="id"]');
+      const variantId = selectedVariantInput
+        ? parseInt(selectedVariantInput.value)
+        : null;
+
+      if (!variantId) return;
+
+      try {
+        window.subifySdk
+          .renderWidget(
+            JSON.parse(
+              document.getElementById('ProductJson-product-template')
+                ?.textContent || '{}'
+            ),
+            {
+              renderPosition: {
+                wrapper: '#subify-widget-wrapper',
+                position: 'APPEND',
+              },
+              sellingPlanInput: {
+                wrapper: 'form.product-page__checkout-form',
+                id: 'selling-plan-input',
+              },
+              useCardApi: true,
+            }
+          )
+          .then(() => {
+            isWidgetInitialized = true;
+            console.log('Subify widget initialized successfully');
+
+            // Setup cart integration
+            setupCartIntegration();
+          })
+          .catch((error) => {
+            console.error('Error initializing Subify widget:', error);
+          });
+      } catch (error) {
+        console.error('Error during Subify initialization:', error);
+      }
+    }
+
+    // Set up event listeners for selling plan changes
+    function setupCartIntegration() {
+      window.addEventListener('subify:sellingPlanChange', function (event) {
+        const { selectedSellingPlan } = event.detail;
+        console.log('Subify selling plan changed to:', selectedSellingPlan);
+
+        const selectedVariantInput =
+          document.querySelector('input[name="id"]:checked') ||
+          document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput
+          ? selectedVariantInput.value
+          : null;
+
+        const buttonTextElement = document.getElementById(
+          `add-to-cart-text-${variantId}`
+        );
+
+        if (buttonTextElement) {
+          if (selectedSellingPlan && selectedSellingPlan.id) {
+            buttonTextElement.textContent = 'Subscribe';
+          } else {
+            buttonTextElement.textContent = 'Add to Bag';
+          }
+        }
+
+        let formattedPlanName = '';
+
+        const sellingPlanId =
+          selectedSellingPlan && selectedSellingPlan.id
+            ? selectedSellingPlan.id
+            : selectedSellingPlan;
+        updateButtonPrice(sellingPlanId, formattedPlanName);
+
+        // Update payment plan visibility
+        const paymentPlans = document.querySelectorAll(
+          '.product-page__payment-plan'
+        );
+        const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+        paymentPlans.forEach((plan) => {
+          plan.style.display = isSubscription ? 'none' : 'block';
+        });
+      });
+    }
+
+    // Update the variant in the widget
+    function updateSubifyVariant() {
+      if (!window.subifySdk || !isWidgetInitialized) return;
+
+      const selectedVariantInput =
+        document.querySelector('input[name="id"]:checked') ||
+        document.querySelector('input[name="id"]');
+      const variantId = selectedVariantInput
+        ? parseInt(selectedVariantInput.value)
+        : null;
+
+      if (variantId && typeof window.subifySdk.changeVariant === 'function') {
+        window.subifySdk.changeVariant(
+          JSON.parse(
+            document.getElementById('ProductJson-product-template')
+              ?.textContent || '{}'
+          ).id,
+          variantId
+        );
+        console.log('Subify variant updated to:', variantId);
+      }
+    }
+
+    // Initialize when SDK is loaded
+    if (window.subifySdk) {
+      initSubifyWidget();
+    } else {
+      window.addEventListener('subify:sdkLoaded', initSubifyWidget);
+    }
+
+    // Add change listeners to variant selectors
+    document.querySelectorAll('input[name="id"]').forEach((input) => {
+      input.addEventListener('change', function () {
+        updateSubifyVariant();
+
+        const sellingPlanInput = document.querySelector(
+          'input[name="selling_plan"]'
+        );
+        if (sellingPlanInput && sellingPlanInput.value) {
+          updateButtonPrice(sellingPlanInput.value);
+        } else {
+          updateButtonPrice(null);
+        }
+      });
+    });
+  } catch (error) {
+    console.error('Error in Subify initialization:', error);
+  }
+}
 
 export default Products;
