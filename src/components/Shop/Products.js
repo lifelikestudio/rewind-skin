@@ -124,26 +124,27 @@ function normalizeOption(option) {
     .replace(/^-+|-+$/g, ''); // Trim leading and trailing dashes
 }
 
-// Create a persistent loader at the top of your file
-let activeLoadingState = null;
+// Add this flag at the top of your file
+let initialLoadComplete = false;
 
+// Update the addLoadingState function
 function addLoadingState() {
-  // Remove any existing loading handlers
-  if (activeLoadingState) {
-    clearTimeout(activeLoadingState.timeout);
+  // Only show loading state on first load
+  if (initialLoadComplete) {
+    return;
   }
 
   const sliderElement = document.getElementById('keen-slider');
   if (!sliderElement) return;
 
-  // First, remove any existing loading overlays to avoid stacking
+  // Remove any existing loading overlays (just in case)
   const existingOverlays = document.querySelectorAll('.product-image-loading');
   existingOverlays.forEach((overlay) => overlay.remove());
 
   // Set position relative on parent if not already
   sliderElement.parentNode.style.position = 'relative';
 
-  // Create a new loading overlay
+  // Create the loading overlay
   const loadingOverlay = document.createElement('div');
   loadingOverlay.className = 'product-image-loading';
 
@@ -160,56 +161,55 @@ function addLoadingState() {
 
   sliderElement.parentNode.insertBefore(loadingOverlay, sliderElement);
 
-  // Hide and completely remove loading when images are loaded
+  // Hide loading when images are loaded
   const hideLoading = () => {
+    initialLoadComplete = true; // Mark initial load as complete
     const loadingEl = document.querySelector('.product-image-loading');
     if (loadingEl) {
       loadingEl.classList.add('fade-out');
-      setTimeout(() => loadingEl.remove(), 500); // Important: Actually remove it
+      setTimeout(() => loadingEl.remove(), 500);
     }
   };
 
-  // Create a new handler that we can reference later
-  activeLoadingState = {
-    timeout: setTimeout(() => {
-      // Check images after a delay
-      const images = sliderElement.querySelectorAll('img');
-      let imagesLoaded = 0;
-      const totalImages = images.length;
+  // Track image loading
+  setTimeout(() => {
+    const images = sliderElement.querySelectorAll('img');
+    const totalImages = images.length;
 
-      if (totalImages === 0) {
-        hideLoading();
-        return;
+    if (totalImages === 0) {
+      hideLoading();
+      return;
+    }
+
+    let imagesLoaded = 0;
+
+    images.forEach((img) => {
+      if (img.complete) {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) hideLoading();
+      } else {
+        img.addEventListener(
+          'load',
+          () => {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) hideLoading();
+          },
+          { once: true }
+        );
+        img.addEventListener(
+          'error',
+          () => {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) hideLoading();
+          },
+          { once: true }
+        );
       }
+    });
 
-      images.forEach((img) => {
-        if (img.complete) {
-          imagesLoaded++;
-          if (imagesLoaded === totalImages) hideLoading();
-        } else {
-          img.addEventListener(
-            'load',
-            () => {
-              imagesLoaded++;
-              if (imagesLoaded === totalImages) hideLoading();
-            },
-            { once: true }
-          );
-          img.addEventListener(
-            'error',
-            () => {
-              imagesLoaded++;
-              if (imagesLoaded === totalImages) hideLoading();
-            },
-            { once: true }
-          );
-        }
-      });
-
-      // Fallback - hide loading after a reasonable time
-      setTimeout(hideLoading, 5000);
-    }, 100),
-  };
+    // Fallback - hide loading after a reasonable time
+    setTimeout(hideLoading, 5000);
+  }, 100);
 }
 
 function navigation(slider) {
