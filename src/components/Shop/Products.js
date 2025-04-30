@@ -2,7 +2,14 @@ import 'keen-slider/keen-slider.min.css';
 import KeenSlider from 'keen-slider';
 
 // Feature flag to control Subify implementation
-const USE_JS_IMPLEMENTATION = false; // Set to false initially to keep using the template version
+const USE_JS_IMPLEMENTATION = false; // Keeping template implementation as default for safety
+
+// Safety: List of product handles to test the JS implementation on (empty array = all products)
+// Add specific product handles to limit testing, e.g. ['test-product', 'another-product']
+const TEST_PRODUCT_HANDLES = [];
+
+// Safety: Fallback to template implementation in case of errors
+let FALLBACK_TO_TEMPLATE = false;
 
 let url = window.location.href;
 let variantIdUrl = null;
@@ -232,6 +239,14 @@ let slider = null; // Holds the current slider instance
 const setupSubifyListeners = () => {
   console.log('[DEBUG] Subify listeners setup from Products.js');
 
+  // If we've previously fallen back due to errors, skip JS implementation
+  if (FALLBACK_TO_TEMPLATE) {
+    console.log(
+      '[DEBUG] Previously encountered errors, using template implementation'
+    );
+    return;
+  }
+
   // Skip if using the template implementation
   if (!USE_JS_IMPLEMENTATION) {
     console.log(
@@ -240,48 +255,86 @@ const setupSubifyListeners = () => {
     return;
   }
 
-  // Listen for Subify SDK loaded event
-  window.addEventListener('subify:sdkLoaded', function () {
-    console.log(
-      '[DEBUG] Subify SDK loaded event caught in setupSubifyListeners'
-    );
+  // Only process specific test products if we've defined any
+  if (TEST_PRODUCT_HANDLES.length > 0) {
+    const productPath = window.location.pathname;
+    const productHandle = productPath.split('/').pop();
 
-    // Once SDK is loaded, we can check for the initial selling plan state
-    const sellingPlanInput = document.querySelector(
-      'input[name="selling_plan"]'
-    );
-    const isSubscription = sellingPlanInput && sellingPlanInput.value;
+    if (!TEST_PRODUCT_HANDLES.includes(productHandle)) {
+      return;
+    }
+  }
 
-    // Toggle payment plan display
-    togglePaymentPlan(isSubscription);
+  try {
+    // Listen for Subify SDK loaded event
+    window.addEventListener('subify:sdkLoaded', function () {
+      console.log(
+        '[DEBUG] Subify SDK loaded event caught in setupSubifyListeners'
+      );
 
-    // The main initialization happens in initializeSubscriptionFeatures
-  });
+      // Once SDK is loaded, we can check for the initial selling plan state
+      const sellingPlanInput = document.querySelector(
+        'input[name="selling_plan"]'
+      );
+      const isSubscription = sellingPlanInput && sellingPlanInput.value;
 
-  // Listen for Subify selling plan change event - this is the official way to detect changes
-  window.addEventListener('subify:sellingPlanChange', function (event) {
-    console.log(
-      '[DEBUG] Subify selling plan change event caught in setupSubifyListeners'
-    );
+      // Toggle payment plan display
+      togglePaymentPlan(isSubscription);
 
-    const { selectedSellingPlan } = event.detail;
-    const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+      // The main initialization happens in initializeSubscriptionFeatures
+    });
 
-    // Toggle payment plan display
-    togglePaymentPlan(isSubscription);
-  });
+    // Listen for Subify selling plan change event - this is the official way to detect changes
+    window.addEventListener('subify:sellingPlanChange', function (event) {
+      console.log(
+        '[DEBUG] Subify selling plan change event caught in setupSubifyListeners'
+      );
+
+      const { selectedSellingPlan } = event.detail;
+      const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+
+      // Toggle payment plan display
+      togglePaymentPlan(isSubscription);
+    });
+  } catch (error) {
+    console.error('[DEBUG] Error in setupSubifyListeners:', error);
+    // Safety: If we encounter any errors, fall back to the template implementation
+    FALLBACK_TO_TEMPLATE = true;
+  }
 };
 
 // Handle subscription functionality
 const initializeSubscriptionFeatures = () => {
   console.log('[DEBUG] initializeSubscriptionFeatures called');
 
-  // Skip if using the template implementation
+  // If we've previously fallen back due to errors, skip JS implementation
+  if (FALLBACK_TO_TEMPLATE) {
+    console.log(
+      '[DEBUG] Previously encountered errors, using template implementation'
+    );
+    return;
+  }
+
+  // Skip if using the template implementation (feature flag)
   if (!USE_JS_IMPLEMENTATION) {
     console.log(
       '[DEBUG] Using template implementation for Subify, skipping JS implementation'
     );
     return;
+  }
+
+  // Only process specific test products if we've defined any
+  if (TEST_PRODUCT_HANDLES.length > 0) {
+    const productPath = window.location.pathname;
+    const productHandle = productPath.split('/').pop();
+
+    if (!TEST_PRODUCT_HANDLES.includes(productHandle)) {
+      console.log(
+        '[DEBUG] Product not in test set, using template implementation'
+      );
+      return;
+    }
+    console.log('[DEBUG] Product in test set, using JS implementation');
   }
 
   try {
@@ -297,8 +350,14 @@ const initializeSubscriptionFeatures = () => {
     }
 
     // Step 2: Get the selling plan data from the pre-rendered JSON
-    const sellingPlanData = JSON.parse(sellingPlanDataElement.textContent);
-    console.log('[DEBUG] Parsed selling plan data:', sellingPlanData);
+    try {
+      var sellingPlanData = JSON.parse(sellingPlanDataElement.textContent);
+      console.log('[DEBUG] Parsed selling plan data:', sellingPlanData);
+    } catch (parseError) {
+      console.error('[DEBUG] Failed to parse selling plan data:', parseError);
+      FALLBACK_TO_TEMPLATE = true;
+      return;
+    }
 
     // Initialize tracking variable
     let isWidgetInitialized = false;
@@ -544,25 +603,32 @@ const initializeSubscriptionFeatures = () => {
     function initSubifyWidget() {
       console.log('[DEBUG] Initializing Subify widget');
 
-      if (!window.subifySdk) {
-        console.log('[DEBUG] Subify SDK not found');
-        return;
-      }
-
-      const selectedVariantInput =
-        document.querySelector('input[name="id"]:checked') ||
-        document.querySelector('input[name="id"]');
-      const variantId = selectedVariantInput
-        ? parseInt(selectedVariantInput.value)
-        : null;
-
-      if (!variantId) {
-        console.log('[DEBUG] No variant selected for Subify widget');
-        return;
-      }
-
       try {
+        if (!window.subifySdk) {
+          console.log('[DEBUG] Subify SDK not found');
+          return;
+        }
+
+        const selectedVariantInput =
+          document.querySelector('input[name="id"]:checked') ||
+          document.querySelector('input[name="id"]');
+        const variantId = selectedVariantInput
+          ? parseInt(selectedVariantInput.value)
+          : null;
+
+        if (!variantId) {
+          console.log('[DEBUG] No variant selected for Subify widget');
+          return;
+        }
+
         console.log('[DEBUG] Attempting to render Subify widget');
+
+        // Safety: Set timeout to abort if render takes too long
+        const renderTimeout = setTimeout(() => {
+          console.error('[DEBUG] Subify widget render timed out');
+          FALLBACK_TO_TEMPLATE = true;
+        }, 5000); // 5 second timeout
+
         window.subifySdk
           .renderWidget(sellingPlanData.product, {
             renderPosition: {
@@ -576,15 +642,19 @@ const initializeSubscriptionFeatures = () => {
             useCardApi: true,
           })
           .then(() => {
+            clearTimeout(renderTimeout);
             console.log('[DEBUG] Subify widget initialized successfully');
             isWidgetInitialized = true;
             setupSubifyCartIntegration();
           })
           .catch((error) => {
+            clearTimeout(renderTimeout);
             console.error('[DEBUG] Error initializing Subify widget:', error);
+            FALLBACK_TO_TEMPLATE = true;
           });
       } catch (error) {
         console.error('[DEBUG] Error during Subify initialization:', error);
+        FALLBACK_TO_TEMPLATE = true;
       }
     }
 
@@ -661,7 +731,7 @@ const initializeSubscriptionFeatures = () => {
             : selectedSellingPlan;
         updateButtonPrice(sellingPlanId, formattedPlanName);
 
-        // Toggle payment plan display
+        // Toggle payment plan display - ensure Sezzle is hidden for subscriptions
         const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
         togglePaymentPlan(isSubscription);
       });
@@ -711,6 +781,8 @@ const initializeSubscriptionFeatures = () => {
     });
   } catch (error) {
     console.error('[DEBUG] Error in subscription initialization:', error);
+    // Safety: If we encounter any errors, fall back to the template implementation
+    FALLBACK_TO_TEMPLATE = true;
   }
 };
 
