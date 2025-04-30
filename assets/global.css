@@ -11110,22 +11110,23 @@ a.order__info--pill {
 
 /* Blob loader animation */
 .loader {
-  height: 32px; /* Adjusted for 16px dots */
-  aspect-ratio: 2;
-  border: 6px solid transparent;
-  box-sizing: border-box;
-  background: radial-gradient(farthest-side, #000 98%, #0000) left/16px 16px,
-    radial-gradient(farthest-side, #000 98%, #0000) left/16px 16px,
-    radial-gradient(farthest-side, #000 98%, #0000) center/16px 16px,
-    radial-gradient(farthest-side, #000 98%, #0000) right/16px 16px, transparent;
-  background-repeat: no-repeat;
-  filter: blur(1px) contrast(10); /* Much less blur */
-  animation: l14 1s infinite;
+  height: 4px;
+  width: 130px;
+  --c: no-repeat linear-gradient(#000 0 0);
+  background: var(--c), var(--c), rgba(0, 0, 0, 0.15);
+  background-size: 60% 100%;
+  animation: l16 3s infinite;
 }
 
-@keyframes l14 {
+@keyframes l16 {
+  0% {
+    background-position: -150% 0, -150% 0;
+  }
+  66% {
+    background-position: 250% 0, -150% 0;
+  }
   100% {
-    background-position: right, left, center, right;
+    background-position: 250% 0, 250% 0;
   }
 }
 
