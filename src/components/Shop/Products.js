@@ -32,7 +32,7 @@ if (match) {
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
 async function showVariantImages(variantId) {
-  // Only show loading on initial page load
+  // Add loading state when starting to load images
   addLoadingState();
 
   if (!variantId) {
@@ -74,8 +74,6 @@ async function showVariantImages(variantId) {
 
     sliderElement.innerHTML = ''; // Clear previous slides
     let isFirstImage = true; // Flag to track the first image
-
-    // Create and append all slides
     productData.media.forEach((mediaItem) => {
       if (
         mediaItem.src.includes('product-page') &&
@@ -89,35 +87,19 @@ async function showVariantImages(variantId) {
         const slide = document.createElement('div');
         slide.className =
           'keen-slider__slide product-page__product-img-container';
-        // Start with opacity 0 (hiding the slide)
-        slide.style.display = 'block';
+        slide.style.display = 'block'; // Always show the slide as this function is called for the active variant
 
         const img = document.createElement('img');
         img.src = mediaItem.src;
         img.alt = mediaItem.alt || 'product image';
         img.width = 893;
-        img.loading = isFirstImage ? 'eager' : 'lazy';
+        img.loading = isFirstImage ? 'eager' : 'lazy'; // Set loading attribute based on whether it's the first image
         img.className = 'product-page__product-img';
-
-        // Add load event to trigger fade-in
-        img.onload = function () {
-          // Add 'loaded' class to parent slide after a small delay
-          setTimeout(() => {
-            slide.classList.add('loaded');
-          }, 50); // Small delay for smoother transition
-        };
-
-        // If image is already loaded (from cache), add the loaded class
-        if (img.complete) {
-          setTimeout(() => {
-            slide.classList.add('loaded');
-          }, 50);
-        }
 
         slide.appendChild(img);
         sliderElement.appendChild(slide);
 
-        isFirstImage = false;
+        isFirstImage = false; // Set to false after the first image
       }
     });
 
