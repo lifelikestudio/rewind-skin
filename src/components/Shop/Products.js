@@ -31,89 +31,167 @@ if (match) {
 
 const variantRadios = document.querySelectorAll('input[type=radio][name=id]');
 
-// Create a persistent loader at the top of your file
-let activeLoadingState = null;
+async function showVariantImages(variantId) {
+  // Add loading state when starting to load images
+  addLoadingState();
+
+  if (!variantId) {
+    console.error('Variant ID is missing.');
+    return;
+  }
+
+  const productHandle = window.location.pathname.split('/').pop();
+  if (!productHandle) {
+    console.error('Product handle is missing.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/products/${productHandle}.js`);
+    const productData = await response.json();
+
+    if (!productData || !productData.variants || !productData.media) {
+      console.error('Product data is not available or media array is missing.');
+      return;
+    }
+
+    const variant = productData.variants.find(
+      (v) => v.id.toString() === variantId
+    );
+    if (!variant) {
+      console.error('Selected variant not found.');
+      return;
+    }
+
+    // Create an array of normalized option values
+    const normalizedOptions = variant.options.map(normalizeOption);
+
+    const sliderElement = document.getElementById('keen-slider');
+    if (!sliderElement) {
+      console.error('Slider element not found.');
+      return;
+    }
+
+    sliderElement.innerHTML = ''; // Clear previous slides
+    let isFirstImage = true; // Flag to track the first image
+    productData.media.forEach((mediaItem) => {
+      if (
+        mediaItem.src.includes('product-page') &&
+        normalizedOptions.every((option) => {
+          // Split the filename by underscores and check for an exact match
+          return mediaItem.src
+            .split('_')
+            .some((part) => normalizeOption(part) === option);
+        })
+      ) {
+        const slide = document.createElement('div');
+        slide.className =
+          'keen-slider__slide product-page__product-img-container';
+        slide.style.display = 'block'; // Always show the slide as this function is called for the active variant
+
+        const img = document.createElement('img');
+        img.src = mediaItem.src;
+        img.alt = mediaItem.alt || 'product image';
+        img.width = 893;
+        img.loading = isFirstImage ? 'eager' : 'lazy'; // Set loading attribute based on whether it's the first image
+        img.className = 'product-page__product-img';
+
+        slide.appendChild(img);
+        sliderElement.appendChild(slide);
+
+        isFirstImage = false; // Set to false after the first image
+      }
+    });
+
+    // Reinitialize the slider after updating slides
+    initializeSlider();
+  } catch (error) {
+    console.error('Error fetching product data:', error);
+  }
+}
+
+function normalizeOption(option) {
+  // If the option starts with a dollar sign, remove it
+  if (option.startsWith('$')) {
+    option = option.slice(1);
+  }
+
+  return option
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9]+/gi, '-') // Replace all non-alphanumeric characters (including spaces) with a single dash
+    .toLowerCase() // Convert to lower case
+    .replace(/^-+|-+$/g, ''); // Trim leading and trailing dashes
+}
 
 function addLoadingState() {
-  // Remove any existing loading handlers
-  if (activeLoadingState) {
-    clearTimeout(activeLoadingState.timeout);
-  }
+  // First, remove any existing loading overlays
+  const existingOverlays = document.querySelectorAll('.product-image-loading');
+  existingOverlays.forEach((overlay) => overlay.remove());
 
   const sliderElement = document.getElementById('keen-slider');
   if (!sliderElement) return;
 
-  // Get or create the loading overlay
-  let loadingOverlay = document.querySelector('.product-image-loading');
-  if (!loadingOverlay) {
-    loadingOverlay = document.createElement('div');
-    loadingOverlay.className = 'product-image-loading';
+  // Set position relative on parent if not already
+  sliderElement.parentNode.style.position = 'relative';
 
-    // Create the loader element
-    const loader = document.createElement('div');
-    loader.className = 'loader';
-    loadingOverlay.appendChild(loader);
+  // Add loading overlay with custom loader
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'product-image-loading';
 
-    // Add accessibility text
-    const srText = document.createElement('span');
-    srText.className = 'sr-only';
-    srText.textContent = 'Loading product images...';
-    loadingOverlay.appendChild(srText);
+  // Create the blob loader element
+  const loader = document.createElement('div');
+  loader.className = 'loader';
+  loadingOverlay.appendChild(loader);
 
-    sliderElement.parentNode.insertBefore(loadingOverlay, sliderElement);
-  } else {
-    // Show existing overlay by removing fade-out class and resetting opacity
-    loadingOverlay.classList.remove('fade-out');
-    loadingOverlay.style.opacity = '';
-  }
+  // Add a visually hidden loading text for accessibility
+  const srText = document.createElement('span');
+  srText.className = 'sr-only';
+  srText.textContent = 'Loading product images...';
+  loadingOverlay.appendChild(srText);
 
-  // Track image loading with a new handler
+  sliderElement.parentNode.insertBefore(loadingOverlay, sliderElement);
+
+  // Hide loading when images are loaded
   const hideLoading = () => {
-    loadingOverlay.classList.add('fade-out');
-    // Don't remove it, just hide it
+    const loadingEl = document.querySelector('.product-image-loading');
+    if (loadingEl) {
+      loadingEl.classList.add('fade-out');
+      setTimeout(() => loadingEl.remove(), 500);
+    }
   };
 
-  // Create a new handler that we can reference later
-  activeLoadingState = {
-    timeout: setTimeout(() => {
-      // Check images after a delay
-      const images = sliderElement.querySelectorAll('img');
-      let imagesLoaded = 0;
-      const totalImages = images.length;
+  // Track image loading
+  setTimeout(() => {
+    const images = sliderElement.querySelectorAll('img');
+    const totalImages = images.length;
 
-      if (totalImages === 0) {
-        hideLoading();
-        return;
-      }
+    if (totalImages === 0) {
+      hideLoading();
+      return;
+    }
 
-      images.forEach((img) => {
-        if (img.complete) {
+    let imagesLoaded = 0;
+
+    images.forEach((img) => {
+      if (img.complete) {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) hideLoading();
+      } else {
+        img.addEventListener('load', () => {
           imagesLoaded++;
           if (imagesLoaded === totalImages) hideLoading();
-        } else {
-          img.addEventListener(
-            'load',
-            () => {
-              imagesLoaded++;
-              if (imagesLoaded === totalImages) hideLoading();
-            },
-            { once: true }
-          );
-          img.addEventListener(
-            'error',
-            () => {
-              imagesLoaded++;
-              if (imagesLoaded === totalImages) hideLoading();
-            },
-            { once: true }
-          );
-        }
-      });
+        });
+        img.addEventListener('error', () => {
+          imagesLoaded++;
+          if (imagesLoaded === totalImages) hideLoading();
+        });
+      }
+    });
+  }, 100);
 
-      // Fallback
-      setTimeout(hideLoading, 5000);
-    }, 100),
-  };
+  // Fallback - hide loading after a reasonable time
+  setTimeout(hideLoading, 5000);
 }
 
 function navigation(slider) {
@@ -800,103 +878,6 @@ function initializeSubify() {
 
   // At the end of the initialization
   // console.log('✅ Subify integration setup complete');
-}
-
-async function showVariantImages(variantId) {
-  // Add loading state when starting to load images
-  addLoadingState();
-
-  if (!variantId) {
-    console.error('Variant ID is missing.');
-    return;
-  }
-
-  const productHandle = window.location.pathname.split('/').pop();
-  if (!productHandle) {
-    console.error('Product handle is missing.');
-    return;
-  }
-
-  try {
-    const response = await fetch(`/products/${productHandle}.js`);
-    const productData = await response.json();
-
-    if (!productData || !productData.variants || !productData.media) {
-      console.error('Product data is not available or media array is missing.');
-      return;
-    }
-
-    const variant = productData.variants.find(
-      (v) => v.id.toString() === variantId
-    );
-    if (!variant) {
-      console.error('Selected variant not found.');
-      return;
-    }
-
-    // Create an array of normalized option values
-    const normalizedOptions = variant.options.map(normalizeOption);
-
-    const sliderElement = document.getElementById('keen-slider');
-    if (!sliderElement) {
-      console.error('Slider element not found.');
-      return;
-    }
-
-    // Use setTimeout to create a small visual delay
-    setTimeout(() => {
-      sliderElement.innerHTML = ''; // Clear previous slides
-
-      let isFirstImage = true; // Flag to track the first image
-      productData.media.forEach((mediaItem) => {
-        if (
-          mediaItem.src.includes('product-page') &&
-          normalizedOptions.every((option) => {
-            // Split the filename by underscores and check for an exact match
-            return mediaItem.src
-              .split('_')
-              .some((part) => normalizeOption(part) === option);
-          })
-        ) {
-          const slide = document.createElement('div');
-          slide.className =
-            'keen-slider__slide product-page__product-img-container';
-          slide.style.display = 'block'; // Always show the slide as this function is called for the active variant
-
-          const img = document.createElement('img');
-          img.src = mediaItem.src;
-          img.alt = mediaItem.alt || 'product image';
-          img.width = 893;
-          img.loading = isFirstImage ? 'eager' : 'lazy'; // Set loading attribute based on whether it's the first image
-          img.className = 'product-page__product-img';
-
-          slide.appendChild(img);
-          sliderElement.appendChild(slide);
-
-          isFirstImage = false; // Set to false after the first image
-        }
-      });
-
-      // Reinitialize the slider after updating slides
-      initializeSlider();
-    }, 100); // Small delay before clearing
-  } catch (error) {
-    console.error('Error fetching product data:', error);
-  }
-}
-
-function normalizeOption(option) {
-  // If the option starts with a dollar sign, remove it
-  if (option.startsWith('$')) {
-    option = option.slice(1);
-  }
-
-  return option
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9]+/gi, '-') // Replace all non-alphanumeric characters (including spaces) with a single dash
-    .toLowerCase() // Convert to lower case
-    .replace(/^-+|-+$/g, ''); // Trim leading and trailing dashes
 }
 
 export default Products;
