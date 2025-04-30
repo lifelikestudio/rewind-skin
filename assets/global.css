@@ -11112,12 +11112,14 @@ a.order__info--pill {
 .loader {
   height: 50px;
   aspect-ratio: 2;
-  border: 10px solid #000;
+  border: 10px solid transparent; /* Changed from black to transparent */
   box-sizing: border-box;
-  background: radial-gradient(farthest-side, #fff 98%, #0000) left/20px 20px,
-    radial-gradient(farthest-side, #fff 98%, #0000) left/20px 20px,
-    radial-gradient(farthest-side, #fff 98%, #0000) center/20px 20px,
-    radial-gradient(farthest-side, #fff 98%, #0000) right/20px 20px, #000;
+  background: 
+    radial-gradient(farthest-side,#000 98%,#0000) left/20px 20px, /* Changed from #fff to #000 */
+    radial-gradient(farthest-side,#000 98%,#0000) left/20px 20px, /* Changed from #fff to #000 */
+    radial-gradient(farthest-side,#000 98%,#0000) center/20px 20px, /* Changed from #fff to #000 */
+    radial-gradient(farthest-side,#000 98%,#0000) right/20px 20px, /* Changed from #fff to #000 */
+    transparent; /* Changed from #000 to transparent */
   background-repeat: no-repeat;
   filter: blur(4px) contrast(10);
   animation: l14 1s infinite;
@@ -11125,7 +11127,7 @@ a.order__info--pill {
 
 @keyframes l14 {
   100% {
-    background-position: right, left, center, right;
+    background-position: right,left,center,right;
   }
 }
 
