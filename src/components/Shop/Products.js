@@ -1,16 +1,6 @@
 import 'keen-slider/keen-slider.min.css';
 import KeenSlider from 'keen-slider';
 
-// Feature flag to control Subify implementation
-const USE_JS_IMPLEMENTATION = false; // Keeping template implementation as default for safety
-
-// Safety: List of product handles to test the JS implementation on (empty array = all products)
-// Add specific product handles to limit testing, e.g. ['test-product', 'another-product']
-const TEST_PRODUCT_HANDLES = [];
-
-// Safety: Fallback to template implementation in case of errors
-let FALLBACK_TO_TEMPLATE = false;
-
 let url = window.location.href;
 let variantIdUrl = null;
 let match = url.match(/variant=([^&]*)/);
@@ -235,588 +225,7 @@ const initializeSlider = () => {
 
 let slider = null; // Holds the current slider instance
 
-// Function to handle Subify integration
-const setupSubifyListeners = () => {
-  console.log('[DEBUG] Subify listeners setup from Products.js');
-
-  // If we've previously fallen back due to errors, skip JS implementation
-  if (FALLBACK_TO_TEMPLATE) {
-    console.log(
-      '[DEBUG] Previously encountered errors, using template implementation'
-    );
-    return;
-  }
-
-  // Skip if using the template implementation
-  if (!USE_JS_IMPLEMENTATION) {
-    console.log(
-      '[DEBUG] Using template implementation for Subify, skipping JS setup'
-    );
-    return;
-  }
-
-  // Only process specific test products if we've defined any
-  if (TEST_PRODUCT_HANDLES.length > 0) {
-    const productPath = window.location.pathname;
-    const productHandle = productPath.split('/').pop();
-
-    if (!TEST_PRODUCT_HANDLES.includes(productHandle)) {
-      return;
-    }
-  }
-
-  try {
-    // Listen for Subify SDK loaded event
-    window.addEventListener('subify:sdkLoaded', function () {
-      console.log(
-        '[DEBUG] Subify SDK loaded event caught in setupSubifyListeners'
-      );
-
-      // Once SDK is loaded, we can check for the initial selling plan state
-      const sellingPlanInput = document.querySelector(
-        'input[name="selling_plan"]'
-      );
-      const isSubscription = sellingPlanInput && sellingPlanInput.value;
-
-      // Toggle payment plan display
-      togglePaymentPlan(isSubscription);
-
-      // The main initialization happens in initializeSubscriptionFeatures
-    });
-
-    // Listen for Subify selling plan change event - this is the official way to detect changes
-    window.addEventListener('subify:sellingPlanChange', function (event) {
-      console.log(
-        '[DEBUG] Subify selling plan change event caught in setupSubifyListeners'
-      );
-
-      const { selectedSellingPlan } = event.detail;
-      const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
-
-      // Toggle payment plan display
-      togglePaymentPlan(isSubscription);
-    });
-  } catch (error) {
-    console.error('[DEBUG] Error in setupSubifyListeners:', error);
-    // Safety: If we encounter any errors, fall back to the template implementation
-    FALLBACK_TO_TEMPLATE = true;
-  }
-};
-
-// Handle subscription functionality
-const initializeSubscriptionFeatures = () => {
-  console.log('[DEBUG] initializeSubscriptionFeatures called');
-
-  // If we've previously fallen back due to errors, skip JS implementation
-  if (FALLBACK_TO_TEMPLATE) {
-    console.log(
-      '[DEBUG] Previously encountered errors, using template implementation'
-    );
-    return;
-  }
-
-  // Skip if using the template implementation (feature flag)
-  if (!USE_JS_IMPLEMENTATION) {
-    console.log(
-      '[DEBUG] Using template implementation for Subify, skipping JS implementation'
-    );
-    return;
-  }
-
-  // Only process specific test products if we've defined any
-  if (TEST_PRODUCT_HANDLES.length > 0) {
-    const productPath = window.location.pathname;
-    const productHandle = productPath.split('/').pop();
-
-    if (!TEST_PRODUCT_HANDLES.includes(productHandle)) {
-      console.log(
-        '[DEBUG] Product not in test set, using template implementation'
-      );
-      return;
-    }
-    console.log('[DEBUG] Product in test set, using JS implementation');
-  }
-
-  try {
-    console.log('[DEBUG] Starting JS implementation for Subify');
-
-    // Step 1: Check if we have selling plan data
-    const sellingPlanDataElement = document.getElementById('selling-plan-data');
-    if (!sellingPlanDataElement) {
-      console.log(
-        '[DEBUG] No selling plan data found, exiting Subify initialization'
-      );
-      return;
-    }
-
-    // Step 2: Get the selling plan data from the pre-rendered JSON
-    try {
-      var sellingPlanData = JSON.parse(sellingPlanDataElement.textContent);
-      console.log('[DEBUG] Parsed selling plan data:', sellingPlanData);
-    } catch (parseError) {
-      console.error('[DEBUG] Failed to parse selling plan data:', parseError);
-      FALLBACK_TO_TEMPLATE = true;
-      return;
-    }
-
-    // Initialize tracking variable
-    let isWidgetInitialized = false;
-
-    // Step 3: Format money with currency using Shopify's format
-    function formatMoney(cents) {
-      if (typeof cents == 'string') cents = cents.replace('.', '');
-      cents = parseInt(cents);
-
-      // Use the money format from our pre-rendered data
-      const format = sellingPlanData.money_format;
-
-      function formatWithDelimiters(
-        number,
-        precision = 2,
-        thousands = ',',
-        decimal = '.'
-      ) {
-        if (isNaN(number) || number == null) return '0';
-
-        // Format with full precision first
-        number = (number / 100.0).toFixed(precision);
-
-        // Remove trailing zeros if it's a whole number
-        if (parseFloat(number) === parseInt(number)) {
-          number = parseInt(number);
-        }
-
-        // Format with appropriate delimiters
-        let parts = String(number).split('.');
-        const dollars = parts[0].replace(
-          /(\d)(?=(\d\d\d)+(?!\d))/g,
-          '$1' + thousands
-        );
-        const cents = parts.length > 1 ? decimal + parts[1] : '';
-
-        return dollars + cents;
-      }
-
-      const formatted = formatWithDelimiters(cents);
-      return format.replace(/\{\{\s*amount\s*\}\}/, formatted);
-    }
-
-    // Step 4: Get accurate selling plan price from the pre-rendered data
-    function getSellingPlanPrice(variantId, sellingPlanId) {
-      console.log(
-        '[DEBUG] Getting price for variant:',
-        variantId,
-        'selling plan:',
-        sellingPlanId
-      );
-
-      // Find the variant in our data
-      const variant = sellingPlanData.variants.find(
-        (v) => v.id === parseInt(variantId)
-      );
-      if (!variant) {
-        console.log(
-          '[DEBUG] Variant not found in selling plan data:',
-          variantId
-        );
-        return null;
-      }
-
-      // If no selling plan selected, return regular price
-      if (!sellingPlanId) {
-        console.log(
-          '[DEBUG] No selling plan selected, returning regular price'
-        );
-        return {
-          price: variant.price,
-          compare_at_price: variant.compare_at_price,
-        };
-      }
-
-      // Try different format comparisons to find the allocation
-      const allocation = variant.selling_plan_allocations.find((a) => {
-        return (
-          a.selling_plan_id === sellingPlanId.toString() ||
-          parseInt(a.selling_plan_id) === parseInt(sellingPlanId)
-        );
-      });
-
-      if (!allocation) {
-        console.log(
-          '[DEBUG] Allocation not found, searching in selling plan groups'
-        );
-
-        // Fallback to calculating the price based on selling plan groups
-        const sellingPlanGroups = sellingPlanData.selling_plan_groups || [];
-        let selectedPlan = null;
-
-        // Find the selling plan across all groups
-        for (const group of sellingPlanGroups) {
-          if (!group.selling_plans) continue;
-
-          for (const plan of group.selling_plans) {
-            if (
-              plan.id.toString() === sellingPlanId.toString() ||
-              parseInt(plan.id) === parseInt(sellingPlanId)
-            ) {
-              selectedPlan = plan;
-              break;
-            }
-          }
-          if (selectedPlan) break;
-        }
-
-        if (
-          selectedPlan &&
-          selectedPlan.price_adjustments &&
-          selectedPlan.price_adjustments.length > 0
-        ) {
-          console.log('[DEBUG] Found plan in groups:', selectedPlan.name);
-
-          // Calculate the adjusted price
-          const priceAdjust = selectedPlan.price_adjustments[0];
-          let adjustedPrice;
-
-          if (priceAdjust.value_type === 'percentage') {
-            adjustedPrice = variant.price * (1 - priceAdjust.value / 100);
-          } else if (priceAdjust.value_type === 'fixed_amount') {
-            adjustedPrice = variant.price - priceAdjust.value;
-          } else if (priceAdjust.value_type === 'price') {
-            adjustedPrice = priceAdjust.value;
-          } else {
-            adjustedPrice = variant.price;
-          }
-
-          return {
-            price: Math.round(adjustedPrice),
-            compare_at_price: variant.compare_at_price,
-          };
-        }
-
-        // Last resort: fall back to product's one-time purchase price
-        console.log('[DEBUG] Falling back to regular price');
-        return {
-          price: variant.price,
-          compare_at_price: variant.compare_at_price,
-        };
-      }
-
-      console.log('[DEBUG] Found allocation, price:', allocation.price);
-      return {
-        price: allocation.price,
-        compare_at_price:
-          allocation.compare_at_price || variant.compare_at_price,
-      };
-    }
-
-    // Step 5: Update button price based on selected selling plan
-    function updateButtonPrice(sellingPlanId, formattedPlanName = '') {
-      console.log(
-        '[DEBUG] Updating button price for selling plan:',
-        sellingPlanId
-      );
-
-      const selectedVariantInput =
-        document.querySelector('input[name="id"]:checked') ||
-        document.querySelector('input[name="id"]');
-      if (!selectedVariantInput) {
-        console.log('[DEBUG] No variant selected');
-        return;
-      }
-
-      const variantId = parseInt(selectedVariantInput.value);
-
-      // Get pricing data from our server-rendered JSON
-      const pricingData = getSellingPlanPrice(variantId, sellingPlanId);
-      if (!pricingData) {
-        console.log('[DEBUG] Pricing data not found');
-        return;
-      }
-
-      console.log('[DEBUG] Using pricing data:', pricingData);
-
-      // Find the buttons for this variant
-      const variantSection = document.querySelector(
-        `.variant-section-${variantId}`
-      );
-      if (!variantSection) {
-        console.log('[DEBUG] Variant section not found');
-        return;
-      }
-
-      const checkoutButton = variantSection.querySelector(
-        '.product-page__checkout-btn'
-      );
-      if (!checkoutButton) {
-        console.log('[DEBUG] Checkout button not found');
-        return;
-      }
-
-      const priceSpan = checkoutButton.querySelector('span:last-child');
-      if (!priceSpan) {
-        console.log('[DEBUG] Price span not found');
-        return;
-      }
-
-      // Format the prices with currency
-      const formattedPrice = formatMoney(pricingData.price);
-
-      // Update the price display
-      if (
-        pricingData.compare_at_price &&
-        pricingData.compare_at_price > pricingData.price
-      ) {
-        const formattedComparePrice = formatMoney(pricingData.compare_at_price);
-        if (formattedPlanName && sellingPlanId) {
-          // For sale items with subscription
-          priceSpan.innerHTML = `
-            <del>${formattedComparePrice}</del>
-            <ins>${formattedPrice}${formattedPlanName}</ins>
-          `;
-        } else {
-          // Regular sale items
-          priceSpan.innerHTML = `
-            <del>${formattedComparePrice}</del>
-            <ins>${formattedPrice}</ins>
-          `;
-        }
-      } else if (formattedPlanName && sellingPlanId) {
-        // For regular items with subscription
-        priceSpan.innerHTML = `${formattedPrice}${formattedPlanName}`;
-      } else {
-        // Regular one-time purchase
-        priceSpan.textContent = formattedPrice;
-      }
-
-      // Update Sezzle payments
-      const paymentPlanElement = variantSection.querySelector(
-        '.product-page__payment-plan'
-      );
-      if (paymentPlanElement) {
-        const dividedPrice = Math.round(pricingData.price / 4);
-        const formattedDividedPrice = formatMoney(dividedPrice);
-        paymentPlanElement.innerHTML = `or 4 interest-free payments of ${formattedDividedPrice} with <span class="is--emphasized">Sezzle</span>`;
-      }
-    }
-
-    // Step 6: Initialize or re-initialize the widget
-    function initSubifyWidget() {
-      console.log('[DEBUG] Initializing Subify widget');
-
-      try {
-        if (!window.subifySdk) {
-          console.log('[DEBUG] Subify SDK not found');
-          return;
-        }
-
-        const selectedVariantInput =
-          document.querySelector('input[name="id"]:checked') ||
-          document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput
-          ? parseInt(selectedVariantInput.value)
-          : null;
-
-        if (!variantId) {
-          console.log('[DEBUG] No variant selected for Subify widget');
-          return;
-        }
-
-        console.log('[DEBUG] Attempting to render Subify widget');
-
-        // Safety: Set timeout to abort if render takes too long
-        const renderTimeout = setTimeout(() => {
-          console.error('[DEBUG] Subify widget render timed out');
-          FALLBACK_TO_TEMPLATE = true;
-        }, 5000); // 5 second timeout
-
-        window.subifySdk
-          .renderWidget(sellingPlanData.product, {
-            renderPosition: {
-              wrapper: '#subify-widget-wrapper',
-              position: 'APPEND',
-            },
-            sellingPlanInput: {
-              wrapper: 'form.product-page__checkout-form',
-              id: 'selling-plan-input',
-            },
-            useCardApi: true,
-          })
-          .then(() => {
-            clearTimeout(renderTimeout);
-            console.log('[DEBUG] Subify widget initialized successfully');
-            isWidgetInitialized = true;
-            setupSubifyCartIntegration();
-          })
-          .catch((error) => {
-            clearTimeout(renderTimeout);
-            console.error('[DEBUG] Error initializing Subify widget:', error);
-            FALLBACK_TO_TEMPLATE = true;
-          });
-      } catch (error) {
-        console.error('[DEBUG] Error during Subify initialization:', error);
-        FALLBACK_TO_TEMPLATE = true;
-      }
-    }
-
-    // Step 7: Update the variant in the widget
-    function updateSubifyVariant() {
-      console.log('[DEBUG] Updating Subify variant');
-
-      if (!window.subifySdk || !isWidgetInitialized) {
-        console.log('[DEBUG] Subify SDK not found or widget not initialized');
-        return;
-      }
-
-      const selectedVariantInput =
-        document.querySelector('input[name="id"]:checked') ||
-        document.querySelector('input[name="id"]');
-      const variantId = selectedVariantInput
-        ? parseInt(selectedVariantInput.value)
-        : null;
-
-      if (variantId && typeof window.subifySdk.changeVariant === 'function') {
-        console.log('[DEBUG] Changing Subify variant to:', variantId);
-        window.subifySdk.changeVariant(sellingPlanData.product, variantId);
-      }
-    }
-
-    // Step 8: Setup event listeners for selling plan changes
-    function setupSubifyCartIntegration() {
-      console.log('[DEBUG] Setting up Subify cart integration');
-
-      // Listen for selling plan changes and update button price
-      window.addEventListener('subify:sellingPlanChange', function (event) {
-        console.log(
-          '[DEBUG] Subify selling plan changed event received:',
-          event.detail
-        );
-
-        const { selectedSellingPlan } = event.detail;
-
-        // Get the selected variant ID
-        const selectedVariantInput =
-          document.querySelector('input[name="id"]:checked') ||
-          document.querySelector('input[name="id"]');
-        const variantId = selectedVariantInput
-          ? selectedVariantInput.value
-          : null;
-
-        // Get the text element for the button
-        const buttonTextElement = document.getElementById(
-          `add-to-cart-text-${variantId}`
-        );
-
-        // Update the button text based on whether a selling plan is selected
-        if (buttonTextElement) {
-          if (selectedSellingPlan && selectedSellingPlan.id) {
-            console.log('[DEBUG] Updating button text to Subscribe');
-            buttonTextElement.textContent = 'Subscribe';
-          } else {
-            console.log('[DEBUG] Updating button text to Add to Bag');
-            buttonTextElement.textContent = 'Add to Bag';
-          }
-        }
-
-        // Get the formatted plan name if available
-        let formattedPlanName = '';
-        if (selectedSellingPlan && selectedSellingPlan.name) {
-          // Format the plan name if needed
-          // Example: formattedPlanName = " / " + selectedSellingPlan.name;
-        }
-
-        // Update the button price with the formatted plan name
-        const sellingPlanId =
-          selectedSellingPlan && selectedSellingPlan.id
-            ? selectedSellingPlan.id
-            : selectedSellingPlan;
-        updateButtonPrice(sellingPlanId, formattedPlanName);
-
-        // Toggle payment plan display - ensure Sezzle is hidden for subscriptions
-        const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
-        togglePaymentPlan(isSubscription);
-      });
-    }
-
-    // Step 9: Wire up the implementation - set up listeners for both widget initialization and variant changes
-
-    // Initialize when SDK is loaded
-    if (window.subifySdk) {
-      console.log('[DEBUG] Subify SDK already available, initializing');
-      initSubifyWidget();
-    } else {
-      console.log('[DEBUG] Waiting for Subify SDK to load');
-      window.addEventListener('subify:sdkLoaded', initSubifyWidget);
-
-      // Fallback: check once after a delay
-      setTimeout(function () {
-        if (!isWidgetInitialized && window.subifySdk) {
-          console.log('[DEBUG] Subify SDK found through timeout check');
-          initSubifyWidget();
-        }
-      }, 2000);
-    }
-
-    // Add change listeners to variant selectors
-    document.querySelectorAll('input[name="id"]').forEach((input) => {
-      input.addEventListener('change', function () {
-        console.log('[DEBUG] Variant changed, updating Subify');
-        updateSubifyVariant();
-
-        // Check if a selling plan is selected and update prices
-        const sellingPlanInput = document.querySelector(
-          'input[name="selling_plan"]'
-        );
-        if (sellingPlanInput && sellingPlanInput.value) {
-          console.log(
-            '[DEBUG] Updating price with selling plan:',
-            sellingPlanInput.value
-          );
-          updateButtonPrice(sellingPlanInput.value);
-        } else {
-          // Reset to one-time purchase price
-          console.log('[DEBUG] Resetting to one-time purchase price');
-          updateButtonPrice(null);
-        }
-      });
-    });
-  } catch (error) {
-    console.error('[DEBUG] Error in subscription initialization:', error);
-    // Safety: If we encounter any errors, fall back to the template implementation
-    FALLBACK_TO_TEMPLATE = true;
-  }
-};
-
 const Products = () => {
-  // Robust check for product page
-  const isProductPage = () => {
-    // Check URL path
-    const isProductPath = window.location.pathname.includes('/products/');
-
-    // Check for product-specific elements
-    const hasProductForm = !!document.querySelector('form[action="/cart/add"]');
-    const hasVariantRadios = !!document.querySelectorAll(
-      'input[type=radio][name=id]'
-    ).length;
-    const hasProductImages = !!document.getElementById('keen-slider');
-
-    // Check for product JSON
-    const hasProductJSON = !!document.getElementById(
-      'ProductJson-product-template'
-    );
-
-    // Combine all checks
-    return (
-      isProductPath &&
-      (hasProductForm || hasVariantRadios || hasProductImages || hasProductJSON)
-    );
-  };
-
-  // Exit early if not on a product page
-  if (!isProductPage()) {
-    console.log('Not a product page, exiting Products component.');
-    return;
-  }
-
   // Handle variant selection
   const handleVariantSelection = (variantId) => {
     const url = new URL(window.location.href);
@@ -902,8 +311,55 @@ const Products = () => {
     });
   });
 
-  // Initialize subscription features
-  initializeSubscriptionFeatures();
+  // Robust check for product page
+  const isProductPage = () => {
+    // Check URL path
+    const isProductPath = window.location.pathname.includes('/products/');
+
+    // Check for product-specific elements
+    const hasProductForm = !!document.querySelector('form[action="/cart/add"]');
+    const hasVariantRadios = !!document.querySelectorAll(
+      'input[type=radio][name=id]'
+    ).length;
+    const hasProductImages = !!document.getElementById('keen-slider');
+
+    // Check for product JSON
+    const hasProductJSON = !!document.getElementById(
+      'ProductJson-product-template'
+    );
+
+    // Combine all checks
+    return (
+      isProductPath &&
+      (hasProductForm || hasVariantRadios || hasProductImages || hasProductJSON)
+    );
+  };
+
+  // Exit early if not on a product page
+  if (!isProductPage()) {
+    console.log('Not a product page, exiting Products component.');
+    return;
+  }
+
+  // Set up Subify integration
+  const setupSubifyListeners = () => {
+    // Listen for Subify SDK loaded event
+    window.addEventListener('subify:sdkLoaded', function () {
+      // Once SDK is loaded, we can check for the initial selling plan state
+      const sellingPlanInput = document.querySelector(
+        'input[name="selling_plan"]'
+      );
+      const isSubscription = sellingPlanInput && sellingPlanInput.value;
+      togglePaymentPlan(isSubscription);
+    });
+
+    // Listen for Subify selling plan change event - this is the official way to detect changes
+    window.addEventListener('subify:sellingPlanChange', function (event) {
+      const { selectedSellingPlan } = event.detail;
+      const isSubscription = selectedSellingPlan && selectedSellingPlan.id;
+      togglePaymentPlan(isSubscription);
+    });
+  };
 
   // Set up listeners when DOM is loaded
   document.addEventListener('DOMContentLoaded', setupSubifyListeners);
