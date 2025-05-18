@@ -489,7 +489,8 @@ function displayProducts(selectedConcern) {
         info.append(brand, title);
 
         if (
-          product.vendor.toLowerCase() === 'biologique recherche' &&
+          (product.vendor.toLowerCase() === 'biologique recherche' ||
+            product.vendor.toLowerCase() === 'calecim professional') &&
           countryCode !== 'CA'
         ) {
           const buttonDiv = document.createElement('div');
