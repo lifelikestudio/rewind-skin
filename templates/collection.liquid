@@ -5,7 +5,7 @@
     </div>
     <div class="large-header-section__container">
       {%- if collection.handle != 'all' -%}
-        {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers'
+        {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'subscribe-save'
         -%}
           <p class="all-caps collections__breadcrumbs">
             <a href="/collections/all">Shop</a>
@@ -26,7 +26,7 @@
         <p class="all-caps collections__breadcrumbs">Shop / All</p>
       {%- endif -%}
       <p class="header-description--shop">
-        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating          
+        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating           
         to correcting, we've got you covered.
       </p>
     </div>
@@ -39,6 +39,9 @@
         <h2 class="all-caps collections__filter-group-title">Featured</h2>
         <div class="collections__filter-group-options">
           <ul class="filter-group-options__list">
+            <li class="all-caps filter-group-options__list-item">
+              <a href="/collections/subscribe-save">Subscribe & Save</a>
+            </li>
             <li class="all-caps filter-group-options__list-item">
               <a href="/collections/biologique-recherche">Biologique Recherche</a>
             </li>
@@ -196,6 +199,9 @@
         </div>
         <div class="drawer__container drawer__menu">
           <ul class="drawer__links-list">
+            <li class="all-caps drawer__link">
+              <a href="/collections/subscribe-save">Subscribe & Save</a>
+            </li>
             <li class="all-caps drawer__link">
               <a href="/collections/biologique-recherche">Biologique Recherche</a>
             </li>
