@@ -162,7 +162,7 @@
 
       {% assign downcased_vendor = product.vendor | strip | downcase %}
 
-      {% if (downcased_vendor == 'biologique recherche' or downcased_vendor == 'calecim professional' ) and localization.country.iso_code != 'CA' %}
+      {% if downcased_vendor == 'biologique recherche' and localization.country.iso_code != 'CA' or downcased_vendor == 'calecim professional' and localization.country.iso_code != 'CA' %}
         {% for variant in product.variants %}
           <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
             <p class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out">
