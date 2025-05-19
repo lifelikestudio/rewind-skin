@@ -26,7 +26,7 @@
         <p class="all-caps collections__breadcrumbs">Shop / All</p>
       {%- endif -%}
       <p class="header-description--shop">
-        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating              
+        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating               
         to correcting, we've got you covered.
       </p>
     </div>
@@ -488,7 +488,8 @@
               </div>
 
               {% assign downcased_vendor = product.vendor | strip | downcase %}
-              {% if downcased_vendor == 'biologique recherche' and localization.country.iso_code != 'CA' or downcased_vendor == 'calecim professional' and localization.country.iso_code != 'CA' %}
+              {% assign restricted_vendors = 'biologique recherche,calecim professional' | split: ',' %}
+              {% if restricted_vendors contains downcased_vendor and localization.country.iso_code != 'CA' %}
                 <div class="all-caps btn btn--primary product-card__btn product-card__btn--sold-out" data-url="{{ variant_url }}">
                   Exclusive to Canada
                 </div>
