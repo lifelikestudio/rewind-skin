@@ -28,10 +28,7 @@ module.exports = {
     },
     plugins: [
         new CopyPlugin({
-            patterns: [
-                { from: './src/global.css', to: 'global.css' },
-                { from: './src/v2-1-0.css', to: 'v2-1-0.css' },
-            ],
+            patterns: [{ from: './src/global.css', to: 'global.css' }],
         }),
     ],
 };
