@@ -3,9 +3,12 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     mode: 'development',
-    entry: './src/global.js',
+    entry: {
+        global: './src/global.js',
+        'v2-1-0': './src/v2-1-0.js', // New entry point
+    },
     output: {
-        filename: 'global.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'assets'),
     },
     module: {
@@ -32,7 +35,7 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: 'global.css', // This will output to assets/global.css
+            filename: '[name].css', // This will create global.css and v2-1-0.css
         }),
     ],
 };
