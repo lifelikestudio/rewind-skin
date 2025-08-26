@@ -1,3 +1,5 @@
+import './global.css';
+
 import Drawers from './components/Drawers/Drawers';
 import VideoMask from './components/VideoMask';
 import SkinConcernsSection from './components/SkinConcernsSection';
@@ -19,30 +21,30 @@ import CollectionsRedirect from './components/Utility/Automations/CollectionsRed
 import CopyrightYear from './components/Utility/CopyrightYear';
 
 const GlobalComponents = () => {
-  Drawers();
-  VideoMask();
-  SkinConcernsSection();
-  TreatmentsSection();
-  Shop();
-  TreatmentsPage();
-  Questions();
-  Products();
-  SearchForm();
-  SearchResults();
-  CustomerLogin();
-  Addresses();
-  QuantityField();
-  CartPage();
-  CartDrawer();
-  // Announcements();
-  Forms();
-  CollectionsRedirect();
-  CopyrightYear();
+    Drawers();
+    VideoMask();
+    SkinConcernsSection();
+    TreatmentsSection();
+    Shop();
+    TreatmentsPage();
+    Questions();
+    Products();
+    SearchForm();
+    SearchResults();
+    CustomerLogin();
+    Addresses();
+    QuantityField();
+    CartPage();
+    CartDrawer();
+    // Announcements();
+    Forms();
+    CollectionsRedirect();
+    CopyrightYear();
 };
 const init = () => {
-  GlobalComponents();
+    GlobalComponents();
 };
 
 $(function () {
-  init();
+    init();
 });

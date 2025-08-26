@@ -1,5 +1,5 @@
 const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     mode: 'development',
@@ -22,13 +22,17 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader', 'postcss-loader'],
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'postcss-loader',
+                ],
             },
         ],
     },
     plugins: [
-        new CopyPlugin({
-            patterns: [{ from: './src/global.css', to: 'global.css' }],
+        new MiniCssExtractPlugin({
+            filename: 'global.css', // This will output to assets/global.css
         }),
     ],
 };
