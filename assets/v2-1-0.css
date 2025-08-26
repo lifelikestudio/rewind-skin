@@ -1,0 +1,12 @@
+@import 'tailwindcss';
+
+/* Optional: Define custom properties directly in CSS (no config file needed) */
+@theme {
+    --color-brand-black: #000000;
+    --color-brand-white: #ffffff;
+    --color-brand-grey: #e6e7e8;
+    --font-sans: 'Scto Grotesk A', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, sans-serif;
+}
+
+/* Your new component styles go here */
