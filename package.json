@@ -4,10 +4,12 @@
     "description": "Rewind Skin website",
     "main": "global.js",
     "scripts": {
+        "tailwind": "npx @tailwindcss/cli -i ./src/v2-1-0.input.css -o ./assets/v2-1-0.output.css --watch",
         "start": "webpack --watch",
         "build": "webpack"
     },
     "dependencies": {
+        "@tailwindcss/cli": "^4.1.12",
         "@typeform/embed": "^4.3.0",
         "axios": "^1.5.0",
         "embla-carousel": "^8.0.0-rc11",
@@ -23,9 +25,6 @@
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.11.0",
         "mini-css-extract-plugin": "^2.9.4",
-        "postcss": "^8.5.6",
-        "postcss-loader": "^7.3.4",
-        "postcss-preset-env": "^9.1.1",
         "style-loader": "^3.3.4",
         "tailwindcss": "^4.1.12",
         "webpack": "^5.101.3",

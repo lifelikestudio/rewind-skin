@@ -5,7 +5,6 @@ module.exports = {
     mode: 'development',
     entry: {
         global: './src/global.js',
-        'v2-1-0': './src/v2-1-0.js', // New entry point
     },
     output: {
         filename: '[name].js',
@@ -25,17 +24,13 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'postcss-loader',
-                ],
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
             },
         ],
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].css', // This will create global.css and v2-1-0.css
+            filename: '[name].css', // This will create global.css
         }),
     ],
 };
