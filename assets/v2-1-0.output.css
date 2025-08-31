@@ -212,6 +212,9 @@
       max-width: 1920px;
     }
   }
+  .\!flex {
+    display: flex !important;
+  }
   .block {
     display: block;
   }
