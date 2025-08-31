@@ -269,14 +269,8 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .px-\[16px\] {
-    padding-inline: 16px;
-  }
   .px-grid-margin {
     padding-inline: var(--grid-margin);
-  }
-  .py-\[28px\] {
-    padding-block: 28px;
   }
   .py-brand-header-padding-y {
     padding-block: var(--brand-header-padding-y);
@@ -315,9 +309,8 @@
     --color-grey-0: #ffffff;
     --color-grey-500: #626262;
     --color-grey-900: #000000;
-    --typography-font-family-scto-grotesk-a: 'Scto Grotesk A', -apple-system,
-            BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
-            Cantarell, 'Helvetica Neue', sans-serif;
+    --typography-font-family-scto-grotesk-a: 'Scto Grotesk A', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
     --typography-font-weight-400: 400;
     --size-14: 14px;
     --size-16: 16px;
@@ -349,9 +342,7 @@
     --screen-width-1919: 1919px;
     --screen-width-1920: 1920px;
     --screen-width-2560: 2560px;
-    --typography-font-family-base: var(
-            --typography-font-family-scto-grotesk-a
-        );
+    --typography-font-family-base: var(--typography-font-family-scto-grotesk-a);
     --typography-font-weight-base: var(--typography-font-weight-400);
     --typography-letter-spacing-base: -0.005em;
     --typography-link-underline: underline;
@@ -405,42 +396,56 @@
   }
   @media (min-width: 375px) {
     :root {
+      --grid-margin: var(--xxs-grid-margin);
+      --grid-gutter: var(--xxs-grid-gutter);
       --brand-header-padding-y: var(--brand-header-xxs-padding-y);
       --brand-header-row-gap: var(--brand-header-xxs-row-gap);
     }
   }
   @media (min-width: 428px) {
     :root {
+      --grid-margin: var(--xs-grid-margin);
+      --grid-gutter: var(--xs-grid-gutter);
       --brand-header-padding-y: var(--brand-header-xs-padding-y);
       --brand-header-row-gap: var(--brand-header-xs-row-gap);
     }
   }
   @media (min-width: 768px) {
     :root {
+      --grid-margin: var(--sm-grid-margin);
+      --grid-gutter: var(--sm-grid-gutter);
       --brand-header-padding-y: var(--brand-header-sm-padding-y);
       --brand-header-row-gap: var(--brand-header-sm-row-gap);
     }
   }
   @media (min-width: 1024px) {
     :root {
+      --grid-margin: var(--md-grid-margin);
+      --grid-gutter: var(--md-grid-gutter);
       --brand-header-padding-y: var(--brand-header-md-padding-y);
       --brand-header-row-gap: var(--brand-header-md-row-gap);
     }
   }
   @media (min-width: 1280px) {
     :root {
+      --grid-margin: var(--md-lg-grid-margin);
+      --grid-gutter: var(--md-lg-grid-gutter);
       --brand-header-padding-y: var(--brand-header-md-lg-padding-y);
       --brand-header-row-gap: var(--brand-header-md-lg-row-gap);
     }
   }
   @media (min-width: 1440px) {
     :root {
+      --grid-margin: var(--lg-grid-margin);
+      --grid-gutter: var(--lg-grid-gutter);
       --brand-header-padding-y: var(--brand-header-lg-padding-y);
       --brand-header-row-gap: var(--brand-header-lg-row-gap);
     }
   }
   @media (min-width: 1920px) {
     :root {
+      --grid-margin: var(--xl-grid-margin);
+      --grid-gutter: var(--xl-grid-gutter);
       --brand-header-padding-y: var(--brand-header-xl-padding-y);
       --brand-header-row-gap: var(--brand-header-xl-row-gap);
     }

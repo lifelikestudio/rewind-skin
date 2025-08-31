@@ -1,203 +1,229 @@
 @import 'tailwindcss';
 
 @layer theme {
-    :root {
-        /* Color Primitives */
-        --color-grey-0: #ffffff;
-        --color-grey-500: #626262;
-        --color-grey-900: #000000;
+  :root {
+    /* Color Primitives */
+    --color-grey-0: #ffffff;
+    --color-grey-500: #626262;
+    --color-grey-900: #000000;
 
-        /* Typography Primitives */
-        --typography-font-family-scto-grotesk-a: 'Scto Grotesk A', -apple-system,
-            BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
-            Cantarell, 'Helvetica Neue', sans-serif;
-        --typography-font-weight-400: 400;
+    /* Typography Primitives */
+    --typography-font-family-scto-grotesk-a:
+      'Scto Grotesk A', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    --typography-font-weight-400: 400;
 
-        /* Sizing Primitives */
-        --size-14: 14px;
-        --size-16: 16px;
-        --size-20: 20px;
-        --size-24: 24px;
-        --size-26: 26px;
-        --size-28: 28px;
-        --size-30: 30px;
-        --size-32: 32px;
-        --size-40: 40px;
+    /* Sizing Primitives */
+    --size-14: 14px;
+    --size-16: 16px;
+    --size-20: 20px;
+    --size-24: 24px;
+    --size-26: 26px;
+    --size-28: 28px;
+    --size-30: 30px;
+    --size-32: 32px;
+    --size-40: 40px;
 
-        /* Screen Width Primitives */
-        --screen-width-360: 360px;
-        --screen-width-375: 375px;
-        --screen-width-390: 390px;
-        --screen-width-427: 427px;
-        --screen-width-428: 428px;
-        --screen-width-430: 430px;
-        --screen-width-767: 767px;
-        --screen-width-768: 768px;
-        --screen-width-834: 834px;
-        --screen-width-1023: 1023px;
-        --screen-width-1024: 1024px;
-        --screen-width-1152: 1152px;
-        --screen-width-1279: 1279px;
-        --screen-width-1280: 1280px;
-        --screen-width-1366: 1366px;
-        --screen-width-1439: 1439px;
-        --screen-width-1440: 1440px;
-        --screen-width-1600: 1600px;
-        --screen-width-1919: 1919px;
-        --screen-width-1920: 1920px;
-        --screen-width-2560: 2560px;
+    /* Screen Width Primitives */
+    --screen-width-360: 360px;
+    --screen-width-375: 375px;
+    --screen-width-390: 390px;
+    --screen-width-427: 427px;
+    --screen-width-428: 428px;
+    --screen-width-430: 430px;
+    --screen-width-767: 767px;
+    --screen-width-768: 768px;
+    --screen-width-834: 834px;
+    --screen-width-1023: 1023px;
+    --screen-width-1024: 1024px;
+    --screen-width-1152: 1152px;
+    --screen-width-1279: 1279px;
+    --screen-width-1280: 1280px;
+    --screen-width-1366: 1366px;
+    --screen-width-1439: 1439px;
+    --screen-width-1440: 1440px;
+    --screen-width-1600: 1600px;
+    --screen-width-1919: 1919px;
+    --screen-width-1920: 1920px;
+    --screen-width-2560: 2560px;
 
-        /* Typography Tokens */
-        --typography-font-family-base: var(
-            --typography-font-family-scto-grotesk-a
-        );
-        --typography-font-weight-base: var(--typography-font-weight-400);
-        --typography-letter-spacing-base: -0.005em;
+    /* Typography Tokens */
+    --typography-font-family-base: var(--typography-font-family-scto-grotesk-a);
+    --typography-font-weight-base: var(--typography-font-weight-400);
+    --typography-letter-spacing-base: -0.005em;
 
-        /* Link Style Tokens */
-        --typography-link-underline: underline;
-        --typography-link-underline-style: solid;
-        --typography-link-underline-position: from-font;
-        --typography-link-skip-ink: auto;
+    /* Link Style Tokens */
+    --typography-link-underline: underline;
+    --typography-link-underline-style: solid;
+    --typography-link-underline-position: from-font;
+    --typography-link-skip-ink: auto;
 
-        --typography-link-brand-description-underline-thickness: 6.5%; /* dial in manually */
-        --typography-link-brand-description-underline-offset: 16%; /* dial in manually */
+    --typography-link-brand-description-underline-thickness: 6.5%; /* dial in manually */
+    --typography-link-brand-description-underline-offset: 16%; /* dial in manually */
 
-        /* Grid System Tokens */
-        --xl-grid-margin: var(--size-40);
-        --xl-grid-gutter: var(--size-16);
-        --lg-grid-margin: var(--size-32);
-        --lg-grid-gutter: var(--size-16);
-        --md-lg-grid-margin: var(--size-24);
-        --md-lg-grid-gutter: var(--size-14);
-        --sm-grid-margin: var(--size-20);
-        --sm-grid-gutter: var(--size-14);
-        --xs-grid-margin: var(--size-16);
-        --xs-grid-gutter: var(--size-12);
-        --xxs-grid-margin: var(--size-14);
-        --xxs-grid-gutter: var(--size-10);
-        --tiny-grid-margin: var(--size-14);
-        --tiny-grid-gutter: var(--size-10);
-        /* Responsive */
-        --grid-margin: var(--tiny-grid-margin);
-        --grid-gutter: var(--tiny-grid-gutter);
-    }
+    /* Grid System Tokens */
+    --xl-grid-margin: var(--size-40);
+    --xl-grid-gutter: var(--size-16);
+    --lg-grid-margin: var(--size-32);
+    --lg-grid-gutter: var(--size-16);
+    --md-lg-grid-margin: var(--size-24);
+    --md-lg-grid-gutter: var(--size-14);
+    --sm-grid-margin: var(--size-20);
+    --sm-grid-gutter: var(--size-14);
+    --xs-grid-margin: var(--size-16);
+    --xs-grid-gutter: var(--size-12);
+    --xxs-grid-margin: var(--size-14);
+    --xxs-grid-gutter: var(--size-10);
+    --tiny-grid-margin: var(--size-14);
+    --tiny-grid-gutter: var(--size-10);
+    /* Responsive */
+    --grid-margin: var(--tiny-grid-margin);
+    --grid-gutter: var(--tiny-grid-gutter);
+  }
 
-    /* Link Styles */
-    [data-element='brand-header'] a {
-        text-decoration-thickness: var(
-            --typography-link-brand-description-underline-thickness
-        );
-        text-underline-offset: var(
-            --typography-link-brand-description-underline-offset
-        );
-    }
+  /* Link Styles */
+  [data-element='brand-header'] a {
+    text-decoration-thickness: var(
+      --typography-link-brand-description-underline-thickness
+    );
+    text-underline-offset: var(
+      --typography-link-brand-description-underline-offset
+    );
+  }
 }
 
 @layer components {
+  :root {
+    /* Brand Collections Theme */
+    --brand-header-xl-padding-y: var(--size-40);
+    --brand-header-lg-padding-y: var(--size-40);
+    --brand-header-md-lg-padding-y: var(--size-40);
+    --brand-header-md-padding-y: var(--size-32);
+    --brand-header-sm-padding-y: var(--size-32);
+    --brand-header-xs-padding-y: var(--size-30);
+    --brand-header-xxs-padding-y: var(--size-28);
+    --brand-header-tiny-padding-y: var(--size-28);
+    /* Responsive */
+    --brand-header-padding-y: var(--brand-header-tiny-padding-y);
+
+    --brand-header-xl-row-gap: var(--size-32);
+    --brand-header-lg-row-gap: var(--size-32);
+    --brand-header-md-lg-row-gap: var(--size-32);
+    --brand-header-md-row-gap: var(--size-32);
+    --brand-header-sm-row-gap: var(--size-32);
+    --brand-header-xs-row-gap: var(--size-32);
+    --brand-header-xxs-row-gap: var(--size-26);
+    --brand-header-tiny-row-gap: var(--size-26);
+    /* Responsive */
+    --brand-header-row-gap: var(--brand-header-tiny-row-gap);
+  }
+
+  /* Responsive System */
+  /* xxs */
+  @media (min-width: 375px) {
     :root {
-        /* Brand Collections Theme */
-        --brand-header-xl-padding-y: var(--size-40);
-        --brand-header-lg-padding-y: var(--size-40);
-        --brand-header-md-lg-padding-y: var(--size-40);
-        --brand-header-md-padding-y: var(--size-32);
-        --brand-header-sm-padding-y: var(--size-32);
-        --brand-header-xs-padding-y: var(--size-30);
-        --brand-header-xxs-padding-y: var(--size-28);
-        --brand-header-tiny-padding-y: var(--size-28);
-        /* Responsive */
-        --brand-header-padding-y: var(--brand-header-tiny-padding-y);
+      /* Grid System */
+      --grid-margin: var(--xxs-grid-margin);
+      --grid-gutter: var(--xxs-grid-gutter);
 
-        --brand-header-xl-row-gap: var(--size-32);
-        --brand-header-lg-row-gap: var(--size-32);
-        --brand-header-md-lg-row-gap: var(--size-32);
-        --brand-header-md-row-gap: var(--size-32);
-        --brand-header-sm-row-gap: var(--size-32);
-        --brand-header-xs-row-gap: var(--size-32);
-        --brand-header-xxs-row-gap: var(--size-26);
-        --brand-header-tiny-row-gap: var(--size-26);
-        /* Responsive */
-        --brand-header-row-gap: var(--brand-header-tiny-row-gap);
+      /* Brand Collections Theme */
+      --brand-header-padding-y: var(--brand-header-xxs-padding-y);
+      --brand-header-row-gap: var(--brand-header-xxs-row-gap);
     }
+  }
 
-    /* Responsive System */
-    /* xxs */
-    @media (min-width: 375px) {
-        :root {
-            /* Brand Collections Theme */
-            --brand-header-padding-y: var(--brand-header-xxs-padding-y);
-            --brand-header-row-gap: var(--brand-header-xxs-row-gap);
-        }
-    }
+  /* xs */
+  @media (min-width: 428px) {
+    :root {
+      /* Grid System */
+      --grid-margin: var(--xs-grid-margin);
+      --grid-gutter: var(--xs-grid-gutter);
 
-    /* xs */
-    @media (min-width: 428px) {
-        :root {
-            /* Brand Collections Theme */
-            --brand-header-padding-y: var(--brand-header-xs-padding-y);
-            --brand-header-row-gap: var(--brand-header-xs-row-gap);
-        }
+      /* Brand Collections Theme */
+      --brand-header-padding-y: var(--brand-header-xs-padding-y);
+      --brand-header-row-gap: var(--brand-header-xs-row-gap);
     }
+  }
 
-    /* sm */
-    @media (min-width: 768px) {
-        :root {
-            /* Brand Collections Theme */
-            --brand-header-padding-y: var(--brand-header-sm-padding-y);
-            --brand-header-row-gap: var(--brand-header-sm-row-gap);
-        }
-    }
+  /* sm */
+  @media (min-width: 768px) {
+    :root {
+      /* Grid System */
+      --grid-margin: var(--sm-grid-margin);
+      --grid-gutter: var(--sm-grid-gutter);
 
-    /* md */
-    @media (min-width: 1024px) {
-        :root {
-            /* Brand Collections Theme */
-            --brand-header-padding-y: var(--brand-header-md-padding-y);
-            --brand-header-row-gap: var(--brand-header-md-row-gap);
-        }
+      /* Brand Collections Theme */
+      --brand-header-padding-y: var(--brand-header-sm-padding-y);
+      --brand-header-row-gap: var(--brand-header-sm-row-gap);
     }
+  }
 
-    /* md-lg */
-    @media (min-width: 1280px) {
-        :root {
-            /* Brand Collections Theme */
-            --brand-header-padding-y: var(--brand-header-md-lg-padding-y);
-            --brand-header-row-gap: var(--brand-header-md-lg-row-gap);
-        }
-    }
+  /* md */
+  @media (min-width: 1024px) {
+    :root {
+      /* Grid System */
+      --grid-margin: var(--md-grid-margin);
+      --grid-gutter: var(--md-grid-gutter);
 
-    /* lg */
-    @media (min-width: 1440px) {
-        :root {
-            /* Brand Collections Theme */
-            --brand-header-padding-y: var(--brand-header-lg-padding-y);
-            --brand-header-row-gap: var(--brand-header-lg-row-gap);
-        }
+      /* Brand Collections Theme */
+      --brand-header-padding-y: var(--brand-header-md-padding-y);
+      --brand-header-row-gap: var(--brand-header-md-row-gap);
     }
+  }
 
-    /* xl */
-    @media (min-width: 1920px) {
-        :root {
-            /* Brand Collections Theme */
-            --brand-header-padding-y: var(--brand-header-xl-padding-y);
-            --brand-header-row-gap: var(--brand-header-xl-row-gap);
-        }
+  /* md-lg */
+  @media (min-width: 1280px) {
+    :root {
+      /* Grid System */
+      --grid-margin: var(--md-lg-grid-margin);
+      --grid-gutter: var(--md-lg-grid-gutter);
+
+      /* Brand Collections Theme */
+      --brand-header-padding-y: var(--brand-header-md-lg-padding-y);
+      --brand-header-row-gap: var(--brand-header-md-lg-row-gap);
     }
+  }
+
+  /* lg */
+  @media (min-width: 1440px) {
+    :root {
+      /* Grid System */
+      --grid-margin: var(--lg-grid-margin);
+      --grid-gutter: var(--lg-grid-gutter);
+
+      /* Brand Collections Theme */
+      --brand-header-padding-y: var(--brand-header-lg-padding-y);
+      --brand-header-row-gap: var(--brand-header-lg-row-gap);
+    }
+  }
+
+  /* xl */
+  @media (min-width: 1920px) {
+    :root {
+      /* Grid System */
+      --grid-margin: var(--xl-grid-margin);
+      --grid-gutter: var(--xl-grid-gutter);
+
+      /* Brand Collections Theme */
+      --brand-header-padding-y: var(--brand-header-xl-padding-y);
+      --brand-header-row-gap: var(--brand-header-xl-row-gap);
+    }
+  }
 }
 
 @theme inline {
-    --*: initial;
-    /* Breakpoints */
-    --breakpoint-xxs: 375px;
-    --breakpoint-xs: 428px;
-    --breakpoint-sm: 768px;
-    --breakpoint-md: 1024px;
-    --breakpoint-mdlg: 1280px;
-    --breakpoint-lg: 1440px;
-    --breakpoint-xl: 1920px;
+  --*: initial;
+  /* Breakpoints */
+  --breakpoint-xxs: 375px;
+  --breakpoint-xs: 428px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+  --breakpoint-mdlg: 1280px;
+  --breakpoint-lg: 1440px;
+  --breakpoint-xl: 1920px;
 
-    /* Color Extensions */
-    /* --color-surface-primary: var(--surface-primary);
+  /* Color Extensions */
+  /* --color-surface-primary: var(--surface-primary);
     --color-surface-secondary: var(--surface-secondary);
     --color-surface-tertiary: var(--surface-tertiary);
 
@@ -207,48 +233,48 @@
     --color-border-primary: var(--border-color-primary);
     --color-border-secondary: var(--border-color-secondary); */
 
-    /* Spacing Extensions */
-    --spacing-system-14: var(--size-14);
-    --spacing-system-16: var(--size-16);
-    --spacing-system-20: var(--size-20);
-    --spacing-system-24: var(--size-24);
-    --spacing-system-26: var(--size-26);
-    --spacing-system-28: var(--size-28);
-    --spacing-system-30: var(--size-30);
-    --spacing-system-32: var(--size-32);
-    --spacing-system-40: var(--size-40);
+  /* Spacing Extensions */
+  --spacing-system-14: var(--size-14);
+  --spacing-system-16: var(--size-16);
+  --spacing-system-20: var(--size-20);
+  --spacing-system-24: var(--size-24);
+  --spacing-system-26: var(--size-26);
+  --spacing-system-28: var(--size-28);
+  --spacing-system-30: var(--size-30);
+  --spacing-system-32: var(--size-32);
+  --spacing-system-40: var(--size-40);
 
-    --spacing-grid-margin: var(--grid-margin);
-    --spacing-grid-gutter: var(--grid-gutter);
+  --spacing-grid-margin: var(--grid-margin);
+  --spacing-grid-gutter: var(--grid-gutter);
 
-    /* Spacing Extensions - Brand Collections Theme */
-    --spacing-tag-padding-x: var(--atom-projects-category-tag-padding-x);
-    --spacing-tag-padding-y: var(--atom-projects-category-tag-padding-y);
+  /* Spacing Extensions - Brand Collections Theme */
+  --spacing-tag-padding-x: var(--atom-projects-category-tag-padding-x);
+  --spacing-tag-padding-y: var(--atom-projects-category-tag-padding-y);
 
-    /* Brand Collections Theme */
-    --spacing-brand-header-padding-y: var(--brand-header-padding-y);
-    --spacing-brand-header-row-gap: var(--brand-header-row-gap);
+  /* Brand Collections Theme */
+  --spacing-brand-header-padding-y: var(--brand-header-padding-y);
+  --spacing-brand-header-row-gap: var(--brand-header-row-gap);
 
-    /* Aspect Ratio Extensions */
-    --aspect-cinema: 1.85 / 1;
-    --aspect-square: 1 / 1;
-    --aspect-anamorphic: 2.39 / 1;
-    --aspect-2-1: 2 / 1;
-    --aspect-3-1: 3 / 1;
-    --aspect-ig: 4 / 5;
-    --aspect-85-11: 8.5 / 11;
-    --aspect-9-16: 9 / 16;
-    --aspect-golden: 1.618 / 1;
-    --aspect-sq-3: 1.732 / 1;
-    --aspect-3-2: 3 / 2;
-    --aspect-silver-iso: 1.414 / 1;
-    --aspect-4-3: 4 / 3;
-    --aspect-sq-5: 2.236 / 1;
-    --aspect-16-9: 16 / 9;
-    --aspect-21-9: 21 / 9;
-    --aspect-golden-vert: 1 / 1.618;
-    --aspect-5-4: 5 / 4;
-    --aspect-7-5: 7 / 5;
-    --aspect-a4: 7 / 5;
-    --aspect-2-3: 2 / 3;
+  /* Aspect Ratio Extensions */
+  --aspect-cinema: 1.85 / 1;
+  --aspect-square: 1 / 1;
+  --aspect-anamorphic: 2.39 / 1;
+  --aspect-2-1: 2 / 1;
+  --aspect-3-1: 3 / 1;
+  --aspect-ig: 4 / 5;
+  --aspect-85-11: 8.5 / 11;
+  --aspect-9-16: 9 / 16;
+  --aspect-golden: 1.618 / 1;
+  --aspect-sq-3: 1.732 / 1;
+  --aspect-3-2: 3 / 2;
+  --aspect-silver-iso: 1.414 / 1;
+  --aspect-4-3: 4 / 3;
+  --aspect-sq-5: 2.236 / 1;
+  --aspect-16-9: 16 / 9;
+  --aspect-21-9: 21 / 9;
+  --aspect-golden-vert: 1 / 1.618;
+  --aspect-5-4: 5 / 4;
+  --aspect-7-5: 7 / 5;
+  --aspect-a4: 7 / 5;
+  --aspect-2-3: 2 / 3;
 }
