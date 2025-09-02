@@ -1,39 +1,39 @@
 {% comment %} <section class="large-header-section large-header-section--shop">
-                                                                                                                                                                                                                      <div class="large-header-section__inner wrapper wrapper--md">
-                                                                                                                                                                                                                        <div class="large-header-section__container">
-                                                                                                                                                                                                                          <h1 class="large-heading large-heading--shop">Shop</h1>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                        <div class="large-header-section__container">
-                                                                                                                                                                                                                          {%- if collection.handle != 'all' -%}
-                                                                                                                                                                                                                            {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'subscribe-save'
-                                                                                                                                                                                                                            -%}
-                                                                                                                                                                                                                              <p class="all-caps collections__breadcrumbs">
-                                                                                                                                                                                                                                <a href="/collections/all">Shop</a>
-                                                                                                                                                                                                                                / Featured / {{ collection.title }}
-                                                                                                                                                                                                                              </p>
-                                                                                                                                                                                                                            {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
-                                                                                                                                                                                                                              <p class="all-caps collections__breadcrumbs">
-                                                                                                                                                                                                                                <a href="/collections/all">Shop</a>
-                                                                                                                                                                                                                                / Areas / {{ collection.title }}
-                                                                                                                                                                                                                              </p>
-                                                                                                                                                                                                                            {%- else -%}
-                                                                                                                                                                                                                              <p class="all-caps collections__breadcrumbs">
-                                                                                                                                                                                                                                <a href="/collections/all">Shop</a>
-                                                                                                                                                                                                                                / {{ collection.title }}
-                                                                                                                                                                                                                              </p>
-                                                                                                                                                                                                                            {%- endif -%}
-                                                                                                                                                                                                                          {%- else -%}
-                                                                                                                                                                                                                            <p class="all-caps collections__breadcrumbs">Shop / All</p>
-                                                                                                                                                                                                                          {%- endif -%}
-                                                                                                                                                                                                                          <p class="header-description--shop">
-                                                                                                                                                                                                                            A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating               
-                                                                                                                                                                                                                            to correcting, we've got you covered.
-                                                                                                                                                                                                                          </p>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                            <div class="large-header-section__inner wrapper wrapper--md">
+                                                                                                                                                                                                                              <div class="large-header-section__container">
+                                                                                                                                                                                                                                <h1 class="large-heading large-heading--shop">Shop</h1>
+                                                                                                                                                                                                                              </div>
+                                                                                                                                                                                                                              <div class="large-header-section__container">
+                                                                                                                                                                                                                                {%- if collection.handle != 'all' -%}
+                                                                                                                                                                                                                                  {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'subscribe-save'
+                                                                                                                                                                                                                                  -%}
+                                                                                                                                                                                                                                    <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                      <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                      / Featured / {{ collection.title }}
+                                                                                                                                                                                                                                    </p>
+                                                                                                                                                                                                                                  {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
+                                                                                                                                                                                                                                    <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                      <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                      / Areas / {{ collection.title }}
+                                                                                                                                                                                                                                    </p>
+                                                                                                                                                                                                                                  {%- else -%}
+                                                                                                                                                                                                                                    <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                      <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                      / {{ collection.title }}
+                                                                                                                                                                                                                                    </p>
+                                                                                                                                                                                                                                  {%- endif -%}
+                                                                                                                                                                                                                                {%- else -%}
+                                                                                                                                                                                                                                  <p class="all-caps collections__breadcrumbs">Shop / All</p>
+                                                                                                                                                                                                                                {%- endif -%}
+                                                                                                                                                                                                                                <p class="header-description--shop">
+                                                                                                                                                                                                                                  A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating               
+                                                                                                                                                                                                                                  to correcting, we've got you covered.
+                                                                                                                                                                                                                                </p>
+                                                                                                                                                                                                                              </div>
+                                                                                                                                                                                                                            </div>
 </section> {% endcomment %}
-{% comment %} Temporarily wrapped with max-w to work with the old layoutxl:max-w-[1584px] xl:mx-auto {% endcomment %}
-<section data-block="collections-header" class="border border-solid border-[red] flex-col !flex gap-y-brand-header-row-gap py-brand-header-padding-y px-grid-margin font-normal tracking-tight">
+{% comment %} Temporarily wrapped with max-w to work with the old layout {% endcomment %}
+<section data-block="collections-header" class="xl:max-w-[1584px] xl:mx-auto flex-col !flex gap-y-brand-header-row-gap py-brand-header-padding-y px-grid-margin font-normal tracking-tight">
   <nav data-element="collections-header__breadcrumbs" class="text-label-base-breadcrumbs text-text-secondary">
     <ol class="flex flex-row gap-x-collections-breadcrumbs-gap items-center">
       <li>
@@ -42,9 +42,7 @@
       <li class="flex items-center gap-x-collections-breadcrumbs-gap">
         <svg
           aria-hidden="true"
-          class="w-[6px] h-[6px] text-text-secondary"
-          width="6"
-          height="6"
+          class="w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary"
           viewBox="0 0 5 8"
           fill="none"
           xmlns="http://www.w3.org/2000/svg">
@@ -60,9 +58,7 @@
       <li class="flex items-center gap-x-collections-breadcrumbs-gap">
         <svg
           aria-hidden="true"
-          class="w-[6px] h-[6px] text-text-secondary"
-          width="6"
-          height="6"
+          class="w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary"
           viewBox="0 0 5 8"
           fill="none"
           xmlns="http://www.w3.org/2000/svg">
@@ -79,7 +75,7 @@
   </nav>
   <h1 class="sr-only">Future 5 Elements</h1>
   {% comment %} Once we move past the old layout add: lg:max-w-3/4 xl:max-w-1/2 {% endcomment %}
-  <p class="text-body-xl-brand-description text-text-primary lg:max-w-3/4 xl:max-w-1/2" data-element="collections-header__desc">Future 5 Elements — Lipcare for iconic women. Avant-garde formulas made-up of a unique blend of nature and cutting-edge biotechnology, for truly transformative results.</p>
+  <p class="text-body-xl-brand-description text-text-primary" data-element="collections-header__desc">Future 5 Elements — Lipcare for iconic women. Avant-garde formulas made-up of a unique blend of nature and cutting-edge biotechnology, for truly transformative results.</p>
 </section>
 
 <main class="collections__main wrapper wrapper--lg">

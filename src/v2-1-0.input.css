@@ -14,6 +14,8 @@
     --typography-font-weight-400: 400;
 
     /* Sizing Primitives */
+    --size-6: 6px;
+    --size-7: 7px;
     --size-8: 8px;
     --size-14: 14px;
     --size-16: 16px;
@@ -133,6 +135,20 @@
     --collections-breadcrumbs-tiny-gap: var(--size-8);
     /* Responsive */
     --collections-breadcrumbs-gap: var(--collections-breadcrumbs-tiny-gap);
+
+    /* 6px in Figma, tweaked for the web */
+    --collections-breadcrumbs-separator-xl-bounding: var(--size-7);
+    --collections-breadcrumbs-separator-lg-bounding: var(--size-7);
+    --collections-breadcrumbs-separator-md-lg-bounding: var(--size-7);
+    --collections-breadcrumbs-separator-md-bounding: var(--size-7);
+    --collections-breadcrumbs-separator-sm-bounding: var(--size-7);
+    --collections-breadcrumbs-separator-xs-bounding: var(--size-7);
+    --collections-breadcrumbs-separator-xxs-bounding: var(--size-7);
+    --collections-breadcrumbs-separator-tiny-bounding: var(--size-7);
+    /* Responsive */
+    --collections-breadcrumbs-separator-bounding: var(
+      --collections-breadcrumbs-separator-tiny-bounding
+    );
   }
 
   /* Responsive System */
@@ -148,6 +164,9 @@
       --brand-header-row-gap: var(--brand-header-xxs-row-gap);
 
       --collections-breadcrumbs-gap: var(--collections-breadcrumbs-xxs-gap);
+      --collections-breadcrumbs-separator-bounding: var(
+        --collections-breadcrumbs-separator-xxs-bounding
+      );
     }
   }
 
@@ -163,6 +182,9 @@
       --brand-header-row-gap: var(--brand-header-xs-row-gap);
 
       --collections-breadcrumbs-gap: var(--collections-breadcrumbs-xs-gap);
+      --collections-breadcrumbs-separator-bounding: var(
+        --collections-breadcrumbs-separator-xs-bounding
+      );
     }
   }
 
@@ -178,6 +200,9 @@
       --brand-header-row-gap: var(--brand-header-sm-row-gap);
 
       --collections-breadcrumbs-gap: var(--collections-breadcrumbs-sm-gap);
+      --collections-breadcrumbs-separator-bounding: var(
+        --collections-breadcrumbs-separator-sm-bounding
+      );
     }
   }
 
@@ -193,6 +218,9 @@
       --brand-header-row-gap: var(--brand-header-md-row-gap);
 
       --collections-breadcrumbs-gap: var(--collections-breadcrumbs-md-gap);
+      --collections-breadcrumbs-separator-bounding: var(
+        --collections-breadcrumbs-separator-md-bounding
+      );
     }
   }
 
@@ -208,6 +236,9 @@
       --brand-header-row-gap: var(--brand-header-md-lg-row-gap);
 
       --collections-breadcrumbs-gap: var(--collections-breadcrumbs-md-lg-gap);
+      --collections-breadcrumbs-separator-bounding: var(
+        --collections-breadcrumbs-separator-md-lg-bounding
+      );
     }
   }
 
@@ -223,6 +254,9 @@
       --brand-header-row-gap: var(--brand-header-lg-row-gap);
 
       --collections-breadcrumbs-gap: var(--collections-breadcrumbs-lg-gap);
+      --collections-breadcrumbs-separator-bounding: var(
+        --collections-breadcrumbs-separator-lg-bounding
+      );
     }
   }
 
@@ -238,6 +272,9 @@
       --brand-header-row-gap: var(--brand-header-xl-row-gap);
 
       --collections-breadcrumbs-gap: var(--collections-breadcrumbs-xl-gap);
+      --collections-breadcrumbs-separator-bounding: var(
+        --collections-breadcrumbs-separator-xl-bounding
+      );
     }
   }
 }
@@ -286,6 +323,9 @@
   --spacing-brand-header-row-gap: var(--brand-header-row-gap);
 
   --spacing-collections-breadcrumbs-gap: var(--collections-breadcrumbs-gap);
+  --spacing-collections-breadcrumbs-separator: var(
+    --collections-breadcrumbs-separator-bounding
+  );
 
   /* Font Extensions */
   --font-weight-normal: var(--typography-font-weight-base);
