@@ -275,6 +275,10 @@
   .py-brand-header-padding-y {
     padding-block: var(--brand-header-padding-y);
   }
+  .font-normal {
+    --tw-font-weight: var(--typography-font-weight-base);
+    font-weight: var(--typography-font-weight-base);
+  }
   .text-text-primary {
     color: var(--text-primary);
   }
@@ -484,6 +488,10 @@
   inherits: false;
   initial-value: solid;
 }
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
 @property --tw-outline-style {
   syntax: "*";
   inherits: false;
@@ -551,6 +559,7 @@
       --tw-skew-x: initial;
       --tw-skew-y: initial;
       --tw-border-style: solid;
+      --tw-font-weight: initial;
       --tw-outline-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;

@@ -257,6 +257,9 @@
   --spacing-brand-header-padding-y: var(--brand-header-padding-y);
   --spacing-brand-header-row-gap: var(--brand-header-row-gap);
 
+  /* Font Extensions */
+  --font-weight-normal: var(--typography-font-weight-base);
+
   /* Aspect Ratio Extensions */
   --aspect-cinema: 1.85 / 1;
   --aspect-square: 1 / 1;
