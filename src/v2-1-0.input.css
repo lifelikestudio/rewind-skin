@@ -71,6 +71,8 @@
     --lg-grid-gutter: var(--size-16);
     --md-lg-grid-margin: var(--size-24);
     --md-lg-grid-gutter: var(--size-14);
+    --md-grid-margin: var(--size-24);
+    --md-grid-gutter: var(--size-14);
     --sm-grid-margin: var(--size-20);
     --sm-grid-gutter: var(--size-14);
     --xs-grid-margin: var(--size-16);
