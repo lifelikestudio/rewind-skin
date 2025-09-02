@@ -281,6 +281,10 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+  .border-solid {
+    --tw-border-style: solid;
+    border-style: solid;
+  }
   .px-grid-margin {
     padding-inline: var(--grid-margin);
   }
