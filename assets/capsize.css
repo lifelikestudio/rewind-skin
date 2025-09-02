@@ -1,0 +1,107 @@
+/* Capsize Text Styles */
+
+.text-body-xl-brand-description {
+  font-size: 17px;
+  line-height: normal;
+}
+.text-body-xl-brand-description::before {
+  content: "";
+  margin-bottom: -0.2412em;
+  display: table;
+}
+.text-body-xl-brand-description::after {
+  content: "";
+  margin-top: -0.2412em;
+  display: table;
+}
+
+@media (min-width: 375px) {
+  .text-body-xl-brand-description {
+    font-size: 18px;
+    line-height: normal;
+  }
+  .text-body-xl-brand-description::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-body-xl-brand-description::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 428px) {
+  .text-body-xl-brand-description {
+    font-size: 18px;
+    line-height: normal;
+  }
+  .text-body-xl-brand-description::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-body-xl-brand-description::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-body-xl-brand-description {
+    font-size: 22px;
+    line-height: normal;
+  }
+  .text-body-xl-brand-description::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-body-xl-brand-description::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-body-xl-brand-description {
+    font-size: 24px;
+    line-height: normal;
+  }
+  .text-body-xl-brand-description::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-body-xl-brand-description::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1280px) {
+  .text-body-xl-brand-description {
+    font-size: 26px;
+    line-height: normal;
+  }
+  .text-body-xl-brand-description::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-body-xl-brand-description::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .text-body-xl-brand-description {
+    font-size: 26px;
+    line-height: normal;
+  }
+  .text-body-xl-brand-description::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-body-xl-brand-description::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1920px) {
+  .text-body-xl-brand-description {
+    font-size: 26px;
+    line-height: normal;
+  }
+  .text-body-xl-brand-description::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-body-xl-brand-description::after {
+    margin-top: -0.2412em;
+  }
+}

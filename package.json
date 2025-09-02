@@ -1,35 +1,38 @@
 {
-    "name": "rewind-skin",
-    "version": "1.0.0",
-    "description": "Rewind Skin website",
-    "main": "global.js",
-    "scripts": {
-        "tailwind": "npx @tailwindcss/cli -i ./src/v2-1-0.input.css -o ./assets/v2-1-0.output.css --watch",
-        "start": "webpack --watch",
-        "build": "webpack"
-    },
-    "dependencies": {
-        "@tailwindcss/cli": "^4.1.12",
-        "@typeform/embed": "^4.3.0",
-        "axios": "^1.5.0",
-        "embla-carousel": "^8.0.0-rc11",
-        "embla-carousel-wheel-gestures": "^8.0.0-rc05",
-        "gsap": "^3.12.2",
-        "keen-slider": "^6.8.6"
-    },
-    "devDependencies": {
-        "@babel/core": "^7.22.9",
-        "@babel/preset-env": "^7.22.9",
-        "@tailwindcss/postcss": "^4.1.12",
-        "babel-loader": "^9.1.3",
-        "copy-webpack-plugin": "^11.0.0",
-        "css-loader": "^6.11.0",
-        "mini-css-extract-plugin": "^2.9.4",
-        "prettier": "^3.6.2",
-        "prettier-plugin-tailwindcss": "^0.6.14",
-        "style-loader": "^3.3.4",
-        "tailwindcss": "^4.1.12",
-        "webpack": "^5.101.3",
-        "webpack-cli": "^5.1.4"
-    }
+  "name": "rewind-skin",
+  "version": "1.0.0",
+  "description": "Rewind Skin website",
+  "main": "global.js",
+  "scripts": {
+    "capsize": "node ./src/capsize.js",
+    "tailwind": "npx @tailwindcss/cli -i ./src/v2-1-0.input.css -o ./assets/v2-1-0.output.css --watch",
+    "start": "webpack --watch",
+    "build": "webpack && npm run capsize"
+  },
+  "dependencies": {
+    "@capsizecss/core": "^4.1.2",
+    "@capsizecss/metrics": "^3.5.0",
+    "@tailwindcss/cli": "^4.1.12",
+    "@typeform/embed": "^4.3.0",
+    "axios": "^1.5.0",
+    "embla-carousel": "^8.0.0-rc11",
+    "embla-carousel-wheel-gestures": "^8.0.0-rc05",
+    "gsap": "^3.12.2",
+    "keen-slider": "^6.8.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@tailwindcss/postcss": "^4.1.12",
+    "babel-loader": "^9.1.3",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.11.0",
+    "mini-css-extract-plugin": "^2.9.4",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "style-loader": "^3.3.4",
+    "tailwindcss": "^4.1.12",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^5.1.4"
+  }
 }
