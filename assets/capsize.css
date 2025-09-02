@@ -105,3 +105,109 @@
     margin-top: -0.2412em;
   }
 }
+
+.text-label-base-breadcrumbs {
+  font-size: 12px;
+  line-height: normal;
+}
+.text-label-base-breadcrumbs::before {
+  content: "";
+  margin-bottom: -0.2412em;
+  display: table;
+}
+.text-label-base-breadcrumbs::after {
+  content: "";
+  margin-top: -0.2412em;
+  display: table;
+}
+
+@media (min-width: 375px) {
+  .text-label-base-breadcrumbs {
+    font-size: 13px;
+    line-height: normal;
+  }
+  .text-label-base-breadcrumbs::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-label-base-breadcrumbs::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 428px) {
+  .text-label-base-breadcrumbs {
+    font-size: 14px;
+    line-height: normal;
+  }
+  .text-label-base-breadcrumbs::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-label-base-breadcrumbs::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-label-base-breadcrumbs {
+    font-size: 14px;
+    line-height: normal;
+  }
+  .text-label-base-breadcrumbs::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-label-base-breadcrumbs::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-label-base-breadcrumbs {
+    font-size: 14px;
+    line-height: normal;
+  }
+  .text-label-base-breadcrumbs::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-label-base-breadcrumbs::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1280px) {
+  .text-label-base-breadcrumbs {
+    font-size: 14px;
+    line-height: normal;
+  }
+  .text-label-base-breadcrumbs::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-label-base-breadcrumbs::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .text-label-base-breadcrumbs {
+    font-size: 14px;
+    line-height: normal;
+  }
+  .text-label-base-breadcrumbs::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-label-base-breadcrumbs::after {
+    margin-top: -0.2412em;
+  }
+}
+
+@media (min-width: 1920px) {
+  .text-label-base-breadcrumbs {
+    font-size: 14px;
+    line-height: normal;
+  }
+  .text-label-base-breadcrumbs::before {
+    margin-bottom: -0.2412em;
+  }
+  .text-label-base-breadcrumbs::after {
+    margin-top: -0.2412em;
+  }
+}

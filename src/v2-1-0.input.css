@@ -52,6 +52,9 @@
     --typography-font-weight-base: var(--typography-font-weight-400);
     --typography-letter-spacing-base: -0.005em;
 
+    --text-primary: var(--color-grey-900);
+    --text-secondary: var(--color-grey-500);
+
     /* Link Style Tokens */
     --typography-link-underline: underline;
     --typography-link-underline-style: solid;
@@ -226,12 +229,11 @@
   /* --color-surface-primary: var(--surface-primary);
     --color-surface-secondary: var(--surface-secondary);
     --color-surface-tertiary: var(--surface-tertiary);
-
-    --color-text-primary: var(--text-primary);
-    --color-text-secondary: var(--text-secondary);
-
     --color-border-primary: var(--border-color-primary);
     --color-border-secondary: var(--border-color-secondary); */
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
 
   /* Spacing Extensions */
   --spacing-system-14: var(--size-14);

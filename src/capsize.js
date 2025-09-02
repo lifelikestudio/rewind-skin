@@ -13,6 +13,16 @@ const textStyles = {
     lg: { fontSize: 26, lineHeight: 1.2 },
     xl: { fontSize: 26, lineHeight: 1.2 },
   },
+  'label-base-breadcrumbs': {
+    tiny: { fontSize: 12, lineHeight: 1 },
+    xxs: { fontSize: 13, lineHeight: 1 },
+    xs: { fontSize: 14, lineHeight: 1 },
+    sm: { fontSize: 14, lineHeight: 1 },
+    md: { fontSize: 14, lineHeight: 1 },
+    'md-lg': { fontSize: 14, lineHeight: 1 },
+    lg: { fontSize: 14, lineHeight: 1 },
+    xl: { fontSize: 14, lineHeight: 1 },
+  },
 };
 
 // Breakpoint mapping to match your CSS
