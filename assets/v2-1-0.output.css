@@ -239,6 +239,12 @@
   .table {
     display: table;
   }
+  .h-\[6px\] {
+    height: 6px;
+  }
+  .w-\[6px\] {
+    width: 6px;
+  }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
@@ -254,8 +260,14 @@
   .flex-wrap {
     flex-wrap: wrap;
   }
+  .items-center {
+    align-items: center;
+  }
   .gap-x-\[4px\] {
     column-gap: 4px;
+  }
+  .gap-x-collections-breadcrumbs-gap {
+    column-gap: var(--collections-breadcrumbs-gap);
   }
   .gap-y-brand-header-row-gap {
     row-gap: var(--brand-header-row-gap);
@@ -317,6 +329,11 @@
     transition-timing-function: var(--tw-ease, ease);
     transition-duration: var(--tw-duration, 0s);
   }
+  .visited\:\!text-inherit {
+    &:visited {
+      color: inherit !important;
+    }
+  }
   .lg\:max-w-3\/4 {
     @media (width >= 1440px) {
       max-width: calc(3/4 * 100%);
@@ -336,6 +353,7 @@
     --typography-font-family-scto-grotesk-a: 'Scto Grotesk A', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
       Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
     --typography-font-weight-400: 400;
+    --size-8: 8px;
     --size-14: 14px;
     --size-16: 16px;
     --size-20: 20px;
@@ -421,6 +439,15 @@
     --brand-header-xxs-row-gap: var(--size-26);
     --brand-header-tiny-row-gap: var(--size-26);
     --brand-header-row-gap: var(--brand-header-tiny-row-gap);
+    --collections-breadcrumbs-xl-gap: var(--size-8);
+    --collections-breadcrumbs-lg-gap: var(--size-8);
+    --collections-breadcrumbs-md-lg-gap: var(--size-8);
+    --collections-breadcrumbs-md-gap: var(--size-8);
+    --collections-breadcrumbs-sm-gap: var(--size-8);
+    --collections-breadcrumbs-xs-gap: var(--size-8);
+    --collections-breadcrumbs-xxs-gap: var(--size-8);
+    --collections-breadcrumbs-tiny-gap: var(--size-8);
+    --collections-breadcrumbs-gap: var(--collections-breadcrumbs-tiny-gap);
   }
   @media (min-width: 375px) {
     :root {
@@ -428,6 +455,7 @@
       --grid-gutter: var(--xxs-grid-gutter);
       --brand-header-padding-y: var(--brand-header-xxs-padding-y);
       --brand-header-row-gap: var(--brand-header-xxs-row-gap);
+      --collections-breadcrumbs-gap: var(--collections-breadcrumbs-xxs-gap);
     }
   }
   @media (min-width: 428px) {
@@ -436,6 +464,7 @@
       --grid-gutter: var(--xs-grid-gutter);
       --brand-header-padding-y: var(--brand-header-xs-padding-y);
       --brand-header-row-gap: var(--brand-header-xs-row-gap);
+      --collections-breadcrumbs-gap: var(--collections-breadcrumbs-xs-gap);
     }
   }
   @media (min-width: 768px) {
@@ -444,6 +473,7 @@
       --grid-gutter: var(--sm-grid-gutter);
       --brand-header-padding-y: var(--brand-header-sm-padding-y);
       --brand-header-row-gap: var(--brand-header-sm-row-gap);
+      --collections-breadcrumbs-gap: var(--collections-breadcrumbs-sm-gap);
     }
   }
   @media (min-width: 1024px) {
@@ -452,6 +482,7 @@
       --grid-gutter: var(--md-grid-gutter);
       --brand-header-padding-y: var(--brand-header-md-padding-y);
       --brand-header-row-gap: var(--brand-header-md-row-gap);
+      --collections-breadcrumbs-gap: var(--collections-breadcrumbs-md-gap);
     }
   }
   @media (min-width: 1280px) {
@@ -460,6 +491,7 @@
       --grid-gutter: var(--md-lg-grid-gutter);
       --brand-header-padding-y: var(--brand-header-md-lg-padding-y);
       --brand-header-row-gap: var(--brand-header-md-lg-row-gap);
+      --collections-breadcrumbs-gap: var(--collections-breadcrumbs-md-lg-gap);
     }
   }
   @media (min-width: 1440px) {
@@ -468,6 +500,7 @@
       --grid-gutter: var(--lg-grid-gutter);
       --brand-header-padding-y: var(--brand-header-lg-padding-y);
       --brand-header-row-gap: var(--brand-header-lg-row-gap);
+      --collections-breadcrumbs-gap: var(--collections-breadcrumbs-lg-gap);
     }
   }
   @media (min-width: 1920px) {
@@ -476,6 +509,7 @@
       --grid-gutter: var(--xl-grid-gutter);
       --brand-header-padding-y: var(--brand-header-xl-padding-y);
       --brand-header-row-gap: var(--brand-header-xl-row-gap);
+      --collections-breadcrumbs-gap: var(--collections-breadcrumbs-xl-gap);
     }
   }
 }
