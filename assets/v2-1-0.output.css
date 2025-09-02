@@ -245,6 +245,9 @@
   .w-\[6px\] {
     width: 6px;
   }
+  .max-w-\[1584px\] {
+    max-width: 1584px;
+  }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
@@ -284,6 +287,9 @@
   .border-solid {
     --tw-border-style: solid;
     border-style: solid;
+  }
+  .border-\[red\] {
+    border-color: red;
   }
   .px-grid-margin {
     padding-inline: var(--grid-margin);
@@ -343,9 +349,19 @@
       max-width: calc(3/4 * 100%);
     }
   }
+  .xl\:mx-auto {
+    @media (width >= 1920px) {
+      margin-inline: auto;
+    }
+  }
   .xl\:max-w-1\/2 {
     @media (width >= 1920px) {
       max-width: calc(1/2 * 100%);
+    }
+  }
+  .xl\:max-w-\[1584px\] {
+    @media (width >= 1920px) {
+      max-width: 1584px;
     }
   }
 }
