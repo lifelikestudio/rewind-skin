@@ -279,6 +279,10 @@
     --tw-font-weight: var(--typography-font-weight-base);
     font-weight: var(--typography-font-weight-base);
   }
+  .tracking-tight {
+    --tw-tracking: var(--typography-letter-spacing-base);
+    letter-spacing: var(--typography-letter-spacing-base);
+  }
   .text-text-primary {
     color: var(--text-primary);
   }
@@ -504,6 +508,10 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-tracking {
+  syntax: "*";
+  inherits: false;
+}
 @property --tw-outline-style {
   syntax: "*";
   inherits: false;
@@ -572,6 +580,7 @@
       --tw-skew-y: initial;
       --tw-border-style: solid;
       --tw-font-weight: initial;
+      --tw-tracking: initial;
       --tw-outline-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;

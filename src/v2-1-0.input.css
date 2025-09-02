@@ -261,6 +261,7 @@
 
   /* Font Extensions */
   --font-weight-normal: var(--typography-font-weight-base);
+  --tracking-tight: var(--typography-letter-spacing-base);
 
   /* Aspect Ratio Extensions */
   --aspect-cinema: 1.85 / 1;
