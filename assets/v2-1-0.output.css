@@ -313,6 +313,16 @@
     transition-timing-function: var(--tw-ease, ease);
     transition-duration: var(--tw-duration, 0s);
   }
+  .lg\:max-w-3\/4 {
+    @media (width >= 1440px) {
+      max-width: calc(3/4 * 100%);
+    }
+  }
+  .xl\:max-w-1\/2 {
+    @media (width >= 1920px) {
+      max-width: calc(1/2 * 100%);
+    }
+  }
 }
 @layer theme {
   :root {
