@@ -2,212 +2,212 @@
 
 .text-body-xl-brand-description {
   font-size: 17px;
-  line-height: normal;
+  line-height: 22.44px;
 }
 .text-body-xl-brand-description::before {
   content: "";
-  margin-bottom: -0.2412em;
+  margin-bottom: -0.2962em;
   display: table;
 }
 .text-body-xl-brand-description::after {
   content: "";
-  margin-top: -0.2412em;
+  margin-top: -0.2962em;
   display: table;
 }
 
 @media (min-width: 375px) {
   .text-body-xl-brand-description {
     font-size: 18px;
-    line-height: normal;
+    line-height: 23.76px;
   }
   .text-body-xl-brand-description::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.2962em;
   }
   .text-body-xl-brand-description::after {
-    margin-top: -0.2412em;
+    margin-top: -0.2962em;
   }
 }
 
 @media (min-width: 428px) {
   .text-body-xl-brand-description {
     font-size: 18px;
-    line-height: normal;
+    line-height: 23.76px;
   }
   .text-body-xl-brand-description::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.2962em;
   }
   .text-body-xl-brand-description::after {
-    margin-top: -0.2412em;
+    margin-top: -0.2962em;
   }
 }
 
 @media (min-width: 768px) {
   .text-body-xl-brand-description {
     font-size: 22px;
-    line-height: normal;
+    line-height: 27.5px;
   }
   .text-body-xl-brand-description::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.2612em;
   }
   .text-body-xl-brand-description::after {
-    margin-top: -0.2412em;
+    margin-top: -0.2612em;
   }
 }
 
 @media (min-width: 1024px) {
   .text-body-xl-brand-description {
     font-size: 24px;
-    line-height: normal;
+    line-height: 30px;
   }
   .text-body-xl-brand-description::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.2612em;
   }
   .text-body-xl-brand-description::after {
-    margin-top: -0.2412em;
+    margin-top: -0.2612em;
   }
 }
 
 @media (min-width: 1280px) {
   .text-body-xl-brand-description {
     font-size: 26px;
-    line-height: normal;
+    line-height: 32.5px;
   }
   .text-body-xl-brand-description::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.2612em;
   }
   .text-body-xl-brand-description::after {
-    margin-top: -0.2412em;
+    margin-top: -0.2612em;
   }
 }
 
 @media (min-width: 1440px) {
   .text-body-xl-brand-description {
     font-size: 26px;
-    line-height: normal;
+    line-height: 31.2px;
   }
   .text-body-xl-brand-description::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.2362em;
   }
   .text-body-xl-brand-description::after {
-    margin-top: -0.2412em;
+    margin-top: -0.2362em;
   }
 }
 
 @media (min-width: 1920px) {
   .text-body-xl-brand-description {
     font-size: 26px;
-    line-height: normal;
+    line-height: 31.2px;
   }
   .text-body-xl-brand-description::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.2362em;
   }
   .text-body-xl-brand-description::after {
-    margin-top: -0.2412em;
+    margin-top: -0.2362em;
   }
 }
 
 .text-label-base-breadcrumbs {
   font-size: 12px;
-  line-height: normal;
+  line-height: 12px;
 }
 .text-label-base-breadcrumbs::before {
   content: "";
-  margin-bottom: -0.2412em;
+  margin-bottom: -0.1362em;
   display: table;
 }
 .text-label-base-breadcrumbs::after {
   content: "";
-  margin-top: -0.2412em;
+  margin-top: -0.1362em;
   display: table;
 }
 
 @media (min-width: 375px) {
   .text-label-base-breadcrumbs {
     font-size: 13px;
-    line-height: normal;
+    line-height: 13px;
   }
   .text-label-base-breadcrumbs::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.1362em;
   }
   .text-label-base-breadcrumbs::after {
-    margin-top: -0.2412em;
+    margin-top: -0.1362em;
   }
 }
 
 @media (min-width: 428px) {
   .text-label-base-breadcrumbs {
     font-size: 14px;
-    line-height: normal;
+    line-height: 14px;
   }
   .text-label-base-breadcrumbs::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.1362em;
   }
   .text-label-base-breadcrumbs::after {
-    margin-top: -0.2412em;
+    margin-top: -0.1362em;
   }
 }
 
 @media (min-width: 768px) {
   .text-label-base-breadcrumbs {
     font-size: 14px;
-    line-height: normal;
+    line-height: 14px;
   }
   .text-label-base-breadcrumbs::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.1362em;
   }
   .text-label-base-breadcrumbs::after {
-    margin-top: -0.2412em;
+    margin-top: -0.1362em;
   }
 }
 
 @media (min-width: 1024px) {
   .text-label-base-breadcrumbs {
     font-size: 14px;
-    line-height: normal;
+    line-height: 14px;
   }
   .text-label-base-breadcrumbs::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.1362em;
   }
   .text-label-base-breadcrumbs::after {
-    margin-top: -0.2412em;
+    margin-top: -0.1362em;
   }
 }
 
 @media (min-width: 1280px) {
   .text-label-base-breadcrumbs {
     font-size: 14px;
-    line-height: normal;
+    line-height: 14px;
   }
   .text-label-base-breadcrumbs::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.1362em;
   }
   .text-label-base-breadcrumbs::after {
-    margin-top: -0.2412em;
+    margin-top: -0.1362em;
   }
 }
 
 @media (min-width: 1440px) {
   .text-label-base-breadcrumbs {
     font-size: 14px;
-    line-height: normal;
+    line-height: 14px;
   }
   .text-label-base-breadcrumbs::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.1362em;
   }
   .text-label-base-breadcrumbs::after {
-    margin-top: -0.2412em;
+    margin-top: -0.1362em;
   }
 }
 
 @media (min-width: 1920px) {
   .text-label-base-breadcrumbs {
     font-size: 14px;
-    line-height: normal;
+    line-height: 14px;
   }
   .text-label-base-breadcrumbs::before {
-    margin-bottom: -0.2412em;
+    margin-bottom: -0.1362em;
   }
   .text-label-base-breadcrumbs::after {
-    margin-top: -0.2412em;
+    margin-top: -0.1362em;
   }
 }

@@ -42,9 +42,13 @@ function generateTextStyleCSS() {
 
   Object.entries(textStyles).forEach(([styleName, breakpointStyles]) => {
     // Generate base styles (tiny)
+    const fontSize = breakpointStyles.tiny.fontSize;
+    const lineHeight = breakpointStyles.tiny.lineHeight;
+    const leading = fontSize * lineHeight; // Convert relative to absolute
+
     const baseStyles = createStyleObject({
-      fontSize: breakpointStyles.tiny.fontSize,
-      lineHeight: breakpointStyles.tiny.lineHeight,
+      fontSize: fontSize,
+      leading: leading, // ✅ Use leading instead of lineHeight
       fontMetrics: interMetrics,
     });
 
@@ -73,9 +77,11 @@ function generateTextStyleCSS() {
         const minWidth = breakpoints[breakpoint];
         if (!minWidth) return;
 
+        const leading = fontSize * lineHeight; // Convert here too
+
         const styles = createStyleObject({
           fontSize,
-          lineHeight,
+          leading: leading, // ✅ Use leading instead of lineHeight
           fontMetrics: interMetrics,
         });
 
