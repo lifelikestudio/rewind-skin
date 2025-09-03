@@ -239,15 +239,45 @@
   .table {
     display: table;
   }
+  .aspect-1\/2 {
+    aspect-ratio: 1/2;
+  }
+  .aspect-2\/1 {
+    aspect-ratio: 2/1;
+  }
+  .aspect-3\/4 {
+    aspect-ratio: 3/4;
+  }
+  .aspect-4\/3 {
+    aspect-ratio: 4/3;
+  }
+  .aspect-5\/6 {
+    aspect-ratio: 5/6;
+  }
+  .h-\[800px\] {
+    height: 800px;
+  }
   .h-collections-breadcrumbs-separator {
     height: var(
     --collections-breadcrumbs-separator-bounding
   );
   }
+  .h-full {
+    height: 100%;
+  }
+  .w-1\/2 {
+    width: calc(1/2 * 100%);
+  }
   .w-collections-breadcrumbs-separator {
     width: var(
     --collections-breadcrumbs-separator-bounding
   );
+  }
+  .w-full {
+    width: 100%;
+  }
+  .grow {
+    flex-grow: 1;
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
@@ -267,6 +297,9 @@
   .items-center {
     align-items: center;
   }
+  .justify-center {
+    justify-content: center;
+  }
   .gap-x-collections-breadcrumbs-gap {
     column-gap: var(--collections-breadcrumbs-gap);
   }
@@ -278,9 +311,35 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .rounded-t-\[10px\] {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+  .border-1 {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-\[black\] {
+    border-color: black;
+  }
+  .border-\[red\] {
+    border-color: red;
+  }
+  .bg-cover {
+    background-size: cover;
+  }
+  .bg-center {
+    background-position: center;
+  }
+  .bg-no-repeat {
+    background-repeat: no-repeat;
+  }
+  .px-\[16px\] {
+    padding-inline: 16px;
   }
   .px-grid-margin {
     padding-inline: var(--grid-margin);
@@ -333,6 +392,16 @@
   .visited\:\!text-inherit {
     &:visited {
       color: inherit !important;
+    }
+  }
+  .xs\:aspect-1\/2 {
+    @media (width >= 428px) {
+      aspect-ratio: 1/2;
+    }
+  }
+  .sm\:aspect-2\/1 {
+    @media (width >= 768px) {
+      aspect-ratio: 2/1;
     }
   }
   .lg\:max-w-3\/4 {
