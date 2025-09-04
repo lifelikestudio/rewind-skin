@@ -296,6 +296,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .overflow-hidden {
+    overflow: hidden;
+  }
   .rounded-t-\[10px\] {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -309,6 +312,9 @@
   }
   .bg-center {
     background-position: center;
+  }
+  .object-cover {
+    object-fit: cover;
   }
   .px-\[16px\] {
     padding-inline: 16px;
@@ -333,11 +339,17 @@
   .text-text-secondary {
     color: var(--text-secondary);
   }
+  .\!normal-case {
+    text-transform: none !important;
+  }
   .capitalize {
     text-transform: capitalize;
   }
   .lowercase {
     text-transform: lowercase;
+  }
+  .normal-case {
+    text-transform: none;
   }
   .uppercase {
     text-transform: uppercase;
