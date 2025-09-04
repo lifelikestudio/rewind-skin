@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
+    "@shopify/prettier-plugin-liquid": "^1.10.0",
     "@tailwindcss/postcss": "^4.1.12",
     "babel-loader": "^9.1.3",
     "copy-webpack-plugin": "^11.0.0",
