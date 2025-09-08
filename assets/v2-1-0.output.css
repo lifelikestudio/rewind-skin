@@ -245,8 +245,8 @@
   .aspect-4\/5 {
     aspect-ratio: 4/5;
   }
-  .aspect-5\/6 {
-    aspect-ratio: 5/6;
+  .aspect-7\/5 {
+    aspect-ratio: 7/5;
   }
   .h-1\/2 {
     height: calc(1/2 * 100%);
@@ -299,10 +299,6 @@
   .overflow-hidden {
     overflow: hidden;
   }
-  .rounded-t-\[10px\] {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
@@ -315,9 +311,6 @@
   }
   .object-cover {
     object-fit: cover;
-  }
-  .px-\[16px\] {
-    padding-inline: 16px;
   }
   .px-grid-margin {
     padding-inline: var(--grid-margin);
@@ -347,9 +340,6 @@
   }
   .lowercase {
     text-transform: lowercase;
-  }
-  .normal-case {
-    text-transform: none;
   }
   .uppercase {
     text-transform: uppercase;
@@ -383,6 +373,11 @@
       aspect-ratio: 2/1;
     }
   }
+  .sm\:aspect-7\/5 {
+    @media (width >= 768px) {
+      aspect-ratio: 7/5;
+    }
+  }
   .sm\:h-full {
     @media (width >= 768px) {
       height: 100%;
@@ -396,6 +391,11 @@
   .sm\:flex-row {
     @media (width >= 768px) {
       flex-direction: row;
+    }
+  }
+  .md\:aspect-2\/1 {
+    @media (width >= 1024px) {
+      aspect-ratio: 2/1;
     }
   }
   .lg\:max-w-3\/4 {
