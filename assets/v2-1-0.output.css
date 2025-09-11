@@ -239,14 +239,17 @@
   .table {
     display: table;
   }
-  .aspect-2\/3 {
-    aspect-ratio: 2/3;
-  }
   .aspect-4\/5 {
     aspect-ratio: 4/5;
   }
-  .aspect-7\/5 {
-    aspect-ratio: 7/5;
+  .aspect-\[4\/5\] {
+    aspect-ratio: 4/5;
+  }
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+  .aspect-square {
+    aspect-ratio: 1 / 1;
   }
   .h-1\/2 {
     height: calc(1/2 * 100%);
@@ -285,11 +288,17 @@
   .items-center {
     align-items: center;
   }
+  .justify-end {
+    justify-content: flex-end;
+  }
   .gap-x-collections-breadcrumbs-gap {
     column-gap: var(--collections-breadcrumbs-gap);
   }
   .gap-y-brand-header-row-gap {
     row-gap: var(--brand-header-row-gap);
+  }
+  .gap-y-home-hero-lock-up-row-gap {
+    row-gap: var(--home-hero-lock-up-row-gap);
   }
   .truncate {
     overflow: hidden;
@@ -299,9 +308,31 @@
   .overflow-hidden {
     overflow: hidden;
   }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+  .border-1 {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-\[\#000\] {
+    border-color: #000;
+  }
+  .border-\[\#fa0000\] {
+    border-color: #fa0000;
+  }
+  .\!bg-\[\#000\] {
+    background-color: #000 !important;
+  }
+  .\!bg-surface-secondary {
+    background-color: var(--color-grey-900) !important;
+  }
+  .bg-surface-secondary {
+    background-color: var(--color-grey-900);
   }
   .bg-cover {
     background-size: cover;
@@ -312,11 +343,20 @@
   .object-cover {
     object-fit: cover;
   }
+  .p-home-hero-btn-padding {
+    padding: var(--home-hero-btn-padding);
+  }
   .px-grid-margin {
     padding-inline: var(--grid-margin);
   }
   .py-brand-header-padding-y {
     padding-block: var(--brand-header-padding-y);
+  }
+  .pb-home-hero-padding-btm {
+    padding-bottom: var(--home-hero-padding-btm);
+  }
+  .text-center {
+    text-align: center;
   }
   .font-normal {
     --tw-font-weight: var(--typography-font-weight-base);
@@ -325,6 +365,9 @@
   .tracking-tight {
     --tw-tracking: var(--typography-letter-spacing-base);
     letter-spacing: var(--typography-letter-spacing-base);
+  }
+  .text-text-btn-label {
+    color: var(--text-btn-label);
   }
   .text-text-primary {
     color: var(--text-primary);
@@ -368,14 +411,24 @@
       color: inherit !important;
     }
   }
-  .sm\:aspect-2\/1 {
-    @media (width >= 768px) {
-      aspect-ratio: 2/1;
+  .visited\:text-inherit {
+    &:visited {
+      color: inherit;
     }
   }
   .sm\:aspect-7\/5 {
     @media (width >= 768px) {
       aspect-ratio: 7/5;
+    }
+  }
+  .sm\:aspect-16-9 {
+    @media (width >= 768px) {
+      aspect-ratio: 16 / 9;
+    }
+  }
+  .sm\:aspect-auto {
+    @media (width >= 768px) {
+      aspect-ratio: auto;
     }
   }
   .sm\:h-full {
@@ -393,6 +446,11 @@
       flex-direction: row;
     }
   }
+  .md\:aspect-2-1 {
+    @media (width >= 1024px) {
+      aspect-ratio: 2 / 1;
+    }
+  }
   .md\:aspect-2\/1 {
     @media (width >= 1024px) {
       aspect-ratio: 2/1;
@@ -401,6 +459,11 @@
   .lg\:max-w-3\/4 {
     @media (width >= 1440px) {
       max-width: calc(3/4 * 100%);
+    }
+  }
+  .lg\:max-w-\[80\%\] {
+    @media (width >= 1440px) {
+      max-width: 80%;
     }
   }
   .xl\:mx-auto {
@@ -430,15 +493,19 @@
     --size-6: 6px;
     --size-7: 7px;
     --size-8: 8px;
+    --size-12: 12px;
     --size-14: 14px;
     --size-16: 16px;
+    --size-18: 18px;
     --size-20: 20px;
     --size-24: 24px;
     --size-26: 26px;
     --size-28: 28px;
+    --size-29: 29px;
     --size-30: 30px;
     --size-32: 32px;
     --size-40: 40px;
+    --size-44: 44px;
     --screen-width-360: 360px;
     --screen-width-375: 375px;
     --screen-width-390: 390px;
@@ -465,6 +532,7 @@
     --typography-letter-spacing-base: -0.005em;
     --text-primary: var(--color-grey-900);
     --text-secondary: var(--color-grey-500);
+    --text-btn-label: var(--color-grey-0);
     --typography-link-underline: underline;
     --typography-link-underline-style: solid;
     --typography-link-underline-position: from-font;
@@ -535,6 +603,33 @@
     --collections-breadcrumbs-separator-bounding: var(
       --collections-breadcrumbs-separator-tiny-bounding
     );
+    --home-hero-xl-padding-btm: var(--size-40);
+    --home-hero-lg-padding-btm: var(--size-32);
+    --home-hero-md-lg-padding-btm: var(--size-24);
+    --home-hero-md-padding-btm: var(--size-24);
+    --home-hero-sm-padding-btm: var(--size-20);
+    --home-hero-xs-padding-btm: var(--size-16);
+    --home-hero-xxs-padding-btm: var(--size-14);
+    --home-hero-tiny-padding-btm: var(--size-14);
+    --home-hero-padding-btm: var(--home-hero-tiny-padding-btm);
+    --home-hero-lock-up-xl-row-gap: var(--size-28);
+    --home-hero-lock-up-lg-row-gap: var(--size-20);
+    --home-hero-lock-up-md-lg-row-gap: var(--size-18);
+    --home-hero-lock-up-md-row-gap: var(--size-16);
+    --home-hero-lock-up-sm-row-gap: var(--size-14);
+    --home-hero-lock-up-xs-row-gap: var(--size-14);
+    --home-hero-lock-up-xxs-row-gap: var(--size-14);
+    --home-hero-lock-up-tiny-row-gap: var(--size-12);
+    --home-hero-lock-up-row-gap: var(--home-hero-lock-up-tiny-row-gap);
+    --home-hero-btn-xl-padding: var(--size-44);
+    --home-hero-btn-lg-padding: var(--size-32);
+    --home-hero-btn-md-lg-padding: var(--size-32);
+    --home-hero-btn-md-padding: var(--size-29);
+    --home-hero-btn-sm-padding: var(--size-26);
+    --home-hero-btn-xs-padding: var(--size-26);
+    --home-hero-btn-xxs-padding: var(--size-26);
+    --home-hero-btn-tiny-padding: var(--size-24);
+    --home-hero-btn-padding: var(--home-hero-btn-tiny-padding);
   }
   @media (min-width: 375px) {
     :root {
@@ -546,6 +641,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-xxs-bounding
       );
+      --home-hero-padding-btm: var(--home-hero-xxs-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xxs-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-xxs-padding);
     }
   }
   @media (min-width: 428px) {
@@ -558,6 +656,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-xs-bounding
       );
+      --home-hero-padding-btm: var(--home-hero-xs-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xs-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-xs-padding);
     }
   }
   @media (min-width: 768px) {
@@ -570,6 +671,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-sm-bounding
       );
+      --home-hero-padding-btm: var(--home-hero-sm-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-sm-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-sm-padding);
     }
   }
   @media (min-width: 1024px) {
@@ -582,6 +686,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-md-bounding
       );
+      --home-hero-padding-btm: var(--home-hero-sm-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-sm-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-sm-padding);
     }
   }
   @media (min-width: 1280px) {
@@ -594,6 +701,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-md-lg-bounding
       );
+      --home-hero-padding-btm: var(--home-hero-md-lg-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-md-lg-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-md-lg-padding);
     }
   }
   @media (min-width: 1440px) {
@@ -606,6 +716,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-lg-bounding
       );
+      --home-hero-padding-btm: var(--home-hero-lg-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-lg-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-lg-padding);
     }
   }
   @media (min-width: 1920px) {
@@ -618,6 +731,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-xl-bounding
       );
+      --home-hero-padding-btm: var(--home-hero-xl-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xl-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-xl-padding);
     }
   }
 }

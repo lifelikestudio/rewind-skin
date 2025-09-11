@@ -106,6 +106,218 @@
   }
 }
 
+.text-body-xl-home-hero {
+  font-size: 16px;
+  line-height: 20px;
+}
+.text-body-xl-home-hero::before {
+  content: "";
+  margin-bottom: -0.2612em;
+  display: table;
+}
+.text-body-xl-home-hero::after {
+  content: "";
+  margin-top: -0.2612em;
+  display: table;
+}
+
+@media (min-width: 375px) {
+  .text-body-xl-home-hero {
+    font-size: 18px;
+    line-height: 23.4px;
+  }
+  .text-body-xl-home-hero::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-body-xl-home-hero::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 428px) {
+  .text-body-xl-home-hero {
+    font-size: 18px;
+    line-height: 23.4px;
+  }
+  .text-body-xl-home-hero::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-body-xl-home-hero::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-body-xl-home-hero {
+    font-size: 18px;
+    line-height: 23.4px;
+  }
+  .text-body-xl-home-hero::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-body-xl-home-hero::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-body-xl-home-hero {
+    font-size: 22px;
+    line-height: 28.6px;
+  }
+  .text-body-xl-home-hero::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-body-xl-home-hero::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 1280px) {
+  .text-body-xl-home-hero {
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .text-body-xl-home-hero::before {
+    margin-bottom: -0.2612em;
+  }
+  .text-body-xl-home-hero::after {
+    margin-top: -0.2612em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .text-body-xl-home-hero {
+    font-size: 26px;
+    line-height: 31.2px;
+  }
+  .text-body-xl-home-hero::before {
+    margin-bottom: -0.2362em;
+  }
+  .text-body-xl-home-hero::after {
+    margin-top: -0.2362em;
+  }
+}
+
+@media (min-width: 1920px) {
+  .text-body-xl-home-hero {
+    font-size: 40px;
+    line-height: 46px;
+  }
+  .text-body-xl-home-hero::before {
+    margin-bottom: -0.2112em;
+  }
+  .text-body-xl-home-hero::after {
+    margin-top: -0.2112em;
+  }
+}
+
+.text-label-xl-home-hero-btn {
+  font-size: 14px;
+  line-height: 14px;
+}
+.text-label-xl-home-hero-btn::before {
+  content: "";
+  margin-bottom: -0.1362em;
+  display: table;
+}
+.text-label-xl-home-hero-btn::after {
+  content: "";
+  margin-top: -0.1362em;
+  display: table;
+}
+
+@media (min-width: 375px) {
+  .text-label-xl-home-hero-btn {
+    font-size: 16px;
+    line-height: 16px;
+  }
+  .text-label-xl-home-hero-btn::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-label-xl-home-hero-btn::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 428px) {
+  .text-label-xl-home-hero-btn {
+    font-size: 16px;
+    line-height: 16px;
+  }
+  .text-label-xl-home-hero-btn::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-label-xl-home-hero-btn::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-label-xl-home-hero-btn {
+    font-size: 16px;
+    line-height: 16px;
+  }
+  .text-label-xl-home-hero-btn::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-label-xl-home-hero-btn::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-label-xl-home-hero-btn {
+    font-size: 17px;
+    line-height: 17px;
+  }
+  .text-label-xl-home-hero-btn::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-label-xl-home-hero-btn::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1280px) {
+  .text-label-xl-home-hero-btn {
+    font-size: 19px;
+    line-height: 19px;
+  }
+  .text-label-xl-home-hero-btn::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-label-xl-home-hero-btn::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .text-label-xl-home-hero-btn {
+    font-size: 26px;
+    line-height: 26px;
+  }
+  .text-label-xl-home-hero-btn::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-label-xl-home-hero-btn::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1920px) {
+  .text-label-xl-home-hero-btn {
+    font-size: 40px;
+    line-height: 40px;
+  }
+  .text-label-xl-home-hero-btn::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-label-xl-home-hero-btn::after {
+    margin-top: -0.1362em;
+  }
+}
+
 .text-label-base-breadcrumbs {
   font-size: 12px;
   line-height: 12px;

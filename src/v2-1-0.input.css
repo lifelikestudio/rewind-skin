@@ -17,15 +17,19 @@
     --size-6: 6px;
     --size-7: 7px;
     --size-8: 8px;
+    --size-12: 12px;
     --size-14: 14px;
     --size-16: 16px;
+    --size-18: 18px;
     --size-20: 20px;
     --size-24: 24px;
     --size-26: 26px;
     --size-28: 28px;
+    --size-29: 29px;
     --size-30: 30px;
     --size-32: 32px;
     --size-40: 40px;
+    --size-44: 44px;
 
     /* Screen Width Primitives */
     --screen-width-360: 360px;
@@ -57,6 +61,8 @@
 
     --text-primary: var(--color-grey-900);
     --text-secondary: var(--color-grey-500);
+
+    --text-btn-label: var(--color-grey-0);
 
     /* Link Style Tokens */
     --typography-link-underline: underline;
@@ -149,6 +155,40 @@
     --collections-breadcrumbs-separator-bounding: var(
       --collections-breadcrumbs-separator-tiny-bounding
     );
+
+    /* Home Hero */
+    --home-hero-xl-padding-btm: var(--size-40);
+    --home-hero-lg-padding-btm: var(--size-32);
+    --home-hero-md-lg-padding-btm: var(--size-24);
+    --home-hero-md-padding-btm: var(--size-24);
+    --home-hero-sm-padding-btm: var(--size-20);
+    --home-hero-xs-padding-btm: var(--size-16);
+    --home-hero-xxs-padding-btm: var(--size-14);
+    --home-hero-tiny-padding-btm: var(--size-14);
+    /* Responsive */
+    --home-hero-padding-btm: var(--home-hero-tiny-padding-btm);
+
+    --home-hero-lock-up-xl-row-gap: var(--size-28);
+    --home-hero-lock-up-lg-row-gap: var(--size-20);
+    --home-hero-lock-up-md-lg-row-gap: var(--size-18);
+    --home-hero-lock-up-md-row-gap: var(--size-16);
+    --home-hero-lock-up-sm-row-gap: var(--size-14);
+    --home-hero-lock-up-xs-row-gap: var(--size-14);
+    --home-hero-lock-up-xxs-row-gap: var(--size-14);
+    --home-hero-lock-up-tiny-row-gap: var(--size-12);
+    /* Responsive */
+    --home-hero-lock-up-row-gap: var(--home-hero-lock-up-tiny-row-gap);
+
+    --home-hero-btn-xl-padding: var(--size-44);
+    --home-hero-btn-lg-padding: var(--size-32);
+    --home-hero-btn-md-lg-padding: var(--size-32);
+    --home-hero-btn-md-padding: var(--size-29);
+    --home-hero-btn-sm-padding: var(--size-26);
+    --home-hero-btn-xs-padding: var(--size-26);
+    --home-hero-btn-xxs-padding: var(--size-26);
+    --home-hero-btn-tiny-padding: var(--size-24);
+    /* Responsive */
+    --home-hero-btn-padding: var(--home-hero-btn-tiny-padding);
   }
 
   /* Responsive System */
@@ -167,6 +207,11 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-xxs-bounding
       );
+
+      /* Home Page */
+      --home-hero-padding-btm: var(--home-hero-xxs-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xxs-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-xxs-padding);
     }
   }
 
@@ -185,6 +230,11 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-xs-bounding
       );
+
+      /* Home Page */
+      --home-hero-padding-btm: var(--home-hero-xs-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xs-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-xs-padding);
     }
   }
 
@@ -203,6 +253,11 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-sm-bounding
       );
+
+      /* Home Page */
+      --home-hero-padding-btm: var(--home-hero-sm-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-sm-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-sm-padding);
     }
   }
 
@@ -221,6 +276,11 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-md-bounding
       );
+
+      /* Home Page */
+      --home-hero-padding-btm: var(--home-hero-sm-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-sm-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-sm-padding);
     }
   }
 
@@ -239,6 +299,11 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-md-lg-bounding
       );
+
+      /* Home Page */
+      --home-hero-padding-btm: var(--home-hero-md-lg-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-md-lg-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-md-lg-padding);
     }
   }
 
@@ -257,6 +322,11 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-lg-bounding
       );
+
+      /* Home Page */
+      --home-hero-padding-btm: var(--home-hero-lg-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-lg-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-lg-padding);
     }
   }
 
@@ -275,6 +345,11 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-xl-bounding
       );
+
+      /* Home Page */
+      --home-hero-padding-btm: var(--home-hero-xl-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xl-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-xl-padding);
     }
   }
 }
@@ -297,19 +372,29 @@
     --color-border-primary: var(--border-color-primary);
     --color-border-secondary: var(--border-color-secondary); */
 
+  --color-surface-secondary: var(--color-grey-900);
+
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-text-btn-label: var(--text-btn-label);
 
   /* Spacing Extensions */
+  --spacing-system-6: var(--size-6);
+  --spacing-system-7: var(--size-7);
+  --spacing-system-8: var(--size-8);
+  --spacing-system-12: var(--size-12);
   --spacing-system-14: var(--size-14);
   --spacing-system-16: var(--size-16);
+  --spacing-system-18: var(--size-18);
   --spacing-system-20: var(--size-20);
   --spacing-system-24: var(--size-24);
   --spacing-system-26: var(--size-26);
   --spacing-system-28: var(--size-28);
+  --spacing-system-29: var(--size-29);
   --spacing-system-30: var(--size-30);
   --spacing-system-32: var(--size-32);
   --spacing-system-40: var(--size-40);
+  --spacing-system-44: var(--size-44);
 
   --spacing-grid-margin: var(--grid-margin);
   --spacing-grid-gutter: var(--grid-gutter);
@@ -326,6 +411,11 @@
   --spacing-collections-breadcrumbs-separator: var(
     --collections-breadcrumbs-separator-bounding
   );
+
+  /* Home Page */
+  --spacing-home-hero-padding-btm: var(--home-hero-padding-btm);
+  --spacing-home-hero-lock-up-row-gap: var(--home-hero-lock-up-row-gap);
+  --spacing-home-hero-btn-padding: var(--home-hero-btn-padding);
 
   /* Font Extensions */
   --font-weight-normal: var(--typography-font-weight-base);
