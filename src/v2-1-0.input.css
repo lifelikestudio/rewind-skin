@@ -278,9 +278,9 @@
       );
 
       /* Home Page */
-      --home-hero-padding-btm: var(--home-hero-sm-padding-btm);
-      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-sm-row-gap);
-      --home-hero-btn-padding: var(--home-hero-btn-sm-padding);
+      --home-hero-padding-btm: var(--home-hero-md-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-md-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-md-padding);
     }
   }
 

@@ -319,20 +319,11 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .border-\[\#000\] {
-    border-color: #000;
-  }
   .border-\[\#fa0000\] {
     border-color: #fa0000;
   }
-  .\!bg-\[\#000\] {
-    background-color: #000 !important;
-  }
   .\!bg-surface-secondary {
     background-color: var(--color-grey-900) !important;
-  }
-  .bg-surface-secondary {
-    background-color: var(--color-grey-900);
   }
   .bg-cover {
     background-size: cover;
@@ -444,6 +435,16 @@
   .sm\:flex-row {
     @media (width >= 768px) {
       flex-direction: row;
+    }
+  }
+  .sm\:px-\[0px\] {
+    @media (width >= 768px) {
+      padding-inline: 0px;
+    }
+  }
+  .sm\:px-grid-margin {
+    @media (width >= 768px) {
+      padding-inline: var(--grid-margin);
     }
   }
   .md\:aspect-2-1 {
@@ -686,9 +687,9 @@
       --collections-breadcrumbs-separator-bounding: var(
         --collections-breadcrumbs-separator-md-bounding
       );
-      --home-hero-padding-btm: var(--home-hero-sm-padding-btm);
-      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-sm-row-gap);
-      --home-hero-btn-padding: var(--home-hero-btn-sm-padding);
+      --home-hero-padding-btm: var(--home-hero-md-padding-btm);
+      --home-hero-lock-up-row-gap: var(--home-hero-lock-up-md-row-gap);
+      --home-hero-btn-padding: var(--home-hero-btn-md-padding);
     }
   }
   @media (min-width: 1280px) {

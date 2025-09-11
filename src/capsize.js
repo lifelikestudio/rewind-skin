@@ -30,8 +30,8 @@ const textStyles = {
     sm: { fontSize: 16, lineHeight: 1 },
     md: { fontSize: 17, lineHeight: 1 },
     'md-lg': { fontSize: 19, lineHeight: 1 },
-    lg: { fontSize: 26, lineHeight: 1 },
-    xl: { fontSize: 40, lineHeight: 1 },
+    lg: { fontSize: 20, lineHeight: 1 },
+    xl: { fontSize: 28, lineHeight: 1 },
   },
   'label-base-breadcrumbs': {
     tiny: { fontSize: 12, lineHeight: 1 },

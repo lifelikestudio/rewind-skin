@@ -294,8 +294,8 @@
 
 @media (min-width: 1440px) {
   .text-label-xl-home-hero-btn {
-    font-size: 26px;
-    line-height: 26px;
+    font-size: 20px;
+    line-height: 20px;
   }
   .text-label-xl-home-hero-btn::before {
     margin-bottom: -0.1362em;
@@ -307,8 +307,8 @@
 
 @media (min-width: 1920px) {
   .text-label-xl-home-hero-btn {
-    font-size: 40px;
-    line-height: 40px;
+    font-size: 28px;
+    line-height: 28px;
   }
   .text-label-xl-home-hero-btn::before {
     margin-bottom: -0.1362em;
