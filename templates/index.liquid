@@ -1,19 +1,33 @@
 <section class="w-full sm:px-[0px] !flex flex-col sm:flex-row sm:aspect-16-9 md:aspect-2-1 font-normal">
   {% comment %} Square Split  {% endcomment %}
   {% comment %} <div class="w-full sm:w-1/2 sm:aspect-auto aspect-square border-1 border-[#fa0000]"></div>
-                                                                                                                                                                  <div class="w-full sm:w-1/2 sm:aspect-auto aspect-square border-1 border-[#fa0000]"></div> {% endcomment %}
+                                                                                                                                                                                          <div class="w-full sm:w-1/2 sm:aspect-auto aspect-square border-1 border-[#fa0000]"></div> {% endcomment %}
 
-  {% comment %} 4:5 Split  {% endcomment %}
+  {% comment %} 4:5 Split Column {% endcomment %}
+  {% comment %} <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'left_fpo_compressed.jpg' | asset_url }}');">
+                            <div class="flex flex-col items-center gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+                              <h2 class="text-center text-text-primary text-body-xl-home-hero">Discover our latest from Mansard</h2>
+                              <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Shop</a>
+                            </div>
+                          </div>
+                          <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'right_fpo_compressed.jpg' | asset_url }}');">
+                            <div class="flex flex-col items-center gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+                              <h2 class="text-center text-text-primary text-body-xl-home-hero">Experience our personalized facial treatments</h2>
+                              <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Facials</a>
+                            </div>
+              </div> {% endcomment %}
+
+  {% comment %} 4:5 Split Row {% endcomment %}
   <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'left_fpo_compressed.jpg' | asset_url }}');">
-    <div class="flex flex-col items-center gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
-      <h2 class="text-center text-text-primary text-body-xl-home-hero">Discover our latest from Mansard</h2>
-      <a class="text-center text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Shop</a>
+    <div class="flex flex-row md:flex-col justify-between md:justify-start items-center gap-x-home-hero-lock-up-col-gap md:gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+      <h2 class="text-left md:text-center text-text-primary text-body-xl-home-hero">Discover our latest from Mansard</h2>
+      <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Shop</a>
     </div>
   </div>
   <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'right_fpo_compressed.jpg' | asset_url }}');">
-    <div class="flex flex-col items-center gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
-      <h2 class="text-center text-text-primary text-body-xl-home-hero">Experience our personalized facial treatments</h2>
-      <a class="text-center text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Facials</a>
+    <div class="flex flex-row md:flex-col justify-between md:justify-start items-center gap-x-home-hero-lock-up-col-gap md:gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+      <h2 class="text-left md:text-center text-text-primary text-body-xl-home-hero">Experience our personalized facial treatments</h2>
+      <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Facials</a>
     </div>
   </div>
 

@@ -17,8 +17,10 @@
     --size-6: 6px;
     --size-7: 7px;
     --size-8: 8px;
+    --size-10: 10px;
     --size-12: 12px;
     --size-14: 14px;
+    --size-15: 15px;
     --size-16: 16px;
     --size-18: 18px;
     --size-20: 20px;
@@ -168,10 +170,10 @@
     /* Responsive */
     --home-hero-padding-btm: var(--home-hero-tiny-padding-btm);
 
-    --home-hero-lock-up-xl-row-gap: var(--size-28);
-    --home-hero-lock-up-lg-row-gap: var(--size-20);
-    --home-hero-lock-up-md-lg-row-gap: var(--size-18);
-    --home-hero-lock-up-md-row-gap: var(--size-16);
+    --home-hero-lock-up-xl-row-gap: var(--size-24);
+    --home-hero-lock-up-lg-row-gap: var(--size-18);
+    --home-hero-lock-up-md-lg-row-gap: var(--size-16);
+    --home-hero-lock-up-md-row-gap: var(--size-15);
     --home-hero-lock-up-sm-row-gap: var(--size-14);
     --home-hero-lock-up-xs-row-gap: var(--size-14);
     --home-hero-lock-up-xxs-row-gap: var(--size-14);
@@ -179,7 +181,14 @@
     /* Responsive */
     --home-hero-lock-up-row-gap: var(--home-hero-lock-up-tiny-row-gap);
 
-    --home-hero-btn-xl-padding: var(--size-44);
+    --home-hero-lock-up-sm-col-gap: var(--size-14);
+    --home-hero-lock-up-xs-col-gap: var(--size-12);
+    --home-hero-lock-up-xxs-col-gap: var(--size-10);
+    --home-hero-lock-up-tiny-col-gap: var(--size-10);
+    /* Responsive */
+    --home-hero-lock-up-col-gap: var(--home-hero-lock-up-tiny-col-gap);
+
+    --home-hero-btn-xl-padding: var(--size-40);
     --home-hero-btn-lg-padding: var(--size-32);
     --home-hero-btn-md-lg-padding: var(--size-32);
     --home-hero-btn-md-padding: var(--size-29);
@@ -211,6 +220,7 @@
       /* Home Page */
       --home-hero-padding-btm: var(--home-hero-xxs-padding-btm);
       --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xxs-row-gap);
+      --home-hero-lock-up-col-gap: var(--home-hero-lock-up-xxs-col-gap);
       --home-hero-btn-padding: var(--home-hero-btn-xxs-padding);
     }
   }
@@ -234,6 +244,7 @@
       /* Home Page */
       --home-hero-padding-btm: var(--home-hero-xs-padding-btm);
       --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xs-row-gap);
+      --home-hero-lock-up-col-gap: var(--home-hero-lock-up-xs-col-gap);
       --home-hero-btn-padding: var(--home-hero-btn-xs-padding);
     }
   }
@@ -257,6 +268,7 @@
       /* Home Page */
       --home-hero-padding-btm: var(--home-hero-sm-padding-btm);
       --home-hero-lock-up-row-gap: var(--home-hero-lock-up-sm-row-gap);
+      --home-hero-lock-up-col-gap: var(--home-hero-lock-up-sm-col-gap);
       --home-hero-btn-padding: var(--home-hero-btn-sm-padding);
     }
   }
@@ -415,6 +427,7 @@
   /* Home Page */
   --spacing-home-hero-padding-btm: var(--home-hero-padding-btm);
   --spacing-home-hero-lock-up-row-gap: var(--home-hero-lock-up-row-gap);
+  --spacing-home-hero-lock-up-col-gap: var(--home-hero-lock-up-col-gap);
   --spacing-home-hero-btn-padding: var(--home-hero-btn-padding);
 
   /* Font Extensions */

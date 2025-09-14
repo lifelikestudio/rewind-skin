@@ -162,8 +162,8 @@
 
 @media (min-width: 1024px) {
   .text-body-xl-home-hero {
-    font-size: 22px;
-    line-height: 28.6px;
+    font-size: 20px;
+    line-height: 26px;
   }
   .text-body-xl-home-hero::before {
     margin-bottom: -0.2862em;
@@ -175,8 +175,8 @@
 
 @media (min-width: 1280px) {
   .text-body-xl-home-hero {
-    font-size: 24px;
-    line-height: 30px;
+    font-size: 22px;
+    line-height: 27.5px;
   }
   .text-body-xl-home-hero::before {
     margin-bottom: -0.2612em;
@@ -188,8 +188,8 @@
 
 @media (min-width: 1440px) {
   .text-body-xl-home-hero {
-    font-size: 26px;
-    line-height: 31.2px;
+    font-size: 24px;
+    line-height: 28.8px;
   }
   .text-body-xl-home-hero::before {
     margin-bottom: -0.2362em;
@@ -201,8 +201,8 @@
 
 @media (min-width: 1920px) {
   .text-body-xl-home-hero {
-    font-size: 40px;
-    line-height: 46px;
+    font-size: 32px;
+    line-height: 36.8px;
   }
   .text-body-xl-home-hero::before {
     margin-bottom: -0.2112em;
