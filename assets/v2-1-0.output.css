@@ -442,11 +442,6 @@
       padding-inline: 0px;
     }
   }
-  .sm\:px-grid-margin {
-    @media (width >= 768px) {
-      padding-inline: var(--grid-margin);
-    }
-  }
   .md\:aspect-2-1 {
     @media (width >= 1024px) {
       aspect-ratio: 2 / 1;
