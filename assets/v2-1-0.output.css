@@ -282,6 +282,9 @@
   .flex-col {
     flex-direction: column;
   }
+  .flex-col-reverse {
+    flex-direction: column-reverse;
+  }
   .flex-row {
     flex-direction: row;
   }
@@ -342,6 +345,9 @@
   }
   .object-cover {
     object-fit: cover;
+  }
+  .object-center {
+    object-position: center;
   }
   .p-home-hero-btn-padding {
     padding: var(--home-hero-btn-padding);
@@ -419,6 +425,11 @@
       color: inherit;
     }
   }
+  .sm\:aspect-2\/1 {
+    @media (width >= 768px) {
+      aspect-ratio: 2/1;
+    }
+  }
   .sm\:aspect-7\/5 {
     @media (width >= 768px) {
       aspect-ratio: 7/5;
@@ -427,6 +438,11 @@
   .sm\:aspect-16-9 {
     @media (width >= 768px) {
       aspect-ratio: 16 / 9;
+    }
+  }
+  .sm\:aspect-16\/9 {
+    @media (width >= 768px) {
+      aspect-ratio: 16/9;
     }
   }
   .sm\:aspect-auto {
