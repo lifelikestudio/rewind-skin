@@ -161,8 +161,9 @@
       {% endif %}
 
       {% assign downcased_vendor = product.vendor | strip | downcase %}
-
       {% assign restricted_vendors = 'biologique recherche,calecim professional' | split: ',' %}
+      {% assign members_only = 'mansard' | split: ',' %}
+
       {% if restricted_vendors contains downcased_vendor and localization.country.iso_code != 'CA' %}
         {% for variant in product.variants %}
           <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
@@ -172,59 +173,63 @@
             <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="/collections/all">Continue Shopping</a>
           </div>
         {% endfor %}
-      {% endif %}
-
-      {% for variant in product.variants %}
-        {% if variant.available %}
-          <div class="product-page__quantity-add-group variant-section variant-section-{{ variant.id }}">
-            <!-- Quantity input field -->
-            <div class="product-page__quantity">
-              <button type="button" class="quantity__decrement">-</button>
-              <input
-                class="product-page__quantity-input"
-                type="number"
-                min="1"
-                name="quantity-{{ variant.id }}"
-                value="1"
-                data-variant-id="{{ variant.id }}">
-              <button type="button" class="quantity__increment">+</button>
-            </div>
-
-            <!-- Remove the Subify wrapper from inside the variant loop -->
-
-            <!-- Add to Cart button -->
-            <button
-              class="btn btn--secondary all-caps product-page__checkout-btn"
-              type="submit"
-              name="add-to-cart-{{ variant.id }}">
-              <!-- This span contains the button text -->
-              <span id="add-to-cart-text-{{ variant.id }}">Add to Bag</span>
-              <span>
-                {% if variant.compare_at_price > variant.price %}
-                  <span class="checkout-btn__sale-price">
-                    <del>{{ variant.compare_at_price | money_with_currency | remove: '.00' }}</del>
-                    <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
-                  </span>
-                {% else %}
-                  {{ variant.price | money_with_currency | remove: '.00' }}
-                {% endif %}
-              </span>
-            </button>
-            <p class="product-page__payment-plan">
-              or 4 interest-free payments of {% assign divided_price = variant.price | divided_by: 4 %}
-              {{ divided_price | money_with_currency }} with
-              <span class="is--emphasized">Sezzle</span>
-            </p>
-          </div>
-        {% else %}
+      {% elsif members_only contains downcased_vendor and customer == null %}
+        {% for variant in product.variants %}
           <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
-            <p class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out">
-              Out of Stock
-            </p>
-            <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="/collections/all">Continue Shopping</a>
+            <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="{{ routes.account_login_url }}">Login to Shop</a>
           </div>
-        {% endif %}
-      {% endfor %}
+        {% endfor %}
+      {% else %}
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            <div class="product-page__quantity-add-group variant-section variant-section-{{ 
+          variant.id }}">
+              <!-- Quantity input field -->
+              <div class="product-page__quantity">
+                <button type="button" class="quantity__decrement">-</button>
+                <input
+                  class="product-page__quantity-input"
+                  type="number"
+                  min="1"
+                  name="quantity-{{ variant.id }}"
+                  value="1"
+                  data-variant-id="{{ variant.id }}">
+                <button type="button" class="quantity__increment">+</button>
+              </div>
+
+              <!-- Add to Cart button -->
+              <button
+                class="btn btn--secondary all-caps product-page__checkout-btn"
+                type="submit"
+                name="add-to-cart-{{ variant.id }}">
+                <span id="add-to-cart-text-{{ variant.id }}">Add to Bag</span>
+                <span>
+                  {% if variant.compare_at_price > variant.price %}
+                    <span class="checkout-btn__sale-price">
+                      <del>{{ variant.compare_at_price | money_with_currency | remove: '.00' }}</del>
+                      <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
+                    </span>
+                  {% else %}
+                    {{ variant.price | money_with_currency | remove: '.00' }}
+                  {% endif %}
+                </span>
+              </button>
+              <p class="product-page__payment-plan">
+                or 4 interest-free payments of {% assign divided_price = variant.price | divided_by: 4 %}
+                {{ divided_price | money_with_currency }} with
+                <span class="is--emphasized">Sezzle</span>
+              </p>
+            </div>
+          {% else %}
+            <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
+              <p class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out">
+                Out of Stock
+              </p>
+              <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="/collections/all">Continue Shopping</a>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
     </form>
   </section>
 </main>
