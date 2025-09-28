@@ -495,9 +495,25 @@ function displayProducts(selectedConcern) {
         ) {
           const buttonDiv = document.createElement('div');
           buttonDiv.className =
-            'all-caps btn btn--primary product-card__btn product-card__btn--sold-out';
+            'all-caps btn btn--primary product-card__btn product-card__btn--private';
           buttonDiv.textContent = 'Exclusive to Canada';
-          // buttonDiv.style.cursor = "default";
+          card.append(info, buttonDiv);
+        } else if (
+          product.vendor.toLowerCase() === 'mansard' &&
+          !isCustomerLoggedIn
+        ) {
+          const buttonDiv = document.createElement('div');
+          buttonDiv.className =
+            'all-caps btn btn--primary product-card__btn product-card__btn--private';
+          buttonDiv.textContent = 'Login to Shop';
+          buttonDiv.style.cursor = 'pointer';
+          
+          // Add click handler to redirect to login
+          buttonDiv.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/account/login';
+          });
+          
           card.append(info, buttonDiv);
         } else {
           const form = document.createElement('form');
