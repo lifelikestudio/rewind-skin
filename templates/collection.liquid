@@ -26,8 +26,8 @@
         <p class="all-caps collections__breadcrumbs">Shop / All</p>
       {%- endif -%}
       <p class="header-description--shop">
-        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating                
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              to correcting, we've got you covered.
+        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating                          
+        to correcting, we've got you covered.
       </p>
     </div>
   </div>
@@ -114,7 +114,7 @@
       </div>
 
       {%- for filter in collection.filters -%}
-        {%- if filter.label != 'Categories' and filter.label != 'Brands' -%}
+        {%- if filter.label != 'Categories' -%}
           <div class="collections__filter-group">
             <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
             <div class="collections__filter-group-options">
@@ -150,22 +150,6 @@
           </div>
         {%- endif -%}
       {%- endfor -%}
-
-      <div class="collections__filter-group">
-        <h2 class="all-caps collections__filter-group-title">Brands</h2>
-        <div class="collections__filter-group-options">
-          <ul class="filter-group-options__list">
-            {%- for collection in collections -%}
-              {%- if collection.metafields.custom.parent_collection == 'brands' -%}
-                <li class="all-caps filter-group-options__list-item">
-                  <a href="{{ collection.url }}">{{ collection.title }}</a>
-                </li>
-              {%- endif -%}
-            {%- endfor -%}
-          </ul>
-        </div>
-      </div>
-
     </form>
 
     <button class="all-caps collections__filters-action" id="refine-action">Refine</button>
@@ -417,9 +401,12 @@
       <div class="drawer drawer--menu" id="filters-brands-menu">
         <div class="drawer__header">
           <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
-
-          <h2 class="drawer__top-level-heading">Brands</h2>
-
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'brands' -%}
+              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+            {%- endif -%}
+          {%- endfor -%}
           <button
             type="button"
             class="all-caps drawer__header-action"
@@ -428,15 +415,39 @@
           </button>
         </div>
         <div class="drawer__container drawer__menu">
-          <ul class="drawer__links-list">
-            {%- for collection in collections -%}
-              {%- if collection.metafields.custom.parent_collection == 'brands' -%}
-                <li class="all-caps drawer__link filter-group-options__label">
-                  <a href="{{ collection.url }}">{{ collection.title }}</a>
-                </li>
-              {%- endif -%}
-            {%- endfor -%}
-          </ul>
+          {%- for filter in collection.filters -%}
+            {%- assign downcased_label = filter.label | downcase -%}
+            {%- if downcased_label == 'brands' -%}
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="drawer__links-list">
+                    {%- for filter_value in filter.values -%}
+                      <li class="all-caps drawer__link">
+                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            name="{{ filter_value.param_name }}"
+                            value="{{ filter_value.value }}"
+                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            {% if filter_value.active -%}
+                            checked
+                            {%- endif %}
+                            {% if filter_value.count == 0 and filter_value.active == false -%}
+                            disabled
+                            {%- endif %}>
+                          {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
+
+                          <span class="filter-group-options__label">
+                            {{- label_with_commas -}}
+                            {{ ' ' }} ({{ filter_value.count }})
+                          </span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            {%- endif -%}
+          {%- endfor -%}
         </div>
       </div>
     </form>
@@ -637,4 +648,6 @@
     </div>
   </div>
 </main>
-{% section 'skin-analysis' %}{% section 'treatments' %}{% section 'opt-in' %}
+{% section 'skin-analysis' %}
+{% section 'treatments' %}
+{% section 'opt-in' %}
