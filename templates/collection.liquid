@@ -1,37 +1,207 @@
-<section class="large-header-section large-header-section--shop">
-  <div class="large-header-section__inner wrapper wrapper--md">
-    <div class="large-header-section__container">
-      <h1 class="large-heading large-heading--shop">Shop</h1>
-    </div>
-    <div class="large-header-section__container">
-      {%- if collection.handle != 'all' -%}
-        {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'subscribe-save'
-        -%}
-          <p class="all-caps collections__breadcrumbs">
-            <a href="/collections/all">Shop</a>
-            / Featured / {{ collection.title }}
-          </p>
-        {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
-          <p class="all-caps collections__breadcrumbs">
-            <a href="/collections/all">Shop</a>
-            / Areas / {{ collection.title }}
-          </p>
-        {%- else -%}
-          <p class="all-caps collections__breadcrumbs">
-            <a href="/collections/all">Shop</a>
-            / {{ collection.title }}
-          </p>
-        {%- endif -%}
-      {%- else -%}
-        <p class="all-caps collections__breadcrumbs">Shop / All</p>
-      {%- endif -%}
-      <p class="header-description--shop">
-        A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating                          
-        to correcting, we've got you covered.
-      </p>
-    </div>
-  </div>
+{% comment %} <section class="large-header-section large-header-section--shop">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="large-header-section__inner wrapper wrapper--md">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <div class="large-header-section__container">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <h1 class="large-heading large-heading--shop">Shop</h1>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <div class="large-header-section__container">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {%- if collection.handle != 'all' -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'subscribe-save'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  / Featured / {{ collection.title }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  / Areas / {{ collection.title }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {%- else -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  / {{ collection.title }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {%- endif -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {%- else -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <p class="all-caps collections__breadcrumbs">Shop / All</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {%- endif -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="header-description--shop">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              to correcting, we've got you covered.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+</section> {% endcomment %}
+{% comment %} Temporarily wrapped with max-w to work with the old layout {% endcomment %}
+<section data-block="collections-header" class="xl:max-w-[1584px] xl:mx-auto flex-col !flex gap-y-brand-header-row-gap py-brand-header-padding-y px-grid-margin font-normal tracking-tight">
+  <nav data-element="collections-header__breadcrumbs" class="text-label-base-breadcrumbs text-text-secondary capitalize">
+    <ol class="flex flex-row gap-x-collections-breadcrumbs-gap items-center">
+      <li>
+        {% comment %} Static, always /all {% endcomment %}
+        <a class="visited:!text-inherit" href="/collections/all">Shop</a>
+      </li>
+      {% if collection.metafields.custom.parent_collection %}
+        <li class="flex items-center gap-x-collections-breadcrumbs-gap">
+          <svg
+            aria-hidden="true"
+            class="w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary"
+            viewBox="0 0 5 8"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M1 7.00008L4 3.99966M1 1L4 4.00042"
+              stroke="currentColor"
+              stroke-width="0.8"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          {% comment %} Dynamic "parent", conditional {% endcomment %}
+          <span>{{ collection.metafields.custom.parent_collection }}</span>
+        </li>
+      {% endif %}
+      <li class="flex items-center gap-x-collections-breadcrumbs-gap">
+        <svg
+          aria-hidden="true"
+          class="w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary"
+          viewBox="0 0 5 8"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M1 7.00008L4 3.99966M1 1L4 4.00042"
+            stroke="currentColor"
+            stroke-width="0.8"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        <span class="inline-block text-text-primary !normal-case" aria-current="page">{{ collection.title }}</span>
+      </li>
+    </ol>
+  </nav>
+  {% comment %} Collections title {% endcomment %}
+  <h1 class="sr-only">
+    {% if collection.title == 'All' %}
+      Skincare Shop
+    {% else %}
+      {{ collection.title }}
+    {% endif %}
+  </h1>
+  {% comment %} Once we move past the old layout add: lg:max-w-3/4 xl:max-w-1/2 {% endcomment %}
+  {% comment %} Collections description {% endcomment %}
+  <p class="text-body-xl-brand-description text-text-primary" data-element="collections-header__desc">
+    {% if collection.title == 'All' %}
+      {{ collection.description }}
+    {% else %}
+      {{ collection.title }} — {{ collection.description }}
+    {% endif %}
+  </p>
 </section>
+{% if collection.metafields.custom.featured_media.value.count > 0 and collection.metafields.custom.featured_media.value.count < 2 %}
+  {% comment %} Full-Bleed Layouts {% endcomment %}
+  {% comment %} Single-Asset {% endcomment %}
+  {% assign media_file = collection.metafields.custom.featured_media.value | first %}
+
+  {% if media_file.media_type == 'video' %}
+    <section data-block="collections-hero" class="relative w-full sm:aspect-7/5 md:aspect-2/1 aspect-4/5 overflow-hidden">
+      <video
+        class="absolute inset-0 w-full h-full object-cover"
+        autoplay
+        muted
+        loop
+        playsinline>
+        {% comment %} Use the highest quality MP4 source available {% endcomment %}
+        {% for source in media_file.sources %}
+          {% if source.format == 'mp4' %}
+            <source src="{{ source.url }}" type="{{ source.mime_type }}">
+          {% endif %}
+        {% endfor %}
+        {% comment %} Fallback image if video fails to load {% endcomment %}
+        <img
+          src="{{ media_file.preview_image.src }}"
+          alt="{{ collection.title }}"
+          class="w-full h-full object-cover">
+      </video>
+    </section>
+  {% else %}
+    <section
+      data-block="collections-hero"
+      class="bg-cover bg-center w-full sm:aspect-7/5 md:aspect-2/1 aspect-4/5"
+      style="background-image: url('{{ media_file | image_url }}');"></section>
+  {% endif %}
+
+{% elsif collection.metafields.custom.featured_media.value.count >= 2 %}
+  {% comment %} Dual-Assets {% endcomment %}
+  <section
+    data-block="collections-hero"
+    data-modifier="collections-hero--split"
+    class="w-full sm:aspect-16/9 md:aspect-2/1 !flex {% if collection.handle == 'mansard' %}flex-col-reverse{% else %}flex-col{% endif %} sm:flex-row">
+
+    {% comment %} first asset {% endcomment %}
+    {% assign first_media = collection.metafields.custom.featured_media.value | first %}
+    {% if first_media.media_type == 'video' %}
+      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
+        <video
+          class="absolute inset-0 w-full h-full object-cover object-center"
+          autoplay
+          muted
+          loop
+          playsinline>
+          {% comment %} Use the highest quality MP4 source available {% endcomment %}
+          {% for source in first_media.sources %}
+            {% if source.format == 'mp4' %}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {% endif %}
+          {% endfor %}
+          {% comment %} Fallback image if video fails to load {% endcomment %}
+          <img
+            src="{{ first_media.preview_image.src }}"
+            alt="{{ collection.title }}"
+            class="w-full h-full object-cover object-center">
+        </video>
+      </div>
+    {% else %}
+      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
+        <img
+          src="{{ first_media | image_url }}"
+          alt="{{ collection.title }}"
+          class="absolute inset-0 w-full h-full object-cover object-center">
+      </div>
+  {% endif %}
+
+    {% comment %} second asset {% endcomment %}
+    {% assign last_media = collection.metafields.custom.featured_media.value | last %}
+    {% if last_media.media_type == 'video' %}
+      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
+        <video
+          class="absolute inset-0 w-full h-full object-cover object-center"
+          autoplay
+          muted
+          loop
+          playsinline>
+          {% comment %} Use the highest quality MP4 source available {% endcomment %}
+          {% for source in last_media.sources %}
+            {% if source.format == 'mp4' %}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {% endif %}
+          {% endfor %}
+          {% comment %} Fallback image if video fails to load {% endcomment %}
+          <img
+            src="{{ last_media.preview_image.src }}"
+            alt="{{ collection.title }}"
+            class="w-full h-full object-cover object-center">
+        </video>
+      </div>
+    {% else %}
+      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
+        <img
+          src="{{ last_media | image_url }}"
+          alt="{{ collection.title }}"
+          class="absolute inset-0 w-full h-full object-cover object-center">
+      </div>
+    {% endif %}
+
+  </section>
+{% endif %}
+
 <main class="collections__main wrapper wrapper--lg">
   <div class="collections__container">
     <form class="collections__filter-form collections__filter-form--desktop">
@@ -114,7 +284,7 @@
       </div>
 
       {%- for filter in collection.filters -%}
-        {%- if filter.label != 'Categories' -%}
+        {%- if filter.label != 'Categories' and filter.label != 'Brands' -%}
           <div class="collections__filter-group">
             <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
             <div class="collections__filter-group-options">
@@ -150,6 +320,22 @@
           </div>
         {%- endif -%}
       {%- endfor -%}
+
+      <div class="collections__filter-group">
+        <h2 class="all-caps collections__filter-group-title">Brands</h2>
+        <div class="collections__filter-group-options">
+          <ul class="filter-group-options__list">
+            {%- for collection in collections -%}
+              {%- if collection.metafields.custom.parent_collection == 'brands' -%}
+                <li class="all-caps filter-group-options__list-item">
+                  <a href="{{ collection.url }}">{{ collection.title }}</a>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+
     </form>
 
     <button class="all-caps collections__filters-action" id="refine-action">Refine</button>
@@ -401,12 +587,9 @@
       <div class="drawer drawer--menu" id="filters-brands-menu">
         <div class="drawer__header">
           <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
-          {%- for filter in collection.filters -%}
-            {%- assign downcased_label = filter.label | downcase -%}
-            {%- if downcased_label == 'brands' -%}
-              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
-            {%- endif -%}
-          {%- endfor -%}
+
+          <h2 class="drawer__top-level-heading">Brands</h2>
+
           <button
             type="button"
             class="all-caps drawer__header-action"
@@ -415,39 +598,15 @@
           </button>
         </div>
         <div class="drawer__container drawer__menu">
-          {%- for filter in collection.filters -%}
-            {%- assign downcased_label = filter.label | downcase -%}
-            {%- if downcased_label == 'brands' -%}
-              {%- case filter.type -%}
-                {%- when 'list' -%}
-                  <ul class="drawer__links-list">
-                    {%- for filter_value in filter.values -%}
-                      <li class="all-caps drawer__link">
-                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
-                          <input
-                            type="checkbox"
-                            name="{{ filter_value.param_name }}"
-                            value="{{ filter_value.value }}"
-                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
-                            {% if filter_value.active -%}
-                            checked
-                            {%- endif %}
-                            {% if filter_value.count == 0 and filter_value.active == false -%}
-                            disabled
-                            {%- endif %}>
-                          {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
-
-                          <span class="filter-group-options__label">
-                            {{- label_with_commas -}}
-                            {{ ' ' }} ({{ filter_value.count }})
-                          </span>
-                        </label>
-                      </li>
-                    {%- endfor -%}
-                  </ul>
-              {%- endcase -%}
-            {%- endif -%}
-          {%- endfor -%}
+          <ul class="drawer__links-list">
+            {%- for collection in collections -%}
+              {%- if collection.metafields.custom.parent_collection == 'brands' -%}
+                <li class="all-caps drawer__link filter-group-options__label">
+                  <a href="{{ collection.url }}">{{ collection.title }}</a>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
         </div>
       </div>
     </form>
@@ -648,6 +807,4 @@
     </div>
   </div>
 </main>
-{% section 'skin-analysis' %}
-{% section 'treatments' %}
-{% section 'opt-in' %}
+{% section 'skin-analysis' %}{% section 'treatments' %}{% section 'opt-in' %}

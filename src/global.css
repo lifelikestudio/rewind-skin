@@ -4291,7 +4291,7 @@ a.drawer-cart__empty-continue::after {
 }
 
 .template-index .main-nav__trigger button {
-  /* color: var(--white); */
+  color: var(--white);
 }
 
 /* From 1023px down */
@@ -4317,12 +4317,12 @@ a.drawer-cart__empty-continue::after {
 }
 
 .template-index .main-nav {
-  /* color: var(--white);
-    background-color: transparent; */
+  color: var(--white);
+  background-color: transparent;
 }
 
 .template-index .main-nav a {
-  /* color: var(--white); */
+  color: var(--white);
 }
 
 /* .main-lockup--home-hero,
