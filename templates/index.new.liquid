@@ -1,0 +1,130 @@
+<section class="w-full sm:px-[0px] !flex flex-col sm:flex-row sm:aspect-16-9 md:aspect-2-1 font-normal">
+  {% comment %} Square Split  {% endcomment %}
+  {% comment %} <div class="w-full sm:w-1/2 sm:aspect-auto aspect-square border-1 border-[#fa0000]"></div>
+                                                                                                                                                                                          <div class="w-full sm:w-1/2 sm:aspect-auto aspect-square border-1 border-[#fa0000]"></div> {% endcomment %}
+
+  {% comment %} 4:5 Split Column {% endcomment %}
+  {% comment %} <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'left_fpo_compressed.jpg' | asset_url }}');">
+                            <div class="flex flex-col items-center gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+                              <h2 class="text-center text-text-primary text-body-xl-home-hero">Discover our latest from Mansard</h2>
+                              <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Shop</a>
+                            </div>
+                          </div>
+                          <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'right_fpo_compressed.jpg' | asset_url }}');">
+                            <div class="flex flex-col items-center gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+                              <h2 class="text-center text-text-primary text-body-xl-home-hero">Experience our personalized facial treatments</h2>
+                              <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Facials</a>
+                            </div>
+              </div> {% endcomment %}
+
+  {% comment %} 4:5 Split Row {% endcomment %}
+  <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'left_fpo_compressed.jpg' | asset_url }}');">
+    <div class="flex flex-row md:flex-col justify-between md:justify-start items-center gap-x-home-hero-lock-up-col-gap md:gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+      <h2 class="text-left md:text-center text-text-primary text-body-xl-home-hero">Discover our latest from Mansard</h2>
+      <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Shop</a>
+    </div>
+  </div>
+  <div class="bg-cover bg-center px-grid-margin pb-home-hero-padding-btm w-full flex flex-col justify-end items-center sm:w-1/2 aspect-[4/5] sm:aspect-auto" style="background-image: url('{{ 'right_fpo_compressed.jpg' | asset_url }}');">
+    <div class="flex flex-row md:flex-col justify-between md:justify-start items-center gap-x-home-hero-lock-up-col-gap md:gap-y-home-hero-lock-up-row-gap w-full lg:max-w-[80%]">
+      <h2 class="text-left md:text-center text-text-primary text-body-xl-home-hero">Experience our personalized facial treatments</h2>
+      <a class="text-center shrink-0 text-text-btn-label !bg-surface-secondary visited:text-inherit rounded-full block p-home-hero-btn-padding text-label-xl-home-hero-btn" href="#">Facials</a>
+    </div>
+  </div>
+
+</section>
+{% comment %}
+  <section class="brand-section">
+  <div class="brand-section__container">
+  <p class="brand-section__statement wrapper wrapper--sm">
+  Deliberately curated luxury skincare and innovative treatments that work in tandem to support beautiful, nourished skin. Bespoke experiences guided by our experts who understand what healthy skin craves. Your journey to a radiant future starts here.
+  </p>
+  <div class="brand-section__video-mask wrapper wrapper--lg">
+  <div class="brand-section__video-mask-half"></div>
+  <div class="brand-section__video-mask-half"></div>
+  <p class="brand-section__statement brand-section__statement--masked wrapper wrapper--sm">
+  Deliberately curated luxury skincare and innovative treatments that work in tandem to support beautiful, nourished skin. Bespoke experiences guided by our experts who understand what healthy skin craves. Your journey to a radiant future starts here.
+  </p>
+  <video
+  class="brand-section__video"
+  playsinline="playsinline"
+  autoplay="autoplay"
+  muted="muted"
+  loop="loop">
+  <source src="https://storage.googleapis.com/rewindskin.co/assets/video/brand-video_web-cut_compressed.mp4" type="video/mp4">
+  </video>
+  </div>
+  </div>
+  </section>
+  <main class="concerns-section aggregate-section" id="skin-concerns-section">
+  <div class="filter-header wrapper wrapper--md">
+  <h2 class="all-caps filter-header__type">Skin Concerns</h2>
+  <form class="filter-header__container">
+  <input
+  type="radio"
+  id="skin-concerns-filter-products"
+  name="skin-concerns-filter"
+  value="products"
+  class="filter-header__input"
+  checked>
+  <label class="all-caps filter-header__type filter-header__btn" for="skin-concerns-filter-products">Products</label>
+
+  <input
+  type="radio"
+  id="skin-concerns-filter-treatments"
+  name="skin-concerns-filter"
+  value="treatments"
+  class="filter-header__input">
+  <label class="all-caps filter-header__type filter-header__btn" for="skin-concerns-filter-treatments">Treatments</label>
+  </form>
+  <a class="all-caps filter-header__type" href="/collections/all">Shop All</a>
+  </div>
+  <section class="concerns-section__container wrapper wrapper--sm">
+  <div class="concerns-section__inner embla">
+  <div class="embla__container">
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="acne-blemishes">
+  Acne and Blemishes
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="facial-volume">
+  Facial Volume
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="hair-scalp-quality">
+  Hair and Scalp Quality
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="hyperpigmentation-scarring">
+  Hyperpigmentation and Scarring
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="intimate-rejuvenation">
+  Intimate Rejuvenation
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="signs-aging">
+  Signs of Aging
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="skin-elasticity">
+  Skin Elasticity
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="skin-quality">
+  Skin Quality
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="stubborn-fat">
+  Stubborn Fat
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="unwanted-hair">
+  Unwanted Hair
+  </h3>
+  </div>
+  <div class="concerns-section__gradient"></div>
+  </div>
+  <div class="concerns-section__inner embla">
+  <div class="embla__viewport">
+  <div class="embla__container" id="skin-concerns-results"></div>
+  </div>
+  <div class="embla__progress">
+  <div class="embla__progress-bar" style="transform: translate3d(0%, 0px, 0px);"></div>
+  </div>
+  </div>
+  </section>
+  </main>
+  {% section 'skin-analysis' %}
+  {% section 'treatments' %}
+  {% section 'opt-in' %}
+{% endcomment %}
