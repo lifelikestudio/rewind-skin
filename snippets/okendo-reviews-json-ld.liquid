@@ -1,5 +1,12 @@
 {% if request.page_type == 'product' %}
-  <script type="application/ld+json">
+  {%- assign downcased_vendor = product.vendor | strip | downcase -%}
+  {%- assign members_only = 'mansard' | split: ',' -%}
+  {%- assign show_pricing = true -%}
+  {%- if members_only contains downcased_vendor and customer == null -%}
+    {%- assign show_pricing = false -%}
+  {%- endif -%}
+
+  <script type='application/ld+json'>
     {
       "@context": "http://schema.org",
       "@type": "Product",
@@ -10,7 +17,9 @@
       "brand": {
         "@type": "Brand",
         "name": {{ product.vendor | strip_html | strip | json }}
-      },
+      }
+      {%- if show_pricing -%}
+      ,
       "offers": {
         "@type": "Offer",
         "priceCurrency": "{{ shop.currency }}",
@@ -21,6 +30,7 @@
           "name": {{ shop.name | strip_html | strip | json }}
         }
       }
+      {%- endif -%}
       {% if product.metafields.okendo.summaryData.reviewCount > 0 %},
         "aggregateRating" : {
           "@type": "AggregateRating",
