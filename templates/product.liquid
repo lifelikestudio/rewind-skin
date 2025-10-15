@@ -1,5 +1,5 @@
-<main class="product-page__hero wrapper wrapper--md">
-  <section class="product-page__container">
+<main class='product-page__hero wrapper wrapper--md'>
+  <section class='product-page__container'>
     {% assign downcased_vendor = product.vendor | strip | downcase %}
     {% comment %} revisit the br logic because it should also check if they're logged-in or not and some br has variants {% endcomment %}
     {% comment %}
@@ -13,21 +13,28 @@
       </div>
       {% else %} {% endif %}
     {% endcomment %}
-    <div class="product-page__copy-lockup">
-      <h1 class="product-page__title is--desktop">{{ product.title }}</h1>
-      <div class="product-page__rating is--desktop">
-        {% render 'okendo-reviews-product-rating-summary'
-          , product: product %}
+    <div class='product-page__copy-lockup'>
+      <h1 class='product-page__title is--desktop'>{{ product.title }}</h1>
+      <div class='product-page__rating is--desktop'>
+        {% render 'okendo-reviews-product-rating-summary', product: product %}
       </div>
 
       <!-- Generate selling plan pricing data using Liquid -->
-      <script type="application/json" id="selling-plan-data">
+      {%- assign downcased_vendor = product.vendor | strip | downcase -%}
+      {%- assign members_only = 'mansard' | split: ',' -%}
+      {%- assign show_pricing = true -%}
+      {%- if members_only contains downcased_vendor and customer == null -%}
+        {%- assign show_pricing = false -%}
+      {%- endif -%}
+
+      <script type='application/json' id='selling-plan-data'>
         {
           "product": {{ product.id | json }},
           "variants": [
             {% for variant in product.variants %}
               {
                 "id": {{ variant.id | json }},
+                {%- if show_pricing -%}
                 "price": {{ variant.price | json }},
                 "compare_at_price": {{ variant.compare_at_price | json }},
                 "selling_plan_allocations": [
@@ -44,23 +51,94 @@
                     }{% unless forloop.last %},{% endunless %}
                   {% endfor %}
                 ]
+                {%- else -%}
+                "price": 0,
+                "compare_at_price": null,
+                "selling_plan_allocations": []
+                {%- endif -%}
               }{% unless forloop.last %},{% endunless %}
             {% endfor %}
           ],
-          "selling_plan_groups": {{ product.selling_plan_groups | json }},
+          "selling_plan_groups": {% if show_pricing %}{{ product.selling_plan_groups | json }}{% else %}[]{% endif %},
           "money_format": {{ shop.money_with_currency_format | json }}
         }
       </script>
 
       <!-- Add the product JSON for the Subify integration -->
-      <script type="application/json" id="ProductJson-product-template">
-        {{ product | json }}
+      <script type='application/json' id='ProductJson-product-template'>
+        {%- if show_pricing -%}
+          {{ product | json }}
+        {%- else -%}
+          {
+            "id": {{ product.id | json }},
+            "title": {{ product.title | json }},
+            "handle": {{ product.handle | json }},
+            "description": {{ product.description | json }},
+            "vendor": {{ product.vendor | json }},
+            "type": {{ product.type | json }},
+            "tags": {{ product.tags | json }},
+            "variants": [
+              {% for variant in product.variants %}
+                {
+                  "id": {{ variant.id | json }},
+                  "title": {{ variant.title | json }},
+                  "available": {{ variant.available | json }},
+                  "sku": {{ variant.sku | json }},
+                  "price": 0,
+                  "compare_at_price": null,
+                  "selling_plan_allocations": []
+                }{% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ],
+            "images": {{ product.images | json }},
+            "options": {{ product.options | json }},
+            "selling_plan_groups": []
+          }
+        {%- endif -%}
       </script>
-
+      <!-- Conditional JSON-LD structured data for search engines -->
+      <script type='application/ld+json'>
+        {
+          "@context": "http://schema.org/",
+          "@type": "Product",
+          "name": {{ product.title | json }},
+          "url": {{ request.origin | append: product.url | json }},
+          {% if product.featured_image -%}
+            "image": [
+              {{ product.featured_image | image_url: width: 1920 | prepend: "https:" | json }}
+            ],
+          {%- endif %}
+          "description": {{ product.description | strip_html | json }},
+          {% if product.selected_or_first_available_variant.sku != blank -%}
+            "sku": {{ product.selected_or_first_available_variant.sku | json }},
+          {%- endif %}
+          "brand": {
+            "@type": "Brand",
+            "name": {{ product.vendor | json }}
+          }
+          {%- if show_pricing -%}
+          ,
+          "offers": [
+            {%- for variant in product.variants -%}
+              {
+                "@type" : "Offer",
+                {%- if variant.sku != blank -%}
+                  "sku": {{ variant.sku | json }},
+                {%- endif -%}
+                "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+                "price" : {{ variant.price | divided_by: 100.00 | json }},
+                "priceCurrency" : {{ cart.currency.iso_code | json }},
+                "url" : {{ request.origin | append: variant.url | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {%- endfor -%}
+          ]
+          {%- endif -%}
+        }
+      </script>
       {{ product.description }}
     </div>
   </section>
-  <section class="product-page__container">
+  <section class='product-page__container'>
     {% comment %}
       <div class="keen-slider">
       {% assign current_variant_id = product.selected_or_first_available_variant.id %}
@@ -107,49 +185,59 @@
       {% endfor %}
       </div>
     {% endcomment %}
-    <div class="keen-slider" id="keen-slider"></div>
+    <div class='keen-slider' id='keen-slider'></div>
   </section>
-  <section class="product-page__container">
+  <section class='product-page__container'>
     <form
-      action="/cart/add"
-      method="post"
-      enctype="multipart/form-data"
-      class="product-page__checkout-form">
-      <h1 class="product-page__title is--mobile">{{ product.title }}</h1>
-      <div class="product-page__rating is--mobile">
-        {% render 'okendo-reviews-product-rating-summary'
-          , product: product %}
+      action='/cart/add'
+      method='post'
+      enctype='multipart/form-data'
+      class='product-page__checkout-form'
+    >
+      <h1 class='product-page__title is--mobile'>{{ product.title }}</h1>
+      <div class='product-page__rating is--mobile'>
+        {% render 'okendo-reviews-product-rating-summary', product: product %}
       </div>
       <!-- Check if the product has multiple variants -->
       {% if product.variants.size > 1 %}
         <!-- If yes, display a dropdown menu for variant selection -->
-        <div class="product-page__variants-group">
+        <div class='product-page__variants-group'>
           {% for variant in product.variants %}
-            <div class="product-page__variant">
+            <div class='product-page__variant'>
               <input
-                type="radio"
-                name="id"
-                value="{{ variant.id }}"
-                id="variant-{{ variant.id }}"
+                type='radio'
+                name='id'
+                value='{{ variant.id }}'
+                id='variant-{{ variant.id }}'
                 {% if forloop.first %}
-                checked
-                {% endif %}>
-              <label class="all-caps" for="variant-{{ variant.id }}">{{ variant.title }}</label>
+                  checked
+                {% endif %}
+              >
+              <label class='all-caps' for='variant-{{ variant.id }}'>
+                {{- variant.title -}}
+              </label>
             </div>
           {% endfor %}
         </div>
       {% else %}
-        <!-- If the product does not have multiple variants, use a hidden input to add the product's variant ID -->
+        <!--
+          If the product does not have multiple variants, use a hidden input to add the product's variant ID
+        -->
         <input
-          type="hidden"
-          name="id"
-          value="{{ product.variants.first.id }}">
-    {% endif %}
+          type='hidden'
+          name='id'
+          value='{{ product.variants.first.id }}'
+        >
+      {% endif %}
 
-      <!-- Implement Subify subscription widget right after variant selection -->
+      <!--
+        Implement Subify subscription widget right after variant selection
+      -->
       {% assign has_subify_plans = false %}
       {% for selling_plan_group in product.selling_plan_groups %}
-        {% if selling_plan_group.app_id == 'subi' or selling_plan_group.app_id == 'subify' %}
+        {% if selling_plan_group.app_id == 'subi'
+          or selling_plan_group.app_id == 'subify'
+        %}
           {% assign has_subify_plans = true %}
           {% break %}
         {% endif %}
@@ -157,75 +245,110 @@
 
       {% if has_subify_plans %}
         <!-- Subify widget wrapper placed right after variant selection -->
-        <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
+        <div id='subify-widget-wrapper' class='subify-widget-wrapper'></div>
       {% endif %}
 
       {% assign downcased_vendor = product.vendor | strip | downcase %}
-      {% assign restricted_vendors = 'biologique recherche,calecim professional' | split: ',' %}
+      {% assign restricted_vendors = 'biologique recherche,calecim professional'
+        | split: ','
+      %}
       {% assign members_only = 'mansard' | split: ',' %}
 
-      {% if restricted_vendors contains downcased_vendor and localization.country.iso_code != 'CA' %}
+      {% if restricted_vendors contains downcased_vendor
+        and localization.country.iso_code != 'CA'
+      %}
         {% for variant in product.variants %}
-          <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
-            <p class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out">
+          <div class='product-page__sold-out-group variant-section variant-section-{{ variant.id }}'>
+            <p class='btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out'>
               Exclusive to Canada
             </p>
-            <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="/collections/all">Continue Shopping</a>
+            <a
+              class='btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon'
+              href='/collections/all'
+              >Continue Shopping</a
+            >
           </div>
         {% endfor %}
       {% elsif members_only contains downcased_vendor and customer == null %}
         {% for variant in product.variants %}
-          <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
-            <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="{{ routes.account_login_url }}">Login to Shop</a>
+          <div class='product-page__sold-out-group variant-section variant-section-{{ variant.id }}'>
+            <a
+              class='btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon'
+              href='{{ routes.account_login_url }}'
+              >Login to Shop</a
+            >
           </div>
         {% endfor %}
       {% else %}
         {% for variant in product.variants %}
           {% if variant.available %}
-            <div class="product-page__quantity-add-group variant-section variant-section-{{ 
-          variant.id }}">
+            <div
+              class='
+                product-page__quantity-add-group variant-section variant-section-{{
+                variant.id }}
+              '
+            >
               <!-- Quantity input field -->
-              <div class="product-page__quantity">
-                <button type="button" class="quantity__decrement">-</button>
+              <div class='product-page__quantity'>
+                <button type='button' class='quantity__decrement'>-</button>
                 <input
-                  class="product-page__quantity-input"
-                  type="number"
-                  min="1"
-                  name="quantity-{{ variant.id }}"
-                  value="1"
-                  data-variant-id="{{ variant.id }}">
-                <button type="button" class="quantity__increment">+</button>
+                  class='product-page__quantity-input'
+                  type='number'
+                  min='1'
+                  name='quantity-{{ variant.id }}'
+                  value='1'
+                  data-variant-id='{{ variant.id }}'
+                >
+                <button type='button' class='quantity__increment'>+</button>
               </div>
 
               <!-- Add to Cart button -->
               <button
-                class="btn btn--secondary all-caps product-page__checkout-btn"
-                type="submit"
-                name="add-to-cart-{{ variant.id }}">
-                <span id="add-to-cart-text-{{ variant.id }}">Add to Bag</span>
+                class='btn btn--secondary all-caps product-page__checkout-btn'
+                type='submit'
+                name='add-to-cart-{{ variant.id }}'
+              >
+                <span id='add-to-cart-text-{{ variant.id }}'>Add to Bag</span>
                 <span>
                   {% if variant.compare_at_price > variant.price %}
-                    <span class="checkout-btn__sale-price">
-                      <del>{{ variant.compare_at_price | money_with_currency | remove: '.00' }}</del>
-                      <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
+                    <span class='checkout-btn__sale-price'>
+                      <del>
+                        {{-
+                          variant.compare_at_price
+                          | money_with_currency
+                          | remove: '.00'
+                        -}}
+                      </del>
+                      <ins>
+                        {{-
+                          variant.price
+                          | money_with_currency
+                          | remove: '.00'
+                        -}}
+                      </ins>
                     </span>
                   {% else %}
                     {{ variant.price | money_with_currency | remove: '.00' }}
                   {% endif %}
                 </span>
               </button>
-              <p class="product-page__payment-plan">
-                or 4 interest-free payments of {% assign divided_price = variant.price | divided_by: 4 %}
+              <p class='product-page__payment-plan'>
+                or 4 interest-free payments of
+                {% assign divided_price = variant.price | divided_by: 4 %}
                 {{ divided_price | money_with_currency }} with
-                <span class="is--emphasized">Sezzle</span>
+                <span class='is--emphasized'>Sezzle</span>
               </p>
             </div>
           {% else %}
-            <div class="product-page__sold-out-group variant-section variant-section-{{ variant.id }}">
-              <p class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out">
+            <div class='product-page__sold-out-group variant-section variant-section-{{ variant.id }}'>
+              <p class='btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--sold-out'>
                 Out of Stock
               </p>
-              <a class="btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon" href="/collections/all">Continue Shopping</a>
+              <a
+                class='btn btn--secondary all-caps product-page__checkout-btn product-page__checkout-btn--icon'
+                href='/collections/all'
+                >Continue Shopping</a
+              >
             </div>
           {% endif %}
         {% endfor %}
@@ -233,26 +356,31 @@
     </form>
   </section>
 </main>
-{% if product.metafields.custom.directions != blank or product.metafields.custom.ingredients != blank %}
-  <section class="product-page__more-info wrapper wrapper--md">
+{% if product.metafields.custom.directions != blank
+  or product.metafields.custom.ingredients != blank
+%}
+  <section class='product-page__more-info wrapper wrapper--md'>
     {% if product.metafields.custom.directions != blank %}
-      <div class="product-page__container">
-        <h2 class="product-page__heading">Directions</h2>
-        <p class="product-page__body">{{ product.metafields.custom.directions }}</p>
+      <div class='product-page__container'>
+        <h2 class='product-page__heading'>Directions</h2>
+        <p class='product-page__body'>
+          {{ product.metafields.custom.directions }}
+        </p>
       </div>
     {% endif %}
     {% if product.metafields.custom.ingredients != blank %}
-      <div class="product-page__container">
-        <h2 class="product-page__heading">INCI Ingredients</h2>
-        <p class="product-page__body">{{ product.metafields.custom.ingredients }}</p>
+      <div class='product-page__container'>
+        <h2 class='product-page__heading'>INCI Ingredients</h2>
+        <p class='product-page__body'>
+          {{ product.metafields.custom.ingredients }}
+        </p>
       </div>
     {% endif %}
   </section>
 {% endif %}
-<section class="product-page__reviews wrapper wrapper--md">
-  <h2 class="product-page__heading">Reviews</h2>
-  {% render 'okendo-reviews-widget'
-    , product: product %}
+<section class='product-page__reviews wrapper wrapper--md'>
+  <h2 class='product-page__heading'>Reviews</h2>
+  {% render 'okendo-reviews-widget', product: product %}
 </section>
 {% section 'skin-analysis' %}
 {% comment %}
@@ -274,8 +402,8 @@
 <!-- Subi Integration - Conditional on product having Subi selling plans -->
 <script>
   const productData = {{ product | json }};
-  const hasSubiPlans = productData.selling_plan_groups && 
-                      productData.selling_plan_groups.some(group => 
+  const hasSubiPlans = productData.selling_plan_groups &&
+                      productData.selling_plan_groups.some(group =>
                         group.app_id === 'subi' || group.app_id === 'subify'
                       );
   // console.log("Product has Subi selling plans:", hasSubiPlans);
@@ -283,16 +411,17 @@
 
 {% if hasSubiPlans %}
   <!-- Subi widget wrapper -->
-  <div id="subi-widget-wrapper" class="subi-widget-wrapper"></div>
+  <div id='subi-widget-wrapper' class='subi-widget-wrapper'></div>
 
   <!-- Subi SDK script -->
   <script>
     // console.log("Loading Subi SDK...");
   </script>
   <script
-    src="https://cdn.hengam.io/subify/subify-sdk.js"
+    src='https://cdn.hengam.io/subify/subify-sdk.js'
     defer
-    id="subi-sdk-script"></script>
+    id='subi-sdk-script'
+  ></script>
 
   <!-- Subi styles -->
   <style>
@@ -318,12 +447,15 @@
     #subi-widget-wrapper {
       order: 2;
     }
-  </style>{% endif %}
+  </style>
+{% endif %}
 
 {% comment %} Implement Subify subscription widget {% endcomment %}
 {% assign has_subify_plans = false %}
 {% for selling_plan_group in product.selling_plan_groups %}
-  {% if selling_plan_group.app_id == 'subi' or selling_plan_group.app_id == 'subify' %}
+  {% if selling_plan_group.app_id == 'subi'
+    or selling_plan_group.app_id == 'subify'
+  %}
     {% assign has_subify_plans = true %}
     {% break %}
   {% endif %}
@@ -331,10 +463,10 @@
 
 {% if has_subify_plans %}
   <!-- Subify SDK script -->
-  <script src="https://cdn.hengam.io/subify/subify-sdk.js" defer></script>
+  <script src='https://cdn.hengam.io/subify/subify-sdk.js' defer></script>
 
   <!-- Subify widget container -->
-  <div id="subify-widget-wrapper" class="subify-widget-wrapper"></div>
+  <div id='subify-widget-wrapper' class='subify-widget-wrapper'></div>
 
   <!-- Subify styles -->
   <style>
