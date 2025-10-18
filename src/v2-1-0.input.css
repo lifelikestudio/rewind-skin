@@ -364,6 +364,16 @@
       --home-hero-btn-padding: var(--home-hero-btn-xl-padding);
     }
   }
+  /* Video accessibility - prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    [data-block='collections-hero'] video {
+      display: none !important;
+    }
+
+    [data-element='collections-hero__fallback'] {
+      display: block !important;
+    }
+  }
 }
 
 @theme inline {

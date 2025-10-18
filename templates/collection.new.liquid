@@ -1,53 +1,62 @@
-{% comment %} <section class="large-header-section large-header-section--shop">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="large-header-section__inner wrapper wrapper--md">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <div class="large-header-section__container">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <h1 class="large-heading large-heading--shop">Shop</h1>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <div class="large-header-section__container">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {%- if collection.handle != 'all' -%}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'subscribe-save'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              -%}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="all-caps collections__breadcrumbs">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="/collections/all">Shop</a>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  / Featured / {{ collection.title }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="all-caps collections__breadcrumbs">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="/collections/all">Shop</a>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  / Areas / {{ collection.title }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </p>
+{% comment %}
+  <section class="large-header-section large-header-section--shop">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <div class="large-header-section__inner wrapper wrapper--md">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="large-header-section__container">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <h1 class="large-heading large-heading--shop">Shop</h1>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="large-header-section__container">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {%- if collection.handle != 'all' -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {%- if collection.handle == 'biologique-recherche' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'subscribe-save'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    / Featured / {{ collection.title }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {%- elsif collection.handle == 'face' or collection.handle == 'bath-body-hair' -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    / Areas / {{ collection.title }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {%- else -%}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <p class="all-caps collections__breadcrumbs">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <a href="/collections/all">Shop</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    / {{ collection.title }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {%- endif -%}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               {%- else -%}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="all-caps collections__breadcrumbs">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="/collections/all">Shop</a>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  / {{ collection.title }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="all-caps collections__breadcrumbs">Shop / All</p>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               {%- endif -%}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {%- else -%}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <p class="all-caps collections__breadcrumbs">Shop / All</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {%- endif -%}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="header-description--shop">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating               
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              to correcting, we've got you covered.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <p class="header-description--shop">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                A solution for every concern. Explore our extensive range of carefully curated luxury products; from hydrating
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                to correcting, we've got you covered.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-</section> {% endcomment %}
+  </section>
+{% endcomment %}
 {% comment %} Temporarily wrapped with max-w to work with the old layout {% endcomment %}
-<section data-block="collections-header" class="xl:max-w-[1584px] xl:mx-auto flex-col !flex gap-y-brand-header-row-gap py-brand-header-padding-y px-grid-margin font-normal tracking-tight">
-  <nav data-element="collections-header__breadcrumbs" class="text-label-base-breadcrumbs text-text-secondary capitalize">
-    <ol class="flex flex-row gap-x-collections-breadcrumbs-gap items-center">
+<section
+  data-block='collections-header'
+  class='gap-y-brand-header-row-gap py-brand-header-padding-y px-grid-margin !flex flex-col font-normal tracking-tight xl:mx-auto xl:max-w-[1584px]'
+>
+  <nav
+    data-element='collections-header__breadcrumbs'
+    class='text-label-base-breadcrumbs text-text-secondary capitalize'
+  >
+    <ol class='gap-x-collections-breadcrumbs-gap flex flex-row items-center'>
       <li>
         {% comment %} Static, always /all {% endcomment %}
-        <a class="visited:!text-inherit" href="/collections/all">Shop</a>
+        <a class='visited:!text-inherit' href='/collections/all'>Shop</a>
       </li>
       {% if collection.metafields.custom.parent_collection %}
-        <li class="flex items-center gap-x-collections-breadcrumbs-gap">
+        <li class='gap-x-collections-breadcrumbs-gap flex items-center'>
           <svg
-            aria-hidden="true"
-            class="w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary"
-            viewBox="0 0 5 8"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
+            aria-hidden='true'
+            class='w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary'
+            viewBox='0 0 5 8'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
             <path
               d="M1 7.00008L4 3.99966M1 1L4 4.00042"
               stroke="currentColor"
@@ -59,13 +68,14 @@
           <span>{{ collection.metafields.custom.parent_collection }}</span>
         </li>
       {% endif %}
-      <li class="flex items-center gap-x-collections-breadcrumbs-gap">
+      <li class='gap-x-collections-breadcrumbs-gap flex items-center'>
         <svg
-          aria-hidden="true"
-          class="w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary"
-          viewBox="0 0 5 8"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg">
+          aria-hidden='true'
+          class='w-collections-breadcrumbs-separator h-collections-breadcrumbs-separator text-text-secondary'
+          viewBox='0 0 5 8'
+          fill='none'
+          xmlns='http://www.w3.org/2000/svg'
+        >
           <path
             d="M1 7.00008L4 3.99966M1 1L4 4.00042"
             stroke="currentColor"
@@ -73,12 +83,17 @@
             stroke-linecap="round"
             stroke-linejoin="round" />
         </svg>
-        <span class="inline-block text-text-primary !normal-case" aria-current="page">{{ collection.title }}</span>
+        <span
+          class='text-text-primary inline-block !normal-case'
+          aria-current='page'
+        >
+          {{- collection.title -}}
+        </span>
       </li>
     </ol>
   </nav>
   {% comment %} Collections title {% endcomment %}
-  <h1 class="sr-only">
+  <h1 class='sr-only'>
     {% if collection.title == 'All' %}
       Skincare Shop
     {% else %}
@@ -87,7 +102,10 @@
   </h1>
   {% comment %} Once we move past the old layout add: lg:max-w-3/4 xl:max-w-1/2 {% endcomment %}
   {% comment %} Collections description {% endcomment %}
-  <p class="text-body-xl-brand-description text-text-primary" data-element="collections-header__desc">
+  <p
+    class='text-body-xl-brand-description text-text-primary'
+    data-element='collections-header__desc'
+  >
     {% if collection.title == 'All' %}
       {{ collection.description }}
     {% else %}
@@ -95,134 +113,188 @@
     {% endif %}
   </p>
 </section>
-{% if collection.metafields.custom.featured_media.value.count > 0 and collection.metafields.custom.featured_media.value.count < 2 %}
+{% if collection.metafields.custom.featured_media.value.count > 0
+  and collection.metafields.custom.featured_media.value.count < 2
+%}
   {% comment %} Full-Bleed Layouts {% endcomment %}
   {% comment %} Single-Asset {% endcomment %}
-  {% assign media_file = collection.metafields.custom.featured_media.value | first %}
+  {% assign media_file = collection.metafields.custom.featured_media.value
+    | first
+  %}
 
   {% if media_file.media_type == 'video' %}
-    <section data-block="collections-hero" class="relative w-full sm:aspect-7/5 md:aspect-2/1 aspect-4/5 overflow-hidden">
+    <section
+      data-block='collections-hero'
+      class='relative aspect-4/5 w-full overflow-hidden sm:aspect-7/5 md:aspect-2/1'
+    >
       <video
-        class="absolute inset-0 w-full h-full object-cover"
+        class='absolute inset-0 h-full w-full object-cover'
         autoplay
         muted
         loop
-        playsinline>
+        playsinline
+        preload='metadata'
+        aria-label='Background video showcasing {{ collection.title }}'
+        role='img'
+      >
         {% comment %} Use the highest quality MP4 source available {% endcomment %}
         {% for source in media_file.sources %}
           {% if source.format == 'mp4' %}
-            <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            <source src='{{ source.url }}' type='{{ source.mime_type }}'>
           {% endif %}
         {% endfor %}
-        {% comment %} Fallback image if video fails to load {% endcomment %}
+        {% comment %} Fallback image for failure to load {% endcomment %}
         <img
-          src="{{ media_file.preview_image.src }}"
-          alt="{{ collection.title }}"
-          class="w-full h-full object-cover">
+          src='{{ media_file.preview_image | image_url  }}'
+          alt='{{ collection.title }} - {{ collection.description }}'
+          data-element='collections-hero__fallback'
+          class='h-full w-full object-cover'
+        >
       </video>
+      {% comment %} Fallback image for reduced motion {% endcomment %}
+      <img
+        src='{{ media_file.preview_image | image_url  }}'
+        alt='{{ collection.title }} - {{ collection.description }}'
+        data-element='collections-hero__fallback'
+        class='h-full w-full object-cover'
+      >
     </section>
   {% else %}
     <section
-      data-block="collections-hero"
-      class="bg-cover bg-center w-full sm:aspect-7/5 md:aspect-2/1 aspect-4/5"
-      style="background-image: url('{{ media_file | image_url }}');"></section>
+      data-block='collections-hero'
+      class='aspect-4/5 w-full bg-cover bg-center sm:aspect-7/5 md:aspect-2/1'
+      style="background-image: url('{{ media_file | image_url }}');"
+    ></section>
   {% endif %}
 
 {% elsif collection.metafields.custom.featured_media.value.count >= 2 %}
   {% comment %} Dual-Assets {% endcomment %}
   <section
-    data-block="collections-hero"
-    data-modifier="collections-hero--split"
-    class="w-full sm:aspect-16/9 md:aspect-2/1 !flex {% if collection.handle == 'mansard' %}flex-col-reverse{% else %}flex-col{% endif %} sm:flex-row">
-
+    data-block='collections-hero'
+    data-modifier='collections-hero--split'
+    class='!flex w-full sm:aspect-16/9 md:aspect-2/1 {% if collection.handle == 'mansard' %}flex-col-reverse{% else %}flex-col{% endif %} sm:flex-row'
+  >
     {% comment %} first asset {% endcomment %}
-    {% assign first_media = collection.metafields.custom.featured_media.value | first %}
+    {% assign first_media = collection.metafields.custom.featured_media.value
+      | first
+    %}
     {% if first_media.media_type == 'video' %}
-      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
+      <div class='relative aspect-4/5 h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2'>
         <video
-          class="absolute inset-0 w-full h-full object-cover object-center"
+          class='absolute inset-0 h-full w-full object-cover object-center'
           autoplay
           muted
           loop
-          playsinline>
+          playsinline
+          preload='metadata'
+          aria-label='Background video showcasing {{ collection.title }}'
+          role='img'
+        >
           {% comment %} Use the highest quality MP4 source available {% endcomment %}
           {% for source in first_media.sources %}
             {% if source.format == 'mp4' %}
-              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+              <source src='{{ source.url }}' type='{{ source.mime_type }}'>
             {% endif %}
           {% endfor %}
           {% comment %} Fallback image if video fails to load {% endcomment %}
           <img
-            src="{{ first_media.preview_image.src }}"
-            alt="{{ collection.title }}"
-            class="w-full h-full object-cover object-center">
+            src='{{ first_media.preview_image | image_url }}'
+            alt='{{ collection.title }} - {{ collection.description }}'
+            class='h-full w-full object-cover object-center'
+            data-element='collections-hero__fallback'
+          >
         </video>
+        {% comment %} Fallback image for reduced motion {% endcomment %}
+        <img
+          src='{{ first_media.preview_image | image_url }}'
+          alt='{{ collection.title }} - {{ collection.description }}'
+          class='h-full w-full object-cover object-center'
+          data-element='collections-hero__fallback'
+        >
       </div>
     {% else %}
-      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
+      <div class='relative aspect-4/5 h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2'>
         <img
-          src="{{ first_media | image_url }}"
-          alt="{{ collection.title }}"
-          class="absolute inset-0 w-full h-full object-cover object-center">
-      </div>
-  {% endif %}
-
-    {% comment %} second asset {% endcomment %}
-    {% assign last_media = collection.metafields.custom.featured_media.value | last %}
-    {% if last_media.media_type == 'video' %}
-      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
-        <video
-          class="absolute inset-0 w-full h-full object-cover object-center"
-          autoplay
-          muted
-          loop
-          playsinline>
-          {% comment %} Use the highest quality MP4 source available {% endcomment %}
-          {% for source in last_media.sources %}
-            {% if source.format == 'mp4' %}
-              <source src="{{ source.url }}" type="{{ source.mime_type }}">
-            {% endif %}
-          {% endfor %}
-          {% comment %} Fallback image if video fails to load {% endcomment %}
-          <img
-            src="{{ last_media.preview_image.src }}"
-            alt="{{ collection.title }}"
-            class="w-full h-full object-cover object-center">
-        </video>
-      </div>
-    {% else %}
-      <div class="aspect-4/5 h-1/2 w-full sm:w-1/2 sm:h-full relative overflow-hidden">
-        <img
-          src="{{ last_media | image_url }}"
-          alt="{{ collection.title }}"
-          class="absolute inset-0 w-full h-full object-cover object-center">
+          src='{{ first_media | image_url }}'
+          alt='{{ collection.title }}'
+          class='absolute inset-0 h-full w-full object-cover object-center'
+        >
       </div>
     {% endif %}
 
+    {% comment %} second asset {% endcomment %}
+    {% assign last_media = collection.metafields.custom.featured_media.value
+      | last
+    %}
+    {% if last_media.media_type == 'video' %}
+      <div class='relative aspect-4/5 h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2'>
+        <video
+          class='absolute inset-0 h-full w-full object-cover object-center'
+          autoplay
+          muted
+          loop
+          playsinline
+          preload='metadata'
+          aria-label='Background video showcasing {{ collection.title }}'
+          role='img'
+        >
+          {% comment %} Use the highest quality MP4 source available {% endcomment %}
+          {% for source in last_media.sources %}
+            {% if source.format == 'mp4' %}
+              <source src='{{ source.url }}' type='{{ source.mime_type }}'>
+            {% endif %}
+          {% endfor %}
+          {% comment %} Fallback image if video fails to load {% endcomment %}
+          <img
+            src='{{ last_media.preview_image | image_url  }}'
+            alt='{{ collection.title }} - {{ collection.description }}'
+            class='h-full w-full object-cover object-center'
+            data-element='collections-hero__fallback'
+          >
+        </video>
+        {% comment %} Fallback image for reduced motion {% endcomment %}
+        <img
+          src='{{ last_media.preview_image | image_url  }}'
+          alt='{{ collection.title }} - {{ collection.description }}'
+          class='h-full w-full object-cover object-center'
+          data-element='collections-hero__fallback'
+        >
+      </div>
+    {% else %}
+      <div class='relative aspect-4/5 h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2'>
+        <img
+          src='{{ last_media | image_url }}'
+          alt='{{ collection.title }}'
+          class='absolute inset-0 h-full w-full object-cover object-center'
+        >
+      </div>
+    {% endif %}
   </section>
 {% endif %}
 
-<main class="collections__main wrapper wrapper--lg">
-  <div class="collections__container">
-    <form class="collections__filter-form collections__filter-form--desktop">
-      <div class="collections__filter-group">
-        <h2 class="all-caps collections__filter-group-title">Featured</h2>
-        <div class="collections__filter-group-options">
-          <ul class="filter-group-options__list">
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/subscribe-save">Subscribe & Save</a>
+<main class='collections__main wrapper wrapper--lg'>
+  <div class='collections__container'>
+    <form class='collections__filter-form collections__filter-form--desktop'>
+      <div class='collections__filter-group'>
+        <h2 class='all-caps collections__filter-group-title'>Featured</h2>
+        <div class='collections__filter-group-options'>
+          <ul class='filter-group-options__list'>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/subscribe-save'>Subscribe & Save</a>
             </li>
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/biologique-recherche">Biologique Recherche</a>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/biologique-recherche'
+                >Biologique Recherche</a
+              >
             </li>
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/gifting">Gifting</a>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/gifting'>Gifting</a>
             </li>
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/bestsellers">Bestsellers</a>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/bestsellers'>Bestsellers</a>
             </li>
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/sales-offers">Sales & Offers</a>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/sales-offers'>Sales & Offers</a>
             </li>
           </ul>
         </div>
@@ -230,29 +302,37 @@
 
       {%- for filter in collection.filters -%}
         {%- if filter.label == 'Categories' -%}
-          <div class="collections__filter-group">
-            <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
-            <div class="collections__filter-group-options">
+          <div class='collections__filter-group'>
+            <h2 class='all-caps collections__filter-group-title'>
+              {{ filter.label }}
+            </h2>
+            <div class='collections__filter-group-options'>
               {%- case filter.type -%}
                 {%- when 'list' -%}
-                  <ul class="filter-group-options__list">
+                  <ul class='filter-group-options__list'>
                     {%- for filter_value in filter.values -%}
-                      <li class="all-caps filter-group-options__list-item">
-                        <label for="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}">
+                      <li class='all-caps filter-group-options__list-item'>
+                        <label for='Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}'>
                           <input
-                            type="checkbox"
-                            name="{{ filter_value.param_name }}"
-                            value="{{ filter_value.value }}"
-                            id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
+                            type='checkbox'
+                            name='{{ filter_value.param_name }}'
+                            value='{{ filter_value.value }}'
+                            id='Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}'
                             {% if filter_value.active -%}
-                            checked
+                              checked
                             {%- endif %}
-                            {% if filter_value.count == 0 and filter_value.active == false -%}
-                            disabled
-                            {%- endif %}>
-                          {% assign label_characters = filter_value.label | join: ', ' | replace: '_', ', ' | replace: 'plus', '+'
+                            {% if filter_value.count == 0
+                              and filter_value.active == false
+                            -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_characters = filter_value.label
+                            | join: ', '
+                            | replace: '_', ', '
+                            | replace: 'plus', '+'
                           %}
-                          <span class="filter-group-options__label">
+                          <span class='filter-group-options__label'>
                             {{- label_characters -}}
                             {{ ' ' }} ({{ filter_value.count }})
                           </span>
@@ -266,18 +346,18 @@
         {%- endif -%}
       {%- endfor -%}
 
-      <div class="collections__filter-group">
-        <h2 class="all-caps collections__filter-group-title">Areas</h2>
-        <div class="collections__filter-group-options">
-          <ul class="filter-group-options__list">
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/face">Face</a>
+      <div class='collections__filter-group'>
+        <h2 class='all-caps collections__filter-group-title'>Areas</h2>
+        <div class='collections__filter-group-options'>
+          <ul class='filter-group-options__list'>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/face'>Face</a>
             </li>
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/bath-body-hair">Bath, Body & Hair</a>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/bath-body-hair'>Bath, Body & Hair</a>
             </li>
-            <li class="all-caps filter-group-options__list-item">
-              <a href="/collections/all">Shop All</a>
+            <li class='all-caps filter-group-options__list-item'>
+              <a href='/collections/all'>Shop All</a>
             </li>
           </ul>
         </div>
@@ -285,29 +365,37 @@
 
       {%- for filter in collection.filters -%}
         {%- if filter.label != 'Categories' and filter.label != 'Brands' -%}
-          <div class="collections__filter-group">
-            <h2 class="all-caps collections__filter-group-title">{{ filter.label }}</h2>
-            <div class="collections__filter-group-options">
+          <div class='collections__filter-group'>
+            <h2 class='all-caps collections__filter-group-title'>
+              {{ filter.label }}
+            </h2>
+            <div class='collections__filter-group-options'>
               {%- case filter.type -%}
                 {%- when 'list' -%}
-                  <ul class="filter-group-options__list">
+                  <ul class='filter-group-options__list'>
                     {%- for filter_value in filter.values -%}
-                      <li class="all-caps filter-group-options__list-item">
-                        <label for="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}">
+                      <li class='all-caps filter-group-options__list-item'>
+                        <label for='Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}'>
                           <input
-                            type="checkbox"
-                            name="{{ filter_value.param_name }}"
-                            value="{{ filter_value.value }}"
-                            id="Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}"
+                            type='checkbox'
+                            name='{{ filter_value.param_name }}'
+                            value='{{ filter_value.value }}'
+                            id='Filter-desktop-{{ filter.param_name }}-{{ forloop.index }}'
                             {% if filter_value.active -%}
-                            checked
+                              checked
                             {%- endif %}
-                            {% if filter_value.count == 0 and filter_value.active == false -%}
-                            disabled
-                            {%- endif %}>
-                          {% assign label_characters = filter_value.label | join: ', ' | replace: '_', ', ' | replace: 'plus', '+'
+                            {% if filter_value.count == 0
+                              and filter_value.active == false
+                            -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_characters = filter_value.label
+                            | join: ', '
+                            | replace: '_', ', '
+                            | replace: 'plus', '+'
                           %}
-                          <span class="filter-group-options__label">
+                          <span class='filter-group-options__label'>
                             {{- label_characters -}}
                             {{ ' ' }} ({{ filter_value.count }})
                           </span>
@@ -321,153 +409,196 @@
         {%- endif -%}
       {%- endfor -%}
 
-      <div class="collections__filter-group">
-        <h2 class="all-caps collections__filter-group-title">Brands</h2>
-        <div class="collections__filter-group-options">
-          <ul class="filter-group-options__list">
+      <div class='collections__filter-group'>
+        <h2 class='all-caps collections__filter-group-title'>Brands</h2>
+        <div class='collections__filter-group-options'>
+          <ul class='filter-group-options__list'>
             {%- for collection in collections -%}
-              {%- if collection.metafields.custom.parent_collection == 'brands' -%}
-                <li class="all-caps filter-group-options__list-item">
-                  <a href="{{ collection.url }}">{{ collection.title }}</a>
+              {%- if collection.metafields.custom.parent_collection == 'brands'
+              -%}
+                <li class='all-caps filter-group-options__list-item'>
+                  <a href='{{ collection.url }}'>{{ collection.title }}</a>
                 </li>
               {%- endif -%}
             {%- endfor -%}
           </ul>
         </div>
       </div>
-
     </form>
 
-    <button class="all-caps collections__filters-action" id="refine-action">Refine</button>
-    <button class="all-caps collections__filters-action" id="sort-action">Sort</button>
+    <button class='all-caps collections__filters-action' id='refine-action'>
+      Refine
+    </button>
+    <button class='all-caps collections__filters-action' id='sort-action'>
+      Sort
+    </button>
 
-    <div class="drawer drawer--menu drawer--filters" id="mobile-refine">
-      <div class="drawer__header">
-        <h2 class="drawer__top-level-heading">Refine</h2>
-        <button class="all-caps drawer__header-action" id="refine-close">Close</button>
+    <div class='drawer drawer--menu drawer--filters' id='mobile-refine'>
+      <div class='drawer__header'>
+        <h2 class='drawer__top-level-heading'>Refine</h2>
+        <button class='all-caps drawer__header-action' id='refine-close'>
+          Close
+        </button>
       </div>
-      <ul class="drawer__container">
-        <li class="drawer__menu">
-          <ul class="drawer__links-list">
-            <li class="drawer__link">
-              <button class="all-caps" id="featured-mobile-action">Featured</button>
+      <ul class='drawer__container'>
+        <li class='drawer__menu'>
+          <ul class='drawer__links-list'>
+            <li class='drawer__link'>
+              <button class='all-caps' id='featured-mobile-action'>
+                Featured
+              </button>
             </li>
-            <li class="drawer__link">
-              <button class="all-caps" id="categories-mobile-action">Categories</button>
+            <li class='drawer__link'>
+              <button class='all-caps' id='categories-mobile-action'>
+                Categories
+              </button>
             </li>
-            <li class="drawer__link">
-              <button class="all-caps" id="areas-mobile-action">Areas</button>
+            <li class='drawer__link'>
+              <button class='all-caps' id='areas-mobile-action'>Areas</button>
             </li>
-            <li class="drawer__link">
-              <button class="all-caps" id="types-mobile-action">Skin Types</button>
+            <li class='drawer__link'>
+              <button class='all-caps' id='types-mobile-action'>
+                Skin Types
+              </button>
             </li>
-            <li class="drawer__link">
-              <button class="all-caps" id="concerns-mobile-action">Skin Concerns</button>
+            <li class='drawer__link'>
+              <button class='all-caps' id='concerns-mobile-action'>
+                Skin Concerns
+              </button>
             </li>
-            <li class="drawer__link">
-              <button class="all-caps" id="brands-mobile-action">Brands</button>
+            <li class='drawer__link'>
+              <button class='all-caps' id='brands-mobile-action'>Brands</button>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <form action="" class="collections__filter-form collections__filter-form--mobile">
-      <div class="drawer drawer--menu" id="filters-featured-menu">
-        <div class="drawer__header">
-          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
-          <h2 class="drawer__top-level-heading">Featured</h2>
+    <form
+      action=''
+      class='collections__filter-form collections__filter-form--mobile'
+    >
+      <div class='drawer drawer--menu' id='filters-featured-menu'>
+        <div class='drawer__header'>
           <button
-            type="button"
-            class="all-caps drawer__header-action"
-            id="featured-close">
+            type='button'
+            class='all-caps drawer__header-action menu-back'
+          >
+            Back
+          </button>
+          <h2 class='drawer__top-level-heading'>Featured</h2>
+          <button
+            type='button'
+            class='all-caps drawer__header-action'
+            id='featured-close'
+          >
             Close
           </button>
         </div>
-        <div class="drawer__container drawer__menu">
-          <ul class="drawer__links-list">
-            <li class="all-caps drawer__link">
-              <a href="/collections/subscribe-save">Subscribe & Save</a>
+        <div class='drawer__container drawer__menu'>
+          <ul class='drawer__links-list'>
+            <li class='all-caps drawer__link'>
+              <a href='/collections/subscribe-save'>Subscribe & Save</a>
             </li>
-            <li class="all-caps drawer__link">
-              <a href="/collections/biologique-recherche">Biologique Recherche</a>
+            <li class='all-caps drawer__link'>
+              <a href='/collections/biologique-recherche'
+                >Biologique Recherche</a
+              >
             </li>
-            <li class="all-caps drawer__link">
-              <a href="#">Gifting</a>
+            <li class='all-caps drawer__link'>
+              <a href='#'>Gifting</a>
             </li>
-            <li class="all-caps drawer__link">
-              <a href="/collections/bestsellers">Bestsellers</a>
+            <li class='all-caps drawer__link'>
+              <a href='/collections/bestsellers'>Bestsellers</a>
             </li>
-            <li class="all-caps drawer__link">
-              <a href="/collections/sales-offers">Sales & Offers</a>
+            <li class='all-caps drawer__link'>
+              <a href='/collections/sales-offers'>Sales & Offers</a>
             </li>
           </ul>
         </div>
       </div>
-      <div class="drawer drawer--menu" id="filters-areas-menu">
-        <div class="drawer__header">
-          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
-          <h2 class="drawer__top-level-heading">Areas</h2>
+      <div class='drawer drawer--menu' id='filters-areas-menu'>
+        <div class='drawer__header'>
           <button
-            type="button"
-            class="all-caps drawer__header-action"
-            id="areas-close">
+            type='button'
+            class='all-caps drawer__header-action menu-back'
+          >
+            Back
+          </button>
+          <h2 class='drawer__top-level-heading'>Areas</h2>
+          <button
+            type='button'
+            class='all-caps drawer__header-action'
+            id='areas-close'
+          >
             Close
           </button>
         </div>
-        <div class="drawer__container drawer__menu">
-          <ul class="drawer__links-list">
-            <li class="all-caps drawer__link">
-              <a href="/collections/face">Face</a>
+        <div class='drawer__container drawer__menu'>
+          <ul class='drawer__links-list'>
+            <li class='all-caps drawer__link'>
+              <a href='/collections/face'>Face</a>
             </li>
-            <li class="all-caps drawer__link">
-              <a href="/collections/bath-body-hair">Bath, Body & Hair</a>
+            <li class='all-caps drawer__link'>
+              <a href='/collections/bath-body-hair'>Bath, Body & Hair</a>
             </li>
-            <li class="all-caps drawer__link">
-              <a href="/collections/all">Shop All</a>
+            <li class='all-caps drawer__link'>
+              <a href='/collections/all'>Shop All</a>
             </li>
           </ul>
         </div>
       </div>
-      <div class="drawer drawer--menu" id="filters-categories-menu">
-        <div class="drawer__header">
-          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+      <div class='drawer drawer--menu' id='filters-categories-menu'>
+        <div class='drawer__header'>
+          <button
+            type='button'
+            class='all-caps drawer__header-action menu-back'
+          >
+            Back
+          </button>
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
             {%- if downcased_label == 'categories' -%}
-              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+              <h2 class='drawer__top-level-heading'>{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
           <button
-            type="button"
-            class="all-caps drawer__header-action"
-            id="categories-close">
+            type='button'
+            class='all-caps drawer__header-action'
+            id='categories-close'
+          >
             Close
           </button>
         </div>
-        <div class="drawer__container drawer__menu">
+        <div class='drawer__container drawer__menu'>
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
             {%- if downcased_label == 'categories' -%}
               {%- case filter.type -%}
                 {%- when 'list' -%}
-                  <ul class="drawer__links-list">
+                  <ul class='drawer__links-list'>
                     {%- for filter_value in filter.values -%}
-                      <li class="all-caps drawer__link">
-                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                      <li class='all-caps drawer__link'>
+                        <label for='Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}'>
                           <input
-                            type="checkbox"
-                            name="{{ filter_value.param_name }}"
-                            value="{{ filter_value.value }}"
-                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            type='checkbox'
+                            name='{{ filter_value.param_name }}'
+                            value='{{ filter_value.value }}'
+                            id='Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}'
                             {% if filter_value.active -%}
-                            checked
+                              checked
                             {%- endif %}
-                            {% if filter_value.count == 0 and filter_value.active == false -%}
-                            disabled
-                            {%- endif %}>
-                          {% assign label_with_commas = filter_value.label | join: ', ' | replace: '_', ', ' %}
+                            {% if filter_value.count == 0
+                              and filter_value.active == false
+                            -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_with_commas = filter_value.label
+                            | join: ', '
+                            | replace: '_', ', '
+                          %}
 
-                          <span class="filter-group-options__label">
+                          <span class='filter-group-options__label'>
                             {{- label_with_commas -}}
                             {{ ' ' }} ({{ filter_value.count }})
                           </span>
@@ -480,46 +611,57 @@
           {%- endfor -%}
         </div>
       </div>
-      <div class="drawer drawer--menu" id="filters-concerns-menu">
-        <div class="drawer__header">
-          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+      <div class='drawer drawer--menu' id='filters-concerns-menu'>
+        <div class='drawer__header'>
+          <button
+            type='button'
+            class='all-caps drawer__header-action menu-back'
+          >
+            Back
+          </button>
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
             {%- if downcased_label == 'skin concerns' -%}
-              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+              <h2 class='drawer__top-level-heading'>{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
           <button
-            type="button"
-            class="all-caps drawer__header-action"
-            id="concerns-close">
+            type='button'
+            class='all-caps drawer__header-action'
+            id='concerns-close'
+          >
             Close
           </button>
         </div>
-        <div class="drawer__container drawer__menu">
+        <div class='drawer__container drawer__menu'>
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
             {%- if downcased_label == 'skin concerns' -%}
               {%- case filter.type -%}
                 {%- when 'list' -%}
-                  <ul class="drawer__links-list">
+                  <ul class='drawer__links-list'>
                     {%- for filter_value in filter.values -%}
-                      <li class="all-caps drawer__link">
-                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                      <li class='all-caps drawer__link'>
+                        <label for='Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}'>
                           <input
-                            type="checkbox"
-                            name="{{ filter_value.param_name }}"
-                            value="{{ filter_value.value }}"
-                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            type='checkbox'
+                            name='{{ filter_value.param_name }}'
+                            value='{{ filter_value.value }}'
+                            id='Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}'
                             {% if filter_value.active -%}
-                            checked
+                              checked
                             {%- endif %}
-                            {% if filter_value.count == 0 and filter_value.active == false -%}
-                            disabled
-                            {%- endif %}>
-                          {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
+                            {% if filter_value.count == 0
+                              and filter_value.active == false
+                            -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_with_plus = filter_value.label
+                            | replace: 'plus', '+'
+                          %}
 
-                          <span class="filter-group-options__label">
+                          <span class='filter-group-options__label'>
                             {{- label_with_plus -}}
                             {{ ' ' }} ({{ filter_value.count }})
                           </span>
@@ -532,46 +674,57 @@
           {%- endfor -%}
         </div>
       </div>
-      <div class="drawer drawer--menu" id="filters-types-menu">
-        <div class="drawer__header">
-          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+      <div class='drawer drawer--menu' id='filters-types-menu'>
+        <div class='drawer__header'>
+          <button
+            type='button'
+            class='all-caps drawer__header-action menu-back'
+          >
+            Back
+          </button>
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
             {%- if downcased_label == 'skin types' -%}
-              <h2 class="drawer__top-level-heading">{{ filter.label }}</h2>
+              <h2 class='drawer__top-level-heading'>{{ filter.label }}</h2>
             {%- endif -%}
           {%- endfor -%}
           <button
-            type="button"
-            class="all-caps drawer__header-action"
-            id="types-close">
+            type='button'
+            class='all-caps drawer__header-action'
+            id='types-close'
+          >
             Close
           </button>
         </div>
-        <div class="drawer__container drawer__menu">
+        <div class='drawer__container drawer__menu'>
           {%- for filter in collection.filters -%}
             {%- assign downcased_label = filter.label | downcase -%}
             {%- if downcased_label == 'skin types' -%}
               {%- case filter.type -%}
                 {%- when 'list' -%}
-                  <ul class="drawer__links-list">
+                  <ul class='drawer__links-list'>
                     {%- for filter_value in filter.values -%}
-                      <li class="all-caps drawer__link">
-                        <label for="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}">
+                      <li class='all-caps drawer__link'>
+                        <label for='Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}'>
                           <input
-                            type="checkbox"
-                            name="{{ filter_value.param_name }}"
-                            value="{{ filter_value.value }}"
-                            id="Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}"
+                            type='checkbox'
+                            name='{{ filter_value.param_name }}'
+                            value='{{ filter_value.value }}'
+                            id='Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}'
                             {% if filter_value.active -%}
-                            checked
+                              checked
                             {%- endif %}
-                            {% if filter_value.count == 0 and filter_value.active == false -%}
-                            disabled
-                            {%- endif %}>
-                          {% assign label_with_plus = filter_value.label | replace: 'plus', '+' %}
+                            {% if filter_value.count == 0
+                              and filter_value.active == false
+                            -%}
+                              disabled
+                            {%- endif %}
+                          >
+                          {% assign label_with_plus = filter_value.label
+                            | replace: 'plus', '+'
+                          %}
 
-                          <span class="filter-group-options__label">
+                          <span class='filter-group-options__label'>
                             {{- label_with_plus -}}
                             {{ ' ' }} ({{ filter_value.count }})
                           </span>
@@ -584,25 +737,32 @@
           {%- endfor -%}
         </div>
       </div>
-      <div class="drawer drawer--menu" id="filters-brands-menu">
-        <div class="drawer__header">
-          <button type="button" class="all-caps drawer__header-action menu-back">Back</button>
+      <div class='drawer drawer--menu' id='filters-brands-menu'>
+        <div class='drawer__header'>
+          <button
+            type='button'
+            class='all-caps drawer__header-action menu-back'
+          >
+            Back
+          </button>
 
-          <h2 class="drawer__top-level-heading">Brands</h2>
+          <h2 class='drawer__top-level-heading'>Brands</h2>
 
           <button
-            type="button"
-            class="all-caps drawer__header-action"
-            id="brands-close">
+            type='button'
+            class='all-caps drawer__header-action'
+            id='brands-close'
+          >
             Close
           </button>
         </div>
-        <div class="drawer__container drawer__menu">
-          <ul class="drawer__links-list">
+        <div class='drawer__container drawer__menu'>
+          <ul class='drawer__links-list'>
             {%- for collection in collections -%}
-              {%- if collection.metafields.custom.parent_collection == 'brands' -%}
-                <li class="all-caps drawer__link filter-group-options__label">
-                  <a href="{{ collection.url }}">{{ collection.title }}</a>
+              {%- if collection.metafields.custom.parent_collection == 'brands'
+              -%}
+                <li class='all-caps drawer__link filter-group-options__label'>
+                  <a href='{{ collection.url }}'>{{ collection.title }}</a>
                 </li>
               {%- endif -%}
             {%- endfor -%}
@@ -610,18 +770,26 @@
         </div>
       </div>
     </form>
-    <div class="drawer-filters__clear-apply" id="filters-clear-apply">
-      <a class="btn btn--primary all-caps drawer-filters__btn drawer-filters__btn--clear" href="{{ collection.url }}?sort_by={{ collection.sort_by }}">Clear Filters</a>
-      <button class="btn btn--secondary all-caps drawer-filters__btn drawer-filters__btn--apply" id="filters-show-results">
+    <div class='drawer-filters__clear-apply' id='filters-clear-apply'>
+      <a
+        class='btn btn--primary all-caps drawer-filters__btn drawer-filters__btn--clear'
+        href='{{ collection.url }}?sort_by={{ collection.sort_by }}'
+        >Clear Filters</a
+      >
+      <button
+        class='btn btn--secondary all-caps drawer-filters__btn drawer-filters__btn--apply'
+        id='filters-show-results'
+      >
         View Results
       </button>
     </div>
   </div>
-  <div class="collections__container">
+  <div class='collections__container'>
     <div
-      class="collections__products"
-      id="collections-products-container"
-      data-collection-handle="{{ collection.handle }}">
+      class='collections__products'
+      id='collections-products-container'
+      data-collection-handle='{{ collection.handle }}'
+    >
       {% paginate collection.products by 24 %}
         {% for product in collection.products %}
           {% for variant in product.variants %}
@@ -630,15 +798,21 @@
             {% assign query_params = url_parts[1] | default: '' %}
 
             {% if query_params != '' %}
-              {% assign variant_url = product.url | append: '&variant=' | append: variant.id %}
+              {% assign variant_url = product.url
+                | append: '&variant='
+                | append: variant.id
+              %}
             {% else %}
-              {% assign variant_url = product.url | append: '?variant=' | append: variant.id %}
+              {% assign variant_url = product.url
+                | append: '?variant='
+                | append: variant.id
+              %}
             {% endif %}
 
-            <a href="{{ variant_url }}" class="product-card">
-              <div class="product-card__info">
-                <p class="all-caps product-card__brand">{{ product.vendor }}</p>
-                <h2 class="product-card__product">
+            <a href='{{ variant_url }}' class='product-card'>
+              <div class='product-card__info'>
+                <p class='all-caps product-card__brand'>{{ product.vendor }}</p>
+                <h2 class='product-card__product'>
                   {{ product.title -}}
                   {%- if variant.title != 'Default Title' %}
                     / {{ variant.title }}
@@ -647,42 +821,76 @@
               </div>
 
               {% assign downcased_vendor = product.vendor | strip | downcase %}
-              {% assign restricted_vendors = 'biologique recherche,calecim professional' | split: ',' %}
+              {% assign restricted_vendors = 'biologique recherche,calecim professional'
+                | split: ','
+              %}
               {% assign members_only = 'mansard' | split: ',' %}
 
-              {% if restricted_vendors contains downcased_vendor and localization.country.iso_code != 'CA' %}
-                <div class="all-caps btn btn--primary product-card__btn product-card__btn--private" data-url="{{ variant_url }}">
+              {% if restricted_vendors contains downcased_vendor
+                and localization.country.iso_code != 'CA'
+              %}
+                <div
+                  class='all-caps btn btn--primary product-card__btn product-card__btn--private'
+                  data-url='{{ variant_url }}'
+                >
                   Exclusive to Canada
                 </div>
-              {% elsif members_only contains downcased_vendor and customer == null %}
-                <div class="all-caps btn btn--primary product-card__btn product-card__btn--private" data-url="{{ variant_url }}">
+              {% elsif members_only contains downcased_vendor
+                and customer == null
+              %}
+                <div
+                  class='all-caps btn btn--primary product-card__btn product-card__btn--private'
+                  data-url='{{ variant_url }}'
+                >
                   Login to Shop
                 </div>
               {% elsif variant.available %}
                 <form
-                  action="/cart/add"
-                  method="post"
-                  class="product-card__form">
+                  action='/cart/add'
+                  method='post'
+                  class='product-card__form'
+                >
                   <input
-                    type="hidden"
-                    name="id"
-                    value="{{ variant.id }}">
-                  <button class="all-caps btn btn--primary product-card__btn">
+                    type='hidden'
+                    name='id'
+                    value='{{ variant.id }}'
+                  >
+                  <button class='all-caps btn btn--primary product-card__btn'>
                     {% if product.compare_at_price > variant.price %}
                       <span>Add to Bag</span>
-                      <span class="product-card__sale-price">
-                        <del>{{ product.compare_at_price | money_with_currency | remove: '.00' }}</del>
-                        <ins>{{ variant.price | money_with_currency | remove: '.00' }}</ins>
+                      <span class='product-card__sale-price'>
+                        <del>
+                          {{-
+                            product.compare_at_price
+                            | money_with_currency
+                            | remove: '.00'
+                          -}}
+                        </del>
+                        <ins>
+                          {{-
+                            variant.price
+                            | money_with_currency
+                            | remove: '.00'
+                          -}}
+                        </ins>
                       </span>
                     {% else %}
                       <span>Add to Bag</span>
-                      <span>{{ variant.price | money_with_currency | remove: '.00' }}</span>
+                      <span>
+                        {{-
+                          variant.price
+                          | money_with_currency
+                          | remove: '.00'
+                        -}}
+                      </span>
                     {% endif %}
                   </button>
                 </form>
               {% else %}
-                <div class="all-caps btn btn--primary product-card__btn product-card__btn--sold-out">Out of Stock</div>
-            {% endif %}
+                <div class='all-caps btn btn--primary product-card__btn product-card__btn--sold-out'>
+                  Out of Stock
+                </div>
+              {% endif %}
 
               {% comment %}
                 <!-- Original Code -->
@@ -706,81 +914,233 @@
               {% assign primary_option_value = variant.option1 | downcase %}
 
               {% if primary_option_value contains '$' %}
-                {% assign primary_option_value = primary_option_value | remove_first: '$' | strip %}
+                {% assign primary_option_value = primary_option_value
+                  | remove_first: '$'
+                  | strip
+                %}
               {% endif %}
 
-              {% assign primary_option_value = primary_option_value | replace: '/', '-' %}
-
-              {% assign primary_option_value = primary_option_value | replace: 'á', 'a' | replace: 'à', 'a' | replace: 'â', 'a' | replace: 'ã', 'a' | replace: 'ä', 'a' | replace: 'å', 'a' | replace: 'ā', 'a' | replace: 'ă', 'a' | replace: 'ȧ', 'a' | replace: 'ạ', 'a' | replace: 'ą', 'a' | replace: 'ả', 'a' | replace: 'ȃ', 'a'
+              {% assign primary_option_value = primary_option_value
+                | replace: '/', '-'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'é', 'e' | replace: 'è', 'e' | replace: 'ê', 'e' | replace: 'ë', 'e' | replace: 'ē', 'e' | replace: 'ĕ', 'e' | replace: 'ė', 'e' | replace: 'ẹ', 'e' | replace: 'ę', 'e' | replace: 'ẻ', 'e' | replace: 'ȅ', 'e' | replace: 'ȇ', 'e' | replace: 'ě', 'e'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'á', 'a'
+                | replace: 'à', 'a'
+                | replace: 'â', 'a'
+                | replace: 'ã', 'a'
+                | replace: 'ä', 'a'
+                | replace: 'å', 'a'
+                | replace: 'ā', 'a'
+                | replace: 'ă', 'a'
+                | replace: 'ȧ', 'a'
+                | replace: 'ạ', 'a'
+                | replace: 'ą', 'a'
+                | replace: 'ả', 'a'
+                | replace: 'ȃ', 'a'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'í', 'i' | replace: 'ì', 'i' | replace: 'î', 'i' | replace: 'ï', 'i' | replace: 'ī', 'i' | replace: 'ĭ', 'i' | replace: 'ị', 'i' | replace: 'ỉ', 'i' | replace: 'į', 'i' | replace: 'ȉ', 'i' | replace: 'ȋ', 'i'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'é', 'e'
+                | replace: 'è', 'e'
+                | replace: 'ê', 'e'
+                | replace: 'ë', 'e'
+                | replace: 'ē', 'e'
+                | replace: 'ĕ', 'e'
+                | replace: 'ė', 'e'
+                | replace: 'ẹ', 'e'
+                | replace: 'ę', 'e'
+                | replace: 'ẻ', 'e'
+                | replace: 'ȅ', 'e'
+                | replace: 'ȇ', 'e'
+                | replace: 'ě', 'e'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ó', 'o' | replace: 'ò', 'o' | replace: 'ô', 'o' | replace: 'õ', 'o' | replace: 'ö', 'o' | replace: 'ō', 'o' | replace: 'ŏ', 'o' | replace: 'ȯ', 'o' | replace: 'ọ', 'o' | replace: 'ỏ', 'o' | replace: 'ơ', 'o' | replace: 'ø', 'o' | replace: 'ő', 'o' | replace: 'ǒ', 'o' | replace: 'ȍ', 'o' | replace: 'ȏ', 'o'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'í', 'i'
+                | replace: 'ì', 'i'
+                | replace: 'î', 'i'
+                | replace: 'ï', 'i'
+                | replace: 'ī', 'i'
+                | replace: 'ĭ', 'i'
+                | replace: 'ị', 'i'
+                | replace: 'ỉ', 'i'
+                | replace: 'į', 'i'
+                | replace: 'ȉ', 'i'
+                | replace: 'ȋ', 'i'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ú', 'u' | replace: 'ù', 'u' | replace: 'û', 'u' | replace: 'ü', 'u' | replace: 'ū', 'u' | replace: 'ŭ', 'u' | replace: 'ů', 'u' | replace: 'ű', 'u' | replace: 'ụ', 'u' | replace: 'ų', 'u' | replace: 'ủ', 'u' | replace: 'ư', 'u' | replace: 'ȕ', 'u' | replace: 'ȗ', 'u'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ó', 'o'
+                | replace: 'ò', 'o'
+                | replace: 'ô', 'o'
+                | replace: 'õ', 'o'
+                | replace: 'ö', 'o'
+                | replace: 'ō', 'o'
+                | replace: 'ŏ', 'o'
+                | replace: 'ȯ', 'o'
+                | replace: 'ọ', 'o'
+                | replace: 'ỏ', 'o'
+                | replace: 'ơ', 'o'
+                | replace: 'ø', 'o'
+                | replace: 'ő', 'o'
+                | replace: 'ǒ', 'o'
+                | replace: 'ȍ', 'o'
+                | replace: 'ȏ', 'o'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ý', 'y' | replace: 'ÿ', 'y' | replace: 'ȳ', 'y' | replace: 'ỳ', 'y' | replace: 'ỷ', 'y' | replace: 'ỵ', 'y' | replace: 'ỹ', 'y' | replace: 'ŷ', 'y'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ú', 'u'
+                | replace: 'ù', 'u'
+                | replace: 'û', 'u'
+                | replace: 'ü', 'u'
+                | replace: 'ū', 'u'
+                | replace: 'ŭ', 'u'
+                | replace: 'ů', 'u'
+                | replace: 'ű', 'u'
+                | replace: 'ụ', 'u'
+                | replace: 'ų', 'u'
+                | replace: 'ủ', 'u'
+                | replace: 'ư', 'u'
+                | replace: 'ȕ', 'u'
+                | replace: 'ȗ', 'u'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ç', 'c' | replace: 'ć', 'c' | replace: 'ĉ', 'c' | replace: 'ċ', 'c' | replace: 'č', 'c'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ý', 'y'
+                | replace: 'ÿ', 'y'
+                | replace: 'ȳ', 'y'
+                | replace: 'ỳ', 'y'
+                | replace: 'ỷ', 'y'
+                | replace: 'ỵ', 'y'
+                | replace: 'ỹ', 'y'
+                | replace: 'ŷ', 'y'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ď', 'd' | replace: 'ḍ', 'd' | replace: 'đ', 'd' | replace: 'ȡ', 'd'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ç', 'c'
+                | replace: 'ć', 'c'
+                | replace: 'ĉ', 'c'
+                | replace: 'ċ', 'c'
+                | replace: 'č', 'c'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ĝ', 'g' | replace: 'ğ', 'g' | replace: 'ġ', 'g' | replace: 'ǧ', 'g'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ď', 'd'
+                | replace: 'ḍ', 'd'
+                | replace: 'đ', 'd'
+                | replace: 'ȡ', 'd'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ĥ', 'h' | replace: 'ȟ', 'h' | replace: 'ḥ', 'h' | replace: 'ħ', 'h' | replace: 'ɦ', 'h'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ĝ', 'g'
+                | replace: 'ğ', 'g'
+                | replace: 'ġ', 'g'
+                | replace: 'ǧ', 'g'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ĵ', 'j' | replace: 'ǰ', 'j' %}
-
-              {% assign primary_option_value = primary_option_value | replace: 'ķ', 'k' | replace: 'ḳ', 'k' | replace: 'ǩ', 'k'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ĥ', 'h'
+                | replace: 'ȟ', 'h'
+                | replace: 'ḥ', 'h'
+                | replace: 'ħ', 'h'
+                | replace: 'ɦ', 'h'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ĺ', 'l' | replace: 'ľ', 'l' | replace: 'ļ', 'l' | replace: 'ḷ', 'l' | replace: 'ł', 'l'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ĵ', 'j'
+                | replace: 'ǰ', 'j'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ṁ', 'm' %}
-
-              {% assign primary_option_value = primary_option_value | replace: 'ń', 'n' | replace: 'ņ', 'n' | replace: 'ň', 'n' | replace: 'ṅ', 'n' | replace: 'ṇ', 'n'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ķ', 'k'
+                | replace: 'ḳ', 'k'
+                | replace: 'ǩ', 'k'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ŕ', 'r' | replace: 'ř', 'r' | replace: 'ŗ', 'r' | replace: 'ṛ', 'r'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ĺ', 'l'
+                | replace: 'ľ', 'l'
+                | replace: 'ļ', 'l'
+                | replace: 'ḷ', 'l'
+                | replace: 'ł', 'l'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ś', 's' | replace: 'š', 's' | replace: 'ş', 's' | replace: 'ṣ', 's' | replace: 'ș', 's'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ṁ', 'm'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ť', 't' | replace: 'ţ', 't' | replace: 'ṭ', 't' | replace: 'ț', 't' | replace: 'ŧ', 't' | replace: 'ȶ', 't'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ń', 'n'
+                | replace: 'ņ', 'n'
+                | replace: 'ň', 'n'
+                | replace: 'ṅ', 'n'
+                | replace: 'ṇ', 'n'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ŵ', 'w' | replace: 'ẁ', 'w' | replace: 'ẃ', 'w' | replace: 'ẅ', 'w' | replace: 'ẇ', 'w' | replace: 'ẉ', 'w'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ŕ', 'r'
+                | replace: 'ř', 'r'
+                | replace: 'ŗ', 'r'
+                | replace: 'ṛ', 'r'
               %}
 
-              {% assign primary_option_value = primary_option_value | replace: 'ź', 'z' | replace: 'ż', 'z' | replace: 'ž', 'z' | replace: 'ẓ', 'z'
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ś', 's'
+                | replace: 'š', 's'
+                | replace: 'ş', 's'
+                | replace: 'ṣ', 's'
+                | replace: 'ș', 's'
               %}
 
-              {% assign normalized_primary_option = primary_option_value | replace: "'", '-' | replace: "'", '-' | replace: ' ', '-' | replace: '.', '-' | replace: '/', '-' | replace: '--', '-' | replace: '--', '-' | downcase
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ť', 't'
+                | replace: 'ţ', 't'
+                | replace: 'ṭ', 't'
+                | replace: 'ț', 't'
+                | replace: 'ŧ', 't'
+                | replace: 'ȶ', 't'
+              %}
+
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ŵ', 'w'
+                | replace: 'ẁ', 'w'
+                | replace: 'ẃ', 'w'
+                | replace: 'ẅ', 'w'
+                | replace: 'ẇ', 'w'
+                | replace: 'ẉ', 'w'
+              %}
+
+              {% assign primary_option_value = primary_option_value
+                | replace: 'ź', 'z'
+                | replace: 'ż', 'z'
+                | replace: 'ž', 'z'
+                | replace: 'ẓ', 'z'
+              %}
+
+              {% assign normalized_primary_option = primary_option_value
+                | replace: "'", '-'
+                | replace: "'", '-'
+                | replace: ' ', '-'
+                | replace: '.', '-'
+                | replace: '/', '-'
+                | replace: '--', '-'
+                | replace: '--', '-'
+                | downcase
               %}
 
               {% comment %} Use the normalized primary option to match images {% endcomment %}
               {% for image in product.images %}
-                {% if image.src contains 'product-card' and image.src contains normalized_primary_option %}
+                {% if image.src contains 'product-card'
+                  and image.src contains normalized_primary_option
+                %}
                   <img
-                    class="product-card__image"
-                    src="{{ image | img_url: '780x1170' }}"
-                    width="780"
-                    height="1170"
-                    loading="lazy">
+                    class='product-card__image'
+                    src='{{ image | img_url: '780x1170' }}'
+                    width='780'
+                    height='1170'
+                    loading='lazy'
+                  >
                   {% break %}
                 {% endif %}
               {% endfor %}
@@ -788,23 +1148,25 @@
           {% endfor %}
         {% endfor %}
 
-        <div class="pagination">
+        <div class='pagination'>
           {% if paginate.previous %}
-            <a class="all-caps" href="{{ paginate.previous.url }}">Previous</a>
+            <a class='all-caps' href='{{ paginate.previous.url }}'>Previous</a>
           {% endif %}
           {% for part in paginate.parts %}
             {% if part.is_link %}
-              <a href="{{ part.url }}">{{ part.title }}</a>
+              <a href='{{ part.url }}'>{{ part.title }}</a>
             {% else %}
               <span>{{ part.title }}</span>
             {% endif %}
           {% endfor %}
           {% if paginate.next %}
-            <a class="all-caps" href="{{ paginate.next.url }}">Next</a>
+            <a class='all-caps' href='{{ paginate.next.url }}'>Next</a>
           {% endif %}
         </div>
       {% endpaginate %}
     </div>
   </div>
 </main>
-{% section 'skin-analysis' %}{% section 'treatments' %}{% section 'opt-in' %}
+{% section 'skin-analysis' %}
+{% section 'treatments' %}
+{% section 'opt-in' %}

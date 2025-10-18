@@ -415,6 +415,11 @@
     transition-timing-function: var(--tw-ease, ease);
     transition-duration: var(--tw-duration, 0s);
   }
+  .transition-opacity {
+    transition-property: opacity;
+    transition-timing-function: var(--tw-ease, ease);
+    transition-duration: var(--tw-duration, 0s);
+  }
   .visited\:\!text-inherit {
     &:visited {
       color: inherit !important;
@@ -783,6 +788,14 @@
       --home-hero-padding-btm: var(--home-hero-xl-padding-btm);
       --home-hero-lock-up-row-gap: var(--home-hero-lock-up-xl-row-gap);
       --home-hero-btn-padding: var(--home-hero-btn-xl-padding);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-block='collections-hero'] video {
+      display: none !important;
+    }
+    [data-element='collections-hero__fallback'] {
+      display: block !important;
     }
   }
 }
