@@ -38,7 +38,6 @@ class VideoControls {
 
     const playBtn = overlay.querySelector('[data-video-play]');
     const pauseBtn = overlay.querySelector('[data-video-pause]');
-    const muteBtn = overlay.querySelector('[data-video-mute]');
 
     // Play/Pause functionality
     if (playBtn) {
@@ -57,15 +56,6 @@ class VideoControls {
       });
     }
 
-    // Mute/Unmute functionality
-    if (muteBtn) {
-      muteBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.toggleMute(video, muteBtn);
-      });
-    }
-
     // Update button states based on video events
     video.addEventListener('play', () => {
       this.updatePlayPauseButtons(playBtn, pauseBtn, true);
@@ -73,10 +63,6 @@ class VideoControls {
 
     video.addEventListener('pause', () => {
       this.updatePlayPauseButtons(playBtn, pauseBtn, false);
-    });
-
-    video.addEventListener('volumechange', () => {
-      this.updateMuteButton(video, muteBtn);
     });
 
     // Keyboard accessibility
@@ -88,9 +74,6 @@ class VideoControls {
         } else {
           this.pauseVideo(video, playBtn, pauseBtn);
         }
-      } else if (e.code === 'KeyM') {
-        e.preventDefault();
-        this.toggleMute(video, muteBtn);
       }
     });
 
@@ -99,17 +82,6 @@ class VideoControls {
 
     // Initialize button states
     this.updatePlayPauseButtons(playBtn, pauseBtn, !video.paused);
-    this.updateMuteButton(video, muteBtn);
-
-    // Add click-to-play functionality on the video itself
-    video.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (video.paused) {
-        this.playVideo(video, playBtn, pauseBtn);
-      } else {
-        this.pauseVideo(video, playBtn, pauseBtn);
-      }
-    });
   }
 
   playVideo(video, playBtn, pauseBtn) {
@@ -131,12 +103,6 @@ class VideoControls {
     this.announceToScreenReader('Video paused');
   }
 
-  toggleMute(video, muteBtn) {
-    video.muted = !video.muted;
-    this.updateMuteButton(video, muteBtn);
-    this.announceToScreenReader(video.muted ? 'Video muted' : 'Video unmuted');
-  }
-
   updatePlayPauseButtons(playBtn, pauseBtn, isPlaying) {
     if (playBtn && pauseBtn) {
       if (isPlaying) {
@@ -150,17 +116,6 @@ class VideoControls {
         playBtn.setAttribute('aria-pressed', 'true');
         pauseBtn.setAttribute('aria-pressed', 'false');
       }
-    }
-  }
-
-  updateMuteButton(video, muteBtn) {
-    if (muteBtn) {
-      const isMuted = video.muted;
-      muteBtn.setAttribute('aria-pressed', isMuted.toString());
-      muteBtn.setAttribute(
-        'aria-label',
-        isMuted ? 'Unmute video' : 'Mute video'
-      );
     }
   }
 
