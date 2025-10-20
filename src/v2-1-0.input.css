@@ -374,6 +374,166 @@
       display: block !important;
     }
   }
+
+  /* Video Controls Overlay */
+  .video-controls-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  /* Show controls on hover or focus */
+  [data-video-controls]:hover .video-controls-overlay,
+  [data-video-controls]:focus-within .video-controls-overlay,
+  .video-controls-overlay:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Video Control Buttons */
+  .video-control-btn {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    pointer-events: auto;
+  }
+
+  .video-control-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+  }
+
+  .video-control-btn:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  .video-control-btn[aria-pressed='true'] {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .video-control-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+  }
+
+  /* Ensure video is focusable for keyboard users */
+  [data-video-controls] {
+    cursor: pointer;
+  }
+
+  [data-video-controls]:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* Mobile responsiveness */
+  @media screen and (max-width: 768px) {
+    .video-controls-overlay {
+      top: 0.75rem;
+      right: 0.75rem;
+      gap: 0.375rem;
+    }
+
+    .video-control-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    .video-control-icon {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  /* Reduced motion support - hide controls and videos */
+  @media (prefers-reduced-motion: reduce) {
+    .video-controls-overlay {
+      display: none !important;
+    }
+
+    [data-video-controls] {
+      display: none !important;
+    }
+
+    [data-element='collections-hero__fallback'] {
+      display: block !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .video-control-btn {
+      border-width: 2px;
+      background: rgba(0, 0, 0, 0.9);
+      border-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .video-control-btn:hover,
+    .video-control-btn:focus {
+      background: rgba(0, 0, 0, 1);
+      border-color: rgba(255, 255, 255, 1);
+    }
+  }
+
+  /* Dark mode support (if you have dark mode) */
+  @media (prefers-color-scheme: dark) {
+    .video-control-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .video-control-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  /* Ensure controls work with your existing video styling */
+  [data-block='collections-hero'] .video-controls-overlay {
+    /* Override any potential conflicts with your existing styles */
+    position: absolute !important;
+    z-index: 10 !important;
+  }
+
+  /* Focus management for better accessibility */
+  .video-controls-overlay:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Smooth transitions for better UX */
+  .video-control-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Ensure proper stacking context */
+  [data-block='collections-hero'] {
+    position: relative;
+    z-index: 1;
+  }
+
+  [data-block='collections-hero'] .video-controls-overlay {
+    z-index: 10;
+  }
 }
 
 @theme inline {

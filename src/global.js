@@ -19,32 +19,34 @@ import CartPage from './components/Shop/CartPage';
 import Forms from './components/Utility/Forms';
 import CollectionsRedirect from './components/Utility/Automations/CollectionsRedirect';
 import CopyrightYear from './components/Utility/CopyrightYear';
+import VideoControls from './components/Utility/VideoControls';
 
 const GlobalComponents = () => {
-    Drawers();
-    VideoMask();
-    SkinConcernsSection();
-    TreatmentsSection();
-    Shop();
-    TreatmentsPage();
-    Questions();
-    Products();
-    SearchForm();
-    SearchResults();
-    CustomerLogin();
-    Addresses();
-    QuantityField();
-    CartPage();
-    CartDrawer();
-    // Announcements();
-    Forms();
-    CollectionsRedirect();
-    CopyrightYear();
+  Drawers();
+  VideoMask();
+  SkinConcernsSection();
+  TreatmentsSection();
+  Shop();
+  TreatmentsPage();
+  Questions();
+  Products();
+  SearchForm();
+  SearchResults();
+  CustomerLogin();
+  Addresses();
+  QuantityField();
+  CartPage();
+  CartDrawer();
+  // Announcements();
+  Forms();
+  CollectionsRedirect();
+  CopyrightYear();
+  new VideoControls();
 };
 const init = () => {
-    GlobalComponents();
+  GlobalComponents();
 };
 
 $(function () {
-    init();
+  init();
 });

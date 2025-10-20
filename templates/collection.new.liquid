@@ -189,6 +189,8 @@
           preload='metadata'
           aria-label='Background video showcasing {{ collection.title }}'
           role='img'
+          data-video-controls
+          id='video-{{ collection.handle }}-first'
         >
           {% comment %} Use the highest quality MP4 source available {% endcomment %}
           {% for source in first_media.sources %}
@@ -204,6 +206,39 @@
             data-element='collections-hero__fallback'
           >
         </video>
+        {% comment %} Video Controls {% endcomment %}
+        <div class='video-controls-overlay' data-video-controls-overlay>
+          <button
+            class='video-control-btn video-control-btn--play'
+            aria-label='Play video'
+            data-video-play
+            aria-pressed='false'
+          >
+            <svg
+              aria-hidden='true'
+              viewBox='0 0 24 24'
+              class='video-control-icon'
+            >
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+
+          <button
+            class='video-control-btn video-control-btn--pause'
+            aria-label='Pause video'
+            data-video-pause
+            aria-pressed='false'
+            style='display: none;'
+          >
+            <svg
+              aria-hidden='true'
+              viewBox='0 0 24 24'
+              class='video-control-icon'
+            >
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+            </svg>
+          </button>
+        </div>
         {% comment %} Fallback image for reduced motion {% endcomment %}
         <img
           src='{{ first_media.preview_image | image_url }}'
@@ -212,6 +247,7 @@
           data-element='collections-hero__fallback'
         >
       </div>
+
     {% else %}
       <div class='relative aspect-4/5 h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2'>
         <img
