@@ -1,43 +1,57 @@
 <!doctype html>
-<html data-shopify-country-code="{{ localization.country.iso_code }}" lang="{{ request.locale.iso_code }}">
+<html
+  data-shopify-country-code='{{ localization.country.iso_code }}'
+  lang='{{ request.locale.iso_code }}'
+>
   <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ page_description }}">
-    <link rel="canonical" href="{{ canonical_url }}">
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta name='description' content='{{ page_description }}'>
+    <link rel='canonical' href='{{ canonical_url }}'>
     <link
-      rel="preconnect"
-      href="https://cdn.shopify.com"
-      crossorigin>
-    {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
+      rel='preconnect'
+      href='https://cdn.shopify.com'
+      crossorigin
+    >
+    {%- unless settings.type_header_font.system?
+      and settings.type_body_font.system?
+    -%}
       <link
-        rel="preconnect"
-        href="https://fonts.shopifycdn.com"
-        crossorigin>
+        rel='preconnect'
+        href='https://fonts.shopifycdn.com'
+        crossorigin
+      >
     {%- endunless -%}
     <title>
       {{ page_title }}
     </title>
     {{ content_for_header }}
     <script
-      type="text/javascript"
-      src="https://app.getterms.io/cookie-consent/embed/8e59a8e0-82ba-43bb-be68-8c1383740ac7/en-us"
-      defer></script>
+      type='text/javascript'
+      src='https://app.getterms.io/cookie-consent/embed/8e59a8e0-82ba-43bb-be68-8c1383740ac7/en-us'
+      defer
+    ></script>
     {% if template contains 'customers' %}
-      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
-      <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
+      <script
+        src='{{ 'shopify_common.js' | shopify_asset_url }}'
+        defer
+      ></script>
+      <script src='{{ 'customer_area.js' | shopify_asset_url }}' defer></script>
     {% endif %}
     {{ 'global.css' | asset_url | stylesheet_tag }}
     {% if template.name == 'collection' or template.name == 'index' %}
       {{ 'capsize.css' | asset_url | stylesheet_tag }}
       {{ 'v2-1-0.output.css' | asset_url | stylesheet_tag }}
     {% endif %}
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js" defer></script>
+    <script
+      src='https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js'
+      defer
+    ></script>
 
-    <script src="//embed.typeform.com/next/embed.js" defer></script>
-    <script src="{{ 'global.js' | asset_url }}" defer></script>
-    <link rel="dns-prefetch" href="//typeform.com">
+    <script src='//embed.typeform.com/next/embed.js' defer></script>
+    <script src='{{ 'global.js' | asset_url }}' defer></script>
+    <link rel='dns-prefetch' href='//typeform.com'>
     <style>
       .template-index .hero {
         background-image: url('{{ 'home_hero_desktop_LNK7977_round-03_hi-res_optimized.jpg' | asset_url }}');
@@ -131,9 +145,10 @@
       }
     </style>
     <script
-      src="https://cdn.usefathom.com/script.js"
-      data-site="QIXWEBMS"
-      defer></script>
+      src='https://cdn.usefathom.com/script.js'
+      data-site='QIXWEBMS'
+      defer
+    ></script>
     <script>
       (function (h, o, t, j, a, r) {
         h.hj =
@@ -149,18 +164,22 @@
         a.appendChild(r);
       })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
     </script>
-    <script type="text/javascript">
-      (window.heap = window.heap || []),
+    <script type='text/javascript'>
+      ((window.heap = window.heap || []),
         (heap.load = function (e, t) {
-          (window.heap.appid = e), (window.heap.config = t = t || {});
+          ((window.heap.appid = e), (window.heap.config = t = t || {}));
           var r = document.createElement('script');
-          (r.type = 'text/javascript'), (r.async = !0), (r.src = 'https://cdn.heapanalytics.com/js/heap-' + e + '.js');
+          ((r.type = 'text/javascript'),
+            (r.async = !0),
+            (r.src = 'https://cdn.heapanalytics.com/js/heap-' + e + '.js'));
           var a = document.getElementsByTagName('script')[0];
           a.parentNode.insertBefore(r, a);
           for (
             var n = function (e) {
                 return function () {
-                  heap.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+                  heap.push(
+                    [e].concat(Array.prototype.slice.call(arguments, 0))
+                  );
                 };
               },
               p = [
@@ -179,10 +198,13 @@
             o++
           )
             heap[p[o]] = n(p[o]);
-        });
+        }));
       heap.load('2878018183');
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKYGP4Q5QL"></script>
+    <script
+      async
+      src='https://www.googletagmanager.com/gtag/js?id=G-YKYGP4Q5QL'
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -209,11 +231,13 @@
     endif
   %}
 
-  <body data-customer-logged-in="{% if customer %}true{% else %}false{% endif %}" class="{{ bodyClass }}">
-    {% if template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder' or template == 'page.terms' or template == 'page.privacy' or template == 'page.shipping-returns' or bodyClass == 'template-' or (template.name == 'collection' and collection.handle == 'mansard'
-    %}
-      <section class="announcement-bar">
-        <div class="wrapper wrapper--lg announcement-bar__container">
+  <body
+    data-customer-logged-in='{% if customer %}true{% else %}false{% endif %}'
+    class='{{ bodyClass }}'
+  >
+    {% if template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder' or template == 'page.terms' or template == 'page.privacy' or template == 'page.shipping-returns' or bodyClass == 'template-' or (template.name == 'collection' and collection.handle == 'mansard' or collection.handle == 'adipeau') %}
+      <section class='announcement-bar'>
+        <div class='wrapper wrapper--lg announcement-bar__container'>
           {% comment %}
             <a
             class="announcement-bar__type"
@@ -223,75 +247,87 @@
             >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
             >
           {% endcomment %}
-          {% comment %}  
-                                                                                                                                                                                                                                  <a
-                                                                                                                                                                                                                                    class="announcement-bar__type"
-                                                                                                                                                                                                                                    href="/collections/all"
-                                                                                                                                                                                                                                    id="evergreen-announcement"
-                                                                                                                                                                                                                                    style="max-width: 800px;">
-                                                                                                                                                                                                                                    Free Shipping on Orders Over $149 CAD. Start Here.
-                                                                                                                                                                                                                                  </a>
-                                                                                                                                                                                            {% endcomment %}
-          {% comment %} 
-                                                                                                                                                                                                                                            <a
-                                                                                                                                                                                                                                              class="announcement-bar__type"
-                                                                                                                                                                                                                                              href="/collections/all"
-                                                                                                                                                                                                                                              id="shipping-delays-announcement"
-                                                                                                                                                                                                                                              style="max-width: 800px;">
-                                                                                                                                                                                                                                              Expect shipping delays due to increased holiday volumes and Canada Post strikes. We appreciate your patience.
-                                                                                                                                                                                                                                            </a>
-                                                                                                                                                                                                  {% endcomment %}
-          {% comment %} <a
-                                                                                                                                                                                    class="announcement-bar__type"
-                                                                                                                                                                                    href="/collections/all?filter.p.vendor=CALECIM+Professional"
-                                                                                                                                                                                    id="evergreen-announcement"
-                                                                                                                                                                                    style="max-width: 800px;">
-                                                                                                                                                                                    CALECIM Professional has arrived. Shop here.
-                                                                                                                                                      </a> {% endcomment %}
+          {% comment %}
+            <a
+              class="announcement-bar__type"
+              href="/collections/all"
+              id="evergreen-announcement"
+              style="max-width: 800px;">
+              Free Shipping on Orders Over $149 CAD. Start Here.
+            </a>
+          {% endcomment %}
+          {% comment %}
+            <a
+              class="announcement-bar__type"
+              href="/collections/all"
+              id="shipping-delays-announcement"
+              style="max-width: 800px;">
+              Expect shipping delays due to increased holiday volumes and Canada Post strikes. We appreciate your patience.
+            </a>
+          {% endcomment %}
+          {% comment %}
+            <a
+                                          class="announcement-bar__type"
+                                          href="/collections/all?filter.p.vendor=CALECIM+Professional"
+                                          id="evergreen-announcement"
+                                          style="max-width: 800px;">
+                                          CALECIM Professional has arrived. Shop here.
+            </a>
+          {% endcomment %}
           <a
-            class="announcement-bar__type"
-            href="/collections/subscribe-save"
-            id="evergreen-announcement"
-            style="max-width: 800px;">
-            Never run out, never pay full price. Subscribe & Save, now live for select brands.
+            class='announcement-bar__type'
+            href='/collections/subscribe-save'
+            id='evergreen-announcement'
+            style='max-width: 800px;'
+          >
+            Never run out, never pay full price. Subscribe & Save, now live for
+            select brands.
           </a>
         </div>
       </section>
       <header>
-        <nav class="main-nav">
-          <div class="main-nav__container wrapper wrapper--lg">
-            <ul class="main-nav__column main-nav__linklist">
-              {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
+        <nav class='main-nav'>
+          <div class='main-nav__container wrapper wrapper--lg'>
+            <ul class='main-nav__column main-nav__linklist'>
+              {% assign half_count = linklists['main-menu'].links.size
+                | divided_by: 2
+                | round
+              %}
               {% for link in linklists['main-menu'].links limit: half_count %}
-                <li class="main-nav__link-item">
+                <li class='main-nav__link-item'>
                   {% if link.url == '#' %}
-                    <p class="main-nav__link all-caps link--main-nav" id="{{ link.handle }}-action">
+                    <p
+                      class='main-nav__link all-caps link--main-nav'
+                      id='{{ link.handle }}-action'
+                    >
                       {{- link.title -}}
                     </p>
                   {% else %}
                     <a
-                      class="main-nav__link all-caps link--main-nav"
-                      id="{{ link.handle }}-action"
-                      href="{{ link.url }}">
+                      class='main-nav__link all-caps link--main-nav'
+                      id='{{ link.handle }}-action'
+                      href='{{ link.url }}'
+                    >
                       {{- link.title -}}
                     </a>
                   {% endif %}
                 </li>
               {% endfor %}
-              <li class="main-nav__trigger">
-                <button id="mobile-action">
-                  <span class="all-caps">Menu</span>
+              <li class='main-nav__trigger'>
+                <button id='mobile-action'>
+                  <span class='all-caps'>Menu</span>
                 </button>
               </li>
             </ul>
-            <div class="main-nav__column main-nav__branding">
-              <a class="svg-container" href="/">
+            <div class='main-nav__column main-nav__branding'>
+              <a class='svg-container' href='/'>
                 <svg
-                  class="svg-content"
-                  fill="currentColor"
-                  preserveAspectRatio="xMinYMin meet"
-                  version="1.1"
-                  viewBox="0 0 358.8 26.5">
+                  class='svg-content'
+                  fill='currentColor'
+                  preserveAspectRatio='xMinYMin meet'
+                  version='1.1'
+                  viewBox='0 0 358.8 26.5'
+                >
                   <path d="m32.6 25.6-0.1 0.1h-4l-10.5-10.8h-14.9v10.9h-3.1v-25.2h20.3c2 0 3.8 0.1 5.2 0.4s2.7 0.7 3.7 1.4c1.9 1.2 2.9 2.9 2.9 5.3 0 2.3-0.9 4-2.6 5.2s-4.3 1.9-7.7 2l10.8 10.7zm-29.5-22.3v8.9h16.3c2.1 0 3.7-0.1 4.9-0.3 1.1-0.2 2-0.5 2.7-0.8 1.3-0.7 1.9-1.8 1.9-3.4s-0.6-2.7-1.9-3.4c-0.6-0.4-1.5-0.6-2.7-0.8-1.1-0.2-2.7-0.2-4.9-0.2h-16.3z" />
                   <path d="M71,3.3H43.6v8.5h25.9v2.7H43.6v8.6H71v2.7H40.4V0.6H71V3.3z" />
                   <path d="m121.4 0.6 0.1 0.1-11 25h-3l-9-21.2-9 21.2h-3l-11-25h3.4l8.9 21.2 9-21.2h3.4l8.9 21.2 9-21.2c0-0.1 3.4-0.1 3.3-0.1z" />
@@ -305,36 +341,44 @@
                 </svg>
               </a>
             </div>
-            <ul class="main-nav__column main-nav__linklist">
-              {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
+            <ul class='main-nav__column main-nav__linklist'>
+              {% assign half_count = linklists['main-menu'].links.size
+                | divided_by: 2
+                | round
+              %}
               {% for link in linklists['main-menu'].links offset: half_count %}
-                <li class="main-nav__link-item">
+                <li class='main-nav__link-item'>
                   {% if link.url == '#' and link.title != 'Account' %}
-                    <p class="main-nav__link all-caps link--main-nav" id="
+                    <p
+                      class='main-nav__link all-caps link--main-nav'
+                      id='
                         {%- if link.title == 'Shopping Bag' -%}
                           cart-action
                         {%- else -%}
                           {{ link.handle }}-action
                         {%- endif -%}
-                      ">
+                      '
+                    >
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
-                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                        <span class='cart-action__count'
+                          >({{ cart.item_count }})</span
+                        >
                       {% else %}
                         {{ link.title }}
                       {% endif %}
                     </p>
                   {% else %}
                     <a
-                      class="main-nav__link all-caps link--main-nav"
-                      id="
+                      class='main-nav__link all-caps link--main-nav'
+                      id='
                         {%- if link.title == 'Shopping Bag' -%}
                           cart-action
                         {%- else -%}
                           {{ link.handle }}-action
                         {%- endif -%}
-                      "
-                      href="
+                      '
+                      href='
                         {%- if link.title == 'Account' -%}
                           {% if shop.customer_accounts_enabled %}
                             {% if customer %}
@@ -346,10 +390,13 @@
                         {%- else -%}
                           {{ link.url }}
                         {%- endif -%}
-                      ">
+                      '
+                    >
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
-                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                        <span class='cart-action__count'
+                          >({{ cart.item_count }})</span
+                        >
                       {% else %}
                         {{ link.title }}
                       {% endif %}
@@ -357,36 +404,46 @@
                   {% endif %}
                 </li>
               {% endfor %}
-              <li class="main-nav__trigger">
-                <button id="mobile-cart-action">
-                  <span class="all-caps">
+              <li class='main-nav__trigger'>
+                <button id='mobile-cart-action'>
+                  <span class='all-caps'>
                     Bag
-                    <span class="cart-action__count">({{ cart.item_count }})</span>
+                    <span class='cart-action__count'
+                      >({{ cart.item_count }})</span
+                    >
                   </span>
                 </button>
               </li>
             </ul>
           </div>
         </nav>
-        <div class="drawer drawer--menu" id="treatments-menu">
-          <div class="drawer__header">
-            <button class="all-caps drawer__header-action menu-back">Back</button>
-            <h2 class="drawer__top-level-heading">Treatments</h2>
+        <div class='drawer drawer--menu' id='treatments-menu'>
+          <div class='drawer__header'>
+            <button class='all-caps drawer__header-action menu-back'>
+              Back
+            </button>
+            <h2 class='drawer__top-level-heading'>Treatments</h2>
             <a
-              href="/pages/skin-treatments/"
-              class="all-caps drawer__header-action"
-              id="treatments-all">View All</a>
+              href='/pages/skin-treatments/'
+              class='all-caps drawer__header-action'
+              id='treatments-all'
+              >View All</a
+            >
           </div>
-          <ul class="drawer__container">
+          <ul class='drawer__container'>
             {% for link in linklists['main-menu'].links %}
               {% if link.title == 'Treatments' %}
                 {% for child_link in link.links %}
-                  <li class="drawer__menu">
-                    <h3 class="all-caps drawer__sub-heading">{{ child_link.title }}</h3>
-                    <ul class="drawer__links-list">
+                  <li class='drawer__menu'>
+                    <h3 class='all-caps drawer__sub-heading'>
+                      {{ child_link.title }}
+                    </h3>
+                    <ul class='drawer__links-list'>
                       {% for grandchild_link in child_link.links %}
-                        <li class="all-caps drawer__link">
-                          <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+                        <li class='all-caps drawer__link'>
+                          <a href='{{ grandchild_link.url }}'>
+                            {{- grandchild_link.title -}}
+                          </a>
                         </li>
                       {% endfor %}
                     </ul>
@@ -396,27 +453,35 @@
             {% endfor %}
           </ul>
         </div>
-        <div class="drawer drawer--menu" id="shop-menu">
-          <div class="drawer__header">
-            <button class="all-caps drawer__header-action menu-back">Back</button>
-            <h2 class="drawer__top-level-heading">Shop</h2>
+        <div class='drawer drawer--menu' id='shop-menu'>
+          <div class='drawer__header'>
+            <button class='all-caps drawer__header-action menu-back'>
+              Back
+            </button>
+            <h2 class='drawer__top-level-heading'>Shop</h2>
             <a
-              href="/collections/all"
-              class="all-caps drawer__header-action"
-              id="shop-all">Shop All</a>
+              href='/collections/all'
+              class='all-caps drawer__header-action'
+              id='shop-all'
+              >Shop All</a
+            >
           </div>
-          <ul class="drawer__container">
+          <ul class='drawer__container'>
             {% for link in linklists['main-menu'].links %}
               {% if link.title == 'Shop' %}
                 {% for child_link in link.links %}
-                  <li class="drawer__menu">
-                    <h3 class="all-caps drawer__sub-heading">{{ child_link.title }}</h3>
-                    <ul class="drawer__links-list">
+                  <li class='drawer__menu'>
+                    <h3 class='all-caps drawer__sub-heading'>
+                      {{ child_link.title }}
+                    </h3>
+                    <ul class='drawer__links-list'>
                       {% if child_link.title == 'Brands' %}
                         {% for collection in collections %}
-                          {%- if collection.metafields.custom.parent_collection == 'brands' -%}
-                            <li class="all-caps drawer__link">
-                              <a href="{{ collection.url }}">
+                          {%- if collection.metafields.custom.parent_collection
+                              == 'brands'
+                          -%}
+                            <li class='all-caps drawer__link'>
+                              <a href='{{ collection.url }}'>
                                 {{- collection.title -}}
                               </a>
                             </li>
@@ -425,8 +490,10 @@
 
                       {% else %}
                         {% for grandchild_link in child_link.links %}
-                          <li class="all-caps drawer__link">
-                            <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+                          <li class='all-caps drawer__link'>
+                            <a href='{{ grandchild_link.url }}'>
+                              {{- grandchild_link.title -}}
+                            </a>
                           </li>
                         {% endfor %}
                       {% endif %}
@@ -437,41 +504,62 @@
             {% endfor %}
           </ul>
         </div>
-        <div class="drawer drawer--menu" id="mobile-menu">
-          <div class="drawer__header">
-            <h2 class="drawer__top-level-heading">Menu</h2>
-            <button class="all-caps drawer__header-action" id="menu-close">Close</button>
+        <div class='drawer drawer--menu' id='mobile-menu'>
+          <div class='drawer__header'>
+            <h2 class='drawer__top-level-heading'>Menu</h2>
+            <button class='all-caps drawer__header-action' id='menu-close'>
+              Close
+            </button>
           </div>
-          <ul class="drawer__container">
-            <li class="drawer__menu">
-              <ul class="drawer__links-list">
-                {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
+          <ul class='drawer__container'>
+            <li class='drawer__menu'>
+              <ul class='drawer__links-list'>
+                {% assign half_count = linklists['main-menu'].links.size
+                  | divided_by: 2
+                  | round
+                %}
                 {% for link in linklists['main-menu'].links limit: half_count %}
-                  <li class="all-caps drawer__link">
+                  <li class='all-caps drawer__link'>
                     {% if link.url == '#' %}
-                      <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                      <p id='{{ link.handle }}-mobile-action'>
+                        {{ link.title }}
+                      </p>
                     {% else %}
-                      <a id="{{ link.handle }}-mobile-action" href="{{ link.url }}">{{ link.title }}</a>
+                      <a
+                        id='{{ link.handle }}-mobile-action'
+                        href='{{ link.url }}'
+                      >
+                        {{- link.title -}}
+                      </a>
                     {% endif %}
                   </li>
                 {% endfor %}
                 <!-- Hardcoded link -->
-                <li class="all-caps drawer__link">
-                  <a href="/pages/our-founder">Our Founder</a>
+                <li class='all-caps drawer__link'>
+                  <a href='/pages/our-founder'>Our Founder</a>
                 </li>
               </ul>
             </li>
-            <li class="drawer__menu">
-              <ul class="drawer__links-list">
-                {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
-                {% for link in linklists['main-menu'].links offset: half_count %}
+            <li class='drawer__menu'>
+              <ul class='drawer__links-list'>
+                {% assign half_count = linklists['main-menu'].links.size
+                  | divided_by: 2
+                  | round
+                %}
+                {% for link in linklists['main-menu'].links
+                  offset: half_count
+                %}
                   {% unless forloop.last %}
                     {% comment %} double-check when pushed to theme {% endcomment %}
-                    <li class="all-caps drawer__link">
+                    <li class='all-caps drawer__link'>
                       {% if link.title != 'Account' and link.url == '#' %}
-                        <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                        <p id='{{ link.handle }}-mobile-action'>
+                          {{ link.title }}
+                        </p>
                       {% else %}
-                        <a id="{{ link.handle }}-mobile-action" href="
+                        <a
+                          id='{{ link.handle }}-mobile-action'
+                          href='
                             {%- if link.title == 'Account' -%}
                               {% if shop.customer_accounts_enabled %}
                                 {% if customer %}
@@ -483,7 +571,8 @@
                             {%- else -%}
                               {{ link.url }}
                             {%- endif -%}
-                          ">
+                          '
+                        >
                           {{ link.title }}
                         </a>
                       {% endif %}
@@ -494,46 +583,55 @@
             </li>
           </ul>
         </div>
-        <div class="drawer drawer--search" id="search-drawer">
-          <div class="search__container">
+        <div class='drawer drawer--search' id='search-drawer'>
+          <div class='search__container'>
             <form
-              id="search-in-drawer"
-              class="search__form"
-              action="{{ routes.search_url }}"
-              role="search">
-              <div class="search__field">
-                <div class="search__inputs">
+              id='search-in-drawer'
+              class='search__form'
+              action='{{ routes.search_url }}'
+              role='search'
+            >
+              <div class='search__field'>
+                <div class='search__inputs'>
                   <input
-                    id="search-input-drawer"
-                    type="text"
-                    name="q"
-                    value="{{ search.terms | escape }}"
-                    placeholder="{{ 'general.search.search' | t }}"
-                    class="field__inner">
-                  <label for="search-input-drawer" class="visually-hidden">{{ 'general.search.search' | t }}</label>
+                    id='search-input-drawer'
+                    type='text'
+                    name='q'
+                    value='{{ search.terms | escape }}'
+                    placeholder='{{ 'general.search.search' | t }}'
+                    class='field__inner'
+                  >
+                  <label for='search-input-drawer' class='visually-hidden'>
+                    {{- 'general.search.search' | t -}}
+                  </label>
 
                   <input
-                    type="hidden"
-                    name="type"
-                    value="product,page">
+                    type='hidden'
+                    name='type'
+                    value='product,page'
+                  >
                   <input
-                    type="hidden"
-                    name="options[unavailable_products]"
-                    value="show">
+                    type='hidden'
+                    name='options[unavailable_products]'
+                    value='show'
+                  >
                   <input
-                    type="hidden"
-                    name="options[prefix]"
-                    value="last">
+                    type='hidden'
+                    name='options[prefix]'
+                    value='last'
+                  >
                 </div>
-                <div class="search__btns">
+                <div class='search__btns'>
                   <button
-                    id="search-clear-drawer"
-                    type="reset"
-                    aria-label="Clear search term">
+                    id='search-clear-drawer'
+                    type='reset'
+                    aria-label='Clear search term'
+                  >
                     <svg
-                      fill="none"
-                      viewBox="0 0 10 10"
-                      xmlns="http://www.w3.org/2000/svg">
+                      fill='none'
+                      viewBox='0 0 10 10'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
                       <path
                         d="M1 1L9 9M1 9L9 1"
                         stroke="currentColor"
@@ -543,11 +641,15 @@
                         focusable="false" />
                     </svg>
                   </button>
-                  <button type="submit" aria-label="{{ 'general.search.search' | t }}">
+                  <button
+                    type='submit'
+                    aria-label='{{ 'general.search.search' | t }}'
+                  >
                     <svg
-                      fill="none"
-                      viewBox="0 0 26 26"
-                      xmlns="http://www.w3.org/2000/svg">
+                      fill='none'
+                      viewBox='0 0 26 26'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
                       <path
                         d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
                         stroke="currentColor"
@@ -560,14 +662,19 @@
                 </div>
               </div>
             </form>
-            <button class="all-caps search__close drawer__header-action" id="search-close">Close</button>
+            <button
+              class='all-caps search__close drawer__header-action'
+              id='search-close'
+            >
+              Close
+            </button>
           </div>
         </div>
         {% section 'cart-drawer' %}
       </header>
     {% else %}
-      <section class="announcement-bar">
-        <div class="wrapper wrapper--lg announcement-bar__container">
+      <section class='announcement-bar'>
+        <div class='wrapper wrapper--lg announcement-bar__container'>
           {% comment %}
             <a
             class="announcement-bar__type"
@@ -577,15 +684,15 @@
             >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
             >
           {% endcomment %}
-          {% comment %}  
-                                                                                                                                                                                                                                  <a
-                                                                                                                                                                                                                                    class="announcement-bar__type"
-                                                                                                                                                                                                                                    href="/collections/all"
-                                                                                                                                                                                                                                    id="evergreen-announcement"
-                                                                                                                                                                                                                                    style="max-width: 800px;">
-                                                                                                                                                                                                                                    Free Shipping on Orders Over $149 CAD. Start Here.
-                                                                                                                                                                                                                                  </a>
-                                                                                                                                                                                              {% endcomment %}
+          {% comment %}
+            <a
+              class="announcement-bar__type"
+              href="/collections/all"
+              id="evergreen-announcement"
+              style="max-width: 800px;">
+              Free Shipping on Orders Over $149 CAD. Start Here.
+            </a>
+          {% endcomment %}
           {% comment %}
             <a
             class="announcement-bar__type"
@@ -595,57 +702,69 @@
             Expect shipping delays due to increased holiday volumes and Canada Post strikes. We appreciate your patience.
             </a>
           {% endcomment %}
-          {% comment %} <a
-                                                                                                                                                                                    class="announcement-bar__type"
-                                                                                                                                                                                    href="/collections/all?filter.p.vendor=CALECIM+Professional"
-                                                                                                                                                                                    id="evergreen-announcement"
-                                                                                                                                                                                    style="max-width: 800px;">
-                                                                                                                                                                                    CALECIM Professional has arrived. Shop here.
-                                                                                                                                                      </a> {% endcomment %}
+          {% comment %}
+            <a
+                                          class="announcement-bar__type"
+                                          href="/collections/all?filter.p.vendor=CALECIM+Professional"
+                                          id="evergreen-announcement"
+                                          style="max-width: 800px;">
+                                          CALECIM Professional has arrived. Shop here.
+            </a>
+          {% endcomment %}
           <a
-            class="announcement-bar__type"
-            href="/collections/subscribe-save"
-            id="evergreen-announcement"
-            style="max-width: 800px;">
-            Never run out, never pay full price. Subscribe & Save, now live for select brands.
+            class='announcement-bar__type'
+            href='/collections/subscribe-save'
+            id='evergreen-announcement'
+            style='max-width: 800px;'
+          >
+            Never run out, never pay full price. Subscribe & Save, now live for
+            select brands.
           </a>
         </div>
       </section>
-      <header class="hero">
-        <nav class="main-nav">
-          <div class="main-nav__container wrapper wrapper--lg">
-            <ul class="main-nav__column main-nav__linklist">
-              {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
+      <header class='hero'>
+        <nav class='main-nav'>
+          <div class='main-nav__container wrapper wrapper--lg'>
+            <ul class='main-nav__column main-nav__linklist'>
+              {% assign half_count = linklists['main-menu'].links.size
+                | divided_by: 2
+                | round
+              %}
               {% for link in linklists['main-menu'].links limit: half_count %}
-                <li class="main-nav__link-item">
+                <li class='main-nav__link-item'>
                   {% if link.url == '#' %}
-                    <p class="main-nav__link all-caps link--main-nav" id="{{ link.handle }}-action">
+                    <p
+                      class='main-nav__link all-caps link--main-nav'
+                      id='{{ link.handle }}-action'
+                    >
                       {{- link.title -}}
                     </p>
                   {% else %}
                     <a
-                      class="main-nav__link all-caps link--main-nav"
-                      id="{{ link.handle }}-action"
-                      href="{{ link.url }}">
+                      class='main-nav__link all-caps link--main-nav'
+                      id='{{ link.handle }}-action'
+                      href='{{ link.url }}'
+                    >
                       {{- link.title -}}
                     </a>
                   {% endif %}
                 </li>
               {% endfor %}
-              <li class="main-nav__trigger">
-                <button id="mobile-action">
-                  <span class="all-caps">Menu</span>
+              <li class='main-nav__trigger'>
+                <button id='mobile-action'>
+                  <span class='all-caps'>Menu</span>
                 </button>
               </li>
             </ul>
-            <div class="main-nav__column main-nav__branding">
-              <a class="svg-container" href="/">
+            <div class='main-nav__column main-nav__branding'>
+              <a class='svg-container' href='/'>
                 <svg
-                  class="svg-content"
-                  fill="currentColor"
-                  preserveAspectRatio="xMinYMin meet"
-                  version="1.1"
-                  viewBox="0 0 358.8 26.5">
+                  class='svg-content'
+                  fill='currentColor'
+                  preserveAspectRatio='xMinYMin meet'
+                  version='1.1'
+                  viewBox='0 0 358.8 26.5'
+                >
                   <path d="m32.6 25.6-0.1 0.1h-4l-10.5-10.8h-14.9v10.9h-3.1v-25.2h20.3c2 0 3.8 0.1 5.2 0.4s2.7 0.7 3.7 1.4c1.9 1.2 2.9 2.9 2.9 5.3 0 2.3-0.9 4-2.6 5.2s-4.3 1.9-7.7 2l10.8 10.7zm-29.5-22.3v8.9h16.3c2.1 0 3.7-0.1 4.9-0.3 1.1-0.2 2-0.5 2.7-0.8 1.3-0.7 1.9-1.8 1.9-3.4s-0.6-2.7-1.9-3.4c-0.6-0.4-1.5-0.6-2.7-0.8-1.1-0.2-2.7-0.2-4.9-0.2h-16.3z" />
                   <path d="M71,3.3H43.6v8.5h25.9v2.7H43.6v8.6H71v2.7H40.4V0.6H71V3.3z" />
                   <path d="m121.4 0.6 0.1 0.1-11 25h-3l-9-21.2-9 21.2h-3l-11-25h3.4l8.9 21.2 9-21.2h3.4l8.9 21.2 9-21.2c0-0.1 3.4-0.1 3.3-0.1z" />
@@ -659,36 +778,44 @@
                 </svg>
               </a>
             </div>
-            <ul class="main-nav__column main-nav__linklist">
-              {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
+            <ul class='main-nav__column main-nav__linklist'>
+              {% assign half_count = linklists['main-menu'].links.size
+                | divided_by: 2
+                | round
+              %}
               {% for link in linklists['main-menu'].links offset: half_count %}
-                <li class="main-nav__link-item">
+                <li class='main-nav__link-item'>
                   {% if link.url == '#' and link.title != 'Account' %}
-                    <p class="main-nav__link all-caps link--main-nav" id="
+                    <p
+                      class='main-nav__link all-caps link--main-nav'
+                      id='
                         {%- if link.title == 'Shopping Bag' -%}
                           cart-action
                         {%- else -%}
                           {{ link.handle }}-action
                         {%- endif -%}
-                      ">
+                      '
+                    >
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
-                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                        <span class='cart-action__count'
+                          >({{ cart.item_count }})</span
+                        >
                       {% else %}
                         {{ link.title }}
                       {% endif %}
                     </p>
                   {% else %}
                     <a
-                      class="main-nav__link all-caps link--main-nav"
-                      id="
+                      class='main-nav__link all-caps link--main-nav'
+                      id='
                         {%- if link.title == 'Shopping Bag' -%}
                           cart-action
                         {%- else -%}
                           {{ link.handle }}-action
                         {%- endif -%}
-                      "
-                      href="
+                      '
+                      href='
                         {%- if link.title == 'Account' -%}
                           {% if shop.customer_accounts_enabled %}
                             {% if customer %}
@@ -700,10 +827,13 @@
                         {%- else -%}
                           {{ link.url }}
                         {%- endif -%}
-                      ">
+                      '
+                    >
                       {% if link.title == 'Shopping Bag' %}
                         {{ link.title }}
-                        <span class="cart-action__count">({{ cart.item_count }})</span>
+                        <span class='cart-action__count'
+                          >({{ cart.item_count }})</span
+                        >
                       {% else %}
                         {{ link.title }}
                       {% endif %}
@@ -711,36 +841,46 @@
                   {% endif %}
                 </li>
               {% endfor %}
-              <li class="main-nav__trigger">
-                <button id="mobile-cart-action">
-                  <span class="all-caps">
+              <li class='main-nav__trigger'>
+                <button id='mobile-cart-action'>
+                  <span class='all-caps'>
                     Bag
-                    <span class="cart-action__count">({{ cart.item_count }})</span>
+                    <span class='cart-action__count'
+                      >({{ cart.item_count }})</span
+                    >
                   </span>
                 </button>
               </li>
             </ul>
           </div>
         </nav>
-        <div class="drawer drawer--menu" id="treatments-menu">
-          <div class="drawer__header">
-            <button class="all-caps drawer__header-action menu-back">Back</button>
-            <h2 class="drawer__top-level-heading">Treatments</h2>
+        <div class='drawer drawer--menu' id='treatments-menu'>
+          <div class='drawer__header'>
+            <button class='all-caps drawer__header-action menu-back'>
+              Back
+            </button>
+            <h2 class='drawer__top-level-heading'>Treatments</h2>
             <a
-              href="/pages/skin-treatments/"
-              class="all-caps drawer__header-action"
-              id="treatments-all">View All</a>
+              href='/pages/skin-treatments/'
+              class='all-caps drawer__header-action'
+              id='treatments-all'
+              >View All</a
+            >
           </div>
-          <ul class="drawer__container">
+          <ul class='drawer__container'>
             {% for link in linklists['main-menu'].links %}
               {% if link.title == 'Treatments' %}
                 {% for child_link in link.links %}
-                  <li class="drawer__menu">
-                    <h3 class="all-caps drawer__sub-heading">{{ child_link.title }}</h3>
-                    <ul class="drawer__links-list">
+                  <li class='drawer__menu'>
+                    <h3 class='all-caps drawer__sub-heading'>
+                      {{ child_link.title }}
+                    </h3>
+                    <ul class='drawer__links-list'>
                       {% for grandchild_link in child_link.links %}
-                        <li class="all-caps drawer__link">
-                          <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+                        <li class='all-caps drawer__link'>
+                          <a href='{{ grandchild_link.url }}'>
+                            {{- grandchild_link.title -}}
+                          </a>
                         </li>
                       {% endfor %}
                     </ul>
@@ -750,27 +890,35 @@
             {% endfor %}
           </ul>
         </div>
-        <div class="drawer drawer--menu" id="shop-menu">
-          <div class="drawer__header">
-            <button class="all-caps drawer__header-action menu-back">Back</button>
-            <h2 class="drawer__top-level-heading">Shop</h2>
+        <div class='drawer drawer--menu' id='shop-menu'>
+          <div class='drawer__header'>
+            <button class='all-caps drawer__header-action menu-back'>
+              Back
+            </button>
+            <h2 class='drawer__top-level-heading'>Shop</h2>
             <a
-              href="/collections/all"
-              class="all-caps drawer__header-action"
-              id="shop-all">Shop All</a>
+              href='/collections/all'
+              class='all-caps drawer__header-action'
+              id='shop-all'
+              >Shop All</a
+            >
           </div>
-          <ul class="drawer__container">
+          <ul class='drawer__container'>
             {% for link in linklists['main-menu'].links %}
               {% if link.title == 'Shop' %}
                 {% for child_link in link.links %}
-                  <li class="drawer__menu">
-                    <h3 class="all-caps drawer__sub-heading">{{ child_link.title }}</h3>
-                    <ul class="drawer__links-list">
+                  <li class='drawer__menu'>
+                    <h3 class='all-caps drawer__sub-heading'>
+                      {{ child_link.title }}
+                    </h3>
+                    <ul class='drawer__links-list'>
                       {% if child_link.title == 'Brands' %}
                         {% for collection in collections %}
-                          {%- if collection.metafields.custom.parent_collection == 'brands' -%}
-                            <li class="all-caps drawer__link">
-                              <a href="{{ collection.url }}">
+                          {%- if collection.metafields.custom.parent_collection
+                              == 'brands'
+                          -%}
+                            <li class='all-caps drawer__link'>
+                              <a href='{{ collection.url }}'>
                                 {{- collection.title -}}
                               </a>
                             </li>
@@ -779,8 +927,10 @@
 
                       {% else %}
                         {% for grandchild_link in child_link.links %}
-                          <li class="all-caps drawer__link">
-                            <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+                          <li class='all-caps drawer__link'>
+                            <a href='{{ grandchild_link.url }}'>
+                              {{- grandchild_link.title -}}
+                            </a>
                           </li>
                         {% endfor %}
                       {% endif %}
@@ -791,40 +941,61 @@
             {% endfor %}
           </ul>
         </div>
-        <div class="drawer drawer--menu" id="mobile-menu">
-          <div class="drawer__header">
-            <h2 class="drawer__top-level-heading">Menu</h2>
-            <button class="all-caps drawer__header-action" id="menu-close">Close</button>
+        <div class='drawer drawer--menu' id='mobile-menu'>
+          <div class='drawer__header'>
+            <h2 class='drawer__top-level-heading'>Menu</h2>
+            <button class='all-caps drawer__header-action' id='menu-close'>
+              Close
+            </button>
           </div>
-          <ul class="drawer__container">
-            <li class="drawer__menu">
-              <ul class="drawer__links-list">
-                {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
+          <ul class='drawer__container'>
+            <li class='drawer__menu'>
+              <ul class='drawer__links-list'>
+                {% assign half_count = linklists['main-menu'].links.size
+                  | divided_by: 2
+                  | round
+                %}
                 {% for link in linklists['main-menu'].links limit: half_count %}
-                  <li class="all-caps drawer__link">
+                  <li class='all-caps drawer__link'>
                     {% if link.url == '#' %}
-                      <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                      <p id='{{ link.handle }}-mobile-action'>
+                        {{ link.title }}
+                      </p>
                     {% else %}
-                      <a id="{{ link.handle }}-mobile-action" href="{{ link.url }}">{{ link.title }}</a>
+                      <a
+                        id='{{ link.handle }}-mobile-action'
+                        href='{{ link.url }}'
+                      >
+                        {{- link.title -}}
+                      </a>
                     {% endif %}
                   </li>
                 {% endfor %}
                 <!-- Hardcoded link -->
-                <li class="all-caps drawer__link">
-                  <a href="/pages/our-founder">Our Founder</a>
+                <li class='all-caps drawer__link'>
+                  <a href='/pages/our-founder'>Our Founder</a>
                 </li>
               </ul>
             </li>
-            <li class="drawer__menu">
-              <ul class="drawer__links-list">
-                {% assign half_count = linklists['main-menu'].links.size | divided_by: 2 | round %}
-                {% for link in linklists['main-menu'].links offset: half_count %}
+            <li class='drawer__menu'>
+              <ul class='drawer__links-list'>
+                {% assign half_count = linklists['main-menu'].links.size
+                  | divided_by: 2
+                  | round
+                %}
+                {% for link in linklists['main-menu'].links
+                  offset: half_count
+                %}
                   {% unless forloop.last %}
-                    <li class="all-caps drawer__link">
+                    <li class='all-caps drawer__link'>
                       {% if link.title != 'Account' and link.url == '#' %}
-                        <p id="{{ link.handle }}-mobile-action">{{ link.title }}</p>
+                        <p id='{{ link.handle }}-mobile-action'>
+                          {{ link.title }}
+                        </p>
                       {% else %}
-                        <a id="{{ link.handle }}-mobile-action" href="
+                        <a
+                          id='{{ link.handle }}-mobile-action'
+                          href='
                             {%- if link.title == 'Account' -%}
                               {% if shop.customer_accounts_enabled %}
                                 {% if customer %}
@@ -836,7 +1007,8 @@
                             {%- else -%}
                               {{ link.url }}
                             {%- endif -%}
-                          ">
+                          '
+                        >
                           {{ link.title }}
                         </a>
                       {% endif %}
@@ -847,47 +1019,56 @@
             </li>
           </ul>
         </div>
-        <div class="drawer drawer--search" id="search-drawer">
-          <div class="search__container">
+        <div class='drawer drawer--search' id='search-drawer'>
+          <div class='search__container'>
             <form
-              id="search-in-drawer"
-              class="search__form"
-              action="{{ routes.search_url }}"
-              role="search">
-              <div class="search__field">
-                <div class="search__inputs">
+              id='search-in-drawer'
+              class='search__form'
+              action='{{ routes.search_url }}'
+              role='search'
+            >
+              <div class='search__field'>
+                <div class='search__inputs'>
                   <input
-                    id="search-input"
-                    type="text"
-                    name="q"
-                    value="{{ search.terms | escape }}"
-                    placeholder="{{ 'general.search.search' | t }}"
-                    class="field__inner"
-                    required>
-                  <label for="search-input" class="visually-hidden">{{ 'general.search.search' | t }}</label>
+                    id='search-input'
+                    type='text'
+                    name='q'
+                    value='{{ search.terms | escape }}'
+                    placeholder='{{ 'general.search.search' | t }}'
+                    class='field__inner'
+                    required
+                  >
+                  <label for='search-input' class='visually-hidden'>
+                    {{- 'general.search.search' | t -}}
+                  </label>
 
                   <input
-                    type="hidden"
-                    name="type"
-                    value="product,page">
+                    type='hidden'
+                    name='type'
+                    value='product,page'
+                  >
                   <input
-                    type="hidden"
-                    name="options[unavailable_products]"
-                    value="show">
+                    type='hidden'
+                    name='options[unavailable_products]'
+                    value='show'
+                  >
                   <input
-                    type="hidden"
-                    name="options[prefix]"
-                    value="last">
+                    type='hidden'
+                    name='options[prefix]'
+                    value='last'
+                  >
                 </div>
-                <div class="search__btns">
+                <div class='search__btns'>
                   <button
-                    id="search-clear"
-                    type="reset"
-                    aria-label="Clear search term">
+                    id='search-clear'
+                    type='reset'
+                    aria-label='Clear search term'
+                  >
                     <svg
-                      fill="none"
-                      viewBox="0 0 10 10"
-                      xmlns="http://www.w3.org/2000/svg">
+                      fill='none'
+                      viewBox='0 0 10 10'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
                       <path
                         d="M1 1L9 9M1 9L9 1"
                         stroke="currentColor"
@@ -897,11 +1078,15 @@
                         focusable="false" />
                     </svg>
                   </button>
-                  <button type="submit" aria-label="{{ 'general.search.search' | t }}">
+                  <button
+                    type='submit'
+                    aria-label='{{ 'general.search.search' | t }}'
+                  >
                     <svg
-                      fill="none"
-                      viewBox="0 0 26 26"
-                      xmlns="http://www.w3.org/2000/svg">
+                      fill='none'
+                      viewBox='0 0 26 26'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
                       <path
                         d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
                         stroke="currentColor"
@@ -914,18 +1099,31 @@
                 </div>
               </div>
             </form>
-            <button class="all-caps search__close drawer__header-action" id="search-close">Close</button>
+            <button
+              class='all-caps search__close drawer__header-action'
+              id='search-close'
+            >
+              Close
+            </button>
           </div>
         </div>
         {% section 'cart-drawer' %}
         {% if template.name == 'index' %}
-          <div class="wrapper wrapper--md">
-            <div class="main-lockup main-lockup--home-hero">
-              <div class="main-lockup__copy" style="max-width: 800px;">
-                <h1 class="main-heading main-lockup__heading">We’re glad you’re here. So is your skin.</h1>
-                <p class="main-body main-lockup__body">Experience our range of carefully curated luxury skincare.</p>
+          <div class='wrapper wrapper--md'>
+            <div class='main-lockup main-lockup--home-hero'>
+              <div class='main-lockup__copy' style='max-width: 800px;'>
+                <h1 class='main-heading main-lockup__heading'>
+                  We’re glad you’re here. So is your skin.
+                </h1>
+                <p class='main-body main-lockup__body'>
+                  Experience our range of carefully curated luxury skincare.
+                </p>
               </div>
-              <a class="btn btn--primary all-caps main-lockup__btn" href="/collections/all">Shop</a>
+              <a
+                class='btn btn--primary all-caps main-lockup__btn'
+                href='/collections/all'
+                >Shop</a
+              >
             </div>
           </div>
         {% endif %}
