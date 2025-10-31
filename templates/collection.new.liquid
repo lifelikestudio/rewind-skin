@@ -205,7 +205,7 @@
   <section
     data-block='collections-hero'
     data-modifier='collections-hero--split'
-    class='!flex w-full sm:aspect-16/9 md:aspect-2/1 {% if collection.handle == 'mansard' %}flex-col-reverse{% else %}flex-col{% endif %} sm:flex-row'
+    class='!flex w-full sm:aspect-16/9 md:aspect-2/1 {% if collection.handle == 'mansard' or collection.handle == 'future-5-elements' %}flex-col-reverse{% else %}flex-col{% endif %} sm:flex-row'
   >
     {% comment %} first asset {% endcomment %}
     {% assign first_media = collection.metafields.custom.featured_media.value
@@ -306,6 +306,8 @@
           preload='metadata'
           aria-label='Background video showcasing {{ collection.title }}'
           role='img'
+          data-video-controls
+          id='video-{{ collection.handle }}-last'
         >
           {% comment %} Use the highest quality MP4 source available {% endcomment %}
           {% for source in last_media.sources %}
