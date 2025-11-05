@@ -349,6 +349,9 @@
   .object-center {
     object-position: center;
   }
+  .object-top {
+    object-position: top;
+  }
   .p-home-hero-btn-padding {
     padding: var(--home-hero-btn-padding);
   }

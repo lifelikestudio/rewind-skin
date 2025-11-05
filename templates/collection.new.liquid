@@ -128,7 +128,7 @@
       class='relative aspect-4/5 w-full overflow-hidden sm:aspect-7/5 md:aspect-2/1'
     >
       <video
-        class='absolute inset-0 h-full w-full object-cover'
+        class='absolute inset-0 h-full w-full object-cover {% if collection.handle == 'biologique-recherche' %}object-top{% endif %}'
         autoplay
         muted
         loop
