@@ -136,6 +136,8 @@
         preload='metadata'
         aria-label='Background video showcasing {{ collection.title }}'
         role='img'
+        data-video-controls
+        id='video-{{ collection.handle }}'
       >
         {% comment %} Use the highest quality MP4 source available {% endcomment %}
         {% for source in media_file.sources %}
