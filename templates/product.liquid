@@ -96,7 +96,22 @@
           }
         {%- endif -%}
       </script>
-      {{ product.description }}
+      <div class='gap-system-24 flex flex-col-reverse sm:flex-col'>
+        {{ product.description }}
+        {% if downcased_vendor == 'mansard' %}
+          <div
+            class='rounded-[20px] bg-[#F8F8F8] p-[20px]'
+          >
+            <h3>Your skin deserves precision.</h3>
+            <p>
+              Mansard formulas perform best when matched to your skin’s unique
+              needs. Meet with one of our skin experts to guide you toward the
+              ideal products for your skin.
+            </p>
+            <a href='#'>Book</a>
+          </div>
+        {% endif %}
+      </div>
     </div>
   </section>
   <section class='product-page__container'>

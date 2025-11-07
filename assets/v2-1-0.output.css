@@ -188,6 +188,12 @@
   .isolate {
     isolation: isolate;
   }
+  .order-0 {
+    order: 0;
+  }
+  .order-1 {
+    order: 1;
+  }
   .container {
     width: 100%;
     @media (width >= 375px) {
@@ -300,6 +306,12 @@
   .justify-end {
     justify-content: flex-end;
   }
+  .gap-\[24px\] {
+    gap: 24px;
+  }
+  .gap-system-24 {
+    gap: var(--size-24);
+  }
   .gap-x-collections-breadcrumbs-gap {
     column-gap: var(--collections-breadcrumbs-gap);
   }
@@ -320,6 +332,9 @@
   .overflow-hidden {
     overflow: hidden;
   }
+  .rounded-\[20px\] {
+    border-radius: 20px;
+  }
   .rounded-full {
     border-radius: calc(infinity * 1px);
   }
@@ -337,6 +352,9 @@
   .\!bg-surface-secondary {
     background-color: var(--color-grey-900) !important;
   }
+  .bg-\[\#F8F8F8\] {
+    background-color: #F8F8F8;
+  }
   .bg-cover {
     background-size: cover;
   }
@@ -351,6 +369,9 @@
   }
   .object-top {
     object-position: top;
+  }
+  .p-\[20px\] {
+    padding: 20px;
   }
   .p-home-hero-btn-padding {
     padding: var(--home-hero-btn-padding);
@@ -428,6 +449,11 @@
       color: inherit;
     }
   }
+  .xs\:flex-col {
+    @media (width >= 428px) {
+      flex-direction: column;
+    }
+  }
   .sm\:aspect-7\/5 {
     @media (width >= 768px) {
       aspect-ratio: 7/5;
@@ -456,6 +482,11 @@
   .sm\:w-1\/2 {
     @media (width >= 768px) {
       width: calc(1/2 * 100%);
+    }
+  }
+  .sm\:flex-col {
+    @media (width >= 768px) {
+      flex-direction: column;
     }
   }
   .sm\:flex-row {

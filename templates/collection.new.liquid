@@ -150,7 +150,7 @@
           src='{{ media_file.preview_image | image_url  }}'
           alt='{{ collection.title }} - {{ collection.description }}'
           data-element='collections-hero__fallback'
-          class='h-full w-full object-cover'
+          class='h-full w-full object-cover {% if collection.handle == 'biologique-recherche' %}object-top{% endif %}'
         >
       </video>
       {% comment %} Video Controls {% endcomment %}
