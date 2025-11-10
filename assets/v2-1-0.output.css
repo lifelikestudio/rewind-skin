@@ -413,6 +413,10 @@
     --tw-leading: 8px;
     line-height: 8px;
   }
+  .leading-\[12px\] {
+    --tw-leading: 12px;
+    line-height: 12px;
+  }
   .font-normal {
     --tw-font-weight: var(--typography-font-weight-base);
     font-weight: var(--typography-font-weight-base);
@@ -650,6 +654,12 @@
     @media (width >= 768px) {
       --tw-leading: 9px;
       line-height: 9px;
+    }
+  }
+  .sm\:leading-\[13px\] {
+    @media (width >= 768px) {
+      --tw-leading: 13px;
+      line-height: 13px;
     }
   }
   .md\:aspect-2-1 {
