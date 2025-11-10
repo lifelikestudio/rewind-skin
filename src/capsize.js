@@ -43,6 +43,27 @@ const textStyles = {
     lg: { fontSize: 14, lineHeight: 1 },
     xl: { fontSize: 14, lineHeight: 1 },
   },
+  // temp
+  'consult-callout-heading': {
+    tiny: { fontSize: 11, lineHeight: 1 },
+    xxs: { fontSize: 11, lineHeight: 1 },
+    xs: { fontSize: 11, lineHeight: 1 },
+    sm: { fontSize: 12, lineHeight: 1 },
+    md: { fontSize: 12, lineHeight: 1 },
+    'md-lg': { fontSize: 12, lineHeight: 1 },
+    lg: { fontSize: 12, lineHeight: 1 },
+    xl: { fontSize: 12, lineHeight: 1 },
+  },
+  'consult-callout-body': {
+    tiny: { fontSize: 12, lineHeight: 1.3 },
+    xxs: { fontSize: 12, lineHeight: 1.3 },
+    xs: { fontSize: 12, lineHeight: 1.3 },
+    sm: { fontSize: 13, lineHeight: 1.3 },
+    md: { fontSize: 13, lineHeight: 1.3 },
+    'md-lg': { fontSize: 13, lineHeight: 1.3 },
+    lg: { fontSize: 13, lineHeight: 1.3 },
+    xl: { fontSize: 13, lineHeight: 1.3 },
+  },
 };
 
 // Breakpoint mapping to match your CSS

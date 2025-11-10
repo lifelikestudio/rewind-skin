@@ -99,17 +99,36 @@
       <div class='gap-system-24 flex flex-col-reverse sm:flex-col'>
         {{ product.description }}
         {% if downcased_vendor == 'mansard' %}
-          <div
-            class='rounded-[20px] bg-[#F8F8F8] p-[20px]'
+          <aside
+            class='!flex flex-col items-start gap-[16px] rounded-[20px] bg-[#F8F8F8] p-[18px] font-normal sm:p-[20px]'
+            data-block='consult-callout'
+            aria-label='Consultation callout'
           >
-            <h3>Your skin deserves precision.</h3>
-            <p>
-              {{ product.vendor }} formulas perform best when matched to your
-              skin’s unique needs. Meet with one of our skin experts to guide
-              you toward the ideal products for your skin.
-            </p>
-            <a href='#'>Book</a>
-          </div>
+            <div
+              class='flex flex-col gap-[12px]'
+              data-element='consult-callout__copy'
+            >
+              <p
+                id='consult-heading'
+                class='text-consult-callout-heading  text-[#787878]'
+              >
+                Your skin deserves precision.
+              </p>
+              <p class='text-consult-callout-body'>
+                {{ product.vendor }} formulas perform best when matched to your
+                skin’s unique needs. Meet with one of our skin experts to guide
+                you toward the ideal products for your skin.
+              </p>
+            </div>
+            <a
+              href='https://rewindskinco-book.as.me/currentclientvirtual'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label='Book a skin consultation'
+              class='p-inline flex items-center gap-[16px] rounded-full !bg-[#DEDEDE] py-[8px] pr-[10px] pl-[16px] text-[12px] leading-[8px] transition-colors duration-300 ease-in-out after:block after:h-[23px] after:w-[25px] after:rounded-full after:bg-[#D0D0D0] after:bg-[url("https://cdn.shopify.com/s/files/1/0494/4425/7941/files/consult-callout_btn-icon.svg")] after:bg-[length:8px_6px] after:bg-center after:bg-no-repeat after:transition-colors after:duration-300 after:ease-in-out after:content-[""] visited:!text-inherit hover:!bg-[#D9D9D9] hover:after:bg-[#C7C7C7] active:!bg-[#D9D9D9] active:after:bg-[#C7C7C7] sm:text-[13px] sm:leading-[9px]'
+              >Book
+            </a>
+          </aside>
         {% endif %}
       </div>
     </div>

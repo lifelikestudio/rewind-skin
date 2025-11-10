@@ -423,3 +423,215 @@
     margin-top: -0.1362em;
   }
 }
+
+.text-consult-callout-heading {
+  font-size: 11px;
+  line-height: 11px;
+}
+.text-consult-callout-heading::before {
+  content: "";
+  margin-bottom: -0.1362em;
+  display: table;
+}
+.text-consult-callout-heading::after {
+  content: "";
+  margin-top: -0.1362em;
+  display: table;
+}
+
+@media (min-width: 375px) {
+  .text-consult-callout-heading {
+    font-size: 11px;
+    line-height: 11px;
+  }
+  .text-consult-callout-heading::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-consult-callout-heading::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 428px) {
+  .text-consult-callout-heading {
+    font-size: 11px;
+    line-height: 11px;
+  }
+  .text-consult-callout-heading::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-consult-callout-heading::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-consult-callout-heading {
+    font-size: 12px;
+    line-height: 12px;
+  }
+  .text-consult-callout-heading::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-consult-callout-heading::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-consult-callout-heading {
+    font-size: 12px;
+    line-height: 12px;
+  }
+  .text-consult-callout-heading::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-consult-callout-heading::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1280px) {
+  .text-consult-callout-heading {
+    font-size: 12px;
+    line-height: 12px;
+  }
+  .text-consult-callout-heading::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-consult-callout-heading::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .text-consult-callout-heading {
+    font-size: 12px;
+    line-height: 12px;
+  }
+  .text-consult-callout-heading::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-consult-callout-heading::after {
+    margin-top: -0.1362em;
+  }
+}
+
+@media (min-width: 1920px) {
+  .text-consult-callout-heading {
+    font-size: 12px;
+    line-height: 12px;
+  }
+  .text-consult-callout-heading::before {
+    margin-bottom: -0.1362em;
+  }
+  .text-consult-callout-heading::after {
+    margin-top: -0.1362em;
+  }
+}
+
+.text-consult-callout-body {
+  font-size: 12px;
+  line-height: 15.6px;
+}
+.text-consult-callout-body::before {
+  content: "";
+  margin-bottom: -0.2862em;
+  display: table;
+}
+.text-consult-callout-body::after {
+  content: "";
+  margin-top: -0.2862em;
+  display: table;
+}
+
+@media (min-width: 375px) {
+  .text-consult-callout-body {
+    font-size: 12px;
+    line-height: 15.6px;
+  }
+  .text-consult-callout-body::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-consult-callout-body::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 428px) {
+  .text-consult-callout-body {
+    font-size: 12px;
+    line-height: 15.6px;
+  }
+  .text-consult-callout-body::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-consult-callout-body::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-consult-callout-body {
+    font-size: 13px;
+    line-height: 16.9px;
+  }
+  .text-consult-callout-body::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-consult-callout-body::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-consult-callout-body {
+    font-size: 13px;
+    line-height: 16.9px;
+  }
+  .text-consult-callout-body::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-consult-callout-body::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 1280px) {
+  .text-consult-callout-body {
+    font-size: 13px;
+    line-height: 16.9px;
+  }
+  .text-consult-callout-body::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-consult-callout-body::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .text-consult-callout-body {
+    font-size: 13px;
+    line-height: 16.9px;
+  }
+  .text-consult-callout-body::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-consult-callout-body::after {
+    margin-top: -0.2862em;
+  }
+}
+
+@media (min-width: 1920px) {
+  .text-consult-callout-body {
+    font-size: 13px;
+    line-height: 16.9px;
+  }
+  .text-consult-callout-body::before {
+    margin-bottom: -0.2862em;
+  }
+  .text-consult-callout-body::after {
+    margin-top: -0.2862em;
+  }
+}
