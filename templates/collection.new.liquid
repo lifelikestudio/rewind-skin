@@ -207,7 +207,7 @@
   <section
     data-block='collections-hero'
     data-modifier='collections-hero--split'
-    class='!flex w-full sm:aspect-16/9 md:aspect-2/1 {% if collection.handle == 'mansard' or collection.handle == 'future-5-elements' %}flex-col-reverse{% else %}flex-col{% endif %} sm:flex-row'
+    class='!flex w-full sm:aspect-16/9 md:aspect-2/1 {% if collection.handle == 'mansard' or collection.handle == 'future-5-elements' or collection.handle == 'the-light-salon'%}flex-col-reverse{% else %}flex-col{% endif %} sm:flex-row'
   >
     {% comment %} first asset {% endcomment %}
     {% assign first_media = collection.metafields.custom.featured_media.value
