@@ -146,7 +146,7 @@
       class='relative aspect-4/5 w-full overflow-hidden sm:aspect-7/5 md:aspect-2/1'
     >
       <video
-        class='absolute inset-0 h-full w-full object-cover object-top'
+        class='absolute inset-0 h-full w-full object-cover object-bottom'
         autoplay
         muted
         loop
@@ -168,7 +168,7 @@
           src='{{ media_file.preview_image | image_url  }}'
           alt='{{ collection.title }} - {{ collection.description }}'
           data-element='collections-hero__fallback'
-          class='h-full w-full object-cover object-top'
+          class='h-full w-full object-cover object-bottom'
         >
       </video>
       {% comment %} Video Controls {% endcomment %}
@@ -209,7 +209,7 @@
         src='{{ media_file.preview_image | image_url  }}'
         alt='{{ collection.title }} - {{ collection.description }}'
         data-element='collections-hero__fallback'
-        class='h-full w-full object-cover'
+        class='h-full w-full object-cover object-bottom'
       >
     </section>
   {% else %}
