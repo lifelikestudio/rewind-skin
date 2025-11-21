@@ -46,7 +46,11 @@
     <ol class='gap-x-collections-breadcrumbs-gap flex flex-row items-center'>
       <li>
         {% comment %} Static, always /all {% endcomment %}
-        <a class='visited:!text-inherit' href='/collections/all'>Shop</a>
+        {% if collection.title == 'All' %}
+          Shop
+        {% else %}
+          <a class='visited:!text-inherit' href='/collections/all'>Shop</a>
+        {% endif %}
       </li>
       {% if collection.metafields.custom.parent_collection %}
         <li class='gap-x-collections-breadcrumbs-gap flex items-center'>
