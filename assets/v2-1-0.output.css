@@ -370,6 +370,9 @@
   .object-center {
     object-position: center;
   }
+  .object-left {
+    object-position: left;
+  }
   .object-top {
     object-position: top;
   }
