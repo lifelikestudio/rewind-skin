@@ -679,6 +679,11 @@
       row-gap: var(--home-hero-lock-up-row-gap);
     }
   }
+  .md\:object-center {
+    @media (width >= 1024px) {
+      object-position: center;
+    }
+  }
   .md\:text-center {
     @media (width >= 1024px) {
       text-align: center;

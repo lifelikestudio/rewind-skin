@@ -288,7 +288,7 @@
         <img
           src='{{ first_media | image_url }}'
           alt='{{ collection.title }}'
-          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == 'the-light-salon'%}object-left sm:object-center{% else %}object-center{% endif %}'
+          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == 'the-light-salon'%}object-left md:object-center{% else %}object-center{% endif %}'
         >
       </div>
     {% endif %}
@@ -371,7 +371,7 @@
         <img
           src='{{ last_media | image_url }}'
           alt='{{ collection.title }}'
-          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == 'the-light-salon'%}object-left sm:object-center{% else %}object-center{% endif %}'
+          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == 'the-light-salon'%}object-left md:object-center{% else %}object-center{% endif %}'
         >
       </div>
     {% endif %}
