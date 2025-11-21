@@ -628,6 +628,11 @@
       flex-direction: row;
     }
   }
+  .sm\:object-center {
+    @media (width >= 768px) {
+      object-position: center;
+    }
+  }
   .sm\:p-\[20px\] {
     @media (width >= 768px) {
       padding: 20px;
