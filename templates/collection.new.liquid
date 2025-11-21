@@ -137,7 +137,16 @@
   {% comment %} Single-Asset (Randomized) {% endcomment %}
   {% assign media_count = collection.metafields.custom.featured_media.value.count %}
   {% assign seconds = 'now' | date: '%S' | plus: 0 %}
-  {% assign random_index = seconds | modulo: media_count %}
+  {% assign minutes = 'now' | date: '%M' | plus: 0 %}
+  {% assign hours = 'now' | date: '%H' | plus: 0 %}
+  {% assign day_of_year = 'now' | date: '%j' | plus: 0 %}
+  {% assign minutes_weighted = minutes | times: 60 %}
+  {% assign hours_weighted = hours | times: 3600 %}
+  {% assign day_weighted = day_of_year | times: 86400 %}
+  {% assign seed_part1 = seconds | plus: minutes_weighted %}
+  {% assign seed_part2 = seed_part1 | plus: hours_weighted %}
+  {% assign combined_seed = seed_part2 | plus: day_weighted %}
+  {% assign random_index = combined_seed | modulo: media_count %}
   {% assign media_file = null %}
   {% for media_item in collection.metafields.custom.featured_media.value %}
     {% if forloop.index0 == random_index %}
