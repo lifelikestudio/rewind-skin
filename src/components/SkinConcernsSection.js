@@ -280,7 +280,7 @@ const fetchProducts = () => {
               currencyCode
             }
           }
-          images(first: 10) {
+          images(first: 30) {
             edges {
               node {
                 url
@@ -424,6 +424,16 @@ function displayProducts(selectedConcern) {
             .includes(selectedConcern)
       );
 
+      // Deduplicate by product handle to ensure each product only appears once
+      const uniqueProducts = new Map();
+      relatedProducts.forEach((product) => {
+        // Use handle as the key since it's unique per product
+        if (!uniqueProducts.has(product.handle)) {
+          uniqueProducts.set(product.handle, product);
+        }
+      });
+      relatedProducts = Array.from(uniqueProducts.values());
+
       // Create array of all variants
       let allVariants = [];
       relatedProducts.forEach((product) => {
@@ -507,13 +517,13 @@ function displayProducts(selectedConcern) {
             'all-caps btn btn--primary product-card__btn product-card__btn--private';
           buttonDiv.textContent = 'Login to Shop';
           buttonDiv.style.cursor = 'pointer';
-          
+
           // Add click handler to redirect to login
           buttonDiv.addEventListener('click', (e) => {
             e.preventDefault();
             window.location.href = '/account/login';
           });
-          
+
           card.append(info, buttonDiv);
         } else {
           const form = document.createElement('form');
@@ -545,6 +555,7 @@ function displayProducts(selectedConcern) {
 
         // Function to normalize option values
         function normalizeOption(option) {
+          if (!option) return '';
           if (option.startsWith('$')) {
             option = option.slice(1);
           }
@@ -556,18 +567,79 @@ function displayProducts(selectedConcern) {
             .replace(/^-+|-+$/g, '');
         }
 
-        const firstVariantValue = normalizeOption(
-          variant.selectedOptions[0]?.value
-        );
+        // Normalize variant title
+        const normalizedVariantTitle = normalizeOption(variant.title);
 
-        const matchingImage = product.images.edges.find((edge) => {
-          const imageUrl = edge.node.url;
-          return (
-            imageUrl.includes('product-card') &&
-            imageUrl.includes(firstVariantValue)
-          );
-        });
+        // Normalize all variant option values
+        const normalizedVariantValues = variant.selectedOptions
+          .map((option) => normalizeOption(option.value))
+          .filter((value) => value.length > 0);
 
+        // Create multiple possible patterns for multi-dimensional variants
+        const combinedVariantSequence = normalizedVariantValues.join('_');
+        const combinedVariantDashes = normalizedVariantValues.join('-');
+
+        // Find the best matching product-card image
+        let matchingImage = null;
+        let bestMatchScore = 0;
+
+        // Use for...of instead of forEach so we can break
+        for (const edge of product.images.edges) {
+          const imageUrl = edge.node.url.toLowerCase();
+
+          if (!imageUrl.includes('product-card')) {
+            continue;
+          }
+
+          // Extract the part of the URL before "product-card"
+          const urlBeforeProductCard = imageUrl.split('product-card')[0];
+
+          // Normalize the image URL the same way we normalize variant options
+          const normalizedUrl = normalizeOption(urlBeforeProductCard);
+
+          // Check if variant title matches (for simple variants)
+          if (
+            normalizedVariantTitle &&
+            normalizedUrl.includes(normalizedVariantTitle)
+          ) {
+            matchingImage = edge;
+            bestMatchScore = 3; // Highest priority
+            break; // Exit loop on exact match
+          }
+
+          // Check if combined sequence matches with underscore (for multi-dimensional variants)
+          if (
+            combinedVariantSequence &&
+            normalizedUrl.includes(combinedVariantSequence) &&
+            bestMatchScore < 2
+          ) {
+            matchingImage = edge;
+            bestMatchScore = 2;
+          }
+
+          // Check if combined sequence matches with dashes (alternative pattern)
+          if (
+            combinedVariantDashes &&
+            normalizedUrl.includes(combinedVariantDashes) &&
+            bestMatchScore < 2
+          ) {
+            matchingImage = edge;
+            bestMatchScore = 2;
+          }
+
+          // Check if all individual variant values are present
+          if (normalizedVariantValues.length > 0 && bestMatchScore < 1) {
+            const allValuesMatch = normalizedVariantValues.every((value) =>
+              normalizedUrl.includes(value)
+            );
+            if (allValuesMatch) {
+              matchingImage = edge;
+              bestMatchScore = 1;
+            }
+          }
+        }
+
+        // Fallback to variant image or first product image
         const fallbackImageSrc = variant.image
           ? variant.image.url
           : product.images.edges[0]?.node.url;
