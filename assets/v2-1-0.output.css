@@ -188,26 +188,8 @@
   .inset-\[0\] {
     inset: 0;
   }
-  .right-\[14\] {
-    right: 14;
-  }
-  .right-\[14px\] {
-    right: 14px;
-  }
   .right-\[var\(--grid-margin\)\] {
     right: var(--grid-margin);
-  }
-  .right-\[var\(px-grid-margin\)\] {
-    right: var(px-grid-margin);
-  }
-  .bottom-\[14\] {
-    bottom: 14;
-  }
-  .bottom-\[14px\] {
-    bottom: 14px;
-  }
-  .bottom-\[16px\] {
-    bottom: 16px;
   }
   .bottom-\[var\(--home-hero-padding-btm\)\] {
     bottom: var(--home-hero-padding-btm);
@@ -223,6 +205,9 @@
   }
   .z-10 {
     z-index: 10;
+  }
+  .z-11 {
+    z-index: 11;
   }
   .container {
     width: 100%;
@@ -368,9 +353,6 @@
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
-  }
-  .border-\[red\] {
-    border-color: red;
   }
   .\!bg-\[\#DEDEDE\] {
     background-color: #DEDEDE !important;
@@ -614,31 +596,6 @@
       }
     }
   }
-  .xs\:right-\[16px\] {
-    @media (width >= 428px) {
-      right: 16px;
-    }
-  }
-  .xs\:bottom-\[14px\] {
-    @media (width >= 428px) {
-      bottom: 14px;
-    }
-  }
-  .xs\:bottom-\[16px\] {
-    @media (width >= 428px) {
-      bottom: 16px;
-    }
-  }
-  .sm\:right-\[20px\] {
-    @media (width >= 768px) {
-      right: 20px;
-    }
-  }
-  .sm\:bottom-\[20px\] {
-    @media (width >= 768px) {
-      bottom: 20px;
-    }
-  }
   .sm\:aspect-7-5 {
     @media (width >= 768px) {
       aspect-ratio: 7 / 5;
@@ -647,11 +604,6 @@
   .sm\:aspect-7\/5 {
     @media (width >= 768px) {
       aspect-ratio: 7/5;
-    }
-  }
-  .sm\:aspect-16-9 {
-    @media (width >= 768px) {
-      aspect-ratio: 16 / 9;
     }
   }
   .sm\:aspect-16\/9 {
@@ -689,11 +641,6 @@
       padding: 20px;
     }
   }
-  .sm\:px-\[0px\] {
-    @media (width >= 768px) {
-      padding-inline: 0px;
-    }
-  }
   .sm\:text-\[13px\] {
     @media (width >= 768px) {
       font-size: 13px;
@@ -703,11 +650,6 @@
     @media (width >= 768px) {
       --tw-leading: 13px;
       line-height: 13px;
-    }
-  }
-  .md\:bottom-\[20px\] {
-    @media (width >= 1024px) {
-      bottom: 20px;
     }
   }
   .md\:aspect-2-1 {
