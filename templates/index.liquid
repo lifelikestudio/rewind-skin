@@ -1,94 +1,180 @@
-<section class="brand-section">
-  <div class="brand-section__container">
-    <p class="brand-section__statement wrapper wrapper--sm">
-      Deliberately curated luxury skincare and innovative treatments that work in tandem to support beautiful, nourished skin. Bespoke experiences guided by our experts who understand what healthy skin craves. Your journey to a radiant future starts here.
-    </p>
-    <div class="brand-section__video-mask wrapper wrapper--lg">
-      <div class="brand-section__video-mask-half"></div>
-      <div class="brand-section__video-mask-half"></div>
-      <p class="brand-section__statement brand-section__statement--masked wrapper wrapper--sm">
-        Deliberately curated luxury skincare and innovative treatments that work in tandem to support beautiful, nourished skin. Bespoke experiences guided by our experts who understand what healthy skin craves. Your journey to a radiant future starts here.
-      </p>
-      <video
-        class="brand-section__video"
-        playsinline="playsinline"
-        autoplay="autoplay"
-        muted="muted"
-        loop="loop">
-        <source src="https://storage.googleapis.com/rewindskin.co/assets/video/brand-video_web-cut_compressed.mp4" type="video/mp4">
-      </video>
-    </div>
-  </div>
-</section>
-<main class="concerns-section aggregate-section" id="skin-concerns-section">
-  <div class="filter-header wrapper wrapper--md">
-    <h2 class="all-caps filter-header__type">Skin Concerns</h2>
-    <form class="filter-header__container">
-      <input
-        type="radio"
-        id="skin-concerns-filter-products"
-        name="skin-concerns-filter"
-        value="products"
-        class="filter-header__input"
-        checked>
-      <label class="all-caps filter-header__type filter-header__btn" for="skin-concerns-filter-products">Products</label>
+<main
+  class='md:aspect-2-1 aspect-ig sm:aspect-7-5 px-grid-margin pb-home-hero-padding-btm relative !flex w-full flex-col items-start justify-end overflow-hidden bg-cover bg-center font-normal'
+>
+  <video
+    class='absolute inset-[0] z-0 h-full w-full object-cover object-bottom'
+    autoplay
+    muted
+    loop
+    playsinline
+    preload='metadata'
+    aria-label='Background video showcasing a skincare model'
+    role='img'
+    data-video-controls
+    id='video-homepage'
+  >
+    <source
+      src='https://cdn.shopify.com/videos/c/o/v/3e659289cab148ef9062264348f78367.mp4'
+      type='video/mp4'
+    >
 
-      <input
-        type="radio"
-        id="skin-concerns-filter-treatments"
-        name="skin-concerns-filter"
-        value="treatments"
-        class="filter-header__input">
-      <label class="all-caps filter-header__type filter-header__btn" for="skin-concerns-filter-treatments">Treatments</label>
-    </form>
-    <a class="all-caps filter-header__type" href="/collections/all">Shop All</a>
+    {% comment %} Fallback image for failure to load {% endcomment %}
+    <img
+      src='https://cdn.shopify.com/s/files/1/0494/4425/7941/files/home_bfcm-2025_hero_grace_fallback_compressed.jpg?v=1764379309'
+      alt='Homepage - Skincare Model Fallback'
+      data-element='collections-hero__fallback'
+      class='h-full w-full object-cover object-bottom'
+    >
+  </video>
+  {% comment %} Video Controls {% endcomment %}
+  <div
+    class='video-controls-overlay right-[var(--grid-margin)] bottom-[var(--home-hero-padding-btm)]'
+    data-video-controls-overlay
+  >
+    <button
+      class='video-control-btn video-control-btn--play'
+      aria-label='Play video'
+      data-video-play
+      aria-pressed='false'
+    >
+      <svg
+        aria-hidden='true'
+        viewBox='0 0 24 24'
+        class='video-control-icon'
+      >
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+
+    <button
+      class='video-control-btn video-control-btn--pause'
+      aria-label='Pause video'
+      data-video-pause
+      aria-pressed='false'
+      style='display: none;'
+    >
+      <svg
+        aria-hidden='true'
+        viewBox='0 0 24 24'
+        class='video-control-icon'
+      >
+        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+      </svg>
+    </button>
+  </div>
+  {% comment %} Fallback image for reduced motion {% endcomment %}
+  <img
+    src='https://cdn.shopify.com/s/files/1/0494/4425/7941/files/home_bfcm-2025_hero_grace_fallback_compressed.jpg?v=1764379309'
+    alt='Homepage - Skincare Model Fallback'
+    data-element='collections-hero__fallback'
+    class='h-full w-full object-cover object-bottom'
+  >
+  <div class='gap-x-home-hero-lock-up-col-gap gap-y-home-hero-lock-up-row-gap z-10 flex w-full flex-col items-start sm:w-3/4 md:w-1/2 xl:w-2/5'>
+    <h2 class='text-text-primary text-body-xl-home-hero text-left'>
+      For one weekend and one weekend only. Save 15% on a curated edit of
+      favourites — a chance to replenish, explore, or finally indulge. Happy
+      Black Friday.
+    </h2>
+    <a
+      class='text-text-btn-label !bg-surface-secondary p-home-hero-btn-padding text-label-xl-home-hero-btn block shrink-0 rounded-full text-center visited:text-inherit'
+      href='{{ routes.collections_url }}/sales-offers'
+      >Shop</a
+    >
+  </div>
+</main>
+{% comment %}
+  <section class="brand-section">
+  <div class="brand-section__container">
+  <p class="brand-section__statement wrapper wrapper--sm">
+  Deliberately curated luxury skincare and innovative treatments that work in tandem to support beautiful, nourished skin. Bespoke experiences guided by our experts who understand what healthy skin craves. Your journey to a radiant future starts here.
+  </p>
+  <div class="brand-section__video-mask wrapper wrapper--lg">
+  <div class="brand-section__video-mask-half"></div>
+  <div class="brand-section__video-mask-half"></div>
+  <p class="brand-section__statement brand-section__statement--masked wrapper wrapper--sm">
+  Deliberately curated luxury skincare and innovative treatments that work in tandem to support beautiful, nourished skin. Bespoke experiences guided by our experts who understand what healthy skin craves. Your journey to a radiant future starts here.
+  </p>
+  <video
+  class="brand-section__video"
+  playsinline="playsinline"
+  autoplay="autoplay"
+  muted="muted"
+  loop="loop">
+  <source src="https://storage.googleapis.com/rewindskin.co/assets/video/brand-video_web-cut_compressed.mp4" type="video/mp4">
+  </video>
+  </div>
+  </div>
+  </section>
+  <main class="concerns-section aggregate-section" id="skin-concerns-section">
+  <div class="filter-header wrapper wrapper--md">
+  <h2 class="all-caps filter-header__type">Skin Concerns</h2>
+  <form class="filter-header__container">
+  <input
+  type="radio"
+  id="skin-concerns-filter-products"
+  name="skin-concerns-filter"
+  value="products"
+  class="filter-header__input"
+  checked>
+  <label class="all-caps filter-header__type filter-header__btn" for="skin-concerns-filter-products">Products</label>
+
+  <input
+  type="radio"
+  id="skin-concerns-filter-treatments"
+  name="skin-concerns-filter"
+  value="treatments"
+  class="filter-header__input">
+  <label class="all-caps filter-header__type filter-header__btn" for="skin-concerns-filter-treatments">Treatments</label>
+  </form>
+  <a class="all-caps filter-header__type" href="/collections/all">Shop All</a>
   </div>
   <section class="concerns-section__container wrapper wrapper--sm">
-    <div class="concerns-section__inner embla">
-      <div class="embla__container">
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="acne-blemishes">
-          Acne and Blemishes
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="facial-volume">
-          Facial Volume
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="hair-scalp-quality">
-          Hair and Scalp Quality
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="hyperpigmentation-scarring">
-          Hyperpigmentation and Scarring
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="intimate-rejuvenation">
-          Intimate Rejuvenation
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="signs-aging">
-          Signs of Aging
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="skin-elasticity">
-          Skin Elasticity
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="skin-quality">
-          Skin Quality
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="stubborn-fat">
-          Stubborn Fat
-        </h3>
-        <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="unwanted-hair">
-          Unwanted Hair
-        </h3>
-      </div>
-      <div class="concerns-section__gradient"></div>
-    </div>
-    <div class="concerns-section__inner embla">
-      <div class="embla__viewport">
-        <div class="embla__container" id="skin-concerns-results"></div>
-      </div>
-      <div class="embla__progress">
-        <div class="embla__progress-bar" style="transform: translate3d(0%, 0px, 0px);"></div>
-      </div>
-    </div>
+  <div class="concerns-section__inner embla">
+  <div class="embla__container">
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="acne-blemishes">
+  Acne and Blemishes
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="facial-volume">
+  Facial Volume
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="hair-scalp-quality">
+  Hair and Scalp Quality
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="hyperpigmentation-scarring">
+  Hyperpigmentation and Scarring
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="intimate-rejuvenation">
+  Intimate Rejuvenation
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="signs-aging">
+  Signs of Aging
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="skin-elasticity">
+  Skin Elasticity
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="skin-quality">
+  Skin Quality
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="stubborn-fat">
+  Stubborn Fat
+  </h3>
+  <h3 class="scroll-select-type concerns-section__skin-concern embla__slide" data-slide-concern="unwanted-hair">
+  Unwanted Hair
+  </h3>
+  </div>
+  <div class="concerns-section__gradient"></div>
+  </div>
+  <div class="concerns-section__inner embla">
+  <div class="embla__viewport">
+  <div class="embla__container" id="skin-concerns-results"></div>
+  </div>
+  <div class="embla__progress">
+  <div class="embla__progress-bar" style="transform: translate3d(0%, 0px, 0px);"></div>
+  </div>
+  </div>
   </section>
-</main>
-{% section 'skin-analysis' %}
-{% section 'treatments' %}
-{% section 'opt-in' %}
+  </main>
+  {% section 'skin-analysis' %}
+  {% section 'treatments' %}
+  {% section 'opt-in' %}
+{% endcomment %}

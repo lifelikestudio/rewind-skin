@@ -4289,13 +4289,13 @@ a.drawer-cart__empty-continue::after {
 /* Pages */
 /* Home */
 /* Hero */
-.template-index .hero {
+/* .template-index .hero {
   color: var(--white);
-}
+} */
 
-.template-index .main-nav__trigger button {
+/* .template-index .main-nav__trigger button {
   color: var(--white);
-}
+} */
 
 /* From 1023px down */
 @media screen and (max-width: 1023px) {
@@ -4311,22 +4311,22 @@ a.drawer-cart__empty-continue::after {
   }
 }
 
-.template-index .hero .wrapper--md {
+/* .template-index .hero .wrapper--md {
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
   padding-bottom: var(--base-unit);
   height: calc(100% - var(--base-unit));
-}
+} */
 
-.template-index .main-nav {
+/* .template-index .main-nav {
   color: var(--white);
   background-color: transparent;
-}
+} */
 
-.template-index .main-nav a {
+/* .template-index .main-nav a {
   color: var(--white);
-}
+} */
 
 /* .main-lockup--home-hero,
 .main-lockup--skin-analysis,

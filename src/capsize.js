@@ -14,9 +14,9 @@ const textStyles = {
     xl: { fontSize: 26, lineHeight: 1.2 },
   },
   'body-xl-home-hero': {
-    tiny: { fontSize: 16, lineHeight: 1.25 },
-    xxs: { fontSize: 18, lineHeight: 1.3 },
-    xs: { fontSize: 18, lineHeight: 1.3 },
+    tiny: { fontSize: 14, lineHeight: 1.25 },
+    xxs: { fontSize: 16, lineHeight: 1.3 },
+    xs: { fontSize: 16, lineHeight: 1.3 },
     sm: { fontSize: 18, lineHeight: 1.3 },
     md: { fontSize: 20, lineHeight: 1.3 },
     'md-lg': { fontSize: 22, lineHeight: 1.25 },

@@ -56,6 +56,7 @@
     <script src='{{ 'global.js' | asset_url }}' defer></script>
     <link rel='dns-prefetch' href='//typeform.com'>
     <style>
+      /*
       .template-index .hero {
         background-image: url('{{ 'home_hero_desktop_LNK7977_round-03_hi-res_optimized.jpg' | asset_url }}');
       }
@@ -69,6 +70,7 @@
           background-image: url('{{ 'home_hero_mobile_LNK7977_round-03_hi-res_optimized.jpg' | asset_url }}');
         }
       }
+      */
       .template-collection .hero {
         background-image: url('{{ 'shop_hero_desktop_22_1004_RewindSkin6973_hi-res_compressed.jpg' | asset_url }}');
       }
@@ -238,7 +240,7 @@
     data-customer-logged-in='{% if customer %}true{% else %}false{% endif %}'
     class='{{ bodyClass }}'
   >
-    {% if template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder' or template == 'page.terms' or template == 'page.privacy' or template == 'page.shipping-returns' or bodyClass == 'template-' or (template.name == 'collection' and collection.handle == 'mansard' or collection.handle == 'adipeau' or collection.handle == 'future-5-elements' or collection.handle == 'biologique-recherche' or collection.handle == 'the-light-salon' or collection.handle == 'calecim-professional' or collection.handle == 'colorescience' or collection.handle == 'ecotao' or collection.handle == 'elta-md' or collection.handle == 'loeuvre-de-beaute' or collection.handle == 'manta' or collection.handle == 'monika-heiligmann' or collection.handle == 'nemat' or collection.handle == 'nuface-microcurrent' or collection.handle == 'all' or collection.handle == 'subscribe-save' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'face' or collection.handle == 'bath-body-hair') %}
+    {% if template contains 'index' or template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder' or template == 'page.terms' or template == 'page.privacy' or template == 'page.shipping-returns' or bodyClass == 'template-' or (template.name == 'collection' and collection.handle == 'mansard' or collection.handle == 'adipeau' or collection.handle == 'future-5-elements' or collection.handle == 'biologique-recherche' or collection.handle == 'the-light-salon' or collection.handle == 'calecim-professional' or collection.handle == 'colorescience' or collection.handle == 'ecotao' or collection.handle == 'elta-md' or collection.handle == 'loeuvre-de-beaute' or collection.handle == 'manta' or collection.handle == 'monika-heiligmann' or collection.handle == 'nemat' or collection.handle == 'nuface-microcurrent' or collection.handle == 'all' or collection.handle == 'subscribe-save' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'face' or collection.handle == 'bath-body-hair') %}
       <section class='announcement-bar'>
         <div class='wrapper wrapper--lg announcement-bar__container'>
           {% comment %}
@@ -1111,25 +1113,27 @@
           </div>
         </div>
         {% section 'cart-drawer' %}
-        {% if template.name == 'index' %}
-          <div class='wrapper wrapper--md'>
-            <div class='main-lockup main-lockup--home-hero'>
-              <div class='main-lockup__copy' style='max-width: 800px;'>
-                <h1 class='main-heading main-lockup__heading'>
-                  We’re glad you’re here. So is your skin.
-                </h1>
-                <p class='main-body main-lockup__body'>
-                  Experience our range of carefully curated luxury skincare.
-                </p>
+        {% comment %}
+          {% if template.name == 'index' %}
+            <div class='wrapper wrapper--md'>
+              <div class='main-lockup main-lockup--home-hero'>
+                <div class='main-lockup__copy' style='max-width: 800px;'>
+                  <h1 class='main-heading main-lockup__heading'>
+                    We’re glad you’re here. So is your skin.
+                  </h1>
+                  <p class='main-body main-lockup__body'>
+                    Experience our range of carefully curated luxury skincare.
+                  </p>
+                </div>
+                <a
+                  class='btn btn--primary all-caps main-lockup__btn'
+                  href='/collections/all'
+                  >Shop</a
+                >
               </div>
-              <a
-                class='btn btn--primary all-caps main-lockup__btn'
-                href='/collections/all'
-                >Shop</a
-              >
             </div>
-          </div>
-        {% endif %}
+          {% endif %}
+        {% endcomment %}
       </header>
     {% endif %}
     {{ content_for_layout }}

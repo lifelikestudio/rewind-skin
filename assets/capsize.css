@@ -107,8 +107,8 @@
 }
 
 .text-body-xl-home-hero {
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17.5px;
 }
 .text-body-xl-home-hero::before {
   content: "";
@@ -123,8 +123,8 @@
 
 @media (min-width: 375px) {
   .text-body-xl-home-hero {
-    font-size: 18px;
-    line-height: 23.4px;
+    font-size: 16px;
+    line-height: 20.8px;
   }
   .text-body-xl-home-hero::before {
     margin-bottom: -0.2862em;
@@ -136,8 +136,8 @@
 
 @media (min-width: 428px) {
   .text-body-xl-home-hero {
-    font-size: 18px;
-    line-height: 23.4px;
+    font-size: 16px;
+    line-height: 20.8px;
   }
   .text-body-xl-home-hero::before {
     margin-bottom: -0.2862em;
