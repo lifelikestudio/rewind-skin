@@ -69,9 +69,19 @@
   >
   <div class='gap-x-home-hero-lock-up-col-gap gap-y-home-hero-lock-up-row-gap z-10 flex w-full flex-col items-start sm:w-3/4 md:w-1/2 xl:w-2/5'>
     <h2 class='text-text-primary text-body-xl-home-hero text-left'>
-      For one weekend and one weekend only. Save 15% on a curated edit of
-      favourites — a chance to replenish, explore, or finally indulge. Happy
-      Black Friday.
+      {% comment %} Set your target date/time (adjust timezone as needed) {% endcomment %}
+      {% assign cutoff_date = '2025-12-01 00:00:00' | date: '%s' %}
+      {% assign current_time = 'now' | date: '%s' %}
+
+      {% if current_time < cutoff_date %}
+        For one weekend and one weekend only. Save 15% on a curated edit of
+        favourites — a chance to replenish, explore, or finally indulge. Happy
+        Black Friday.
+      {% else %}
+        The countdown starts now. Our annual Black Friday Cyber Monday event
+        ends at midnight. Save 15% on a curated edit of favourites — a chance to
+        replenish, explore, or finally indulge.
+      {% endif %}
     </h2>
     <a
       class='text-text-btn-label !bg-surface-secondary p-home-hero-btn-padding text-label-xl-home-hero-btn block shrink-0 rounded-full text-center visited:text-inherit'
