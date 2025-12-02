@@ -1106,18 +1106,19 @@ a:visited {
 
 .svg-container {
   display: inline-block;
-  position: relative;
   width: 100%;
-  vertical-align: middle;
+  /* position: relative;
+  vertical-align: middle; */
   /* overflow: hidden; */
 }
 
 .svg-content {
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: block;
   width: 100%;
+  height: auto;
+  /* position: absolute;
+  top: 0;
+  left: 0; */
 }
 
 .main-nav {
@@ -1136,7 +1137,7 @@ a:visited {
 }
 
 .main-nav .svg-container {
-  padding-bottom: calc((26.5 / 358.8) * 100%);
+  /* padding-bottom: calc((26.5 / 358.8) * 100%); */
 }
 
 .main-nav__column {
@@ -4103,14 +4104,14 @@ a.drawer-cart__empty-continue::after {
 }
 
 .main-footer .svg-container {
-  padding-bottom: 72px;
+  /* padding-bottom: 72px; */
   width: 62.89px;
 }
 
 /* Less than or equal to 671px */
 @media screen and (max-width: 671px) {
   .main-footer .svg-container {
-    padding-bottom: 64px;
+    /* padding-bottom: 64px; */
     width: 55.95px;
   }
 }
