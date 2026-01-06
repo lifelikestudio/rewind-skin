@@ -410,10 +410,7 @@
         <img
           src='{{ first_media | image_url }}'
           alt='{{ collection.title }}'
-          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == "elta-md" %}sm:object-center{% elsif collection.handle == "the-light-salon" %}object-left md:object-center{% else %}object-center{% endif %}'
-          {% if collection.handle == 'elta-md' %}
-            style='object-position: 30% center;'
-          {% endif %}
+          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == "elta-md" %}object-[30%_center] sm:object-center{% elsif collection.handle == "the-light-salon" %}object-left md:object-center{% else %}object-center{% endif %}'
         >
       </div>
     {% endif %}

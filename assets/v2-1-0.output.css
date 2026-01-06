@@ -372,6 +372,9 @@
   .object-cover {
     object-fit: cover;
   }
+  .object-\[30\%_center\] {
+    object-position: 30% center;
+  }
   .object-bottom {
     object-position: bottom;
   }
