@@ -119,7 +119,7 @@
 </section>
 {% comment %} Randomized single-asset hero for specific collections {% endcomment %}
 {% comment %} Add collection handles here, separated by commas (e.g., 'face,bath-body-hair,all') {% endcomment %}
-{% assign randomized_collections = 'all,subscribe-save,gifting,bestsellers,sales-offers,face,bath-body-hair,ecotao,manta,nemat'
+{% assign randomized_collections = 'all,subscribe-save,gifting,bestsellers,sales-offers,face,bath-body-hair,ecotao,nemat'
   | split: ','
 %}
 {% assign is_randomized_collection = false %}
@@ -338,7 +338,7 @@
     {% if first_media.media_type == 'video' %}
       <div class='relative aspect-4/5 h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2'>
         <video
-          class='absolute inset-0 h-full w-full object-cover object-center'
+          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == "manta" %}object-left md:object-center{% else %}object-center{% endif %}'
           autoplay
           muted
           loop
@@ -359,7 +359,7 @@
           <img
             src='{{ first_media.preview_image | image_url }}'
             alt='{{ collection.title }} - {{ collection.description }}'
-            class='h-full w-full object-cover object-center'
+            class='h-full w-full object-cover {% if collection.handle == "manta" %}object-left md:object-center{% else %}object-center{% endif %}'
             data-element='collections-hero__fallback'
           >
         </video>
@@ -493,7 +493,7 @@
         <img
           src='{{ last_media | image_url }}'
           alt='{{ collection.title }}'
-          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == 'the-light-salon'%}object-left md:object-center{% else %}object-center{% endif %}'
+          class='absolute inset-0 h-full w-full object-cover {% if collection.handle == 'the-light-salon' or collection.handle == 'manta' %}object-left md:object-center{% else %}object-center{% endif %}'
         >
       </div>
     {% endif %}
