@@ -7023,7 +7023,8 @@ a.drawer-cart__empty-continue::after {
 
 .template-collection .pagination,
 .template-search .pagination,
-.template-account .pagination {
+.template-account .pagination,
+.template-new .pagination {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -7036,7 +7037,8 @@ a.drawer-cart__empty-continue::after {
 
 .template-collection .pagination span,
 .template-search .pagination span,
-.template-account .pagination span {
+.template-account .pagination span,
+.template-new .pagination span {
   border-bottom: 1px solid black;
   /* line-height: 9.716px; */
   line-height: 1em;
@@ -7045,7 +7047,8 @@ a.drawer-cart__empty-continue::after {
 
 .template-collection .pagination span::before,
 .template-search .pagination span::before,
-.template-account .pagination span::before {
+.template-account .pagination span::before,
+.template-new .pagination span::before {
   content: '';
   margin-bottom: 0.047em;
   display: table;
@@ -7053,7 +7056,8 @@ a.drawer-cart__empty-continue::after {
 
 .template-collection .pagination span::after,
 .template-search .pagination span::after,
-.template-account .pagination span::after {
+.template-account .pagination span::after,
+.template-new .pagination span::after {
   content: '';
   margin-top: -0.047em;
   display: table;
@@ -7061,20 +7065,23 @@ a.drawer-cart__empty-continue::after {
 
 .template-collection .pagination span:nth-of-type(2),
 .template-search .pagination span:nth-of-type(2),
-.template-account .pagination span:nth-of-type(2) {
+.template-account .pagination span:nth-of-type(2), 
+.template-new .pagination span:nth-of-type(2) {
   border-bottom: none;
 }
 
 .template-collection .pagination a,
 .template-search .pagination a,
-.template-account .pagination a {
+.template-account .pagination a, 
+.template-new .pagination a {
   color: var(--black);
   /* line-height: 9.716px; */
 }
 
 .template-collection .pagination a::before,
 .template-search .pagination a::before,
-.template-account .pagination a::before {
+.template-account .pagination a::before,
+.template-new .pagination a::before {
   content: '';
   margin-bottom: 0.047em;
   display: table;
@@ -7082,7 +7089,8 @@ a.drawer-cart__empty-continue::after {
 
 .template-collection .pagination a::after,
 .template-search .pagination a::after,
-.template-account .pagination a::after {
+.template-account .pagination a::after,
+.template-new .pagination a::after {
   content: '';
   margin-top: -0.047em;
   display: table;
@@ -7093,13 +7101,16 @@ a.drawer-cart__empty-continue::after {
 .template-search .pagination a:last-child,
 .template-search .pagination a:first-child,
 .template-account .pagination a:last-child,
-.template-account .pagination a:first-child {
+.template-account .pagination a:first-child,
+.template-new .pagination a:last-child,
+.template-new .pagination a:first-child {
   font-weight: var(--medium);
 }
 
 .template-collection .pagination a:visited,
 .template-search .pagination a:visited,
-.template-account .pagination a:visited {
+.template-account .pagination a:visited,
+.template-new .pagination a:visited {
   color: var(--black);
 }
 
@@ -7107,7 +7118,8 @@ a.drawer-cart__empty-continue::after {
 @media screen and (max-width: 671px) {
   .template-collection .pagination,
   .template-search .pagination,
-  .template-account .pagination {
+  .template-account .pagination,
+  .template-new .pagination {
     font-size: 1rem;
     column-gap: 16px;
   }
