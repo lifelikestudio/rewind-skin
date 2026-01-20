@@ -1760,23 +1760,21 @@
           {% endfor %}
         {% endif %}
 
-        {% if collection.handle != 'bestsellers' %}
-          <div class='pagination'>
-            {% if paginate.previous %}
-              <a class='all-caps' href='{{ paginate.previous.url }}'>Previous</a>
+        <div class='pagination'>
+          {% if paginate.previous %}
+            <a class='all-caps' href='{{ paginate.previous.url }}'>Previous</a>
+          {% endif %}
+          {% for part in paginate.parts %}
+            {% if part.is_link %}
+              <a href='{{ part.url }}'>{{ part.title }}</a>
+            {% else %}
+              <span>{{ part.title }}</span>
             {% endif %}
-            {% for part in paginate.parts %}
-              {% if part.is_link %}
-                <a href='{{ part.url }}'>{{ part.title }}</a>
-              {% else %}
-                <span>{{ part.title }}</span>
-              {% endif %}
-            {% endfor %}
-            {% if paginate.next %}
-              <a class='all-caps' href='{{ paginate.next.url }}'>Next</a>
-            {% endif %}
-          </div>
-        {% endif %}
+          {% endfor %}
+          {% if paginate.next %}
+            <a class='all-caps' href='{{ paginate.next.url }}'>Next</a>
+          {% endif %}
+        </div>
       {% endpaginate %}
     </div>
   </div>
