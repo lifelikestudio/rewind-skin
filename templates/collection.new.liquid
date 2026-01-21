@@ -1009,7 +1009,7 @@
       data-collection-handle='{{ collection.handle }}'
     >
       {% if collection.handle == 'bestsellers' %}
-        {% paginate collection.products by 50 %}
+        {% paginate collection.products by 24 %}
           {% comment %} Custom sorting for bestsellers by units_last_30d using sort_natural {% endcomment %}
           {% assign sorted_products = '' %}
           
@@ -1022,15 +1022,15 @@
           {% comment %} Sort using sort_natural (handles numbers properly) and reverse for descending {% endcomment %}
           {% assign sorted_array = sorted_products | split: ';' | sort_natural | reverse %}
           
-          {% comment %} Extract and render top 20 products {% endcomment %}
-          {% for sort_item in sorted_array limit: 20 %}
+          {% comment %} Extract and render sorted products {% endcomment %}
+          {% for sort_item in sorted_array %}
             {% if sort_item != blank %}
               {% assign item_parts = sort_item | split: '|' %}
               {% assign product_index = item_parts[1] | plus: 0 %}
               {% assign product = collection.products[product_index] %}
               
               {% for variant in product.variants %}
-            {% assign url_parts = product.url | split: '?' %}
+                {% assign url_parts = product.url | split: '?' %}
             {% assign base_url = url_parts[0] %}
             {% assign query_params = url_parts[1] | default: '' %}
 
@@ -1382,7 +1382,7 @@
                 {% endif %}
               {% endfor %}
             </a>
-          {% endfor %}
+              {% endfor %}
             {% endif %}
         {% endfor %}
 
