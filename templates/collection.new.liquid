@@ -1008,8 +1008,8 @@
       id='collections-products-container'
       data-collection-handle='{{ collection.handle }}'
     >
-      {% paginate collection.products by 24 %}
-        {% if collection.handle == 'bestsellers' %}
+      {% if collection.handle == 'bestsellers' %}
+        {% paginate collection.products by 50 %}
           {% comment %} Custom sorting for bestsellers by units_last_30d using sort_natural {% endcomment %}
           {% assign sorted_products = '' %}
           
@@ -1385,7 +1385,25 @@
           {% endfor %}
             {% endif %}
         {% endfor %}
-        {% else %}
+
+        <div class='pagination'>
+          {% if paginate.previous %}
+            <a class='all-caps' href='{{ paginate.previous.url }}'>Previous</a>
+          {% endif %}
+          {% for part in paginate.parts %}
+            {% if part.is_link %}
+              <a href='{{ part.url }}'>{{ part.title }}</a>
+            {% else %}
+              <span>{{ part.title }}</span>
+            {% endif %}
+          {% endfor %}
+          {% if paginate.next %}
+            <a class='all-caps' href='{{ paginate.next.url }}'>Next</a>
+          {% endif %}
+        </div>
+      {% endpaginate %}
+      {% else %}
+        {% paginate collection.products by 24 %}
           {% comment %} Standard product loop for all other collections {% endcomment %}
           {% for product in collection.products %}
             {% for variant in product.variants %}
@@ -1743,9 +1761,8 @@
               </a>
             {% endfor %}
           {% endfor %}
-        {% endif %}
 
-        <div class='pagination'>
+          <div class='pagination'>
           {% if paginate.previous %}
             <a class='all-caps' href='{{ paginate.previous.url }}'>Previous</a>
           {% endif %}
@@ -1760,7 +1777,8 @@
             <a class='all-caps' href='{{ paginate.next.url }}'>Next</a>
           {% endif %}
         </div>
-      {% endpaginate %}
+        {% endpaginate %}
+      {% endif %}
     </div>
   </div>
 </main>
