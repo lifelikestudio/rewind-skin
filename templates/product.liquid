@@ -394,57 +394,6 @@
   </section>
 {% endcomment %}
 
-<!-- Subi Integration - Conditional on product having Subi selling plans -->
-<script>
-  const productData = {{ product | json }};
-  const hasSubiPlans = productData.selling_plan_groups &&
-                      productData.selling_plan_groups.some(group =>
-                        group.app_id === 'subi' || group.app_id === 'subify'
-                      );
-  // console.log("Product has Subi selling plans:", hasSubiPlans);
-</script>
-
-{% if hasSubiPlans %}
-  <!-- Subi widget wrapper -->
-  <div id='subi-widget-wrapper' class='subi-widget-wrapper'></div>
-
-  <!-- Subi SDK script -->
-  <script>
-    // console.log("Loading Subi SDK...");
-  </script>
-  <script
-    src='https://cdn.hengam.io/subify/subify-sdk.js'
-    defer
-    id='subi-sdk-script'
-  ></script>
-
-  <!-- Subi styles -->
-  <style>
-    .subi-widget-wrapper {
-      width: 100%;
-      margin: 15px 0;
-      display: block;
-    }
-
-    .product-page__checkout-form {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .variant-section {
-      order: 3;
-    }
-
-    .product-page__variants-group {
-      order: 1;
-    }
-
-    #subi-widget-wrapper {
-      order: 2;
-    }
-  </style>
-{% endif %}
-
 {% comment %} Implement Subify subscription widget {% endcomment %}
 {% assign has_subify_plans = false %}
 {% for selling_plan_group in product.selling_plan_groups %}
@@ -457,11 +406,15 @@
 {% endfor %}
 
 {% if has_subify_plans %}
+  <script>
+    window.SubiMemberships = window.SubiMemberships || [];
+    window.SubiFixedBundles = window.SubiFixedBundles || [];
+    window.SubiFixedBundlesSubProducts =
+      window.SubiFixedBundlesSubProducts || [];
+    window.SubiLoyaltyPoints = window.SubiLoyaltyPoints || {};
+  </script>
   <!-- Subify SDK script -->
-  <script src='https://cdn.hengam.io/subify/subify-sdk.js' defer></script>
-
-  <!-- Subify widget container -->
-  <div id='subify-widget-wrapper' class='subify-widget-wrapper'></div>
+  <script src='https://cdn.subi.co/subify/v5/subify-sdk.js' defer></script>
 
   <!-- Subify styles -->
   <style>
