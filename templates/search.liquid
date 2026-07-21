@@ -418,7 +418,7 @@
                   </div>
                   {% assign downcased_vendor = item.vendor | strip | downcase %}
 
-                  {% assign restricted_vendors = 'biologique recherche,calecim professional' | split: ',' %}{% assign members_only = 'mansard' | split: ',' %}
+                  {% assign restricted_vendors = 'biologique recherche' | split: ',' %}{% assign members_only = 'mansard' | split: ',' %}
 
                   {% if restricted_vendors contains downcased_vendor and localization.country.iso_code != 'CA' %}
                     <div class="all-caps btn btn--primary product-card__btn product-card__btn--private" data-url="{{ variant_url }}">
