@@ -15,37 +15,47 @@
 -%}
 
 <nav
-  class="v3-nav bg-bg"
-  aria-label="Main navigation"
-  data-section-id="{{ section.id }}"
-  data-nav-context="shop"
+  class='v3-nav bg-bg'
+  aria-label='Main navigation'
+  data-section-id='{{ section.id }}'
+  data-nav-context='shop'
 >
   {%- comment -%} ═══ DESKTOP (sm+) ═══ {%- endcomment -%}
-  <div class="
-    hidden sm:flex items-center justify-between
-    px-[20px] py-[24px]
-    md:px-[24px] md:py-[24px]
-    lg:px-[32px] lg:py-[32px]
-    xl:px-[40px] xl:py-[40px]
-  ">
+  <div
+    class='
+      hidden items-center justify-between px-[20px]
+      py-[24px] sm:flex
+      md:px-[24px] md:py-[24px]
+      lg:px-[32px] lg:py-[32px]
+      xl:px-[40px] xl:py-[40px]
+    '
+  >
     {%- comment -%} PriorityNav: Logotype + PriorityLinks {%- endcomment -%}
-    <div class="flex items-center gap-[40px]">
+    <div class='flex items-center gap-[40px]'>
       {%- comment -%} Logotype {%- endcomment -%}
-      <a href="{{ routes.root_url }}" class="block shrink-0" aria-label="{{ shop.name }}">
+      <a
+        href='{{ routes.root_url }}'
+        class='block shrink-0'
+        aria-label='{{ shop.name }}'
+      >
         {%- if section.settings.logo != blank -%}
-          {{ section.settings.logo | image_url: width: 500 | image_tag:
-            class: 'w-[220px] lg:w-[248px] h-auto',
-            widths: '165, 180, 193, 221, 248, 400',
-            alt: section.settings.logo.alt | default: shop.name
+          {{
+            section.settings.logo
+            | image_url: width: 500
+            | image_tag:
+              class: 'w-[220px] lg:w-[248px] h-auto',
+              widths: '165, 180, 193, 221, 248, 400',
+              alt: section.settings.logo.alt
+            | default: shop.name
           }}
         {%- else -%}
           <svg
-            class="w-[220px] lg:w-[248px] h-auto"
-            viewBox="0 0 193.235 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-label="{{ shop.name }}"
-            role="img"
+            class='h-auto w-[220px] lg:w-[248px]'
+            viewBox='0 0 193.235 14'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            aria-label='{{ shop.name }}'
+            role='img'
           >
             <path d="M17.5621 13.7362L17.5083 13.789H15.3534L9.69689 8.08336H1.67002V13.8419H0V0.528646H10.9359C12.0134 0.528646 12.9831 0.581476 13.7373 0.739967C14.4915 0.898457 15.1918 1.10978 15.7305 1.47959C16.7541 2.11355 17.2928 3.01166 17.2928 4.27959C17.2928 5.49468 16.8079 6.3928 15.8921 7.02676C14.9763 7.66072 13.5756 8.03053 11.744 8.08336L17.5621 13.7362ZM1.67002 1.95506V6.65695H10.4511C11.5824 6.65695 12.4443 6.60412 13.0908 6.49846C13.6834 6.3928 14.1682 6.23431 14.5453 6.07582C15.2457 5.706 15.5689 5.12487 15.5689 4.27959C15.5689 3.43431 15.2457 2.85317 14.5453 2.48336C14.2221 2.27204 13.7373 2.16638 13.0908 2.06072C12.4982 1.95506 11.6363 1.95506 10.4511 1.95506H1.67002Z" fill="currentColor"/>
             <path d="M38.2458 1.95506H23.485V6.44563H37.4377V7.87204H23.485V12.4154H38.2458V13.8419H21.7611V0.528646H38.2458V1.95506Z" fill="currentColor"/>
@@ -62,21 +72,29 @@
       </a>
 
       {%- comment -%} PriorityLinks {%- endcomment -%}
-      <div class="flex items-center gap-[8px] group/priority">
+      <div class='group/priority flex items-center gap-[8px]'>
         {%- comment -%} Shop/Studio toggle (MainPathsGroup) {%- endcomment -%}
-        <div class="relative flex items-center bg-rest rounded-pill p-[4px] gap-[4px]" role="group" aria-label="Navigation context" data-nav-paths>
-          <span class="v3-nav__slider absolute top-[4px] h-[calc(100%_-_8px)] rounded-pill bg-hover opacity-0 pointer-events-none" aria-hidden="true"></span>
+        <div
+          class='bg-rest rounded-pill relative flex items-center gap-[4px] p-[4px]'
+          role='group'
+          aria-label='Navigation context'
+          data-nav-paths
+        >
+          <span
+            class='v3-nav__slider rounded-pill bg-hover pointer-events-none absolute top-[4px] h-[calc(100%_-_8px)] opacity-0'
+            aria-hidden='true'
+          ></span>
           <button
-            type="button"
-            class="v3-nav__switch-btn relative z-[1] h-[30px] lg:h-[32px] px-[14px] rounded-pill text-nav-label tracking-tight font-base text-ink transition-colors duration-150 ease-out"
-            data-nav-toggle="shop"
+            type='button'
+            class='v3-nav__switch-btn rounded-pill text-nav-label font-base text-ink relative z-[1] h-[30px] px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
+            data-nav-toggle='shop'
           >
             {{ section.settings.shop_label | default: 'Shop' }}
           </button>
           <button
-            type="button"
-            class="v3-nav__switch-btn relative z-[1] h-[30px] lg:h-[32px] px-[14px] rounded-pill text-nav-label tracking-tight font-base text-ink transition-colors duration-150 ease-out"
-            data-nav-toggle="studio"
+            type='button'
+            class='v3-nav__switch-btn rounded-pill text-nav-label font-base text-ink relative z-[1] h-[30px] px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
+            data-nav-toggle='studio'
           >
             {{ section.settings.studio_label | default: 'Studio' }}
           </button>
@@ -85,14 +103,19 @@
         {%- comment -%} Search pill (NavBtnIcon) {%- endcomment -%}
         {%- if section.settings.show_search -%}
           <button
-            type="button"
-            class="v3-nav__search-pill flex items-center h-[38px] lg:h-[40px] pl-[18px] pr-[5px] lg:pr-[6px] gap-[8px] bg-rest rounded-pill transition-colors duration-150 ease-out"
-            aria-label="Search"
+            type='button'
+            class='v3-nav__search-pill bg-rest rounded-pill flex h-[38px] items-center gap-[8px] pr-[5px] pl-[18px] transition-colors duration-150 ease-out lg:h-[40px] lg:pr-[6px]'
+            aria-label='Search'
             data-nav-search
           >
-            <span class="text-nav-label tracking-tight font-base text-ink transition-colors duration-150 ease-out">Search</span>
-            <span class="flex items-center justify-center w-[28px] h-[28px] bg-hover rounded-pill transition-colors duration-150 ease-out">
-              {%- render 'v3-icon-search', size: 11, class: 'w-[10px] lg:w-[11px] h-[10px] lg:h-[11px] text-ink' -%}
+            <span class='text-nav-label font-base text-ink tracking-tight transition-colors duration-150 ease-out'
+              >Search</span
+            >
+            <span class='bg-hover rounded-pill flex h-[28px] w-[28px] items-center justify-center transition-colors duration-150 ease-out'>
+              {%- render 'v3-icon-search',
+                size: 11,
+                class: 'w-[10px] lg:w-[11px] h-[10px] lg:h-[11px] text-ink'
+              -%}
             </span>
           </button>
         {%- endif -%}
@@ -100,22 +123,30 @@
     </div>
 
     {%- comment -%} SupportingLinks (right group) {%- endcomment -%}
-    <div class="flex items-center justify-end gap-[4px] group/supporting" style="padding-right: calc(var(--v3-nav-pr-offset, 0px));">
+    <div
+      class='group/supporting flex items-center justify-end gap-[4px]'
+      style='padding-right: calc(var(--v3-nav-pr-offset, 0px));'
+    >
       {%- if section.settings.show_cart -%}
         <button
-          type="button"
-          class="v3-nav__naked-btn flex items-center h-[30px] lg:h-[32px] px-[14px] rounded-pill text-nav-label tracking-tight font-base text-ink transition-colors duration-150 ease-out"
-          id="v3-cart-btn"
+          type='button'
+          class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
+          id='v3-cart-btn'
           data-nav-cart
         >
-          Bag{% if cart_count > 0 %}<span class="v3-nav__cart-count" aria-live="polite"> ({{ cart_count_display }})</span>{% endif %}
+          Bag
+          {%- if cart_count > 0 -%}&nbsp;
+            <span class='v3-nav__cart-count' aria-live='polite'>
+              ({{ cart_count_display }})</span
+            >
+          {%- endif %}
         </button>
       {%- endif -%}
 
       {%- if section.settings.show_wishlist -%}
         <button
-          type="button"
-          class="v3-nav__naked-btn flex items-center h-[30px] lg:h-[32px] px-[14px] rounded-pill text-nav-label tracking-tight font-base text-ink transition-colors duration-150 ease-out"
+          type='button'
+          class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
           data-nav-wishlist
         >
           Wishlist
@@ -124,8 +155,8 @@
 
       {%- if section.settings.show_account -%}
         <a
-          href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
-          class="v3-nav__naked-btn flex items-center h-[30px] lg:h-[32px] px-[14px] rounded-pill text-nav-label tracking-tight font-base text-ink transition-colors duration-150 ease-out"
+          href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
+          class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
         >
           Account
         </a>
@@ -134,28 +165,38 @@
   </div>
 
   {%- comment -%} ═══ MOBILE (<sm) ═══ {%- endcomment -%}
-  <div class="
-    flex sm:hidden items-center justify-between
-    h-[76px] xxs:h-[76px] xs:h-[80px]
-    pl-[14px] xxs:pl-[14px] xs:pl-[16px]
-    pr-[11px] xxs:pr-[11px] xs:pr-[12px]
-  ">
+  <div
+    class='
+      xxs:h-[76px] xs:h-[80px] xxs:pl-[14px] xs:pl-[16px]
+      xxs:pr-[11px] xs:pr-[12px] flex
+      h-[76px] items-center justify-between
+      pr-[11px] pl-[14px] sm:hidden
+    '
+  >
     {%- comment -%} Logotype {%- endcomment -%}
-    <a href="{{ routes.root_url }}" class="block shrink-0" aria-label="{{ shop.name }}">
+    <a
+      href='{{ routes.root_url }}'
+      class='block shrink-0'
+      aria-label='{{ shop.name }}'
+    >
       {%- if section.settings.logo != blank -%}
-        {{ section.settings.logo | image_url: width: 400 | image_tag:
-          class: 'w-[165px] xxs:w-[179px] xs:w-[193px] h-auto',
-          widths: '165, 179, 193, 330, 358, 386',
-          alt: section.settings.logo.alt | default: shop.name
+        {{
+          section.settings.logo
+          | image_url: width: 400
+          | image_tag:
+            class: 'w-[165px] xxs:w-[179px] xs:w-[193px] h-auto',
+            widths: '165, 179, 193, 330, 358, 386',
+            alt: section.settings.logo.alt
+          | default: shop.name
         }}
       {%- else -%}
         <svg
-          class="w-[165px] xxs:w-[179px] xs:w-[193px] h-auto"
-          viewBox="0 0 193.235 14"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-label="{{ shop.name }}"
-          role="img"
+          class='xxs:w-[179px] xs:w-[193px] h-auto w-[165px]'
+          viewBox='0 0 193.235 14'
+          fill='none'
+          xmlns='http://www.w3.org/2000/svg'
+          aria-label='{{ shop.name }}'
+          role='img'
         >
           <path d="M17.5621 13.7362L17.5083 13.789H15.3534L9.69689 8.08336H1.67002V13.8419H0V0.528646H10.9359C12.0134 0.528646 12.9831 0.581476 13.7373 0.739967C14.4915 0.898457 15.1918 1.10978 15.7305 1.47959C16.7541 2.11355 17.2928 3.01166 17.2928 4.27959C17.2928 5.49468 16.8079 6.3928 15.8921 7.02676C14.9763 7.66072 13.5756 8.03053 11.744 8.08336L17.5621 13.7362ZM1.67002 1.95506V6.65695H10.4511C11.5824 6.65695 12.4443 6.60412 13.0908 6.49846C13.6834 6.3928 14.1682 6.23431 14.5453 6.07582C15.2457 5.706 15.5689 5.12487 15.5689 4.27959C15.5689 3.43431 15.2457 2.85317 14.5453 2.48336C14.2221 2.27204 13.7373 2.16638 13.0908 2.06072C12.4982 1.95506 11.6363 1.95506 10.4511 1.95506H1.67002Z" fill="currentColor"/>
           <path d="M38.2458 1.95506H23.485V6.44563H37.4377V7.87204H23.485V12.4154H38.2458V13.8419H21.7611V0.528646H38.2458V1.95506Z" fill="currentColor"/>
@@ -172,35 +213,46 @@
     </a>
 
     {%- comment -%} Triggers {%- endcomment -%}
-    <div class="flex items-center justify-end gap-[14px] xxs:gap-[15px] xs:gap-[16px]">
+    <div class='xxs:gap-[8px] xs:gap-[10px] flex items-center justify-end gap-[6px]'>
       {%- if section.settings.show_search -%}
         <button
-          type="button"
-          class="flex items-center justify-center w-[44px] h-[44px] text-ink transition-colors duration-150 ease-out"
-          aria-label="Search"
+          type='button'
+          class='text-ink flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
+          aria-label='Search'
           data-nav-search-mobile
         >
-          {%- render 'v3-icon-search', size: 24, class: 'w-[24px] xxs:w-[25px] xs:w-[26px] h-[24px] xxs:h-[25px] xs:h-[26px]' -%}
+          {%- render 'v3-icon-search',
+            size: 26,
+            frame_size: 26,
+            class: 'w-[24px] xxs:w-[25px] xs:w-[26px] h-[24px] xxs:h-[25px] xs:h-[26px]'
+          -%}
         </button>
       {%- endif -%}
 
       {%- if section.settings.show_cart -%}
         <a
-          href="{{ routes.cart_url }}"
-          class="relative flex items-center justify-center w-[44px] h-[44px] text-ink transition-colors duration-150 ease-out"
-          aria-label="{{ 'templates.cart.cart' | t }}{% if cart_count > 0 %}, {{ cart_count }} {{ 'templates.cart.item_count' | t }}{% endif %}"
-          id="v3-cart-mobile"
+          href='{{ routes.cart_url }}'
+          class='text-ink relative flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
+          aria-label='{{ 'templates.cart.cart' | t }}{% if cart_count > 0 %}, {{ cart_count }} {{ 'templates.cart.item_count' | t }}{% endif %}'
+          id='v3-cart-mobile'
         >
-          {%- render 'v3-icon-cart', size: 24, class: 'w-[24px] xxs:w-[25px] xs:w-[26px] h-[24px] xxs:h-[25px] xs:h-[26px]' -%}
+          {%- render 'v3-icon-cart',
+            size: 26,
+            frame_size: 26,
+            class: 'w-[24px] xxs:w-[25px] xs:w-[26px] h-[24px] xxs:h-[25px] xs:h-[26px]'
+          -%}
           {%- if cart_count > 0 -%}
-            <span class="
-              absolute -top-[4px] left-[56%]
-              flex items-center justify-center
-              min-w-[18px] h-[18px] px-[4px]
-              bg-ink text-bg
-              rounded-pill border-2 border-bg
-              text-nav-badge font-medium tracking-tight
-            " aria-hidden="true">
+            <span
+              class='
+                bg-ink text-bg rounded-pill
+                border-bg text-nav-badge absolute
+                -top-[4px] left-[56%] flex
+                h-[18px] min-w-[18px]
+                items-center justify-center border-2
+                px-[4px] font-medium tracking-tight
+              '
+              aria-hidden='true'
+            >
               {{- cart_count_display -}}
             </span>
           {%- endif -%}
@@ -209,15 +261,15 @@
 
       {%- comment -%} Hamburger pill (MobileMenuBtn) {%- endcomment -%}
       <button
-        type="button"
-        class="v3-nav__hamburger flex items-center justify-center h-[32px] px-[15px] xs:px-[16px] bg-rest rounded-pill transition-colors duration-150 ease-out"
-        aria-label="Open menu"
-        aria-expanded="false"
+        type='button'
+        class='v3-nav__hamburger xs:px-[16px] xs:ml-[3px] xxs:ml-[3.5px] bg-rest rounded-pill flex h-[32px] items-center justify-center px-[15px] ml-[4px] transition-colors duration-150 ease-out'
+        aria-label='Open menu'
+        aria-expanded='false'
         data-nav-hamburger
       >
-        <span class="flex flex-col items-center justify-center gap-[5px] py-[2px]">
-          <span class="block w-[20px] h-[1.2px] bg-ink rounded-pill"></span>
-          <span class="block w-[20px] h-[1.2px] bg-ink rounded-pill"></span>
+        <span class='flex flex-col items-center justify-center gap-[5px] py-[2px]'>
+          <span class='bg-ink rounded-pill block h-[1.2px] w-[20px]'></span>
+          <span class='bg-ink rounded-pill block h-[1.2px] w-[20px]'></span>
         </span>
       </button>
     </div>
@@ -229,7 +281,17 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    font-family: 'Scto Grotesk A', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    font-family:
+      'Scto Grotesk A',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      Oxygen-Sans,
+      Ubuntu,
+      Cantarell,
+      'Helvetica Neue',
+      sans-serif;
     font-weight: 400;
     letter-spacing: -0.005em;
     -webkit-font-smoothing: antialiased;
@@ -250,11 +312,31 @@
     --v3-nav-pr-offset: 0px;
     padding-right: 6px;
   }
-  @media (min-width: 768px) { .v3-nav > div:first-child { padding-right: 6px; } }
-  @media (min-width: 1024px) { .v3-nav > div:first-child { padding-right: 10px; } }
-  @media (min-width: 1280px) { .v3-nav > div:first-child { padding-right: 10px; } }
-  @media (min-width: 1440px) { .v3-nav > div:first-child { padding-right: 18px; } }
-  @media (min-width: 1920px) { .v3-nav > div:first-child { padding-right: 26px; } }
+  @media (min-width: 768px) {
+    .v3-nav > div:first-child {
+      padding-right: 6px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .v3-nav > div:first-child {
+      padding-right: 10px;
+    }
+  }
+  @media (min-width: 1280px) {
+    .v3-nav > div:first-child {
+      padding-right: 10px;
+    }
+  }
+  @media (min-width: 1440px) {
+    .v3-nav > div:first-child {
+      padding-right: 18px;
+    }
+  }
+  @media (min-width: 1920px) {
+    .v3-nav > div:first-child {
+      padding-right: 26px;
+    }
+  }
 
   /* ═══ PRESSED STATES (all input types) ═══ */
 
@@ -279,7 +361,9 @@
     }
 
     .v3-nav__switch-btn {
-      transition: color 150ms ease-out 200ms, background-color 150ms ease-out;
+      transition:
+        color 150ms ease-out 200ms,
+        background-color 150ms ease-out;
     }
 
     .v3-nav__search-pill:hover {
@@ -303,13 +387,19 @@
     }
 
     /* Demote siblings — priority group */
-    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover) .v3-nav__switch-btn,
-    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover) .v3-nav__search-pill span:first-child {
+    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover)
+      .v3-nav__switch-btn,
+    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover)
+      .v3-nav__search-pill
+      span:first-child {
       color: var(--color-muted);
       transition: color 150ms ease-out;
     }
-    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover) .v3-nav__switch-btn:hover,
-    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover) .v3-nav__search-pill:hover span:first-child {
+    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover)
+      .v3-nav__switch-btn:hover,
+    .group\/priority:has(.v3-nav__switch-btn:hover, .v3-nav__search-pill:hover)
+      .v3-nav__search-pill:hover
+      span:first-child {
       color: var(--color-ink);
     }
   }
@@ -336,34 +426,41 @@
 
   /* ═══ REDUCED MOTION ═══ */
   @media (prefers-reduced-motion: reduce) {
-    .v3-nav, .v3-nav * {
+    .v3-nav,
+    .v3-nav * {
       transition-duration: 0.01ms !important;
     }
   }
 </style>
 
 <script>
-  (function() {
+  (function () {
     const nav = document.querySelector('[data-section-id="{{ section.id }}"]');
     if (!nav) return;
 
     /* Shop/Studio — fire context event for submenu system (built later) */
     var toggleBtns = nav.querySelectorAll('[data-nav-toggle]');
-    toggleBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
+    toggleBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
         var context = btn.getAttribute('data-nav-toggle');
         nav.setAttribute('data-nav-context', context);
-        document.dispatchEvent(new CustomEvent('nav:context-change', {
-          detail: { context: context }
-        }));
+        document.dispatchEvent(
+          new CustomEvent('nav:context-change', {
+            detail: { context: context },
+          })
+        );
       });
     });
 
     /* Shop/Studio hover slider (pointer devices only) */
     var hasHover = window.matchMedia('(hover: hover)').matches;
-    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
     var pathsGroup = nav.querySelector('[data-nav-paths]');
-    var slider = pathsGroup ? pathsGroup.querySelector('.v3-nav__slider') : null;
+    var slider = pathsGroup
+      ? pathsGroup.querySelector('.v3-nav__slider')
+      : null;
 
     if (hasHover && slider && toggleBtns.length) {
       var sliderActive = false;
@@ -381,26 +478,39 @@
       }
 
       function fadeSlider() {
-        slider.style.transition = reducedMotion ? 'none' : 'opacity 150ms ease-out';
+        slider.style.transition = reducedMotion
+          ? 'none'
+          : 'opacity 150ms ease-out';
         slider.style.opacity = '0';
         sliderActive = false;
       }
 
-      toggleBtns.forEach(function(btn) {
-        btn.addEventListener('mouseenter', function() {
-          if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
+      toggleBtns.forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () {
+          if (fadeTimer) {
+            clearTimeout(fadeTimer);
+            fadeTimer = null;
+          }
           positionSlider(btn, sliderActive);
           sliderActive = true;
         });
 
-        btn.addEventListener('mouseleave', function(e) {
-          if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('[data-nav-toggle]')) return;
+        btn.addEventListener('mouseleave', function (e) {
+          if (
+            e.relatedTarget &&
+            e.relatedTarget.closest &&
+            e.relatedTarget.closest('[data-nav-toggle]')
+          )
+            return;
           fadeTimer = setTimeout(fadeSlider, 200);
         });
       });
 
-      pathsGroup.addEventListener('mouseleave', function() {
-        if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
+      pathsGroup.addEventListener('mouseleave', function () {
+        if (fadeTimer) {
+          clearTimeout(fadeTimer);
+          fadeTimer = null;
+        }
         fadeSlider();
       });
     }
@@ -408,12 +518,14 @@
     /* Hamburger */
     const hamburger = nav.querySelector('[data-nav-hamburger]');
     if (hamburger) {
-      hamburger.addEventListener('click', function() {
+      hamburger.addEventListener('click', function () {
         const expanded = hamburger.getAttribute('aria-expanded') === 'true';
         hamburger.setAttribute('aria-expanded', String(!expanded));
-        document.dispatchEvent(new CustomEvent('nav:menu-toggle', {
-          detail: { open: !expanded }
-        }));
+        document.dispatchEvent(
+          new CustomEvent('nav:menu-toggle', {
+            detail: { open: !expanded },
+          })
+        );
       });
     }
   })();
