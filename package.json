@@ -5,7 +5,10 @@
   "main": "global.js",
   "scripts": {
     "capsize": "node ./src/capsize.js",
+    "capsize:v3": "node ./src/capsize-v3.js",
     "tailwind": "npx @tailwindcss/cli -i ./src/v2-1-0.input.css -o ./assets/v2-1-0.output.css --watch",
+    "tailwind:v3": "npx @tailwindcss/cli -i ./src/v3.input.css -o ./assets/v3.output.css --watch",
+    "tailwind:v3:build": "npx @tailwindcss/cli -i ./src/v3.input.css -o ./assets/v3.output.css",
     "start": "webpack --watch",
     "build": "webpack && npm run capsize"
   },
@@ -23,6 +26,7 @@
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
+    "@capsizecss/unpack": "^4.0.1",
     "@shopify/prettier-plugin-liquid": "^1.10.0",
     "@tailwindcss/postcss": "^4.1.12",
     "babel-loader": "^9.1.3",

@@ -1,0 +1,56 @@
+---
+description: "Shopify 2.0 theme conventions for Rewind Skin V3"
+alwaysApply: true
+---
+
+# Shopify Theme Conventions
+
+## Section architecture
+
+- Every section: fully customisable from the theme editor. A non-technical merchant controls everything.
+- Schema: typed settings, descriptive labels, sensible defaults, block support where appropriate.
+- Presets: at least one default preset per section.
+- Sections for page-level composition, snippets for reusable sub-components.
+- Section groups for header/footer.
+
+## Liquid
+
+- Clean, well-commented code.
+- Use `{% comment %}` for section documentation.
+- Assign complex logic to variables at top of file before markup.
+- Use `| escape` on user-generated content.
+- Prefer `render` over `include` for snippets.
+
+## Tailwind CSS (v4)
+
+- Utility-first in templates.
+- All custom values come from `@theme inline` in `src/v3.input.css` (extends design system tokens).
+- Never hardcode colours, spacing, or font sizes — use Tailwind classes.
+- `@apply` only in component CSS files, never in Liquid templates.
+- Responsive: mobile-first breakpoint approach.
+- This project uses Tailwind v4 (CSS-first). There is no `tailwind.config.js`.
+
+## Capsize typography
+
+- All V3 text styles use Capsize-generated classes (`.text-{style-name}`) from `assets/capsize-v3.css`.
+- Never set `font-size` or `line-height` directly in templates. Capsize trims browser leading so text spacing matches Figma.
+- When a section introduces a new text style, define it in `src/capsize-v3.js` and regenerate with `npm run capsize:v3`.
+- Text style definitions include responsive font-size/line-height per breakpoint.
+
+## React islands
+
+- Liquid vs React is a per-feature decision. Evaluate with George — do not default to React.
+- When React is warranted: Liquid section renders the container with data attributes (`<div data-component="ComponentName" data-props='{{ props | json }}'>`).
+- React mounts into the container, hydrates from data attributes.
+- Storefront API for data beyond Liquid context.
+
+## Accessibility & performance
+
+- Semantic markup, ARIA attributes, keyboard navigation, focus management. WCAG 2.1 AA.
+- Mobile-first as a performance concern: asset weight, deferred loading, render cost.
+- Canadian English (colour, favourite, centre).
+- Sentence case for UI copy.
+
+## Naming
+
+Follow existing theme conventions. Do not impose a new convention without confirming with George.

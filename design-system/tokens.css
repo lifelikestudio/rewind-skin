@@ -1,0 +1,144 @@
+/* Design Tokens — Rewind Skin V3
+ *
+ * Canonical source for all design values in this project.
+ * Populated through extraction from V3 Figma designs.
+ *
+ * NEVER populate from brand guidelines.
+ * NEVER invent values — if a token doesn't exist, flag it.
+ *
+ * Extraction logs: design-system/extractions/
+ */
+
+:root {
+
+  /* ============================================
+   * COLOUR
+   * Named by function, not appearance.
+   * ============================================ */
+
+  /* Brand palette (reference — confirmed in designs) */
+  /* --color-black: #000000; */
+  /* --color-white: #FFFFFF; */
+  /* --color-stone: #E2DEDB; */
+  /* --color-grey: #E6E7E9; */
+  /* --color-grey-light: #F8F8F8; */
+  /* --color-grey-dark: #B5B5B5; */
+
+  /* Semantic (how colours are actually applied in designs) */
+  /* --color-bg-primary: ; */
+  /* --color-bg-secondary: ; */
+  /* --color-bg-inverse: ; */
+  /* --color-text-primary: ; */
+  /* --color-text-secondary: ; */
+  /* --color-text-inverse: ; */
+  /* --color-border-default: ; */
+  /* --color-border-subtle: ; */
+
+
+  /* ============================================
+   * TYPOGRAPHY
+   * ============================================ */
+
+  /* Font family */
+  /* --font-primary: 'Scto Grotesk A', sans-serif; */
+
+  /* Body — Light/300, -0.005em */
+  /* --text-body-xs: ; */
+  /* --text-body-sm: ; */
+  /* --text-body-base: ; */
+  /* --text-body-lg: ; */
+  /* --text-body-xl: ; */
+
+  /* Heading — Regular/400, -0.005em */
+  /* --text-heading-sm: ; */
+  /* --text-heading-base: ; */
+  /* --text-heading-lg: ; */
+  /* --text-heading-xl: ; */
+
+  /* Display — Light/300, -0.015em */
+  /* --text-display-sm: ; */
+  /* --text-display-base: ; */
+  /* --text-display-lg: ; */
+  /* --text-display-xl: ; */
+
+  /* Structural — Medium/500, -0.005em */
+  /* --text-structural-sm: ; */
+  /* --text-structural-base: ; */
+
+  /* Uppercase Label — Regular or Medium, 0.14em */
+  /* --text-label-sm: ; */
+  /* --text-label-base: ; */
+
+  /* Weights */
+  /* --font-weight-light: 300; */
+  /* --font-weight-regular: 400; */
+  /* --font-weight-medium: 500; */
+
+  /* Line heights */
+  /* --leading-tight: ; */
+  /* --leading-normal: ; */
+  /* --leading-relaxed: ; */
+
+  /* Letter spacing */
+  /* --tracking-body: -0.005em; */
+  /* --tracking-heading: -0.005em; */
+  /* --tracking-display: -0.015em; */
+  /* --tracking-label: 0.14em; */
+
+
+  /* ============================================
+   * SPACING
+   * ============================================ */
+
+  /* --space-1: ; */
+  /* --space-2: ; */
+  /* --space-3: ; */
+  /* --space-4: ; */
+  /* --space-5: ; */
+  /* --space-6: ; */
+  /* --space-8: ; */
+  /* --space-10: ; */
+  /* --space-12: ; */
+  /* --space-16: ; */
+  /* --space-20: ; */
+  /* --space-24: ; */
+  /* --space-32: ; */
+
+
+  /* ============================================
+   * LAYOUT
+   * ============================================ */
+
+  /* --container-max: ; */
+  /* --container-padding: ; */
+  /* --grid-columns: ; */
+  /* --grid-gutter: ; */
+
+  /* Breakpoints */
+  /* --bp-sm: ; */
+  /* --bp-md: ; */
+  /* --bp-lg: ; */
+  /* --bp-xl: ; */
+
+
+  /* ============================================
+   * BORDERS & RADII
+   * ============================================ */
+
+  /* --radius-sm: ; */
+  /* --radius-md: ; */
+  /* --radius-lg: ; */
+  /* --radius-full: 9999px; */
+  /* --border-width: ; */
+  /* --border-color: ; */
+
+
+  /* ============================================
+   * TRANSITIONS
+   * ============================================ */
+
+  /* --duration-fast: ; */
+  /* --duration-normal: ; */
+  /* --duration-slow: ; */
+  /* --easing-default: ; */
+}

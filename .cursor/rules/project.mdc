@@ -1,0 +1,35 @@
+---
+description: "Rewind Skin V3 — project context"
+alwaysApply: true
+---
+
+# Rewind Skin V3
+
+Boutique luxury skincare studio in North York, Toronto. In-studio treatments and curated e-commerce retail on Shopify. No in-house product line.
+
+Designer/Developer: George (Lifelike).
+
+## Figma
+
+- File key: `lwPjiKhA1GRP4OQxpttUxR`
+- Frame naming: `[Seed] [BREAKPOINT] [Width Range] - Component/Page [State] [Theme]`
+- Extraction happens in a separate workspace. This repo consumes the output.
+
+## Design system
+
+- `design-system/tokens.css` — CSS custom properties (canonical)
+- `design-system/tokens.json` — structured for agent reasoning
+- `design-system/extractions/` — raw extraction logs per component
+- `docs/component-inventory.md` — tracks what's been identified and extracted
+
+### Rules
+
+- Never invent token values — flag missing tokens
+- Never populate from brand guidelines — tokens come from V3 Figma designs
+- George approves all token additions
+
+## Build pipeline
+
+- Tailwind v4 CLI: `src/v3.input.css` → `assets/v3.output.css`
+- Capsize: `src/capsize-v3.js` → `assets/capsize-v3.css`
+- Webpack: `src/global.js` → `assets/global.js` + `assets/global.css`

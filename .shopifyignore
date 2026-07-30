@@ -14,3 +14,11 @@
 /.babelrc
 /.gitignore
 /.theme-check.yml
+
+# V3 workspace — not deployed to Shopify
+/docs/
+/design-system/
+/prompts/
+/.claude/
+/.cursor/
+/CLAUDE.md

@@ -1,0 +1,60 @@
+---
+description: "Figma and Paper MCP patterns for design system extraction"
+alwaysApply: false
+globs: ["design-system/**", "prompts/extract-tokens.md"]
+---
+
+# Design Extraction — MCP Patterns
+
+## Figma MCP
+
+Dev Mode server at `http://127.0.0.1:3845/mcp`.
+
+### Tool usage
+- `get_metadata` — hierarchy overview. Use FIRST on every frame. No size limit.
+- `get_design_context` — full applied values + screenshot. ~20KB cap — target individual components, not full pages.
+- `get_metadata` returns node IDs. Use those IDs to call `get_design_context` on specific nodes.
+
+### Extraction sequence
+1. `get_metadata` on full-page frame → read hierarchy
+2. Present top-level sections to George → he picks the target
+3. `get_design_context` on the target node → extract values
+4. Repeat for same component at other breakpoints
+5. Diff values across breakpoints → responsive extraction
+6. Identify state frames → extract each state
+7. Ask George for behaviour between states
+
+## Paper MCP (fallback)
+
+Local server at `http://127.0.0.1:29979/mcp`. Paper Desktop must be running.
+
+- `get_computed_styles` — batch CSS values (most precise)
+- `get_jsx` — node as JSX with styles
+- `get_tree_summary` — hierarchy
+- `get_screenshot` — visual verification
+
+## What to extract
+
+### Per component, per breakpoint
+- **Typography:** family, weight, size, line-height, letter-spacing, colour
+- **Spacing:** padding, margin, gap (auto-layout values)
+- **Colour:** fills, borders, text colours (hex + opacity)
+- **Layout:** direction, width mode (fixed/fill/hug), dimensions, alignment
+- **Borders:** width, colour, radius
+
+### Responsive (cross-breakpoint)
+- Which values change between breakpoints
+- Which values stay constant
+- Layout direction shifts (row → column)
+- Visibility changes (elements hidden/shown)
+- Size/spacing changes expressed as a delta table
+
+### States
+- Visual differences between states (Initial, Hover, Active, Open, etc.)
+- What George can tell us: triggers, transitions, timing, interaction model
+
+### Page-level
+- Container max-width and padding
+- Section vertical spacing (gap between sections)
+- Grid columns and gutters
+- Page-edge padding per breakpoint
