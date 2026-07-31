@@ -642,6 +642,7 @@
       updateDrawerToggle(context);
       hideL2();
       document.documentElement.style.overflow = 'hidden';
+      requestAnimationFrame(initPill);
       var closeBtn = submenu.querySelector('[data-submenu-close]');
       if (closeBtn) closeBtn.focus();
     }
@@ -657,12 +658,17 @@
       }
     }
 
+    var toggleGroup = submenu.querySelector('[data-submenu-toggle-group]');
+
     function updateDrawerToggle(context) {
       var btns = submenu.querySelectorAll('[data-submenu-toggle]');
       btns.forEach(function (btn) {
         var isActive = btn.getAttribute('data-submenu-toggle') === context;
         btn.setAttribute('aria-pressed', String(isActive));
+        btn.removeAttribute('data-previewing');
       });
+      if (toggleGroup) toggleGroup.removeAttribute('data-pill-preview');
+      parkPill();
     }
 
     /* Close triggers */
@@ -683,6 +689,10 @@
     var drawerToggles = submenu.querySelectorAll('[data-submenu-toggle]');
     drawerToggles.forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (pillIntentTimer) {
+          clearTimeout(pillIntentTimer);
+          pillIntentTimer = null;
+        }
         var context = btn.getAttribute('data-submenu-toggle');
         submenu.setAttribute('data-context', context);
         nav.setAttribute('data-nav-context', context);
@@ -690,6 +700,85 @@
         hideL2();
       });
     });
+
+    /* ═══ TOGGLE PILL (hover-preview with snap-back) ═══ */
+    var pill = submenu.querySelector('[data-submenu-pill]');
+    var pillIntentTimer = null;
+
+    function positionPill(btn, animate) {
+      if (!pill) return;
+      pill.style.transition = reducedMotion
+        ? 'none'
+        : animate
+          ? 'left 200ms ease-out, width 200ms ease-out'
+          : 'none';
+      pill.style.width = btn.offsetWidth + 'px';
+      pill.style.left = btn.offsetLeft + 'px';
+    }
+
+    function parkPill() {
+      var activeBtn = submenu.querySelector('[data-submenu-toggle][aria-pressed="true"]');
+      if (activeBtn) positionPill(activeBtn, true);
+    }
+
+    function initPill() {
+      var activeBtn = submenu.querySelector('[data-submenu-toggle][aria-pressed="true"]');
+      if (activeBtn) positionPill(activeBtn, false);
+    }
+
+    initPill();
+
+    function previewOn(btn) {
+      toggleGroup.setAttribute('data-pill-preview', '');
+      btn.setAttribute('data-previewing', '');
+    }
+
+    function previewOff() {
+      toggleGroup.removeAttribute('data-pill-preview');
+      drawerToggles.forEach(function (b) {
+        b.removeAttribute('data-previewing');
+      });
+    }
+
+    if (hasHover && pill && toggleGroup) {
+      drawerToggles.forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () {
+          if (pillIntentTimer) {
+            clearTimeout(pillIntentTimer);
+            pillIntentTimer = null;
+          }
+          pillIntentTimer = setTimeout(function () {
+            positionPill(btn, true);
+            previewOn(btn);
+            pillIntentTimer = null;
+          }, 120);
+        });
+
+        btn.addEventListener('mouseleave', function () {
+          if (pillIntentTimer) {
+            clearTimeout(pillIntentTimer);
+            pillIntentTimer = null;
+          }
+          previewOff();
+          parkPill();
+        });
+      });
+
+      toggleGroup.addEventListener('mouseleave', function () {
+        if (pillIntentTimer) {
+          clearTimeout(pillIntentTimer);
+          pillIntentTimer = null;
+        }
+        previewOff();
+        parkPill();
+      });
+
+      window.addEventListener('resize', function () {
+        if (submenu.getAttribute('data-submenu-state') === 'open') {
+          initPill();
+        }
+      });
+    }
 
     /* ═══ L2 HOVER REVEAL (pointer devices only) ═══ */
     if (primary && hasHover) {
@@ -727,14 +816,13 @@
       activeL2 = panel;
 
       /* Baseline alignment: position first L2 link so its baseline
-         (Capsize-trimmed bottom edge) aligns with the hovered L1 link's
-         baseline. Both use Capsize cap-height trim, so getBoundingClientRect
-         bottom ≈ text baseline. */
+         aligns with the hovered L1 link's baseline. Both use Capsize
+         cap-height trim, so getBoundingClientRect bottom ≈ text baseline. */
       var firstL2Link = panel.querySelector('.v3-submenu__l2-link');
       if (firstL2Link) {
         var l1Rect = l1Link.getBoundingClientRect();
-        var primaryRect = primary.getBoundingClientRect();
-        var l1BaselineY = l1Rect.bottom - primaryRect.top;
+        var panelRect = panel.getBoundingClientRect();
+        var l1BaselineY = l1Rect.bottom - panelRect.top;
         var l2Height = firstL2Link.getBoundingClientRect().height;
         panel.style.paddingTop = Math.max(0, l1BaselineY - l2Height) + 'px';
       }

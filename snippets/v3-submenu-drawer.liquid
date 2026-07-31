@@ -84,7 +84,13 @@
           class='v3-submenu__toggle-group bg-rest rounded-pill'
           role='group'
           aria-label='Navigation context'
+          data-submenu-toggle-group
         >
+          <span
+            class='v3-submenu__toggle-pill rounded-pill bg-bg'
+            aria-hidden='true'
+            data-submenu-pill
+          ></span>
           <button
             type='button'
             class='v3-submenu__toggle-btn rounded-pill text-nav-label font-base tracking-tight'
@@ -276,7 +282,6 @@
     --l1-pl: 24px;
     --l1-pr: 32px;
     --l1-py: 24px;
-    --l1-w: 221px;
     --link-gap-l1: 15px;
     --subgroup-gap: 56px;
     --title-gap: 30px;
@@ -307,7 +312,6 @@
       --l1-pl: 32px;
       --l1-pr: 40px;
       --l1-py: 32px;
-      --l1-w: 255px;
       --link-gap-l1: 16px;
       --subgroup-gap: 64px;
       --title-gap: 32px;
@@ -410,12 +414,20 @@
     gap: 40px;
   }
 
-  /* ═══ TOGGLE (active/demoted — no slider) ═══ */
+  /* ═══ TOGGLE (sliding pill) ═══ */
   .v3-submenu__toggle-group {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 4px;
     padding: 4px;
+  }
+  .v3-submenu__toggle-pill {
+    position: absolute;
+    top: 4px;
+    height: calc(100% - 8px);
+    pointer-events: none;
+    transition: left 200ms ease-out, width 200ms ease-out;
   }
   .v3-submenu__toggle-btn {
     position: relative;
@@ -424,7 +436,7 @@
     padding: 0 14px;
     border: none;
     background: transparent;
-    transition: color 150ms ease-out, background-color 150ms ease-out;
+    transition: color 150ms ease-out;
   }
   @media (min-width: 1440px) {
     .v3-submenu__toggle-btn {
@@ -432,12 +444,17 @@
     }
   }
   .v3-submenu__toggle-btn[aria-pressed='true'] {
-    background-color: var(--color-bg);
     color: var(--color-ink);
   }
   .v3-submenu__toggle-btn[aria-pressed='false'] {
-    background-color: transparent;
     color: var(--color-muted);
+  }
+  /* During preview: demote the selected button, promote the hovered one */
+  [data-pill-preview] .v3-submenu__toggle-btn[aria-pressed='true'] {
+    color: var(--color-muted);
+  }
+  [data-pill-preview] .v3-submenu__toggle-btn[data-previewing] {
+    color: var(--color-ink);
   }
 
   /* ═══ CLOSE BUTTON ═══ */
@@ -474,7 +491,6 @@
     display: flex;
     flex: 1;
     min-height: 0;
-    position: relative;
   }
 
   /* ── L1 column ── */
@@ -483,11 +499,6 @@
     flex-direction: column;
     gap: var(--subgroup-gap);
     padding: var(--l1-py) var(--l1-pr) var(--l1-py) var(--l1-pl);
-    flex: 1;
-    min-width: 0;
-  }
-  .v3-submenu__primary.has-l2 .v3-submenu__l1 {
-    width: var(--l1-w);
     flex: none;
   }
 
@@ -503,7 +514,7 @@
   .v3-submenu__l1-link {
     display: block;
     color: var(--color-ink);
-    transition: color 150ms ease-out;
+    transition: color 250ms ease-out;
   }
 
   /* ── L2 panel ── */
@@ -512,11 +523,8 @@
     flex-direction: column;
     gap: var(--link-gap-l2);
     padding: 0 var(--l2-pr) var(--l1-py) var(--l2-pl);
-    position: absolute;
-    top: 0;
-    left: var(--l1-w);
-    right: 0;
-    bottom: 0;
+    flex: 1;
+    min-width: 0;
     overflow-y: auto;
   }
   .v3-submenu__l2.is-active {
@@ -525,7 +533,7 @@
   .v3-submenu__l2-link {
     display: block;
     color: var(--color-ink);
-    transition: color 150ms ease-out;
+    transition: color 250ms ease-out;
   }
 
   /* ═══ QUICK ACTIONS ═══ */
@@ -558,7 +566,7 @@
   }
   .v3-submenu__utility-link {
     color: var(--color-ink);
-    transition: color 150ms ease-out;
+    transition: color 250ms ease-out;
   }
 
   /* ═══ CONTEXT VISIBILITY ═══ */
@@ -583,28 +591,34 @@
       background-color: var(--color-hover);
     }
 
-    /* L1 — highlight + demote siblings */
-    .v3-submenu__l1:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link {
+    /* L1 — demote siblings within the same subgroup only */
+    .v3-submenu__subgroup:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link {
       color: var(--color-demoted);
+      transition: color 300ms ease-out 60ms;
     }
-    .v3-submenu__l1:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link:hover {
+    .v3-submenu__subgroup:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link:hover {
       color: var(--color-ink);
+      transition: color 250ms ease-out;
     }
 
-    /* L2 — highlight + demote siblings */
+    /* L2 — demote siblings */
     .v3-submenu__l2.is-active:has(.v3-submenu__l2-link:hover) .v3-submenu__l2-link {
       color: var(--color-demoted);
+      transition: color 300ms ease-out 60ms;
     }
     .v3-submenu__l2.is-active:has(.v3-submenu__l2-link:hover) .v3-submenu__l2-link:hover {
       color: var(--color-ink);
+      transition: color 250ms ease-out;
     }
 
-    /* Utility — highlight + demote siblings */
+    /* Utility — demote siblings */
     .v3-submenu__utility-links:has(.v3-submenu__utility-link:hover) .v3-submenu__utility-link {
       color: var(--color-demoted);
+      transition: color 300ms ease-out 60ms;
     }
     .v3-submenu__utility-links:has(.v3-submenu__utility-link:hover) .v3-submenu__utility-link:hover {
       color: var(--color-ink);
+      transition: color 250ms ease-out;
     }
   }
 

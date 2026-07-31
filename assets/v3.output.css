@@ -206,6 +206,9 @@
   .inset-\[0\] {
     inset: 0;
   }
+  .-top-\[4px\] {
+    top: calc(4px * -1);
+  }
   .top-\[4px\] {
     top: 4px;
   }
@@ -214,6 +217,9 @@
   }
   .bottom-\[var\(--home-hero-padding-btm\)\] {
     bottom: var(--home-hero-padding-btm);
+  }
+  .left-\[56\%\] {
+    left: 56%;
   }
   .isolate {
     isolation: isolate;
@@ -257,6 +263,9 @@
       max-width: 1920px;
     }
   }
+  .ml-\[4px\] {
+    margin-left: 4px;
+  }
   .\!flex {
     display: flex !important;
   }
@@ -289,6 +298,9 @@
   }
   .h-1\/2 {
     height: calc(1/2 * 100%);
+  }
+  .h-\[1\.2px\] {
+    height: 1.2px;
   }
   .h-\[10px\] {
     height: 10px;
@@ -329,6 +341,9 @@
   .w-\[10px\] {
     width: 10px;
   }
+  .w-\[20px\] {
+    width: 20px;
+  }
   .w-\[24px\] {
     width: 24px;
   }
@@ -341,6 +356,9 @@
   .w-\[32px\] {
     width: 32px;
   }
+  .w-\[44px\] {
+    width: 44px;
+  }
   .w-\[165px\] {
     width: 165px;
   }
@@ -349,6 +367,9 @@
   }
   .w-full {
     width: 100%;
+  }
+  .min-w-\[18px\] {
+    min-width: 18px;
   }
   .flex-1 {
     flex: 1;
@@ -361,6 +382,17 @@
   }
   .shrink-0 {
     flex-shrink: 0;
+  }
+  .border-collapse {
+    border-collapse: collapse;
+  }
+  .translate-x-1\/2 {
+    --tw-translate-x: calc(1/2 * 100%);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .-translate-y-1\/2 {
+    --tw-translate-y: calc(calc(1/2 * 100%) * -1);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
@@ -398,6 +430,9 @@
   .gap-\[4px\] {
     gap: 4px;
   }
+  .gap-\[5px\] {
+    gap: 5px;
+  }
   .gap-\[6px\] {
     gap: 6px;
   }
@@ -406,6 +441,9 @@
   }
   .gap-\[12px\] {
     gap: 12px;
+  }
+  .gap-\[14px\] {
+    gap: 14px;
   }
   .gap-\[16px\] {
     gap: 16px;
@@ -433,6 +471,13 @@
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+  .border-2 {
+    border-style: var(--tw-border-style);
+    border-width: 2px;
+  }
+  .border-bg {
+    border-color: var(--color-bg);
   }
   .\!bg-\[\#DEDEDE\] {
     background-color: #DEDEDE !important;
@@ -487,6 +532,12 @@
   }
   .p-\[24px\] {
     padding: 24px;
+  }
+  .px-\[4px\] {
+    padding-inline: 4px;
+  }
+  .px-\[6\.5px\] {
+    padding-inline: 6.5px;
   }
   .px-\[14px\] {
     padding-inline: 14px;
@@ -581,6 +632,9 @@
   }
   .italic {
     font-style: italic;
+  }
+  .underline {
+    text-decoration-line: underline;
   }
   .opacity-0 {
     opacity: 0%;
@@ -740,6 +794,11 @@
       }
     }
   }
+  .xxs\:ml-\[3\.5px\] {
+    @media (width >= 375px) {
+      margin-left: 3.5px;
+    }
+  }
   .xxs\:h-\[25px\] {
     @media (width >= 375px) {
       height: 25px;
@@ -765,6 +824,11 @@
       gap: 8px;
     }
   }
+  .xxs\:gap-\[15px\] {
+    @media (width >= 375px) {
+      gap: 15px;
+    }
+  }
   .xxs\:pr-\[11px\] {
     @media (width >= 375px) {
       padding-right: 11px;
@@ -773,6 +837,11 @@
   .xxs\:pl-\[14px\] {
     @media (width >= 375px) {
       padding-left: 14px;
+    }
+  }
+  .xs\:ml-\[3px\] {
+    @media (width >= 428px) {
+      margin-left: 3px;
     }
   }
   .xs\:h-\[26px\] {
@@ -798,6 +867,11 @@
   .xs\:gap-\[10px\] {
     @media (width >= 428px) {
       gap: 10px;
+    }
+  }
+  .xs\:gap-\[16px\] {
+    @media (width >= 428px) {
+      gap: 16px;
     }
   }
   .xs\:px-\[16px\] {
@@ -1023,6 +1097,21 @@
     --blur-overlay: 32px;
   }
 }
+@property --tw-translate-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
 @property --tw-rotate-x {
   syntax: "*";
   inherits: false;
@@ -1231,6 +1320,9 @@
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-translate-z: 0;
       --tw-rotate-x: initial;
       --tw-rotate-y: initial;
       --tw-rotate-z: initial;
