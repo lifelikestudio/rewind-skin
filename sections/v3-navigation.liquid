@@ -527,20 +527,28 @@
     var primary = submenu ? submenu.querySelector('[data-submenu-primary]') : null;
     var openTrigger = null;
 
-    /* ═══ SHOP/STUDIO TOGGLE — opens submenu drawer ═══ */
+    /* ═══ SHOP/STUDIO TOGGLE — opens/closes submenu drawer ═══ */
     var toggleBtns = nav.querySelectorAll('[data-nav-toggle]');
     toggleBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var context = btn.getAttribute('data-nav-toggle');
+        var isOpen = submenu && submenu.getAttribute('data-submenu-state') === 'open';
+        var currentContext = submenu ? submenu.getAttribute('data-context') : null;
+
         nav.setAttribute('data-nav-context', context);
         document.dispatchEvent(
           new CustomEvent('nav:context-change', {
             detail: { context: context },
           })
         );
+
         if (submenu) {
-          openTrigger = btn;
-          openDrawer(context);
+          if (isOpen && context === currentContext) {
+            closeDrawer();
+          } else {
+            openTrigger = btn;
+            openDrawer(context);
+          }
         }
       });
     });
@@ -636,6 +644,10 @@
     var activeL2 = null;
 
     function openDrawer(context) {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
       submenu.setAttribute('data-context', context);
       submenu.setAttribute('data-submenu-state', 'open');
       submenu.setAttribute('aria-hidden', 'false');
@@ -647,11 +659,20 @@
       if (closeBtn) closeBtn.focus();
     }
 
+    var closeTimer = null;
+
     function closeDrawer() {
-      submenu.setAttribute('data-submenu-state', 'closed');
-      submenu.setAttribute('aria-hidden', 'true');
+      if (closeTimer) return;
+      submenu.setAttribute('data-submenu-state', 'closing');
       hideL2();
       document.documentElement.style.overflow = '';
+
+      closeTimer = setTimeout(function () {
+        submenu.setAttribute('data-submenu-state', 'closed');
+        submenu.setAttribute('aria-hidden', 'true');
+        closeTimer = null;
+      }, 280);
+
       if (openTrigger) {
         openTrigger.focus();
         openTrigger = null;
@@ -694,10 +715,16 @@
           pillIntentTimer = null;
         }
         var context = btn.getAttribute('data-submenu-toggle');
-        submenu.setAttribute('data-context', context);
-        nav.setAttribute('data-nav-context', context);
-        updateDrawerToggle(context);
-        hideL2();
+        var currentContext = submenu.getAttribute('data-context');
+
+        if (context === currentContext) {
+          closeDrawer();
+        } else {
+          submenu.setAttribute('data-context', context);
+          nav.setAttribute('data-nav-context', context);
+          updateDrawerToggle(context);
+          hideL2();
+        }
       });
     });
 
@@ -807,7 +834,7 @@
       if (!panel || panel === activeL2) return;
 
       if (activeL2) {
-        activeL2.classList.remove('is-active');
+        activeL2.classList.remove('is-active', 'is-closing');
         activeL2.style.paddingTop = '';
       }
 
@@ -830,10 +857,56 @@
 
     function hideL2() {
       if (!activeL2) return;
-      activeL2.classList.remove('is-active');
-      activeL2.style.paddingTop = '';
+      var closing = activeL2;
+      closing.classList.add('is-closing');
+      closing.classList.remove('is-active');
       activeL2 = null;
       if (primary) primary.classList.remove('has-l2');
+
+      setTimeout(function () {
+        closing.classList.remove('is-closing');
+        closing.style.paddingTop = '';
+      }, 200);
+    }
+
+    /* ═══ LINK HOVER INTENT (de-emphasis on deliberate stop) ═══ */
+    if (hasHover) {
+      var linkIntentTimer = null;
+      var focusedLink = null;
+
+      function clearLinkIntent() {
+        if (linkIntentTimer) {
+          clearTimeout(linkIntentTimer);
+          linkIntentTimer = null;
+        }
+        if (focusedLink) {
+          var group = focusedLink.closest('[data-l1-group], .v3-submenu__l2, .v3-submenu__utility-links');
+          if (group) group.removeAttribute('data-link-focused');
+          focusedLink.removeAttribute('data-focused');
+          focusedLink = null;
+        }
+      }
+
+      drawer.addEventListener('mouseover', function (e) {
+        var link = e.target.closest('.v3-submenu__l1-link, .v3-submenu__l2-link, .v3-submenu__utility-link');
+        if (link === focusedLink) return;
+
+        clearLinkIntent();
+
+        if (!link) return;
+
+        linkIntentTimer = setTimeout(function () {
+          var group = link.closest('[data-l1-group], .v3-submenu__l2, .v3-submenu__utility-links');
+          if (group) group.setAttribute('data-link-focused', '');
+          link.setAttribute('data-focused', '');
+          focusedLink = link;
+          linkIntentTimer = null;
+        }, 150);
+      });
+
+      drawer.addEventListener('mouseleave', function () {
+        clearLinkIntent();
+      });
     }
 
     /* ═══ FOCUS TRAP ═══ */

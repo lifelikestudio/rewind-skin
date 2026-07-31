@@ -130,10 +130,10 @@
           {%- comment -%} ── Shop L1 ── {%- endcomment -%}
           <div class='v3-submenu__l1' data-submenu-context='shop'>
             <div class='v3-submenu__subgroup' data-l1-group>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='skincare' data-has-l2>Skincare</a>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='skincare' data-has-l2>Skincare</button>
               <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Hair & Body</a>
               <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Tools & Accessories</a>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='brands' data-has-l2>Brands</a>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='brands' data-has-l2>Brands</button>
               <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Shop All</a>
             </div>
             <div class='v3-submenu__subgroup' data-l1-group>
@@ -149,12 +149,12 @@
           {%- comment -%} ── Studio L1 ── {%- endcomment -%}
           <div class='v3-submenu__l1' data-submenu-context='studio'>
             <div class='v3-submenu__subgroup' data-l1-group>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='facials' data-has-l2>Facials</a>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='body-contouring' data-has-l2>Body Contouring</a>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='hair-removal' data-has-l2>Hair Removal</a>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='injectables' data-has-l2>Injectables</a>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-improvement' data-has-l2>Skin Improvement</a>
-              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-tightening' data-has-l2>Skin Tightening</a>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='facials' data-has-l2>Facials</button>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='body-contouring' data-has-l2>Body Contouring</button>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='hair-removal' data-has-l2>Hair Removal</button>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='injectables' data-has-l2>Injectables</button>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-improvement' data-has-l2>Skin Improvement</button>
+              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-tightening' data-has-l2>Skin Tightening</button>
               <a href='#' class='v3-submenu__l1-link text-submenu-l1'>All Treatments</a>
             </div>
             <div class='v3-submenu__subgroup' data-l1-group>
@@ -369,9 +369,13 @@
       visibility: hidden;
       pointer-events: none;
     }
-    .v3-submenu[data-submenu-state='open'] {
+    .v3-submenu[data-submenu-state='open'],
+    .v3-submenu[data-submenu-state='closing'] {
       visibility: visible;
       pointer-events: auto;
+    }
+    .v3-submenu[data-submenu-state='closing'] {
+      pointer-events: none;
     }
   }
 
@@ -382,6 +386,15 @@
     background: rgba(251, 250, 249, 0.5);
     backdrop-filter: blur(32px);
     -webkit-backdrop-filter: blur(32px);
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+  }
+  .v3-submenu[data-submenu-state='open'] .v3-submenu__overlay {
+    opacity: 1;
+  }
+  .v3-submenu[data-submenu-state='closing'] .v3-submenu__overlay {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
   }
 
   /* ═══ DRAWER PANEL ═══ */
@@ -396,6 +409,15 @@
     overflow: clip;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transition: opacity 380ms ease-out 40ms;
+  }
+  .v3-submenu[data-submenu-state='open'] .v3-submenu__drawer {
+    opacity: 1;
+  }
+  .v3-submenu[data-submenu-state='closing'] .v3-submenu__drawer {
+    opacity: 0;
+    transition: opacity 180ms ease-out;
   }
 
   /* ═══ HEADING ═══ */
@@ -513,8 +535,13 @@
   }
   .v3-submenu__l1-link {
     display: block;
+    width: fit-content;
     color: var(--color-ink);
-    transition: color 250ms ease-out;
+    transition: color 180ms ease-out;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
   }
 
   /* ── L2 panel ── */
@@ -526,14 +553,27 @@
     flex: 1;
     min-width: 0;
     overflow-y: auto;
+    opacity: 0;
+    transition: opacity 200ms ease-out;
   }
   .v3-submenu__l2.is-active {
     display: flex;
+    opacity: 1;
+    animation: submenu-l2-in 250ms ease-out;
+  }
+  .v3-submenu__l2.is-closing {
+    display: flex;
+    opacity: 0;
+  }
+  @keyframes submenu-l2-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
   .v3-submenu__l2-link {
     display: block;
+    width: fit-content;
     color: var(--color-ink);
-    transition: color 250ms ease-out;
+    transition: color 180ms ease-out;
   }
 
   /* ═══ QUICK ACTIONS ═══ */
@@ -565,8 +605,9 @@
     gap: var(--utility-gap);
   }
   .v3-submenu__utility-link {
+    width: fit-content;
     color: var(--color-ink);
-    transition: color 250ms ease-out;
+    transition: color 180ms ease-out;
   }
 
   /* ═══ CONTEXT VISIBILITY ═══ */
@@ -592,33 +633,30 @@
     }
 
     /* L1 — demote siblings within the same subgroup only */
-    .v3-submenu__subgroup:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link {
+    [data-l1-group][data-link-focused] .v3-submenu__l1-link {
       color: var(--color-demoted);
-      transition: color 300ms ease-out 60ms;
+      transition: color 220ms ease-out;
     }
-    .v3-submenu__subgroup:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link:hover {
+    [data-l1-group][data-link-focused] .v3-submenu__l1-link[data-focused] {
       color: var(--color-ink);
-      transition: color 250ms ease-out;
     }
 
     /* L2 — demote siblings */
-    .v3-submenu__l2.is-active:has(.v3-submenu__l2-link:hover) .v3-submenu__l2-link {
+    .v3-submenu__l2[data-link-focused] .v3-submenu__l2-link {
       color: var(--color-demoted);
-      transition: color 300ms ease-out 60ms;
+      transition: color 220ms ease-out;
     }
-    .v3-submenu__l2.is-active:has(.v3-submenu__l2-link:hover) .v3-submenu__l2-link:hover {
+    .v3-submenu__l2[data-link-focused] .v3-submenu__l2-link[data-focused] {
       color: var(--color-ink);
-      transition: color 250ms ease-out;
     }
 
     /* Utility — demote siblings */
-    .v3-submenu__utility-links:has(.v3-submenu__utility-link:hover) .v3-submenu__utility-link {
+    .v3-submenu__utility-links[data-link-focused] .v3-submenu__utility-link {
       color: var(--color-demoted);
-      transition: color 300ms ease-out 60ms;
+      transition: color 220ms ease-out;
     }
-    .v3-submenu__utility-links:has(.v3-submenu__utility-link:hover) .v3-submenu__utility-link:hover {
+    .v3-submenu__utility-links[data-link-focused] .v3-submenu__utility-link[data-focused] {
       color: var(--color-ink);
-      transition: color 250ms ease-out;
     }
   }
 
@@ -643,6 +681,7 @@
     .v3-submenu,
     .v3-submenu * {
       transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
     }
   }
 </style>
