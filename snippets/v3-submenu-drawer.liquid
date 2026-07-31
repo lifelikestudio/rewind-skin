@@ -1,0 +1,634 @@
+{% comment %}
+  V3 Sub-menu Drawer — desktop (SM+)
+  Rendered by v3-navigation section. Content is hardcoded for development;
+  will be replaced with dynamic link_list loops when the site transitions.
+
+  Parameters (passed from section):
+    logo        — image object from section settings
+    shop_label  — text label for Shop toggle
+    studio_label — text label for Studio toggle
+    section_id  — parent section id
+{% endcomment %}
+
+{%- liquid
+  assign cart_count = cart.item_count
+  if cart_count > 99
+    assign cart_bag_label = 'Bag (99+)'
+  elsif cart_count > 0
+    assign cart_bag_label = 'Bag (' | append: cart_count | append: ')'
+  else
+    assign cart_bag_label = 'Bag (0)'
+  endif
+-%}
+
+<div
+  class='v3-submenu'
+  data-submenu
+  data-context='shop'
+  data-submenu-state='closed'
+  aria-hidden='true'
+>
+  {%- comment -%} Page overlay {%- endcomment -%}
+  <div class='v3-submenu__overlay' data-submenu-overlay></div>
+
+  {%- comment -%} Drawer panel {%- endcomment -%}
+  <div
+    class='v3-submenu__drawer'
+    role='dialog'
+    aria-modal='true'
+    aria-label='Navigation menu'
+  >
+    {%- comment -%} ═══ HEADING ═══ {%- endcomment -%}
+    <div class='v3-submenu__heading'>
+      <a
+        href='{{ routes.root_url }}'
+        class='block shrink-0'
+        aria-label='{{ shop.name }}'
+      >
+        {%- if logo != blank -%}
+          {{
+            logo
+            | image_url: width: 500
+            | image_tag:
+              class: 'w-[220px] lg:w-[248px] h-auto',
+              widths: '220, 248, 440, 496',
+              alt: logo.alt
+            | default: shop.name
+          }}
+        {%- else -%}
+          <svg
+            class='h-auto w-[220px] lg:w-[248px]'
+            viewBox='0 0 193.235 14'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            aria-label='{{ shop.name }}'
+            role='img'
+          >
+            <path d="M17.5621 13.7362L17.5083 13.789H15.3534L9.69689 8.08336H1.67002V13.8419H0V0.528646H10.9359C12.0134 0.528646 12.9831 0.581476 13.7373 0.739967C14.4915 0.898457 15.1918 1.10978 15.7305 1.47959C16.7541 2.11355 17.2928 3.01166 17.2928 4.27959C17.2928 5.49468 16.8079 6.3928 15.8921 7.02676C14.9763 7.66072 13.5756 8.03053 11.744 8.08336L17.5621 13.7362ZM1.67002 1.95506V6.65695H10.4511C11.5824 6.65695 12.4443 6.60412 13.0908 6.49846C13.6834 6.3928 14.1682 6.23431 14.5453 6.07582C15.2457 5.706 15.5689 5.12487 15.5689 4.27959C15.5689 3.43431 15.2457 2.85317 14.5453 2.48336C14.2221 2.27204 13.7373 2.16638 13.0908 2.06072C12.4982 1.95506 11.6363 1.95506 10.4511 1.95506H1.67002Z" fill="currentColor"/>
+            <path d="M38.2458 1.95506H23.485V6.44563H37.4377V7.87204H23.485V12.4154H38.2458V13.8419H21.7611V0.528646H38.2458V1.95506Z" fill="currentColor"/>
+            <path d="M65.3963 0.528646L65.4502 0.581476L59.5243 13.789H57.9082L53.0597 2.58902L48.2113 13.789H46.5951L40.6693 0.581476L40.7231 0.528646H42.5009L47.2955 11.7286L52.1439 0.528646H53.9756L58.7701 11.7286L63.6186 0.528646H65.3963Z" fill="currentColor"/>
+            <path d="M68.6328 13.789V0.528646H70.3028V13.789H68.6328Z" fill="currentColor"/>
+            <path d="M90.6626 0.528646H92.3327V13.789H90.6626L76.9793 2.53619V13.8419H75.3092V0.528646H76.9793L90.6626 11.7815V0.528646Z" fill="currentColor"/>
+            <path d="M113.99 2.16638C115.606 3.27582 116.468 4.96638 116.468 7.13242C116.468 9.35129 115.66 10.989 113.99 12.0985C112.374 13.2079 109.896 13.789 106.556 13.789H97.3438V0.528646H106.556C109.896 0.528646 112.374 1.05695 113.99 2.16638ZM112.697 11.1475C113.397 10.7249 113.882 10.1966 114.206 9.50978C114.529 8.87581 114.69 8.08336 114.69 7.13242C114.69 6.18148 114.529 5.44185 114.206 4.75506C113.882 4.1211 113.397 3.53997 112.697 3.11732C111.997 2.69468 111.135 2.3777 110.057 2.16638C108.98 1.95506 107.633 1.8494 105.963 1.8494H99.0676V12.3098H105.963C107.418 12.3098 108.711 12.2041 109.842 12.0456C110.973 11.94 111.943 11.623 112.697 11.1475Z" fill="currentColor"/>
+            <path d="M136.241 14C135.433 14 134.571 13.9472 133.763 13.8943C132.955 13.8415 132.146 13.7887 131.338 13.683C130.53 13.5774 129.83 13.4717 129.13 13.3132C128.429 13.1547 127.783 12.9962 127.244 12.8377V11.2528L127.352 11.2C127.944 11.4113 128.645 11.6226 129.345 11.7811C130.045 11.9396 130.8 12.0981 131.554 12.2038C132.308 12.3094 133.116 12.4151 133.924 12.4679C134.732 12.5208 135.54 12.5736 136.348 12.5736C141.143 12.5736 143.513 11.7283 143.513 10.0377C143.513 9.50943 143.298 9.13962 142.813 8.82264C142.328 8.50566 141.736 8.29434 140.981 8.13585C140.227 7.97736 139.365 7.8717 138.396 7.76604C137.426 7.66038 136.402 7.60755 135.433 7.50189C134.409 7.39623 133.439 7.3434 132.47 7.18491C131.5 7.07925 130.638 6.86792 129.884 6.60377C129.13 6.33962 128.483 5.96981 128.052 5.54717C127.567 5.12453 127.352 4.5434 127.352 3.80377C127.352 2.58868 128.106 1.63774 129.561 0.950943C131.015 0.316981 133.116 0 135.864 0C137.48 0 139.042 0.10566 140.55 0.316981C142.059 0.528302 143.406 0.845283 144.699 1.21509V2.69434L144.591 2.74717C143.998 2.53585 143.352 2.37736 142.651 2.21887C141.951 2.06038 141.251 1.90189 140.497 1.79623C139.742 1.69057 138.988 1.58491 138.234 1.53208C137.264 1.58491 136.564 1.58491 135.81 1.58491C134.786 1.58491 133.87 1.63774 133.008 1.7434C132.146 1.84906 131.446 2.00755 130.854 2.21887C130.261 2.43019 129.776 2.64151 129.453 2.90566C129.13 3.16981 128.968 3.48679 128.968 3.80377C128.968 4.27925 129.184 4.70189 129.668 4.96604C130.153 5.23019 130.746 5.44151 131.5 5.6C132.254 5.75849 133.116 5.86415 134.086 5.91698C135.056 5.96981 136.079 6.07547 137.049 6.1283C138.072 6.23396 139.042 6.33962 140.012 6.44528C140.981 6.60377 141.843 6.76226 142.598 7.02642C143.352 7.29057 143.998 7.66038 144.429 8.13585C144.914 8.61132 145.13 9.19245 145.13 9.93208C145.13 11.3057 144.429 12.3623 142.975 12.9962C141.52 13.6302 139.365 14 136.241 14Z" fill="currentColor"/>
+            <path d="M156.973 5.706L166.347 13.7362L166.293 13.789H163.923L155.465 6.55129L151.263 9.03431V13.789H149.593V0.528646H151.263V7.23808L163.007 0.528646H165.647L165.701 0.581476L156.973 5.706Z" fill="currentColor"/>
+            <path d="M169.477 13.789V0.528646H171.147V13.789H169.477Z" fill="currentColor"/>
+            <path d="M191.565 0.528646H193.235V13.789H191.565L177.828 2.53619V13.8419H176.158V0.528646H177.828L191.511 11.7815V0.528646H191.565Z" fill="currentColor"/>
+          </svg>
+        {%- endif -%}
+      </a>
+
+      <div class='v3-submenu__actions'>
+        {%- comment -%} Shop / Studio toggle {%- endcomment -%}
+        <div
+          class='v3-submenu__toggle-group bg-rest rounded-pill'
+          role='group'
+          aria-label='Navigation context'
+        >
+          <button
+            type='button'
+            class='v3-submenu__toggle-btn rounded-pill text-nav-label font-base tracking-tight'
+            data-submenu-toggle='shop'
+            aria-pressed='true'
+          >
+            {{ shop_label | default: 'Shop' }}
+          </button>
+          <button
+            type='button'
+            class='v3-submenu__toggle-btn rounded-pill text-nav-label font-base tracking-tight'
+            data-submenu-toggle='studio'
+            aria-pressed='false'
+          >
+            {{ studio_label | default: 'Studio' }}
+          </button>
+        </div>
+
+        {%- comment -%} Close {%- endcomment -%}
+        <button
+          type='button'
+          class='v3-submenu__close'
+          data-submenu-close
+          aria-label='Close menu'
+        >
+          {%- render 'v3-icon-close', size: 10, class: 'text-ink' -%}
+        </button>
+      </div>
+    </div>
+
+    {%- comment -%} ═══ NAVIGATION BODY ═══ {%- endcomment -%}
+    <div class='v3-submenu__nav'>
+      {%- comment -%} NavigationLevels — flex-1, space-between for primary + quick {%- endcomment -%}
+      <div class='v3-submenu__levels'>
+        {%- comment -%} PrimaryLinks — L1 and L2 side-by-side {%- endcomment -%}
+        <div class='v3-submenu__primary' data-submenu-primary>
+          {%- comment -%} ── Shop L1 ── {%- endcomment -%}
+          <div class='v3-submenu__l1' data-submenu-context='shop'>
+            <div class='v3-submenu__subgroup' data-l1-group>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='skincare' data-has-l2>Skincare</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Hair & Body</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Tools & Accessories</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='brands' data-has-l2>Brands</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Shop All</a>
+            </div>
+            <div class='v3-submenu__subgroup' data-l1-group>
+              <span class='v3-submenu__subgroup-title text-submenu-caption'>Featured</span>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Concierge</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Bestsellers</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Subscribe & Save</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Gifting</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Sales & Offers</a>
+            </div>
+          </div>
+
+          {%- comment -%} ── Studio L1 ── {%- endcomment -%}
+          <div class='v3-submenu__l1' data-submenu-context='studio'>
+            <div class='v3-submenu__subgroup' data-l1-group>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='facials' data-has-l2>Facials</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='body-contouring' data-has-l2>Body Contouring</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='hair-removal' data-has-l2>Hair Removal</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='injectables' data-has-l2>Injectables</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-improvement' data-has-l2>Skin Improvement</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-tightening' data-has-l2>Skin Tightening</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>All Treatments</a>
+            </div>
+            <div class='v3-submenu__subgroup' data-l1-group>
+              <span class='v3-submenu__subgroup-title text-submenu-caption'>Featured</span>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Virtual Consult</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Gifting</a>
+              <a href='#' class='v3-submenu__l1-link text-submenu-l1'>Your Therapist</a>
+            </div>
+          </div>
+
+          {%- comment -%} ── L2 panels (Shop) ── {%- endcomment -%}
+          <div class='v3-submenu__l2' data-l2='skincare' data-l2-context='shop'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Cleansers</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Toners and Mists</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Creams and Moisturizers</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Exfoliants</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Eyes & Lips</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Masks and Treatments</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Serums and Oils</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Suncare</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Travel</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Skincare</a>
+          </div>
+          <div class='v3-submenu__l2' data-l2='brands' data-l2-context='shop'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Adipeau</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Biologique Recherche</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Calecim Professional</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Colorescience</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Ecotao</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Elta MD</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Future 5 Elements</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>L'oeuvre de Beauté</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Laboratoires Mansard</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>The Light Salon</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Manta</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Monika Heiligmann</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Nemat</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>NuFACE</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Brands</a>
+          </div>
+
+          {%- comment -%} ── L2 panels (Studio) ── {%- endcomment -%}
+          <div class='v3-submenu__l2' data-l2='facials' data-l2-context='studio'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Light Facial</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Essential Facial</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Bespoke Advanced Facial</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Aya's Touch Facial</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Microcurrent Facial</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Forma Facial</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Facials</a>
+          </div>
+          <div class='v3-submenu__l2' data-l2='body-contouring' data-l2-context='studio'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>BodyFX</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Forma Plus</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Body Contouring</a>
+          </div>
+          <div class='v3-submenu__l2' data-l2='hair-removal' data-l2-context='studio'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Diolaze</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Hair Removal</a>
+          </div>
+          <div class='v3-submenu__l2' data-l2='injectables' data-l2-context='studio'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Dermal Fillers</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Neuromodulators</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Injectables</a>
+          </div>
+          <div class='v3-submenu__l2' data-l2='skin-improvement' data-l2-context='studio'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Lumecca IPL</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Morpheus8</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>SkinPen®</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Skin Improvement</a>
+          </div>
+          <div class='v3-submenu__l2' data-l2='skin-tightening' data-l2-context='studio'>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Forma Plus</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>Morpheus8</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>SkinPen®</a>
+            <a href='#' class='v3-submenu__l2-link text-submenu-l2'>All Skin Tightening</a>
+          </div>
+        </div>
+
+        {%- comment -%} QuickActions {%- endcomment -%}
+        <div class='v3-submenu__quick'>
+          <button
+            type='button'
+            class='v3-submenu__quick-pill text-submenu-caption'
+            data-submenu-search
+          >
+            Search rewindskinco.com
+          </button>
+          <button
+            type='button'
+            class='v3-submenu__quick-pill text-submenu-caption'
+            data-submenu-bag
+          >
+            {{ cart_bag_label }}
+          </button>
+        </div>
+      </div>
+
+      {%- comment -%} UtilityLinks {%- endcomment -%}
+      <div class='v3-submenu__utility'>
+        <div class='v3-submenu__utility-links' data-submenu-context='shop'>
+          <a href='#' class='v3-submenu__utility-link text-submenu-utility'>Account</a>
+          <a href='#' class='v3-submenu__utility-link text-submenu-utility'>Shipping & Returns</a>
+        </div>
+        <div class='v3-submenu__utility-links' data-submenu-context='studio'>
+          <a href='#' class='v3-submenu__utility-link text-submenu-utility'>Manage Appointments</a>
+          <a href='#' class='v3-submenu__utility-link text-submenu-utility'>FAQ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ═══ CUSTOM PROPERTIES — SM/MD/MD-LG plateau (base) ═══ */
+  .v3-submenu {
+    --drawer-w: 522px;
+    --drawer-inset: 12px;
+    --drawer-r: 20px;
+    --header-h: 86px;
+    --header-pl: 24px;
+    --header-pr: 10px;
+    --header-py: 24px;
+    --close-size: 38px;
+    --l1-pl: 24px;
+    --l1-pr: 32px;
+    --l1-py: 24px;
+    --l1-w: 221px;
+    --link-gap-l1: 15px;
+    --subgroup-gap: 56px;
+    --title-gap: 30px;
+    --l2-pl: 32px;
+    --l2-pr: 24px;
+    --link-gap-l2: 13px;
+    --quick-h: 30px;
+    --utility-p: 24px;
+    --utility-gap: 14px;
+    --levels-pb: 18px;
+  }
+  @media (min-width: 1280px) {
+    .v3-submenu {
+      --drawer-inset: 14px;
+    }
+  }
+  /* LG/XL plateau */
+  @media (min-width: 1440px) {
+    .v3-submenu {
+      --drawer-w: 571px;
+      --drawer-inset: 16px;
+      --drawer-r: 24px;
+      --header-h: 104px;
+      --header-pl: 32px;
+      --header-pr: 17px;
+      --header-py: 32px;
+      --close-size: 40px;
+      --l1-pl: 32px;
+      --l1-pr: 40px;
+      --l1-py: 32px;
+      --l1-w: 255px;
+      --link-gap-l1: 16px;
+      --subgroup-gap: 64px;
+      --title-gap: 32px;
+      --l2-pl: 40px;
+      --l2-pr: 32px;
+      --link-gap-l2: 14px;
+      --quick-h: 32px;
+      --utility-p: 32px;
+      --utility-gap: 16px;
+      --levels-pb: 20px;
+    }
+  }
+
+  /* ═══ TYPOGRAPHY FOUNDATION ═══ */
+  .v3-submenu {
+    font-family:
+      'Scto Grotesk A',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      Oxygen-Sans,
+      Ubuntu,
+      Cantarell,
+      'Helvetica Neue',
+      sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .v3-submenu button,
+  .v3-submenu a {
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+  }
+  .v3-submenu a,
+  .v3-submenu a:visited {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  /* ═══ CONTAINER — hidden below SM, fixed fullscreen at SM+ ═══ */
+  .v3-submenu {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .v3-submenu {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .v3-submenu[data-submenu-state='open'] {
+      visibility: visible;
+      pointer-events: auto;
+    }
+  }
+
+  /* ═══ PAGE OVERLAY ═══ */
+  .v3-submenu__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(251, 250, 249, 0.5);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+  }
+
+  /* ═══ DRAWER PANEL ═══ */
+  .v3-submenu__drawer {
+    position: absolute;
+    top: var(--drawer-inset);
+    left: var(--drawer-inset);
+    width: var(--drawer-w);
+    height: calc(100dvh - var(--drawer-inset) * 2);
+    background: var(--color-bg);
+    border-radius: var(--drawer-r);
+    overflow: clip;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ═══ HEADING ═══ */
+  .v3-submenu__heading {
+    display: flex;
+    align-items: center;
+    height: var(--header-h);
+    padding: var(--header-py) var(--header-pr) var(--header-py) var(--header-pl);
+    gap: 40px;
+    flex-shrink: 0;
+  }
+  .v3-submenu__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  /* ═══ TOGGLE (active/demoted — no slider) ═══ */
+  .v3-submenu__toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+  }
+  .v3-submenu__toggle-btn {
+    position: relative;
+    z-index: 1;
+    height: 30px;
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    transition: color 150ms ease-out, background-color 150ms ease-out;
+  }
+  @media (min-width: 1440px) {
+    .v3-submenu__toggle-btn {
+      height: 32px;
+    }
+  }
+  .v3-submenu__toggle-btn[aria-pressed='true'] {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+  }
+  .v3-submenu__toggle-btn[aria-pressed='false'] {
+    background-color: transparent;
+    color: var(--color-muted);
+  }
+
+  /* ═══ CLOSE BUTTON ═══ */
+  .v3-submenu__close {
+    width: var(--close-size);
+    height: var(--close-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    transition: background-color 150ms ease-out;
+  }
+
+  /* ═══ NAVIGATION BODY ═══ */
+  .v3-submenu__nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .v3-submenu__levels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: var(--levels-pb);
+  }
+
+  /* ═══ PRIMARY LINKS (L1 + L2 side-by-side) ═══ */
+  .v3-submenu__primary {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+  }
+
+  /* ── L1 column ── */
+  .v3-submenu__l1 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--subgroup-gap);
+    padding: var(--l1-py) var(--l1-pr) var(--l1-py) var(--l1-pl);
+    flex: 1;
+    min-width: 0;
+  }
+  .v3-submenu__primary.has-l2 .v3-submenu__l1 {
+    width: var(--l1-w);
+    flex: none;
+  }
+
+  .v3-submenu__subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--link-gap-l1);
+  }
+  .v3-submenu__subgroup-title {
+    color: var(--color-ink);
+    margin-bottom: calc(var(--title-gap) - var(--link-gap-l1));
+  }
+  .v3-submenu__l1-link {
+    display: block;
+    color: var(--color-ink);
+    transition: color 150ms ease-out;
+  }
+
+  /* ── L2 panel ── */
+  .v3-submenu__l2 {
+    display: none;
+    flex-direction: column;
+    gap: var(--link-gap-l2);
+    padding: 0 var(--l2-pr) var(--l1-py) var(--l2-pl);
+    position: absolute;
+    top: 0;
+    left: var(--l1-w);
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+  }
+  .v3-submenu__l2.is-active {
+    display: flex;
+  }
+  .v3-submenu__l2-link {
+    display: block;
+    color: var(--color-ink);
+    transition: color 150ms ease-out;
+  }
+
+  /* ═══ QUICK ACTIONS ═══ */
+  .v3-submenu__quick {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 32px;
+  }
+  .v3-submenu__quick-pill {
+    height: var(--quick-h);
+    padding: 0 14px;
+    background: var(--color-rest);
+    border: none;
+    border-radius: 9999px;
+    color: var(--color-action);
+    text-align: center;
+    transition: background-color 150ms ease-out;
+  }
+
+  /* ═══ UTILITY LINKS ═══ */
+  .v3-submenu__utility {
+    border-top: 1px solid var(--color-hover);
+    padding: var(--utility-p);
+    flex-shrink: 0;
+  }
+  .v3-submenu__utility-links {
+    display: flex;
+    gap: var(--utility-gap);
+  }
+  .v3-submenu__utility-link {
+    color: var(--color-ink);
+    transition: color 150ms ease-out;
+  }
+
+  /* ═══ CONTEXT VISIBILITY ═══ */
+  .v3-submenu[data-context='shop'] [data-submenu-context='studio'],
+  .v3-submenu[data-context='studio'] [data-submenu-context='shop'] {
+    display: none;
+  }
+  .v3-submenu[data-context='shop'] [data-l2-context='studio'],
+  .v3-submenu[data-context='studio'] [data-l2-context='shop'] {
+    display: none;
+  }
+
+  /* ═══ HOVER STATES (pointer devices only) ═══ */
+  @media (hover: hover) {
+    /* Close button */
+    .v3-submenu__close:hover {
+      background-color: var(--color-rest);
+    }
+
+    /* QuickAction pills */
+    .v3-submenu__quick-pill:hover {
+      background-color: var(--color-hover);
+    }
+
+    /* L1 — highlight + demote siblings */
+    .v3-submenu__l1:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link {
+      color: var(--color-demoted);
+    }
+    .v3-submenu__l1:has(.v3-submenu__l1-link:hover) .v3-submenu__l1-link:hover {
+      color: var(--color-ink);
+    }
+
+    /* L2 — highlight + demote siblings */
+    .v3-submenu__l2.is-active:has(.v3-submenu__l2-link:hover) .v3-submenu__l2-link {
+      color: var(--color-demoted);
+    }
+    .v3-submenu__l2.is-active:has(.v3-submenu__l2-link:hover) .v3-submenu__l2-link:hover {
+      color: var(--color-ink);
+    }
+
+    /* Utility — highlight + demote siblings */
+    .v3-submenu__utility-links:has(.v3-submenu__utility-link:hover) .v3-submenu__utility-link {
+      color: var(--color-demoted);
+    }
+    .v3-submenu__utility-links:has(.v3-submenu__utility-link:hover) .v3-submenu__utility-link:hover {
+      color: var(--color-ink);
+    }
+  }
+
+  /* ═══ PRESSED STATES ═══ */
+  .v3-submenu__close:active {
+    background-color: var(--color-pressed);
+  }
+  .v3-submenu__quick-pill:active {
+    background-color: var(--color-pressed);
+  }
+
+  /* ═══ FOCUS VISIBLE ═══ */
+  .v3-submenu button:focus-visible,
+  .v3-submenu a:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 9999px;
+  }
+
+  /* ═══ REDUCED MOTION ═══ */
+  @media (prefers-reduced-motion: reduce) {
+    .v3-submenu,
+    .v3-submenu * {
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

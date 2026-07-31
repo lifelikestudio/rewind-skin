@@ -306,6 +306,13 @@
   </div>
 </nav>
 
+{%- render 'v3-submenu-drawer',
+  logo: section.settings.logo,
+  shop_label: section.settings.shop_label,
+  studio_label: section.settings.studio_label,
+  section_id: section.id
+-%}
+
 <style>
   .v3-nav {
     position: sticky;
@@ -511,10 +518,16 @@
 
 <script>
   (function () {
-    const nav = document.querySelector('[data-section-id="{{ section.id }}"]');
+    var nav = document.querySelector('[data-section-id="{{ section.id }}"]');
     if (!nav) return;
 
-    /* Shop/Studio — fire context event for submenu system (built later) */
+    var submenu = document.querySelector('[data-submenu]');
+    var drawer = submenu ? submenu.querySelector('.v3-submenu__drawer') : null;
+    var overlay = submenu ? submenu.querySelector('[data-submenu-overlay]') : null;
+    var primary = submenu ? submenu.querySelector('[data-submenu-primary]') : null;
+    var openTrigger = null;
+
+    /* ═══ SHOP/STUDIO TOGGLE — opens submenu drawer ═══ */
     var toggleBtns = nav.querySelectorAll('[data-nav-toggle]');
     toggleBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -525,10 +538,14 @@
             detail: { context: context },
           })
         );
+        if (submenu) {
+          openTrigger = btn;
+          openDrawer(context);
+        }
       });
     });
 
-    /* Shop/Studio hover slider (pointer devices only) */
+    /* ═══ SHOP/STUDIO HOVER SLIDER (pointer devices only) ═══ */
     var hasHover = window.matchMedia('(hover: hover)').matches;
     var reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
@@ -599,11 +616,11 @@
       });
     }
 
-    /* Hamburger */
-    const hamburger = nav.querySelector('[data-nav-hamburger]');
+    /* ═══ HAMBURGER ═══ */
+    var hamburger = nav.querySelector('[data-nav-hamburger]');
     if (hamburger) {
       hamburger.addEventListener('click', function () {
-        const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+        var expanded = hamburger.getAttribute('aria-expanded') === 'true';
         hamburger.setAttribute('aria-expanded', String(!expanded));
         document.dispatchEvent(
           new CustomEvent('nav:menu-toggle', {
@@ -612,6 +629,149 @@
         );
       });
     }
+
+    /* ═══ SUBMENU DRAWER ═══ */
+    if (!submenu || !drawer) return;
+
+    var activeL2 = null;
+
+    function openDrawer(context) {
+      submenu.setAttribute('data-context', context);
+      submenu.setAttribute('data-submenu-state', 'open');
+      submenu.setAttribute('aria-hidden', 'false');
+      updateDrawerToggle(context);
+      hideL2();
+      document.documentElement.style.overflow = 'hidden';
+      var closeBtn = submenu.querySelector('[data-submenu-close]');
+      if (closeBtn) closeBtn.focus();
+    }
+
+    function closeDrawer() {
+      submenu.setAttribute('data-submenu-state', 'closed');
+      submenu.setAttribute('aria-hidden', 'true');
+      hideL2();
+      document.documentElement.style.overflow = '';
+      if (openTrigger) {
+        openTrigger.focus();
+        openTrigger = null;
+      }
+    }
+
+    function updateDrawerToggle(context) {
+      var btns = submenu.querySelectorAll('[data-submenu-toggle]');
+      btns.forEach(function (btn) {
+        var isActive = btn.getAttribute('data-submenu-toggle') === context;
+        btn.setAttribute('aria-pressed', String(isActive));
+      });
+    }
+
+    /* Close triggers */
+    var closeBtn = submenu.querySelector('[data-submenu-close]');
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (overlay) overlay.addEventListener('click', closeDrawer);
+
+    document.addEventListener('keydown', function (e) {
+      if (
+        e.key === 'Escape' &&
+        submenu.getAttribute('data-submenu-state') === 'open'
+      ) {
+        closeDrawer();
+      }
+    });
+
+    /* Context toggle inside the drawer */
+    var drawerToggles = submenu.querySelectorAll('[data-submenu-toggle]');
+    drawerToggles.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var context = btn.getAttribute('data-submenu-toggle');
+        submenu.setAttribute('data-context', context);
+        nav.setAttribute('data-nav-context', context);
+        updateDrawerToggle(context);
+        hideL2();
+      });
+    });
+
+    /* ═══ L2 HOVER REVEAL (pointer devices only) ═══ */
+    if (primary && hasHover) {
+      primary.addEventListener('mouseover', function (e) {
+        if (submenu.getAttribute('data-submenu-state') !== 'open') return;
+        if (e.target.closest('.v3-submenu__l2')) return;
+
+        var l1Link = e.target.closest('.v3-submenu__l1-link');
+        if (l1Link && l1Link.hasAttribute('data-has-l2')) {
+          showL2(l1Link.getAttribute('data-l1'), l1Link);
+        } else if (l1Link || e.target.closest('.v3-submenu__subgroup-title')) {
+          hideL2();
+        }
+      });
+
+      primary.addEventListener('mouseleave', function () {
+        hideL2();
+      });
+    }
+
+    function showL2(slug, l1Link) {
+      var context = submenu.getAttribute('data-context');
+      var panel = submenu.querySelector(
+        '[data-l2="' + slug + '"][data-l2-context="' + context + '"]'
+      );
+      if (!panel || panel === activeL2) return;
+
+      if (activeL2) {
+        activeL2.classList.remove('is-active');
+        activeL2.style.paddingTop = '';
+      }
+
+      panel.classList.add('is-active');
+      primary.classList.add('has-l2');
+      activeL2 = panel;
+
+      /* Baseline alignment: position first L2 link so its baseline
+         (Capsize-trimmed bottom edge) aligns with the hovered L1 link's
+         baseline. Both use Capsize cap-height trim, so getBoundingClientRect
+         bottom ≈ text baseline. */
+      var firstL2Link = panel.querySelector('.v3-submenu__l2-link');
+      if (firstL2Link) {
+        var l1Rect = l1Link.getBoundingClientRect();
+        var primaryRect = primary.getBoundingClientRect();
+        var l1BaselineY = l1Rect.bottom - primaryRect.top;
+        var l2Height = firstL2Link.getBoundingClientRect().height;
+        panel.style.paddingTop = Math.max(0, l1BaselineY - l2Height) + 'px';
+      }
+    }
+
+    function hideL2() {
+      if (!activeL2) return;
+      activeL2.classList.remove('is-active');
+      activeL2.style.paddingTop = '';
+      activeL2 = null;
+      if (primary) primary.classList.remove('has-l2');
+    }
+
+    /* ═══ FOCUS TRAP ═══ */
+    drawer.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      if (submenu.getAttribute('data-submenu-state') !== 'open') return;
+
+      var focusables = drawer.querySelectorAll(
+        'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"])'
+      );
+      var visible = Array.from(focusables).filter(function (el) {
+        return el.offsetParent !== null;
+      });
+      if (!visible.length) return;
+
+      var first = visible[0];
+      var last = visible[visible.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
   })();
 </script>
 

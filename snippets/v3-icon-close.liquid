@@ -1,0 +1,24 @@
+{% comment %}
+  V3 Close icon — X mark (two crossed strokes).
+  Renders at currentColor; size controlled by parent.
+
+  Parameters:
+    size   — width/height in px (default: 10)
+    class  — CSS classes on the <svg>
+{% endcomment %}
+{%- liquid
+  assign _size = size | default: 10
+-%}
+<svg
+  class="{{ class }}"
+  width="{{ _size }}"
+  height="{{ _size }}"
+  viewBox="0 0 10 10"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M1 1L9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M9 1L1 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+</svg>
