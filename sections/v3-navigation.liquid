@@ -7,10 +7,15 @@
 
 {%- liquid
   assign cart_count = cart.item_count
-  if cart_count > 9
-    assign cart_count_display = '9+'
+  if cart_count > 99
+    assign cart_count_desktop = '99+'
   else
-    assign cart_count_display = cart_count | append: ''
+    assign cart_count_desktop = cart_count | append: ''
+  endif
+  if cart_count > 9
+    assign cart_count_badge = '9+'
+  else
+    assign cart_count_badge = cart_count | append: ''
   endif
 -%}
 
@@ -135,9 +140,10 @@
           data-nav-cart
         >
           Bag
-          {%- if cart_count > 0 -%}&nbsp;
+          {%- if cart_count > 0 -%}
+            &nbsp;
             <span class='v3-nav__cart-count' aria-live='polite'>
-              ({{ cart_count_display }})</span
+              ({{ cart_count_desktop }})</span
             >
           {%- endif %}
         </button>
@@ -219,6 +225,7 @@
           type='button'
           class='text-ink flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
           aria-label='Search'
+          aria-expanded='false'
           data-nav-search-mobile
         >
           {%- render 'v3-icon-search',
@@ -230,46 +237,69 @@
       {%- endif -%}
 
       {%- if section.settings.show_cart -%}
-        <a
-          href='{{ routes.cart_url }}'
-          class='text-ink relative flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
-          aria-label='{{ 'templates.cart.cart' | t }}{% if cart_count > 0 %}, {{ cart_count }} {{ 'templates.cart.item_count' | t }}{% endif %}'
+        <button
+          type='button'
+          class='text-ink flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
+          aria-label='Cart{% if cart_count > 0 %}, {{ cart_count }} {{ cart_count | pluralize: 'item', 'items' }}{% endif %}'
+          aria-expanded='false'
           id='v3-cart-mobile'
+          data-nav-cart-mobile
         >
-          {%- render 'v3-icon-cart',
-            size: 26,
-            frame_size: 26,
-            class: 'w-[24px] xxs:w-[25px] xs:w-[26px] h-[24px] xxs:h-[25px] xs:h-[26px]'
-          -%}
-          {%- if cart_count > 0 -%}
-            <span
-              class='
-                bg-ink text-bg rounded-pill
-                border-bg text-nav-badge absolute
-                -top-[4px] left-[56%] flex
-                h-[18px] min-w-[18px]
-                items-center justify-center border-2
-                px-[4px] font-medium tracking-tight
-              '
-              aria-hidden='true'
-            >
-              {{- cart_count_display -}}
-            </span>
-          {%- endif -%}
-        </a>
+          <span class='relative'>
+            {%- render 'v3-icon-cart',
+              size: 26,
+              frame_size: 26,
+              class: 'w-[24px] xxs:w-[25px] xs:w-[26px] h-[24px] xxs:h-[25px] xs:h-[26px]'
+            -%}
+            {%- if cart_count > 0 -%}
+              <span
+                class='
+                  v3-nav__cart-badge
+                  bg-ink text-bg rounded-pill
+                  text-nav-badge ring-bg
+                  absolute flex h-[18px]
+                  w-[26px] items-center
+                  justify-center text-center
+                  font-medium tracking-tight ring-2
+                '
+                aria-hidden='true'
+              >
+                {{- cart_count_badge -}}
+              </span>
+            {%- endif -%}
+          </span>
+        </button>
       {%- endif -%}
 
       {%- comment -%} Hamburger pill (MobileMenuBtn) {%- endcomment -%}
       <button
         type='button'
-        class='v3-nav__hamburger xs:px-[16px] xs:ml-[3px] xxs:ml-[3.5px] bg-rest rounded-pill flex h-[32px] items-center justify-center px-[15px] ml-[4px] transition-colors duration-150 ease-out'
+        class='v3-nav__hamburger xs:px-[16px] bg-rest rounded-pill flex h-[32px] items-center justify-center px-[15px] transition-colors duration-150 ease-out'
         aria-label='Open menu'
         aria-expanded='false'
         data-nav-hamburger
       >
-        <span class='flex flex-col items-center justify-center gap-[5px] py-[2px]'>
-          <span class='bg-ink rounded-pill block h-[1.2px] w-[20px]'></span>
-          <span class='bg-ink rounded-pill block h-[1.2px] w-[20px]'></span>
+        {%- comment -%}
+          Single SVG so both bars share one paint/AA pass. Two separate
+          1.2px spans land on different subpixel Y offsets under flex
+          centering and render at visibly different weights.
+        {%- endcomment -%}
+        <span
+          class='flex items-center justify-center py-[2px]'
+          aria-hidden='true'
+        >
+          <svg
+            class='text-ink block'
+            width='20'
+            height='7.4'
+            viewBox='0 0 20 7.4'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            focusable='false'
+          >
+            <rect width='20' height='1.2' rx='0.6' fill='currentColor'/>
+            <rect y='6.2' width='20' height='1.2' rx='0.6' fill='currentColor'/>
+          </svg>
         </span>
       </button>
     </div>
@@ -366,6 +396,10 @@
         background-color 150ms ease-out;
     }
 
+    .v3-nav__search-pill span:first-child {
+      transition: color 150ms ease-out 200ms;
+    }
+
     .v3-nav__search-pill:hover {
       background-color: var(--color-hover);
     }
@@ -404,7 +438,49 @@
     }
   }
 
-  /* ═══ MOBILE: hamburger pressed ═══ */
+  /* ═══ MOBILE: cart badge ═══
+     Capsize trim pseudos (display: table) become flex items inside the
+     badge pill and fight against flex centering. Disable them here —
+     the badge uses flexbox for vertical alignment, not text flow. */
+  .v3-nav__cart-badge {
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%) scale(0.923);
+    padding-top: 1px;
+  }
+  @media (min-width: 375px) {
+    .v3-nav__cart-badge {
+      transform: translate(50%, -50%) scale(0.962);
+    }
+  }
+  @media (min-width: 428px) {
+    .v3-nav__cart-badge {
+      transform: translate(50%, -50%) scale(1);
+    }
+  }
+  .v3-nav__cart-badge::before,
+  .v3-nav__cart-badge::after {
+    display: none;
+  }
+
+  /* ═══ MOBILE: hamburger spacing + pressed ═══
+     Left margin compensates for cart touch-target padding so the visual
+     gap between icon edge and pill edge matches the design (14/15/16px).
+     Declared here (unlayered) because global.css `button { margin: 0 }`
+     beats Tailwind utilities living in @layer utilities. */
+  .v3-nav__hamburger {
+    margin-left: 4px;
+  }
+  @media (min-width: 375px) {
+    .v3-nav__hamburger {
+      margin-left: 3.5px;
+    }
+  }
+  @media (min-width: 428px) {
+    .v3-nav__hamburger {
+      margin-left: 3px;
+    }
+  }
   .v3-nav__hamburger:active {
     background-color: var(--color-pressed);
   }
@@ -507,6 +583,14 @@
       });
 
       pathsGroup.addEventListener('mouseleave', function () {
+        if (fadeTimer) {
+          clearTimeout(fadeTimer);
+          fadeTimer = null;
+        }
+        fadeSlider();
+      });
+
+      window.addEventListener('resize', function () {
         if (fadeTimer) {
           clearTimeout(fadeTimer);
           fadeTimer = null;

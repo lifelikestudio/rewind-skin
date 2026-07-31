@@ -1,12 +1,43 @@
 {% comment %}
   V3 Search icon — Lucide-style magnifying glass.
   Renders at currentColor; size controlled by parent.
+
+  Parameters:
+    size        — fallback width/height in px (default: 26)
+    class       — CSS classes on the <svg>
+    frame_size  — when set, expands viewBox to this square size and centres
+                  the artwork within it (use for bare icon triggers where the
+                  bounding box is larger than the artwork)
 {% endcomment %}
+{%- liquid
+  assign _size = size | default: 26
+  assign _artwork_w = 20.6985
+  assign _artwork_h = 20.6985
+-%}
+{%- if frame_size -%}
+  {%- assign _offset_x = frame_size | minus: _artwork_w | divided_by: 2.0 -%}
+  {%- assign _offset_y = frame_size | minus: _artwork_h | divided_by: 2.0 -%}
 <svg
   class="{{ class }}"
-  width="{{ size | default: 20 }}"
-  height="{{ size | default: 20 }}"
-  viewBox="0 0 20.6985 20.6985"
+  width="{{ _size }}"
+  height="{{ _size }}"
+  viewBox="0 0 {{ frame_size }} {{ frame_size }}"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+  focusable="false"
+>
+  <g transform="translate({{ _offset_x }}, {{ _offset_y }})">
+    <path d="M20.0985 20.0985L15.3969 15.3969" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9.26667 17.9333C14.0531 17.9333 17.9333 14.0531 17.9333 9.26667C17.9333 4.4802 14.0531 0.6 9.26667 0.6C4.4802 0.6 0.6 4.4802 0.6 9.26667C0.6 14.0531 4.4802 17.9333 9.26667 17.9333Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
+{%- else -%}
+<svg
+  class="{{ class }}"
+  width="{{ _size }}"
+  height="{{ _size }}"
+  viewBox="0 0 {{ _artwork_w }} {{ _artwork_h }}"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   aria-hidden="true"
@@ -15,3 +46,4 @@
   <path d="M20.0985 20.0985L15.3969 15.3969" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M9.26667 17.9333C14.0531 17.9333 17.9333 14.0531 17.9333 9.26667C17.9333 4.4802 14.0531 0.6 9.26667 0.6C4.4802 0.6 0.6 4.4802 0.6 9.26667C0.6 14.0531 4.4802 17.9333 9.26667 17.9333Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
+{%- endif -%}
