@@ -1,6 +1,6 @@
 {% comment %}
   V3 Navigation — MainNav
-  Two layouts: desktop (sm+) and mobile (<sm).
+  Two layouts: desktop (SM and above) and mobile (below SM).
   Desktop: Logotype | PriorityLinks (Shop/Studio toggle + Search pill) | SupportingLinks
   Mobile: Logotype | Triggers (Search + Cart + Hamburger)
 {% endcomment %}
@@ -116,6 +116,8 @@
             type='button'
             class='v3-nav__search-pill bg-rest rounded-pill flex h-[38px] items-center gap-[8px] pr-[5px] pl-[18px] transition-colors duration-150 ease-out lg:h-[40px] lg:pr-[6px]'
             aria-label='Search'
+            aria-expanded='false'
+            aria-controls='v3-search-drawer-{{ section.id }}'
             data-nav-search
           >
             <span class='text-nav-label font-base text-ink tracking-tight transition-colors duration-150 ease-out'
@@ -175,7 +177,7 @@
     </div>
   </div>
 
-  {%- comment -%} ═══ MOBILE (<sm) ═══ {%- endcomment -%}
+  {%- comment -%} ═══ MOBILE (BELOW SM) ═══ {%- endcomment -%}
   <div
     class='
       xxs:h-[76px] xs:h-[80px] xxs:pl-[14px] xs:pl-[16px]
@@ -317,6 +319,14 @@
   shop_label: section.settings.shop_label,
   studio_label: section.settings.studio_label,
   section_id: section.id
+-%}
+
+{%- render 'v3-search-drawer',
+  logo: section.settings.logo,
+  section_id: section.id,
+  popular_terms: section.settings.search_popular_terms,
+  popular_collection: section.settings.search_popular_collection,
+  treatment_menu: section.settings.search_treatment_menu
 -%}
 
 {%- render 'v3-mobile-menu',
@@ -557,6 +567,8 @@
     var drawer = submenu ? submenu.querySelector('.v3-submenu__drawer') : null;
     var overlay = submenu ? submenu.querySelector('[data-submenu-overlay]') : null;
     var primary = submenu ? submenu.querySelector('[data-submenu-primary]') : null;
+    var searchDrawer = document.getElementById('v3-search-drawer-{{ section.id }}');
+    var searchTrigger = nav.querySelector('[data-nav-search]');
     var openTrigger = null;
     var inertRecords = [];
 
@@ -717,6 +729,369 @@
     /* ── GSAP duration (0 for reduced-motion users) ── */
     var motionDur = reducedMotion ? 0 : 0.2;
     var motionDurFast = reducedMotion ? 0 : 0.15;
+
+    /* ═══ SEARCH DRAWER — SM–XL ═══ */
+    if (searchDrawer && searchTrigger) {
+      var searchInput = searchDrawer.querySelector('[data-search-input]');
+      var searchForm = searchDrawer.querySelector('[data-search-form]');
+      var searchClear = searchDrawer.querySelector('[data-search-clear]');
+      var searchClose = searchDrawer.querySelector('[data-search-close]');
+      var searchOverlay = searchDrawer.querySelector('[data-search-overlay]');
+      var searchStates = searchDrawer.querySelector('[data-search-states]');
+      var searchPredictive = searchDrawer.querySelector('[data-search-predictive-results]');
+      var searchQueryLabel = searchDrawer.querySelector('[data-search-query]');
+      var searchViewAll = searchDrawer.querySelector('[data-search-view-all]');
+      var searchFooterHint = searchDrawer.querySelector('[data-search-footer-hint]');
+      var searchAnnounce = searchDrawer.querySelector('[data-search-announce]');
+      var searchScroll = searchDrawer.querySelector('[data-search-scroll]');
+      var searchTreatmentSource = searchDrawer.querySelector('[data-search-treatment-source]');
+      var searchCloseTimer = null;
+      var searchDebounceTimer = null;
+      var searchRequest = null;
+      var searchOpenTrigger = null;
+      var searchNavigating = false;
+
+      function setSearchView(view, immediate) {
+        if (!searchStates) {
+          searchDrawer.setAttribute('data-search-view', view);
+          return;
+        }
+
+        gsap.killTweensOf(searchStates);
+        if (immediate || reducedMotion) {
+          searchDrawer.setAttribute('data-search-view', view);
+          gsap.set(searchStates, { clearProps: 'opacity' });
+          return;
+        }
+
+        gsap.to(searchStates, {
+          opacity: 0,
+          duration: motionDurFast,
+          ease: 'power1.out',
+          onComplete: function () {
+            searchDrawer.setAttribute('data-search-view', view);
+            gsap.to(searchStates, {
+              opacity: 1,
+              duration: motionDur,
+              ease: 'power1.out',
+              onComplete: function () {
+                gsap.set(searchStates, { clearProps: 'opacity' });
+              }
+            });
+          }
+        });
+      }
+
+      function updateSearchQueryState() {
+        var query = searchInput ? searchInput.value.trim() : '';
+        if (query) {
+          searchDrawer.setAttribute('data-search-has-query', '');
+        } else {
+          searchDrawer.removeAttribute('data-search-has-query');
+        }
+        return query;
+      }
+
+      function resetSearchResults() {
+        if (searchDebounceTimer) {
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = null;
+        }
+        if (searchRequest) {
+          searchRequest.abort();
+          searchRequest = null;
+        }
+        searchDrawer.removeAttribute('data-search-has-results');
+        if (searchPredictive) searchPredictive.innerHTML = '';
+        if (searchInput) searchInput.setAttribute('aria-expanded', 'false');
+        if (searchStates) searchStates.setAttribute('aria-busy', 'false');
+        setSearchView('initial', true);
+      }
+
+      function resetSearchDrawerState() {
+        if (!searchDrawer) return;
+        if (searchCloseTimer) {
+          clearTimeout(searchCloseTimer);
+          searchCloseTimer = null;
+        }
+        if (searchInput) searchInput.value = '';
+        updateSearchQueryState();
+        resetSearchResults();
+        searchDrawer.setAttribute('data-search-state', 'closed');
+        searchDrawer.setAttribute('aria-hidden', 'true');
+        searchTrigger.setAttribute('aria-expanded', 'false');
+        searchOpenTrigger = null;
+        searchNavigating = false;
+      }
+
+      function openSearchDrawer(trigger) {
+        if (window.innerWidth < 768) return;
+        if (searchCloseTimer) {
+          clearTimeout(searchCloseTimer);
+          searchCloseTimer = null;
+        }
+
+        if (submenu && submenu.getAttribute('data-submenu-state') === 'open') {
+          closeDrawer();
+        }
+
+        searchOpenTrigger =
+          trigger && trigger.closest('[data-submenu]') ? searchTrigger : trigger || searchTrigger;
+        searchDrawer.setAttribute('data-search-state', 'open');
+        searchDrawer.setAttribute('aria-hidden', 'false');
+        searchTrigger.setAttribute('aria-expanded', 'true');
+        nav.setAttribute('data-nav-shared-fade', '');
+        document.documentElement.style.overflow = 'hidden';
+        isolateModal(searchDrawer);
+
+        requestAnimationFrame(function () {
+          if (searchInput) searchInput.focus();
+        });
+      }
+
+      function closeSearchDrawer(restoreFocus) {
+        if (searchCloseTimer) return;
+        searchDrawer.setAttribute('data-search-state', 'closing');
+        searchDrawer.setAttribute('aria-hidden', 'true');
+        searchTrigger.setAttribute('aria-expanded', 'false');
+        nav.removeAttribute('data-nav-shared-fade');
+        document.documentElement.style.overflow = '';
+        clearModalIsolation();
+
+        searchCloseTimer = setTimeout(function () {
+          searchDrawer.setAttribute('data-search-state', 'closed');
+          searchCloseTimer = null;
+          if (!searchNavigating) {
+            if (searchInput) searchInput.value = '';
+            updateSearchQueryState();
+            resetSearchResults();
+          }
+        }, 280);
+
+        if (restoreFocus !== false && searchOpenTrigger) {
+          searchOpenTrigger.focus();
+          searchOpenTrigger = null;
+        }
+      }
+
+      function buildTreatmentGroup(query, response) {
+        if (!searchTreatmentSource || !response) return 0;
+        var normalizedQuery = query.toLocaleLowerCase();
+        var matches = Array.from(
+          searchTreatmentSource.querySelectorAll('[data-search-treatment]')
+        )
+          .filter(function (link) {
+            return link.textContent.trim().toLocaleLowerCase().indexOf(normalizedQuery) !== -1;
+          })
+          .slice(0, 6);
+
+        if (!matches.length) return 0;
+
+        var section = document.createElement('section');
+        section.className = 'v3-search__subgroup';
+        section.setAttribute('data-search-results-group', 'treatments');
+
+        var heading = document.createElement('h2');
+        heading.className = 'v3-search__subgroup-title text-submenu-caption';
+        heading.textContent = 'Treatments';
+        section.appendChild(heading);
+
+        var list = document.createElement('div');
+        list.className = 'v3-search__link-list';
+        matches.forEach(function (sourceLink) {
+          var link = document.createElement('a');
+          link.className = 'v3-search__result-link text-submenu-l1';
+          link.href = sourceLink.href;
+          link.textContent = sourceLink.textContent.trim();
+          link.setAttribute('data-search-result-link', '');
+          list.appendChild(link);
+        });
+        section.appendChild(list);
+        response.appendChild(section);
+        return matches.length;
+      }
+
+      function updateSearchLinks(query, clickedSuggestion) {
+        var searchUrl = searchForm ? searchForm.action : '{{ routes.search_url }}';
+        if (searchViewAll) {
+          searchViewAll.href = searchUrl + '?q=' + encodeURIComponent(query);
+        }
+        if (searchFooterHint) {
+          searchFooterHint.textContent = clickedSuggestion ? 'Press Enter' : 'or press Enter';
+        }
+      }
+
+      function renderSearchResponse(markup, query, clickedSuggestion) {
+        var documentFragment = new DOMParser().parseFromString(markup, 'text/html');
+        var response = documentFragment.querySelector('[data-search-response]');
+        var serverCount = response
+          ? parseInt(response.getAttribute('data-search-result-count') || '0', 10)
+          : 0;
+        var actionableCount = response
+          ? parseInt(response.getAttribute('data-search-actionable-count') || '0', 10)
+          : 0;
+        var treatmentCount = buildTreatmentGroup(query, response);
+        var totalCount = serverCount + treatmentCount;
+        actionableCount += treatmentCount;
+
+        if (searchPredictive) {
+          searchPredictive.innerHTML = '';
+          if (response) searchPredictive.appendChild(response);
+        }
+
+        if (searchQueryLabel) searchQueryLabel.textContent = query;
+        searchDrawer.toggleAttribute('data-search-has-results', actionableCount > 0);
+        if (searchInput) searchInput.setAttribute('aria-expanded', String(totalCount > 0));
+        updateSearchLinks(query, clickedSuggestion);
+
+        if (totalCount > 0) {
+          setSearchView(clickedSuggestion ? 'clicked' : 'autocomplete');
+          if (searchAnnounce) {
+            searchAnnounce.textContent =
+              totalCount + ' ' + (totalCount === 1 ? 'result' : 'results') + ' available';
+          }
+        } else {
+          setSearchView('no-results');
+          if (searchAnnounce) searchAnnounce.textContent = 'No search results found';
+        }
+
+        if (searchStates) searchStates.setAttribute('aria-busy', 'false');
+        searchRequest = null;
+      }
+
+      function requestSearch(query, clickedSuggestion) {
+        if (searchRequest) searchRequest.abort();
+        searchRequest = new AbortController();
+        if (searchStates) searchStates.setAttribute('aria-busy', 'true');
+
+        var predictiveUrl = searchDrawer.getAttribute('data-predictive-url');
+        var url =
+          predictiveUrl +
+          '?q=' +
+          encodeURIComponent(query) +
+          '&resources[type]=query,product,collection' +
+          '&resources[limit]=6' +
+          '&section_id=v3-predictive-search';
+
+        fetch(url, { signal: searchRequest.signal })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Search request failed');
+            return response.text();
+          })
+          .then(function (markup) {
+            renderSearchResponse(markup, query, clickedSuggestion);
+          })
+          .catch(function (error) {
+            if (error.name === 'AbortError') return;
+            if (searchStates) searchStates.setAttribute('aria-busy', 'false');
+            searchRequest = null;
+            if (searchAnnounce) {
+              searchAnnounce.textContent = 'Search is temporarily unavailable';
+            }
+          });
+      }
+
+      function scheduleSearch(clickedSuggestion) {
+        var query = updateSearchQueryState();
+        if (!query) {
+          resetSearchResults();
+          return;
+        }
+
+        if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(
+          function () {
+            requestSearch(query, clickedSuggestion);
+          },
+          clickedSuggestion ? 0 : 180
+        );
+      }
+
+      [searchTrigger]
+        .concat(Array.from(submenu ? submenu.querySelectorAll('[data-submenu-search]') : []))
+        .forEach(function (trigger) {
+          trigger.addEventListener('click', function () {
+            openSearchDrawer(trigger);
+          });
+        });
+
+      if (searchClose) {
+        searchClose.addEventListener('click', function () {
+          closeSearchDrawer();
+        });
+      }
+      if (searchOverlay) {
+        searchOverlay.addEventListener('click', function () {
+          closeSearchDrawer();
+        });
+      }
+      if (searchClear) {
+        searchClear.addEventListener('click', function () {
+          if (searchInput) searchInput.value = '';
+          updateSearchQueryState();
+          resetSearchResults();
+          if (searchInput) searchInput.focus();
+        });
+      }
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          scheduleSearch(false);
+        });
+      }
+
+      searchDrawer.addEventListener('click', function (event) {
+        var suggestion = event.target.closest('[data-search-suggestion]');
+        if (suggestion) {
+          var value = suggestion.getAttribute('data-search-suggestion-value') || '';
+          searchInput.value = value;
+          updateSearchQueryState();
+          scheduleSearch(true);
+          searchInput.focus();
+          return;
+        }
+
+        var resultLink = event.target.closest('[data-search-result-link]');
+        if (resultLink && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+          event.preventDefault();
+          searchNavigating = true;
+          closeSearchDrawer(false);
+          var destination = resultLink.href;
+          gsap.delayedCall(motionDur, function () {
+            window.location.href = destination;
+          });
+        }
+      });
+
+      searchDrawer.addEventListener('mouseover', function (event) {
+        if (!hasHover) return;
+        var link = event.target.closest('.v3-search__result-link');
+        if (!link) return;
+        var group = link.closest('[data-search-results-group]');
+        if (!group) return;
+        group.setAttribute('data-link-focused', '');
+        link.setAttribute('data-focused', '');
+      });
+
+      searchDrawer.addEventListener('mouseout', function (event) {
+        if (!hasHover) return;
+        var link = event.target.closest('.v3-search__result-link');
+        if (!link) return;
+        var group = link.closest('[data-search-results-group]');
+        link.removeAttribute('data-focused');
+        if (group && !group.querySelector('[data-focused]')) {
+          group.removeAttribute('data-link-focused');
+        }
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (
+          event.key === 'Escape' &&
+          searchDrawer.getAttribute('data-search-state') === 'open'
+        ) {
+          closeSearchDrawer();
+        }
+      });
+    }
 
     if (mobileMenu && mobilePanel) {
       var mobileAnnounce = mobileMenu.querySelector('[data-mobile-menu-announce]');
@@ -1595,6 +1970,14 @@
           if (desktopTrigger) desktopTrigger.focus();
         }
       } else if (!isDesktop) {
+        if (searchDrawer) {
+          var searchState = searchDrawer.getAttribute('data-search-state');
+          if (searchState === 'open' || searchState === 'closing') {
+            resetSearchDrawerState();
+            document.documentElement.style.overflow = '';
+            clearModalIsolation();
+          }
+        }
         var desktopState = submenu.getAttribute('data-submenu-state');
         if (desktopState === 'open' || desktopState === 'closing') {
           resetDesktopDrawerState();
@@ -1610,6 +1993,7 @@
     window.addEventListener('pagehide', function () {
       resetMobileMenuState();
       resetDesktopDrawerState();
+      if (searchDrawer) resetSearchDrawerState();
       document.documentElement.style.overflow = '';
       clearModalIsolation();
     });
@@ -1618,6 +2002,7 @@
       if (!e.persisted) return;
       resetMobileMenuState();
       resetDesktopDrawerState();
+      if (searchDrawer) resetSearchDrawerState();
       document.documentElement.style.overflow = '';
       clearModalIsolation();
     });
@@ -1677,6 +2062,23 @@
       "id": "show_search",
       "label": "Show search",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_popular_terms",
+      "label": "Most searched keywords",
+      "info": "Separate terms with commas."
+    },
+    {
+      "type": "collection",
+      "id": "search_popular_collection",
+      "label": "Most searched products"
+    },
+    {
+      "type": "link_list",
+      "id": "search_treatment_menu",
+      "label": "Searchable treatments",
+      "info": "Links from this menu can appear in treatment search results."
     },
     {
       "type": "checkbox",

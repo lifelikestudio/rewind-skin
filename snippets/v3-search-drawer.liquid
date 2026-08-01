@@ -1,0 +1,810 @@
+{% comment %}
+  V3 Search Drawer — desktop SM–XL.
+
+  Parameters:
+    logo                — image object from parent navigation section
+    section_id          — parent section id
+    popular_terms       — comma-separated fallback search terms
+    popular_collection  — collection used for fallback product cards
+    treatment_menu      — optional menu used for treatment matches
+{% endcomment %}
+
+{%- liquid
+  assign search_terms = popular_terms | split: ','
+  assign fallback_products = popular_collection.products
+-%}
+
+<aside
+  id='v3-search-drawer-{{ section_id }}'
+  class='v3-search'
+  data-search-drawer
+  data-search-state='closed'
+  data-search-view='initial'
+  data-predictive-url='{{ routes.predictive_search_url }}'
+  aria-hidden='true'
+  aria-label='Search'
+>
+  <div class='v3-search__overlay' data-search-overlay aria-hidden='true'></div>
+
+  <div
+    class='v3-search__drawer'
+    role='dialog'
+    aria-modal='true'
+    aria-label='Search rewindskinco.com'
+  >
+    <header class='v3-search__header'>
+      <a
+        href='{{ routes.root_url }}'
+        class='v3-search__logo'
+        aria-label='{{ shop.name }}'
+      >
+        {%- render 'v3-logotype',
+          logo: logo,
+          class: 'v3-search__logo-image h-[16px] w-[220px] lg:h-[18px] lg:w-[248px]'
+        -%}
+      </a>
+
+      <button
+        type='button'
+        class='v3-search__close'
+        data-search-close
+        aria-label='Close search'
+      >
+        {%- render 'v3-icon-close', size: 10, class: 'text-ink' -%}
+      </button>
+    </header>
+
+    <div class='v3-search__body'>
+      <div class='v3-search__scroll' data-search-scroll>
+        <form
+          action='{{ routes.search_url }}'
+          method='get'
+          role='search'
+          class='v3-search__form'
+          data-search-form
+        >
+          <div class='v3-search__input-ring'>
+            <div class='v3-search__input-field'>
+              <span class='v3-search__input-icon'>
+                {%- render 'v3-icon-search',
+                  size: 12,
+                  class: 'h-[12px] w-[12px] text-ink'
+                -%}
+              </span>
+              <input
+                id='v3-search-input-{{ section_id }}'
+                class='v3-search__input text-search-input'
+                type='search'
+                name='q'
+                value=''
+                placeholder='Search products and collections...'
+                autocomplete='off'
+                autocorrect='off'
+                autocapitalize='off'
+                spellcheck='false'
+                aria-autocomplete='list'
+                aria-controls='v3-search-results-{{ section_id }}'
+                aria-expanded='false'
+                data-search-input
+              >
+              <button
+                type='button'
+                class='v3-search__input-clear text-search-small'
+                data-search-clear
+                aria-label='Clear search'
+              >
+                <span data-search-clear-empty aria-hidden='true'>
+                  {%- render 'v3-icon-close', size: 8, class: 'text-muted' -%}
+                </span>
+                <span data-search-clear-active aria-hidden='true'>Clear</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div
+          id='v3-search-results-{{ section_id }}'
+          class='v3-search__states'
+          aria-live='polite'
+          aria-busy='false'
+          data-search-states
+        >
+          <div class='v3-search__callout' data-search-callout>
+            <p class='text-search-callout-title'>
+              We couldn't find anything related to “<span
+                data-search-query
+              ></span
+              >”.
+            </p>
+            <p class='text-search-callout-body'>
+              Try a different word, phrase, or start with one of the most
+              searched terms below.
+            </p>
+          </div>
+
+          <div class='v3-search__fallback' data-search-fallback>
+            {%- if popular_terms != blank -%}
+              <section class='v3-search__subgroup'>
+                <h2 class='v3-search__subgroup-title text-submenu-caption'>
+                  Most searched keywords
+                </h2>
+                <div class='v3-search__suggestion-list' role='list'>
+                  {%- for term in search_terms -%}
+                    {%- assign clean_term = term | strip -%}
+                    {%- if clean_term != blank -%}
+                      <button
+                        type='button'
+                        class='v3-search__suggestion text-search-suggestion'
+                        data-search-suggestion
+                        data-search-suggestion-value='{{ clean_term | escape }}'
+                        role='listitem'
+                      >
+                        {{- clean_term | escape -}}
+                      </button>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </section>
+            {%- endif -%}
+
+            {%- if fallback_products != blank -%}
+              <section class='v3-search__subgroup'>
+                <h2 class='v3-search__subgroup-title text-submenu-caption'>
+                  Most searched products
+                </h2>
+                <div class='v3-search__product-list'>
+                  {%- for product in fallback_products limit: 4 -%}
+                    {%- render 'v3-search-product-card', product: product -%}
+                  {%- endfor -%}
+                </div>
+              </section>
+            {%- endif -%}
+          </div>
+
+          <div
+            class='v3-search__predictive'
+            data-search-predictive-results
+          ></div>
+        </div>
+      </div>
+
+      <footer class='v3-search__footer' data-search-footer>
+        <div class='v3-search__footer-inner'>
+          <a
+            href='{{ routes.search_url }}'
+            class='v3-search__view-all text-submenu-l1'
+            data-search-view-all
+          >
+            View all
+          </a>
+          <span class='text-search-footer-hint' data-search-footer-hint
+            >or press Enter</span
+          >
+        </div>
+      </footer>
+    </div>
+
+    <span
+      class='sr-only'
+      aria-live='polite'
+      aria-atomic='true'
+      data-search-announce
+    ></span>
+
+    {%- if treatment_menu != blank -%}
+      {%- liquid
+        assign treatment_root = blank
+        for link in treatment_menu.links
+          if link.title == 'Treatments'
+            assign treatment_root = link
+            break
+          endif
+        endfor
+        if treatment_root != blank
+          assign treatment_links = treatment_root.links
+        else
+          assign treatment_links = treatment_menu.links
+        endif
+      -%}
+      <div hidden data-search-treatment-source>
+        {%- for link in treatment_links -%}
+          {%- if link.links != blank -%}
+            {%- for child_link in link.links -%}
+              <a href='{{ child_link.url }}' data-search-treatment>
+                {{- child_link.title | escape -}}
+              </a>
+              {%- if child_link.links != blank -%}
+                {%- for grandchild_link in child_link.links -%}
+                  <a href='{{ grandchild_link.url }}' data-search-treatment>
+                    {{- grandchild_link.title | escape -}}
+                  </a>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            <a href='{{ link.url }}' data-search-treatment>
+              {{- link.title | escape -}}
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</aside>
+
+<style>
+  .v3-search {
+    --search-inset: 12px;
+    --search-radius: 20px;
+    --search-header-h: 86px;
+    --search-header-pl: 24px;
+    --search-header-pr: 10px;
+    --search-header-py: 24px;
+    --search-close-size: 38px;
+    --search-content-p: 24px;
+    --search-content-gap: 56px;
+    --search-subgroup-gap: 30px;
+    --search-link-gap: 15px;
+    --search-input-h: 38px;
+    --search-footer-p: 24px;
+    --search-footer-h: 90px;
+    --search-button-h: 42px;
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .v3-search {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: block;
+      visibility: hidden;
+      pointer-events: none;
+      font-family: var(--font-family-base);
+      font-weight: var(--font-weight-regular);
+      letter-spacing: var(--tracking-base);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .v3-search[data-search-state='open'],
+    .v3-search[data-search-state='closing'] {
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .v3-search[data-search-state='closing'] {
+      pointer-events: none;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .v3-search {
+      --search-inset: 14px;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .v3-search {
+      --search-inset: 16px;
+      --search-radius: 24px;
+      --search-header-h: 104px;
+      --search-header-pl: 32px;
+      --search-header-pr: 17px;
+      --search-header-py: 32px;
+      --search-close-size: 40px;
+      --search-content-p: 32px;
+      --search-content-gap: 64px;
+      --search-subgroup-gap: 32px;
+      --search-link-gap: 16px;
+      --search-input-h: 40px;
+      --search-footer-p: 32px;
+      --search-footer-h: 108px;
+      --search-button-h: 44px;
+    }
+  }
+
+  .v3-search button,
+  .v3-search a,
+  .v3-search input {
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  .v3-search a,
+  .v3-search a:visited {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .v3-search__overlay {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(251, 250, 249, 0.5);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+  }
+
+  .v3-search[data-search-state='open'] .v3-search__overlay {
+    opacity: 1;
+  }
+
+  .v3-search[data-search-state='closing'] .v3-search__overlay {
+    opacity: 0;
+    transition-duration: 200ms;
+  }
+
+  .v3-search__drawer {
+    position: absolute;
+    top: var(--search-inset);
+    left: var(--search-inset);
+    display: flex;
+    width: 456px;
+    height: calc(100dvh - var(--search-inset) * 2);
+    flex-direction: column;
+    overflow: clip;
+    border-radius: var(--search-radius);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    opacity: 0;
+    transition: opacity 250ms ease-out 80ms;
+  }
+
+  .v3-search[data-search-state='open'] .v3-search__drawer {
+    opacity: 1;
+  }
+
+  .v3-search[data-search-state='closing'] .v3-search__drawer {
+    opacity: 0;
+    transition: opacity 180ms ease-out;
+  }
+
+  .v3-search__header {
+    display: flex;
+    height: var(--search-header-h);
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--search-header-py) var(--search-header-pr)
+      var(--search-header-py) var(--search-header-pl);
+  }
+
+  .v3-search__logo,
+  .v3-search__close,
+  .v3-search__body {
+    opacity: 0;
+  }
+
+  .v3-search__logo {
+    display: block;
+    flex: none;
+    transition: opacity 200ms ease-out;
+  }
+
+  .v3-search__logo-image {
+    display: block;
+  }
+
+  .v3-search__close {
+    display: flex;
+    width: var(--search-close-size);
+    height: var(--search-close-size);
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 9999px;
+    background: transparent;
+    transition:
+      opacity 200ms ease-out,
+      background-color 150ms ease-out;
+  }
+
+  .v3-search__body {
+    position: relative;
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    transition: opacity 250ms ease-out;
+  }
+
+  .v3-search[data-search-state='open'] .v3-search__logo {
+    opacity: 1;
+    transition-delay: 150ms;
+  }
+
+  .v3-search[data-search-state='open'] .v3-search__close {
+    opacity: 1;
+    transition-delay: 230ms;
+  }
+
+  .v3-search[data-search-state='open'] .v3-search__body {
+    opacity: 1;
+    transition-delay: 300ms;
+  }
+
+  .v3-search[data-search-state='closing'] .v3-search__logo,
+  .v3-search[data-search-state='closing'] .v3-search__close,
+  .v3-search[data-search-state='closing'] .v3-search__body {
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  .v3-search__scroll {
+    min-height: 0;
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--search-content-p);
+    scrollbar-width: none;
+  }
+
+  .v3-search__scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .v3-search__form {
+    margin: 0 0 var(--search-content-gap);
+  }
+
+  .v3-search__input-ring {
+    padding: 2px;
+    border-radius: 9999px;
+    background: var(--color-search-focus);
+  }
+
+  .v3-search__input-field {
+    display: flex;
+    height: var(--search-input-h);
+    align-items: center;
+    gap: 16px;
+    border: 1px solid var(--color-demoted);
+    border-radius: 9999px;
+    background: var(--color-pressed);
+    padding: 0 16px;
+  }
+
+  .v3-search__input-icon {
+    display: flex;
+    flex: none;
+  }
+
+  .v3-search__input {
+    min-width: 0;
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--color-ink);
+    padding: 0;
+    appearance: none;
+  }
+
+  .v3-search__input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  .v3-search__input::placeholder {
+    color: var(--color-muted);
+    opacity: 1;
+  }
+
+  .v3-search__input-clear {
+    display: flex;
+    min-width: 12px;
+    flex: none;
+    align-items: center;
+    justify-content: flex-end;
+    border: 0;
+    background: transparent;
+    color: var(--color-muted);
+    padding: 0;
+  }
+
+  .v3-search__input-clear [data-search-clear-active] {
+    display: none;
+  }
+
+  .v3-search[data-search-has-query]
+    .v3-search__input-clear
+    [data-search-clear-empty] {
+    display: none;
+  }
+
+  .v3-search[data-search-has-query]
+    .v3-search__input-clear
+    [data-search-clear-active] {
+    display: inline;
+  }
+
+  .v3-search__states,
+  .v3-search__fallback,
+  .v3-search__predictive,
+  [data-search-response] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--search-content-gap);
+  }
+
+  .v3-search__callout {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    border-radius: 16px;
+  }
+
+  .v3-search__callout p {
+    margin: 0;
+  }
+
+  .v3-search__callout .text-search-callout-body {
+    color: var(--color-action);
+  }
+
+  .v3-search[data-search-view='no-results'] .v3-search__callout {
+    display: flex;
+  }
+
+  .v3-search[data-search-view='autocomplete'] .v3-search__fallback,
+  .v3-search[data-search-view='clicked'] .v3-search__fallback,
+  .v3-search[data-search-view='initial'] .v3-search__predictive,
+  .v3-search[data-search-view='no-results'] .v3-search__predictive {
+    display: none;
+  }
+
+  .v3-search__subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--search-subgroup-gap);
+  }
+
+  .v3-search__subgroup-title {
+    margin: 0;
+    color: var(--color-ink);
+    font-weight: var(--font-weight-regular);
+  }
+
+  .v3-search__suggestion-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .v3-search__suggestion {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--color-rest);
+    color: var(--color-ink);
+    padding: 0 14px;
+    text-align: left;
+    transition: background-color 150ms ease-out;
+  }
+
+  .v3-search__suggestion mark {
+    background: var(--color-search-focus);
+    color: inherit;
+  }
+
+  .v3-search__link-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--search-link-gap);
+  }
+
+  .v3-search__result-link {
+    width: fit-content;
+    transition: color 180ms ease-out;
+  }
+
+  .v3-search__product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .v3-search__product-card {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .v3-search__product-image {
+    position: relative;
+    display: flex;
+    width: 186px;
+    height: 186px;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    overflow: clip;
+    border-radius: 16px;
+    background: var(--color-rest);
+  }
+
+  .v3-search__product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .v3-search__product-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border-radius: 9999px;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-weight: var(--font-weight-medium);
+    padding: 6px 8px;
+  }
+
+  .v3-search__product-data {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .v3-search__product-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .v3-search__product-price {
+    display: flex;
+    gap: 4px;
+  }
+
+  .v3-search__product-sale {
+    color: var(--color-price-sale);
+  }
+
+  .v3-search__product-variants {
+    color: var(--color-action);
+  }
+
+  .v3-search__footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: none;
+    height: var(--search-footer-h);
+    align-items: center;
+    padding: var(--search-footer-p);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .v3-search[data-search-view='autocomplete'][data-search-has-results]
+    .v3-search__footer,
+  .v3-search[data-search-view='clicked'][data-search-has-results]
+    .v3-search__footer {
+    display: flex;
+  }
+
+  .v3-search[data-search-view='autocomplete'][data-search-has-results]
+    .v3-search__scroll,
+  .v3-search[data-search-view='clicked'][data-search-has-results]
+    .v3-search__scroll {
+    padding-bottom: calc(var(--search-footer-h) + var(--search-content-p));
+  }
+
+  .v3-search__footer-inner {
+    display: flex;
+    width: 392px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .v3-search__view-all {
+    display: inline-flex;
+    height: var(--search-button-h);
+    align-items: center;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    color: var(--color-bg) !important;
+    padding: 0 14px;
+    mix-blend-mode: darken;
+  }
+
+  .v3-search[data-search-view='autocomplete']
+    [data-search-results-group='suggestions'] {
+    order: 1;
+  }
+
+  .v3-search[data-search-view='autocomplete']
+    [data-search-results-group='collections'] {
+    order: 2;
+  }
+
+  .v3-search[data-search-view='autocomplete']
+    [data-search-results-group='treatments'] {
+    order: 3;
+  }
+
+  .v3-search[data-search-view='autocomplete']
+    [data-search-results-group='products'] {
+    order: 4;
+  }
+
+  .v3-search[data-search-view='clicked']
+    [data-search-results-group='suggestions'],
+  .v3-search[data-search-view='clicked']
+    [data-search-results-group='treatments'] {
+    display: none;
+  }
+
+  .v3-search[data-search-view='clicked']
+    [data-search-results-group='products'] {
+    order: 1;
+  }
+
+  .v3-search[data-search-view='clicked']
+    [data-search-results-group='collections'] {
+    order: 2;
+  }
+
+  .v3-search button:focus-visible,
+  .v3-search a:focus-visible {
+    border-radius: 9999px;
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  .v3-search__input:focus-visible {
+    outline: 0;
+  }
+
+  @media (hover: hover) {
+    .v3-search__close:hover,
+    .v3-search__suggestion:hover {
+      background-color: var(--color-hover);
+    }
+
+    [data-search-results-group='collections'][data-link-focused]
+      .v3-search__result-link,
+    [data-search-results-group='treatments'][data-link-focused]
+      .v3-search__result-link {
+      color: var(--color-demoted);
+    }
+
+    [data-search-results-group][data-link-focused]
+      .v3-search__result-link[data-focused] {
+      color: var(--color-ink);
+    }
+  }
+
+  .v3-search__close:active,
+  .v3-search__suggestion:active {
+    background-color: var(--color-pressed);
+  }
+
+  @media (min-width: 1440px) {
+    .v3-search__callout {
+      gap: 14px;
+    }
+
+    .v3-search__footer-inner {
+      gap: 14px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .v3-search,
+    .v3-search * {
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+</style>

@@ -1,0 +1,81 @@
+{% comment %}
+  V3 Search Drawer product card.
+
+  Parameters:
+    product — product object
+{% endcomment %}
+
+{%- liquid
+  assign feature_badge = blank
+  if product.compare_at_price > product.price
+    assign feature_badge = 'Sale'
+  elsif product.tags contains 'Bestseller'
+    assign feature_badge = 'Bestseller'
+  elsif product.tags contains 'Subscribe'
+    assign feature_badge = 'Subscribe'
+  endif
+-%}
+
+<a
+  href='{{ product.url }}'
+  class='v3-search__product-card'
+  data-search-result-link
+>
+  <span class='v3-search__product-image'>
+    {%- if product.featured_image != blank -%}
+      {{
+        product.featured_image
+        | image_url: width: 372, height: 372, crop: 'center'
+        | image_tag:
+          loading: 'lazy',
+          widths: '186, 372',
+          sizes: '186px',
+          alt: product.featured_image.alt
+      }}
+    {%- endif -%}
+
+    {%- if feature_badge != blank -%}
+      <span class='v3-search__product-badge text-search-small'>
+        {{- feature_badge -}}
+      </span>
+    {%- endif -%}
+  </span>
+
+  <span class='v3-search__product-data'>
+    <span class='v3-search__product-meta text-search-product-meta'>
+      <span>{{ product.vendor | escape }}</span>
+      <span>{{ product.title | escape }}</span>
+      <span class='v3-search__product-price text-search-product-price'>
+        {%- if product.compare_at_price > product.price -%}
+          <s>
+            {%- if settings.currency_code_enabled -%}
+              {{- product.compare_at_price | money_with_currency -}}
+            {%- else -%}
+              {{- product.compare_at_price | money -}}
+            {%- endif -%}
+          </s>
+          <span class='v3-search__product-sale'>
+            {%- if settings.currency_code_enabled -%}
+              {{- product.price | money_with_currency -}}
+            {%- else -%}
+              {{- product.price | money -}}
+            {%- endif -%}
+          </span>
+        {%- else -%}
+          {%- if settings.currency_code_enabled -%}
+            {{- product.price | money_with_currency -}}
+          {%- else -%}
+            {{- product.price | money -}}
+          {%- endif -%}
+        {%- endif -%}
+      </span>
+    </span>
+
+    {%- if product.variants.size > 1 -%}
+      <span class='v3-search__product-variants text-search-small'>
+        {{- product.variants.size }}
+        {{ product.variants.size | pluralize: 'variant', 'variants' -}}
+      </span>
+    {%- endif -%}
+  </span>
+</a>

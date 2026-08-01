@@ -16,13 +16,10 @@
    * Named by function, not appearance.
    * ============================================ */
 
-  /* Brand palette (reference — confirmed in designs) */
-  /* --color-black: #000000; */
-  /* --color-white: #FFFFFF; */
-  /* --color-stone: #E2DEDB; */
-  /* --color-grey: #E6E7E9; */
-  /* --color-grey-light: #F8F8F8; */
-  /* --color-grey-dark: #B5B5B5; */
+  /* Primitive palette
+   * No values approved yet. Populate only from V3 Figma extraction
+   * after George approval.
+   */
 
   /* Semantic (how colours are actually applied in designs) */
   /* --color-bg-primary: ; */
@@ -33,6 +30,8 @@
   /* --color-text-inverse: ; */
   /* --color-border-default: ; */
   /* --color-border-subtle: ; */
+  --color-search-focus: #D8D2D0;
+  --color-price-sale: #E7000B;
 
 
   /* ============================================

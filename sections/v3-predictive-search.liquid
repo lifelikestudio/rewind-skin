@@ -1,0 +1,75 @@
+{%- if predictive_search.performed -%}
+  {%- liquid
+    assign query_count = predictive_search.resources.queries.size
+    assign collection_count = predictive_search.resources.collections.size
+    assign product_count = predictive_search.resources.products.size
+    assign result_count = query_count | plus: collection_count | plus: product_count
+    assign actionable_count = collection_count | plus: product_count
+  -%}
+
+  <div
+    data-search-response
+    data-search-result-count='{{ result_count }}'
+    data-search-actionable-count='{{ actionable_count }}'
+    data-search-product-count='{{ product_count }}'
+  >
+    {%- if query_count > 0 -%}
+      <section
+        class='v3-search__subgroup v3-search__suggestions'
+        data-search-results-group='suggestions'
+      >
+        <h2 class='v3-search__subgroup-title text-submenu-caption'>
+          Suggestions
+        </h2>
+        <div class='v3-search__suggestion-list' role='list'>
+          {%- for query in predictive_search.resources.queries -%}
+            <button
+              type='button'
+              class='v3-search__suggestion text-search-suggestion'
+              data-search-suggestion
+              data-search-suggestion-value='{{ query.text | escape }}'
+              role='listitem'
+            >
+              {{- query.styled_text -}}
+            </button>
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- if collection_count > 0 -%}
+      <section
+        class='v3-search__subgroup'
+        data-search-results-group='collections'
+      >
+        <h2 class='v3-search__subgroup-title text-submenu-caption'>
+          Collections
+        </h2>
+        <div class='v3-search__link-list'>
+          {%- for collection in predictive_search.resources.collections -%}
+            <a
+              href='{{ collection.url }}'
+              class='v3-search__result-link text-submenu-l1'
+              data-search-result-link
+            >
+              {{- collection.title | escape -}}
+            </a>
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- if product_count > 0 -%}
+      <section class='v3-search__subgroup' data-search-results-group='products'>
+        <h2 class='v3-search__subgroup-title text-submenu-caption'>
+          Products ({{ product_count }})
+        </h2>
+        <div class='v3-search__product-list'>
+          {%- for product in predictive_search.resources.products -%}
+            {%- render 'v3-search-product-card', product: product -%}
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+  </div>
+{%- endif -%}
