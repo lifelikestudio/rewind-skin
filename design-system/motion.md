@@ -55,6 +55,7 @@ When unsure whether to animate something: don't. Stillness is on-brand. If the m
 | Link de-emphasis recovery | 180ms | ease-out | Intentionally quicker than onset |
 | Toggle pill morph | 200ms | ease-out | After 120ms hover intent delay |
 | Toggle pill snap-back | 200ms | ease-out | |
+| Navigation exit (internal link) | 200ms | ease-out | Reuses closing state; `link.click()` fires after fade |
 
 ### Principles applied
 
@@ -62,7 +63,8 @@ When unsure whether to animate something: don't. Stillness is on-brand. If the m
 - All exits are quicker than entrances (decisive reset)
 - Hover intent gates (JS-based) prevent partial/phantom transitions on pass-through
 - No transforms used for show/hide — elements are already positioned, they just become visible
-- `prefers-reduced-motion: reduce` zeroes all durations
+- Internal navigation from the drawer plays a compressed exit fade before the browser navigates — the transition feels resolved rather than interrupted
+- `prefers-reduced-motion: reduce` zeroes all durations and skips the navigation exit delay entirely
 
 ---
 
@@ -98,4 +100,11 @@ The trick is that the nav bar elements disappear at the same moment the drawer e
 
 ### Status
 
-Placeholder implemented (pure opacity reveal, no choreography). Tier 2 is a refinement pass to be explored when the static QA is complete and George is ready to art-direct the sequencing in real time.
+Implemented. Choreography sequence:
+- t=0: Nav bar shared elements (logo + toggle) fade out (200ms) while overlay begins (250ms)
+- t=80ms: Drawer shell surfaces (250ms)
+- t=150ms: Heading logo reveals (200ms)
+- t=230ms: Heading actions (toggle + close) reveal (200ms)
+- t=300ms: Nav body content reveals (250ms)
+- ~550ms total open
+- Close: all drawer content fades together (150ms), drawer shell fades (180ms), nav bar elements return (200ms) — ~280ms total close

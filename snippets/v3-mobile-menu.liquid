@@ -1,0 +1,834 @@
+{% comment %}
+  V3 Mobile Menu — full-screen frosted glass overlay (<SM)
+  Rendered by v3-navigation section. Content is hardcoded for development;
+  will be replaced with dynamic link_list loops when the site transitions.
+
+  Interaction model: drill-in/drill-out (L2 replaces L1, back button returns).
+  Desktop uses side-by-side L2 reveal in v3-submenu-drawer.liquid.
+
+  Parameters (passed from section):
+    logo         — image object from section settings
+    shop_label   — text label for Shop toggle
+    studio_label — text label for Studio toggle
+    section_id   — parent section id
+{% endcomment %}
+
+{%- liquid
+  assign cart_count = cart.item_count
+  if cart_count > 99
+    assign cart_bag_label = 'Bag (99+)'
+  elsif cart_count > 0
+    assign cart_bag_label = 'Bag (' | append: cart_count | append: ')'
+  else
+    assign cart_bag_label = 'Bag (0)'
+  endif
+-%}
+
+<nav
+  class='v3-mobile-menu'
+  data-mobile-menu
+  data-mobile-menu-context='shop'
+  data-mobile-menu-state='closed'
+  aria-hidden='true'
+  aria-label='Mobile navigation'
+>
+  {%- comment -%} Screen-reader announcement for context/level changes {%- endcomment -%}
+  <span class='sr-only' aria-live='polite' aria-atomic='true' data-mobile-menu-announce></span>
+
+  {%- comment -%} Panel (frosted glass surface) {%- endcomment -%}
+  <div
+    class='v3-mobile-menu__panel'
+    role='dialog'
+    aria-modal='true'
+    aria-label='Navigation menu'
+  >
+    {%- comment -%} ═══ HEADING ═══ {%- endcomment -%}
+    <div class='v3-mobile-menu__heading'>
+      <a
+        href='{{ routes.root_url }}'
+        class='block shrink-0'
+        aria-label='{{ shop.name }}'
+      >
+        {%- if logo != blank -%}
+          {{
+            logo
+            | image_url: width: 400
+            | image_tag:
+              class: 'v3-mobile-menu__logo h-auto',
+              widths: '165, 179, 193, 207, 221, 330, 386',
+              alt: logo.alt
+            | default: shop.name
+          }}
+        {%- else -%}
+          <svg
+            class='v3-mobile-menu__logo h-auto'
+            viewBox='0 0 193.235 14'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            aria-label='{{ shop.name }}'
+            role='img'
+          >
+            <path d="M17.5621 13.7362L17.5083 13.789H15.3534L9.69689 8.08336H1.67002V13.8419H0V0.528646H10.9359C12.0134 0.528646 12.9831 0.581476 13.7373 0.739967C14.4915 0.898457 15.1918 1.10978 15.7305 1.47959C16.7541 2.11355 17.2928 3.01166 17.2928 4.27959C17.2928 5.49468 16.8079 6.3928 15.8921 7.02676C14.9763 7.66072 13.5756 8.03053 11.744 8.08336L17.5621 13.7362ZM1.67002 1.95506V6.65695H10.4511C11.5824 6.65695 12.4443 6.60412 13.0908 6.49846C13.6834 6.3928 14.1682 6.23431 14.5453 6.07582C15.2457 5.706 15.5689 5.12487 15.5689 4.27959C15.5689 3.43431 15.2457 2.85317 14.5453 2.48336C14.2221 2.27204 13.7373 2.16638 13.0908 2.06072C12.4982 1.95506 11.6363 1.95506 10.4511 1.95506H1.67002Z" fill="currentColor"/>
+            <path d="M38.2458 1.95506H23.485V6.44563H37.4377V7.87204H23.485V12.4154H38.2458V13.8419H21.7611V0.528646H38.2458V1.95506Z" fill="currentColor"/>
+            <path d="M65.3963 0.528646L65.4502 0.581476L59.5243 13.789H57.9082L53.0597 2.58902L48.2113 13.789H46.5951L40.6693 0.581476L40.7231 0.528646H42.5009L47.2955 11.7286L52.1439 0.528646H53.9756L58.7701 11.7286L63.6186 0.528646H65.3963Z" fill="currentColor"/>
+            <path d="M68.6328 13.789V0.528646H70.3028V13.789H68.6328Z" fill="currentColor"/>
+            <path d="M90.6626 0.528646H92.3327V13.789H90.6626L76.9793 2.53619V13.8419H75.3092V0.528646H76.9793L90.6626 11.7815V0.528646Z" fill="currentColor"/>
+            <path d="M113.99 2.16638C115.606 3.27582 116.468 4.96638 116.468 7.13242C116.468 9.35129 115.66 10.989 113.99 12.0985C112.374 13.2079 109.896 13.789 106.556 13.789H97.3438V0.528646H106.556C109.896 0.528646 112.374 1.05695 113.99 2.16638ZM112.697 11.1475C113.397 10.7249 113.882 10.1966 114.206 9.50978C114.529 8.87581 114.69 8.08336 114.69 7.13242C114.69 6.18148 114.529 5.44185 114.206 4.75506C113.882 4.1211 113.397 3.53997 112.697 3.11732C111.997 2.69468 111.135 2.3777 110.057 2.16638C108.98 1.95506 107.633 1.8494 105.963 1.8494H99.0676V12.3098H105.963C107.418 12.3098 108.711 12.2041 109.842 12.0456C110.973 11.94 111.943 11.623 112.697 11.1475Z" fill="currentColor"/>
+            <path d="M136.241 14C135.433 14 134.571 13.9472 133.763 13.8943C132.955 13.8415 132.146 13.7887 131.338 13.683C130.53 13.5774 129.83 13.4717 129.13 13.3132C128.429 13.1547 127.783 12.9962 127.244 12.8377V11.2528L127.352 11.2C127.944 11.4113 128.645 11.6226 129.345 11.7811C130.045 11.9396 130.8 12.0981 131.554 12.2038C132.308 12.3094 133.116 12.4151 133.924 12.4679C134.732 12.5208 135.54 12.5736 136.348 12.5736C141.143 12.5736 143.513 11.7283 143.513 10.0377C143.513 9.50943 143.298 9.13962 142.813 8.82264C142.328 8.50566 141.736 8.29434 140.981 8.13585C140.227 7.97736 139.365 7.8717 138.396 7.76604C137.426 7.66038 136.402 7.60755 135.433 7.50189C134.409 7.39623 133.439 7.3434 132.47 7.18491C131.5 7.07925 130.638 6.86792 129.884 6.60377C129.13 6.33962 128.483 5.96981 128.052 5.54717C127.567 5.12453 127.352 4.5434 127.352 3.80377C127.352 2.58868 128.106 1.63774 129.561 0.950943C131.015 0.316981 133.116 0 135.864 0C137.48 0 139.042 0.10566 140.55 0.316981C142.059 0.528302 143.406 0.845283 144.699 1.21509V2.69434L144.591 2.74717C143.998 2.53585 143.352 2.37736 142.651 2.21887C141.951 2.06038 141.251 1.90189 140.497 1.79623C139.742 1.69057 138.988 1.58491 138.234 1.53208C137.264 1.58491 136.564 1.58491 135.81 1.58491C134.786 1.58491 133.87 1.63774 133.008 1.7434C132.146 1.84906 131.446 2.00755 130.854 2.21887C130.261 2.43019 129.776 2.64151 129.453 2.90566C129.13 3.16981 128.968 3.48679 128.968 3.80377C128.968 4.27925 129.184 4.70189 129.668 4.96604C130.153 5.23019 130.746 5.44151 131.5 5.6C132.254 5.75849 133.116 5.86415 134.086 5.91698C135.056 5.96981 136.079 6.07547 137.049 6.1283C138.072 6.23396 139.042 6.33962 140.012 6.44528C140.981 6.60377 141.843 6.76226 142.598 7.02642C143.352 7.29057 143.998 7.66038 144.429 8.13585C144.914 8.61132 145.13 9.19245 145.13 9.93208C145.13 11.3057 144.429 12.3623 142.975 12.9962C141.52 13.6302 139.365 14 136.241 14Z" fill="currentColor"/>
+            <path d="M156.973 5.706L166.347 13.7362L166.293 13.789H163.923L155.465 6.55129L151.263 9.03431V13.789H149.593V0.528646H151.263V7.23808L163.007 0.528646H165.647L165.701 0.581476L156.973 5.706Z" fill="currentColor"/>
+            <path d="M169.477 13.789V0.528646H171.147V13.789H169.477Z" fill="currentColor"/>
+            <path d="M191.565 0.528646H193.235V13.789H191.565L177.828 2.53619V13.8419H176.158V0.528646H177.828L191.511 11.7815V0.528646H191.565Z" fill="currentColor"/>
+          </svg>
+        {%- endif -%}
+      </a>
+
+      <button
+        type='button'
+        class='v3-mobile-menu__close'
+        data-mobile-menu-close
+        aria-label='Close menu'
+      >
+        {%- render 'v3-icon-close', class: 'v3-mobile-menu__close-icon text-ink' -%}
+      </button>
+    </div>
+
+    {%- comment -%} ═══ TOGGLE (Shop / Studio) ═══ {%- endcomment -%}
+    <div class='v3-mobile-menu__toggle-wrap'>
+      <div
+        class='v3-mobile-menu__toggle-group rounded-pill'
+        role='group'
+        aria-label='Navigation context'
+        data-mobile-menu-toggle-group
+      >
+        <span
+          class='v3-mobile-menu__toggle-pill rounded-pill'
+          aria-hidden='true'
+          data-mobile-menu-pill
+        ></span>
+        <button
+          type='button'
+          class='v3-mobile-menu__toggle-btn rounded-pill text-nav-label font-base tracking-tight'
+          data-mobile-menu-toggle='shop'
+          aria-pressed='true'
+        >
+          {{ shop_label | default: 'Shop' }}
+        </button>
+        <button
+          type='button'
+          class='v3-mobile-menu__toggle-btn rounded-pill text-nav-label font-base tracking-tight'
+          data-mobile-menu-toggle='studio'
+          aria-pressed='false'
+        >
+          {{ studio_label | default: 'Studio' }}
+        </button>
+      </div>
+    </div>
+
+    {%- comment -%} ═══ NAVIGATION BODY ═══ {%- endcomment -%}
+    <div class='v3-mobile-menu__nav'>
+      <div class='v3-mobile-menu__levels'>
+        {%- comment -%} ── L1 views ── {%- endcomment -%}
+        <div class='v3-mobile-menu__l1-view' data-mobile-menu-l1-view>
+
+          {%- comment -%} Shop L1 {%- endcomment -%}
+          <div class='v3-mobile-menu__l1' data-mobile-menu-context='shop'>
+            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Shop categories'>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='skincare' data-has-l2>
+                <span>Skincare</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <a href='/collections/bath-body-hair' class='v3-mobile-menu__l1-link text-submenu-l1'>Hair & Body</a>
+              <a href='/collections/all?filter.p.tag=Tools+and+Accessories' class='v3-mobile-menu__l1-link text-submenu-l1'>Tools & Accessories</a>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='brands' data-has-l2>
+                <span>Brands</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <a href='/collections/all' class='v3-mobile-menu__l1-link text-submenu-l1'>Shop All</a>
+            </div>
+            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Shop featured'>
+              <span class='v3-mobile-menu__subgroup-title text-submenu-caption' aria-hidden='true'>Featured</span>
+              <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l1-link text-submenu-l1'>Concierge</a>
+              <a href='/collections/bestsellers' class='v3-mobile-menu__l1-link text-submenu-l1'>Bestsellers</a>
+              <a href='/collections/subscribe-save' class='v3-mobile-menu__l1-link text-submenu-l1'>Subscribe & Save</a>
+              <a href='/collections/gifting' class='v3-mobile-menu__l1-link text-submenu-l1'>Gifting</a>
+              <a href='/collections/sales-offers' class='v3-mobile-menu__l1-link text-submenu-l1'>Sales & Offers</a>
+            </div>
+          </div>
+
+          {%- comment -%} Studio L1 {%- endcomment -%}
+          <div class='v3-mobile-menu__l1' data-mobile-menu-context='studio'>
+            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Studio treatments'>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='facials' data-has-l2>
+                <span>Facials</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='body-contouring' data-has-l2>
+                <span>Body Contouring</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='hair-removal' data-has-l2>
+                <span>Hair Removal</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='injectables' data-has-l2>
+                <span>Injectables</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='skin-improvement' data-has-l2>
+                <span>Skin Improvement</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='skin-tightening' data-has-l2>
+                <span>Skin Tightening</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              </button>
+              <a href='/pages/skin-treatments/?type=body-contouring' class='v3-mobile-menu__l1-link text-submenu-l1'>All Treatments</a>
+            </div>
+            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Studio featured'>
+              <span class='v3-mobile-menu__subgroup-title text-submenu-caption' aria-hidden='true'>Featured</span>
+              <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l1-link text-submenu-l1'>Virtual Consult</a>
+              <a href='/collections/gifting' class='v3-mobile-menu__l1-link text-submenu-l1'>Gifting</a>
+              <a href='/pages/our-founder' class='v3-mobile-menu__l1-link text-submenu-l1'>Your Therapist</a>
+            </div>
+          </div>
+        </div>
+
+        {%- comment -%} ── L2 views (drill-in panels) ── {%- endcomment -%}
+
+        {%- comment -%} Shop L2: Skincare {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='skincare' data-mobile-l2-context='shop'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Shop'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Skincare</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists' class='v3-mobile-menu__l2-link text-submenu-l1'>Cleansers</a>
+            <a href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists' class='v3-mobile-menu__l2-link text-submenu-l1'>Toners and Mists</a>
+            <a href='/collections/all?filter.p.tag=Creams_+Lotions+and+Moisturizers' class='v3-mobile-menu__l2-link text-submenu-l1'>Creams and Moisturizers</a>
+            <a href='/collections/all?filter.p.tag=Exfoliants' class='v3-mobile-menu__l2-link text-submenu-l1'>Exfoliants</a>
+            <a href='/collections/all?filter.p.tag=Eyes_+Lips+and+Neck' class='v3-mobile-menu__l2-link text-submenu-l1'>Eyes & Lips</a>
+            <a href='/collections/all?filter.p.tag=Masks+and+Treatments' class='v3-mobile-menu__l2-link text-submenu-l1'>Masks and Treatments</a>
+            <a href='/collections/all?filter.p.tag=Serums+and+Oils' class='v3-mobile-menu__l2-link text-submenu-l1'>Serums and Oils</a>
+            <a href='/collections/all?filter.p.tag=Suncare' class='v3-mobile-menu__l2-link text-submenu-l1'>Suncare</a>
+            <a href='/collections/all?filter.p.tag=Travel' class='v3-mobile-menu__l2-link text-submenu-l1'>Travel</a>
+            <a href='/collections/all' class='v3-mobile-menu__l2-link text-submenu-l1'>All Skincare</a>
+          </div>
+        </div>
+
+        {%- comment -%} Shop L2: Brands {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='brands' data-mobile-l2-context='shop'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Shop'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Brands</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='/collections/adipeau' class='v3-mobile-menu__l2-link text-submenu-l1'>Adipeau</a>
+            <a href='/collections/biologique-recherche' class='v3-mobile-menu__l2-link text-submenu-l1'>Biologique Recherche</a>
+            <a href='/collections/calecim-professional' class='v3-mobile-menu__l2-link text-submenu-l1'>Calecim Professional</a>
+            <a href='/collections/colorescience' class='v3-mobile-menu__l2-link text-submenu-l1'>Colorescience</a>
+            <a href='/collections/ecotao' class='v3-mobile-menu__l2-link text-submenu-l1'>Ecotao</a>
+            <a href='/collections/elta-md' class='v3-mobile-menu__l2-link text-submenu-l1'>Elta MD</a>
+            <a href='/collections/future-5-elements' class='v3-mobile-menu__l2-link text-submenu-l1'>Future 5 Elements</a>
+            <a href='/collections/loeuvre-de-beaute' class='v3-mobile-menu__l2-link text-submenu-l1'>L'oeuvre de Beaut&eacute;</a>
+            <a href='/collections/mansard' class='v3-mobile-menu__l2-link text-submenu-l1'>Laboratoires Mansard</a>
+            <a href='/collections/the-light-salon' class='v3-mobile-menu__l2-link text-submenu-l1'>The Light Salon</a>
+            <a href='/collections/manta' class='v3-mobile-menu__l2-link text-submenu-l1'>Manta</a>
+            <a href='/collections/monika-heiligmann' class='v3-mobile-menu__l2-link text-submenu-l1'>Monika Heiligmann</a>
+            <a href='/collections/nemat' class='v3-mobile-menu__l2-link text-submenu-l1'>Nemat</a>
+            <a href='/collections/nuface-microcurrent' class='v3-mobile-menu__l2-link text-submenu-l1'>NuFACE</a>
+            <a href='/collections/all' class='v3-mobile-menu__l2-link text-submenu-l1'>All Brands</a>
+          </div>
+        </div>
+
+        {%- comment -%} Studio L2: Facials {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='facials' data-mobile-l2-context='studio'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Facials</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='https://rewindskinco-book.as.me/light-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Light Facial</a>
+            <a href='https://rewindskinco-book.as.me/essential-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Essential Facial</a>
+            <a href='https://rewindskinco-book.as.me/bespoke-advanced-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Bespoke Advanced Facial</a>
+            <a href='https://rewindskinco-book.as.me/ayas-touch-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Aya's Touch Facial</a>
+            <a href='https://rewindskinco-book.as.me/microcurrent-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Microcurrent Facial</a>
+            <a href='https://rewindskinco-book.as.me/?appointmentType=category:FORMA™%20Skin%20Tightening' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Forma Facial</a>
+            <a href='/pages/skin-treatments/?type=facials' class='v3-mobile-menu__l2-link text-submenu-l1'>All Facials</a>
+          </div>
+        </div>
+
+        {%- comment -%} Studio L2: Body Contouring {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='body-contouring' data-mobile-l2-context='studio'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Body Contouring</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='https://rewindskinco-book.as.me/bodyfx' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>BodyFX</a>
+            <a href='https://rewindskinco-book.as.me/forma-plus' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Forma Plus</a>
+            <a href='/pages/skin-treatments?type=body-contouring' class='v3-mobile-menu__l2-link text-submenu-l1'>All Body Contouring</a>
+          </div>
+        </div>
+
+        {%- comment -%} Studio L2: Hair Removal {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='hair-removal' data-mobile-l2-context='studio'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Hair Removal</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='https://rewindskinco-book.as.me/?appointmentType=category:DIOLAZE™%20Laser%20Hair%20Removal' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Diolaze</a>
+            <a href='/pages/skin-treatments?type=hair-removal' class='v3-mobile-menu__l2-link text-submenu-l1'>All Hair Removal</a>
+          </div>
+        </div>
+
+        {%- comment -%} Studio L2: Injectables {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='injectables' data-mobile-l2-context='studio'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Injectables</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='https://rewindskinco-book.as.me/dermal-fillers' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Dermal Fillers</a>
+            <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Neuromodulators</a>
+            <a href='/pages/skin-treatments?type=injectables' class='v3-mobile-menu__l2-link text-submenu-l1'>All Injectables</a>
+          </div>
+        </div>
+
+        {%- comment -%} Studio L2: Skin Improvement {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='skin-improvement' data-mobile-l2-context='studio'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Skin Improvement</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='https://rewindskinco-book.as.me/lumecca' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Lumecca IPL</a>
+            <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Morpheus8</a>
+            <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>SkinPen&reg;</a>
+            <a href='/pages/skin-treatments?type=skin-improvement' class='v3-mobile-menu__l2-link text-submenu-l1'>All Skin Improvement</a>
+          </div>
+        </div>
+
+        {%- comment -%} Studio L2: Skin Tightening {%- endcomment -%}
+        <div class='v3-mobile-menu__l2' data-mobile-l2='skin-tightening' data-mobile-l2-context='studio'>
+          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='text-submenu-caption'>Skin Tightening</span>
+          </button>
+          <div class='v3-mobile-menu__l2-links'>
+            <a href='https://rewindskinco-book.as.me/forma-plus' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Forma Plus</a>
+            <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Morpheus8</a>
+            <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>SkinPen&reg;</a>
+            <a href='/pages/skin-treatments?type=skin-tightening' class='v3-mobile-menu__l2-link text-submenu-l1'>All Skin Tightening</a>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} QuickActions {%- endcomment -%}
+      <div class='v3-mobile-menu__quick'>
+        <button
+          type='button'
+          class='v3-mobile-menu__quick-pill text-submenu-caption'
+          data-mobile-menu-search
+        >
+          Search rewindskinco.com
+        </button>
+        <button
+          type='button'
+          class='v3-mobile-menu__quick-pill text-submenu-caption'
+          data-mobile-menu-bag
+        >
+          {{ cart_bag_label }}
+        </button>
+      </div>
+    </div>
+
+    {%- comment -%} UtilityLinks {%- endcomment -%}
+    <div class='v3-mobile-menu__utility'>
+      <div class='v3-mobile-menu__utility-links' data-mobile-menu-context='shop' role='group' aria-label='Shop support'>
+        <a href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}' class='v3-mobile-menu__utility-link text-submenu-utility'>Account</a>
+        <a href='/pages/shipping-returns' class='v3-mobile-menu__utility-link text-submenu-utility'>Shipping & Returns</a>
+      </div>
+      <div class='v3-mobile-menu__utility-links' data-mobile-menu-context='studio' role='group' aria-label='Studio support'>
+        <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__utility-link text-submenu-utility'>Manage Appointments</a>
+        <a href='/pages/skin-treatments/?type=body-contouring#faq' class='v3-mobile-menu__utility-link text-submenu-utility'>FAQ</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* ═══ CUSTOM PROPERTIES — TINY (base, <375px) ═══ */
+  .v3-mobile-menu {
+    --panel-inset: 7px;
+    --panel-r: 19px;
+    --header-h: 72px;
+    --header-pl: 20px;
+    --header-pr: 8px;
+    --header-py: 20px;
+    --content-px: 20px;
+    --content-pb: 22px;
+    --close-size: 32px;
+    --close-icon: 9px;
+    --link-gap: 13px;
+    --subgroup-gap: 48px;
+    --title-gap: 27px;
+    --toggle-track-h: 38px;
+    --toggle-btn-h: 34px;
+    --toggle-px: 6px;
+    --quick-h: 28px;
+    --quick-px: 13px;
+    --levels-pb: 16px;
+    --utility-px: 20px;
+    --utility-py: 22px;
+    --utility-gap: 14px;
+    --l2-back-gap: 28px;
+    --l2-links-gap: 28px;
+  }
+  /* XXS — 375px+ */
+  @media (min-width: 375px) {
+    .v3-mobile-menu {
+      --panel-inset: 8px;
+      --panel-r: 19px;
+      --header-h: 80px;
+      --header-pl: 22px;
+      --header-pr: 9px;
+      --header-py: 22px;
+      --content-px: 22px;
+      --content-pb: 23px;
+      --close-size: 36px;
+      --close-icon: 10px;
+      --link-gap: 14px;
+      --subgroup-gap: 52px;
+      --title-gap: 28px;
+      --toggle-track-h: 40px;
+      --toggle-btn-h: 36px;
+      --toggle-px: 8px;
+      --quick-h: 29px;
+      --quick-px: 13px;
+      --levels-pb: 17px;
+      --utility-px: 22px;
+      --utility-py: 23px;
+      --l2-back-gap: 30px;
+      --l2-links-gap: 30px;
+    }
+  }
+  /* XS — 428px+ (capped at SM) */
+  @media (min-width: 428px) {
+    .v3-mobile-menu {
+      --panel-inset: 8px;
+      --panel-r: 20px;
+      --header-h: 86px;
+      --header-pl: 24px;
+      --header-pr: 10px;
+      --header-py: 24px;
+      --content-px: 24px;
+      --content-pb: 24px;
+      --close-size: 38px;
+      --close-icon: 10px;
+      --link-gap: 15px;
+      --subgroup-gap: 56px;
+      --title-gap: 30px;
+      --toggle-track-h: 40px;
+      --toggle-btn-h: 36px;
+      --toggle-px: 8px;
+      --quick-h: 30px;
+      --quick-px: 14px;
+      --levels-pb: 18px;
+      --utility-px: 24px;
+      --utility-py: 24px;
+      --l2-back-gap: 30px;
+      --l2-links-gap: 30px;
+    }
+  }
+
+  /* ═══ TYPOGRAPHY FOUNDATION ═══ */
+  .v3-mobile-menu {
+    font-family:
+      'Scto Grotesk A',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      Oxygen-Sans,
+      Ubuntu,
+      Cantarell,
+      'Helvetica Neue',
+      sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .v3-mobile-menu button,
+  .v3-mobile-menu a {
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+  }
+  .v3-mobile-menu a,
+  .v3-mobile-menu a:visited {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  /* ═══ CONTAINER — visible below SM only, fixed fullscreen ═══ */
+  .v3-mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  @media (min-width: 768px) {
+    .v3-mobile-menu {
+      display: none;
+    }
+  }
+  .v3-mobile-menu[data-mobile-menu-state='open'],
+  .v3-mobile-menu[data-mobile-menu-state='closing'] {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='closing'] {
+    pointer-events: none;
+  }
+
+  /* ═══ PANEL (frosted glass surface) ═══ */
+  .v3-mobile-menu__panel {
+    position: absolute;
+    inset: var(--panel-inset);
+    background: rgba(251, 250, 249, 0.5);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border-radius: var(--panel-r);
+    overflow: clip;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='open'] .v3-mobile-menu__panel {
+    opacity: 1;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__panel {
+    opacity: 0;
+    transition: opacity 180ms ease-out;
+  }
+
+  /* ═══ CHOREOGRAPHED ENTRANCE ═══ */
+  .v3-mobile-menu__heading {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+  .v3-mobile-menu__toggle-wrap {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+  .v3-mobile-menu__nav {
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+  }
+  .v3-mobile-menu__utility {
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='open'] .v3-mobile-menu__heading {
+    opacity: 1;
+    transition: opacity 200ms ease-out 150ms;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='open'] .v3-mobile-menu__toggle-wrap {
+    opacity: 1;
+    transition: opacity 200ms ease-out 230ms;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='open'] .v3-mobile-menu__nav {
+    opacity: 1;
+    transition: opacity 250ms ease-out 300ms;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='open'] .v3-mobile-menu__utility {
+    opacity: 1;
+    transition: opacity 250ms ease-out 300ms;
+  }
+  .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__heading,
+  .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__toggle-wrap,
+  .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__nav,
+  .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__utility {
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  /* ═══ HEADING ═══ */
+  .v3-mobile-menu__heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-h);
+    padding: var(--header-py) var(--header-pr) var(--header-py) var(--header-pl);
+    flex-shrink: 0;
+  }
+  .v3-mobile-menu__logo {
+    width: 193px;
+  }
+  @media (min-width: 375px) {
+    .v3-mobile-menu__logo {
+      width: 207px;
+    }
+  }
+  @media (min-width: 428px) {
+    .v3-mobile-menu__logo {
+      width: 221px;
+    }
+  }
+
+  /* ═══ CLOSE BUTTON ═══ */
+  .v3-mobile-menu__close {
+    width: var(--close-size);
+    height: var(--close-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    flex-shrink: 0;
+    transition: background-color 150ms ease-out;
+  }
+  .v3-mobile-menu__close-icon {
+    width: var(--close-icon);
+    height: var(--close-icon);
+  }
+
+  /* ═══ TOGGLE (Shop / Studio pill) ═══ */
+  .v3-mobile-menu__toggle-wrap {
+    padding: 0 var(--toggle-px);
+    flex-shrink: 0;
+  }
+  .v3-mobile-menu__toggle-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px;
+    background: var(--color-rest);
+    height: var(--toggle-track-h);
+  }
+  .v3-mobile-menu__toggle-pill {
+    position: absolute;
+    top: 2px;
+    height: calc(100% - 4px);
+    background: var(--color-bg);
+    pointer-events: none;
+    transition: left 200ms ease-out, width 200ms ease-out;
+  }
+  .v3-mobile-menu__toggle-btn {
+    position: relative;
+    z-index: 1;
+    height: var(--toggle-btn-h);
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    transition: color 150ms ease-out;
+  }
+  .v3-mobile-menu__toggle-btn[aria-pressed='true'] {
+    color: var(--color-ink);
+  }
+  .v3-mobile-menu__toggle-btn[aria-pressed='false'] {
+    color: var(--color-muted);
+  }
+
+  /* ═══ NAVIGATION BODY ═══ */
+  .v3-mobile-menu__nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .v3-mobile-menu__levels {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding-bottom: var(--levels-pb);
+  }
+  .v3-mobile-menu__levels::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ═══ L1 VIEW ═══ */
+  .v3-mobile-menu__l1-view {
+    flex: 1;
+  }
+  .v3-mobile-menu__l1 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--subgroup-gap);
+    padding: 0 var(--content-px) var(--content-pb);
+  }
+  .v3-mobile-menu__subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--link-gap);
+  }
+  .v3-mobile-menu__subgroup-title {
+    color: var(--color-ink);
+    margin-bottom: calc(var(--title-gap) - var(--link-gap));
+  }
+
+  /* ── L1 links ── */
+  .v3-mobile-menu__l1-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    color: var(--color-ink);
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .v3-mobile-menu__l1-link[data-has-l2] {
+    justify-content: space-between;
+  }
+  .v3-mobile-menu__chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  /* ═══ L2 VIEW (drill-in panels) ═══ */
+  .v3-mobile-menu__l2 {
+    display: none;
+    flex-direction: column;
+    padding: 0 var(--content-px) var(--content-pb);
+  }
+  .v3-mobile-menu__l2.is-active {
+    display: flex;
+    animation: mobile-l2-in 200ms ease-out;
+  }
+
+  /* ── Back button (ReturnLevel) ── */
+  .v3-mobile-menu__back {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--color-ink);
+    margin-bottom: var(--l2-back-gap);
+  }
+  .v3-mobile-menu__back-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  /* ── L2 links ── */
+  .v3-mobile-menu__l2-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--link-gap);
+  }
+  .v3-mobile-menu__l2-link {
+    display: block;
+    width: fit-content;
+    color: var(--color-ink);
+  }
+
+  /* ═══ DRILL-IN/OUT TRANSITIONS ═══ */
+  .v3-mobile-menu__l1-view {
+    transition: opacity 200ms ease-out;
+  }
+  .v3-mobile-menu__l1-view.is-exiting {
+    opacity: 0;
+  }
+  .v3-mobile-menu__l1-view.is-hidden {
+    display: none;
+  }
+  @keyframes mobile-l2-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .v3-mobile-menu__l2.is-exiting {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+
+  /* ═══ QUICK ACTIONS ═══ */
+  .v3-mobile-menu__quick {
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: 8px;
+    padding: 0 32px var(--levels-pb);
+  }
+  .v3-mobile-menu__quick-pill {
+    height: var(--quick-h);
+    padding: 0 var(--quick-px);
+    background: rgba(251, 250, 249, 0.3);
+    border: none;
+    border-radius: 9999px;
+    color: var(--color-action);
+    text-align: center;
+    transition: background-color 150ms ease-out;
+  }
+
+  /* ═══ UTILITY LINKS ═══ */
+  .v3-mobile-menu__utility {
+    border-top: 1px solid rgba(251, 250, 249, 0.3);
+    padding: var(--utility-py) var(--utility-px);
+    flex-shrink: 0;
+  }
+  .v3-mobile-menu__utility-links {
+    display: flex;
+    gap: var(--utility-gap);
+  }
+  .v3-mobile-menu__utility-link {
+    width: fit-content;
+    color: var(--color-ink);
+  }
+
+  /* ═══ CONTEXT VISIBILITY ═══ */
+  .v3-mobile-menu[data-mobile-menu-context='shop'] [data-mobile-menu-context='studio'],
+  .v3-mobile-menu[data-mobile-menu-context='studio'] [data-mobile-menu-context='shop'] {
+    display: none;
+  }
+  .v3-mobile-menu[data-mobile-menu-context='shop'] [data-mobile-l2-context='studio'],
+  .v3-mobile-menu[data-mobile-menu-context='studio'] [data-mobile-l2-context='shop'] {
+    display: none;
+  }
+
+  /* ═══ PRESSED STATES ═══ */
+  .v3-mobile-menu__close:active {
+    background-color: var(--color-pressed);
+  }
+  .v3-mobile-menu__quick-pill:active {
+    background-color: rgba(251, 250, 249, 0.15);
+  }
+
+  /* ═══ FOCUS VISIBLE ═══ */
+  .v3-mobile-menu button:focus-visible,
+  .v3-mobile-menu a:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 9999px;
+  }
+
+  /* ═══ REDUCED MOTION ═══ */
+  @media (prefers-reduced-motion: reduce) {
+    .v3-mobile-menu,
+    .v3-mobile-menu * {
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+</style>
