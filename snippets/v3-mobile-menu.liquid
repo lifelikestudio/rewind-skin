@@ -88,7 +88,9 @@
         data-mobile-menu-close
         aria-label='Close menu'
       >
-        {%- render 'v3-icon-close', class: 'v3-mobile-menu__close-icon text-ink' -%}
+        <span class='v3-mobile-menu__close-circle'>
+          {%- render 'v3-icon-close', class: 'v3-mobile-menu__close-icon text-ink' -%}
+        </span>
       </button>
     </div>
 
@@ -328,17 +330,21 @@
       <div class='v3-mobile-menu__quick'>
         <button
           type='button'
-          class='v3-mobile-menu__quick-pill text-submenu-caption'
+          class='v3-mobile-menu__quick-btn'
           data-mobile-menu-search
         >
-          Search rewindskinco.com
+          <span class='v3-mobile-menu__quick-pill text-submenu-caption'>
+            Search rewindskinco.com
+          </span>
         </button>
         <button
           type='button'
-          class='v3-mobile-menu__quick-pill text-submenu-caption'
+          class='v3-mobile-menu__quick-btn'
           data-mobile-menu-bag
         >
-          {{ cart_bag_label }}
+          <span class='v3-mobile-menu__quick-pill text-submenu-caption'>
+            {{ cart_bag_label }}
+          </span>
         </button>
       </div>
     </div>
@@ -362,14 +368,15 @@
   .v3-mobile-menu {
     --panel-inset: 7px;
     --panel-r: 19px;
-    --header-h: 72px;
     --header-pl: 20px;
-    --header-pr: 8px;
-    --header-py: 20px;
+    --header-pr: 6px;
+    --header-py: 18px;
     --content-px: 20px;
     --content-pb: 22px;
+    --close-touch: 44px;
     --close-size: 32px;
     --close-icon: 9px;
+    --toggle-nav-gap: 28px;
     --link-gap: 13px;
     --subgroup-gap: 48px;
     --title-gap: 27px;
@@ -378,9 +385,10 @@
     --toggle-px: 6px;
     --quick-h: 28px;
     --quick-px: 13px;
-    --levels-pb: 16px;
+    --quick-touch: 44px;
+    --levels-pb: 9px;
     --utility-px: 20px;
-    --utility-py: 22px;
+    --utility-py: 6px;
     --utility-gap: 14px;
     --l2-back-gap: 28px;
     --l2-links-gap: 28px;
@@ -390,14 +398,14 @@
     .v3-mobile-menu {
       --panel-inset: 8px;
       --panel-r: 19px;
-      --header-h: 80px;
       --header-pl: 22px;
-      --header-pr: 9px;
-      --header-py: 22px;
+      --header-pr: 6px;
+      --header-py: 19px;
       --content-px: 22px;
       --content-pb: 23px;
       --close-size: 36px;
       --close-icon: 10px;
+      --toggle-nav-gap: 30px;
       --link-gap: 14px;
       --subgroup-gap: 52px;
       --title-gap: 28px;
@@ -406,9 +414,9 @@
       --toggle-px: 8px;
       --quick-h: 29px;
       --quick-px: 13px;
-      --levels-pb: 17px;
+      --levels-pb: 10px;
       --utility-px: 22px;
-      --utility-py: 23px;
+      --utility-py: 7px;
       --l2-back-gap: 30px;
       --l2-links-gap: 30px;
     }
@@ -418,14 +426,14 @@
     .v3-mobile-menu {
       --panel-inset: 8px;
       --panel-r: 20px;
-      --header-h: 86px;
       --header-pl: 24px;
-      --header-pr: 10px;
-      --header-py: 24px;
+      --header-pr: 7px;
+      --header-py: 21px;
       --content-px: 24px;
       --content-pb: 24px;
       --close-size: 38px;
       --close-icon: 10px;
+      --toggle-nav-gap: 32px;
       --link-gap: 15px;
       --subgroup-gap: 56px;
       --title-gap: 30px;
@@ -434,9 +442,9 @@
       --toggle-px: 8px;
       --quick-h: 30px;
       --quick-px: 14px;
-      --levels-pb: 18px;
+      --levels-pb: 11px;
       --utility-px: 24px;
-      --utility-py: 24px;
+      --utility-py: 7px;
       --l2-back-gap: 30px;
       --l2-links-gap: 30px;
     }
@@ -563,7 +571,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: var(--header-h);
     padding: var(--header-py) var(--header-pr) var(--header-py) var(--header-pl);
     flex-shrink: 0;
   }
@@ -583,15 +590,22 @@
 
   /* ═══ CLOSE BUTTON ═══ */
   .v3-mobile-menu__close {
+    width: var(--close-touch);
+    height: var(--close-touch);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    flex-shrink: 0;
+  }
+  .v3-mobile-menu__close-circle {
     width: var(--close-size);
     height: var(--close-size);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
-    border: none;
-    background: transparent;
-    flex-shrink: 0;
     transition: background-color 150ms ease-out;
   }
   .v3-mobile-menu__close-icon {
@@ -624,6 +638,8 @@
   .v3-mobile-menu__toggle-btn {
     position: relative;
     z-index: 1;
+    flex: 1 0 0;
+    min-width: 0;
     height: var(--toggle-btn-h);
     padding: 0 14px;
     border: none;
@@ -651,6 +667,7 @@
     min-height: 0;
     overflow-y: auto;
     scrollbar-width: none;
+    padding-top: var(--toggle-nav-gap);
     padding-bottom: var(--levels-pb);
   }
   .v3-mobile-menu__levels::-webkit-scrollbar {
@@ -690,6 +707,10 @@
   }
   .v3-mobile-menu__l1-link[data-has-l2] {
     justify-content: space-between;
+  }
+  .v3-mobile-menu__l1-link[data-has-l2]::before,
+  .v3-mobile-menu__l1-link[data-has-l2]::after {
+    display: none;
   }
   .v3-mobile-menu__chevron {
     display: flex;
@@ -770,14 +791,25 @@
     gap: 8px;
     padding: 0 32px var(--levels-pb);
   }
+  .v3-mobile-menu__quick-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--quick-touch);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
   .v3-mobile-menu__quick-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: var(--quick-h);
     padding: 0 var(--quick-px);
     background: rgba(251, 250, 249, 0.3);
-    border: none;
     border-radius: 9999px;
     color: var(--color-action);
-    text-align: center;
+    white-space: nowrap;
     transition: background-color 150ms ease-out;
   }
 
@@ -789,7 +821,9 @@
   }
   .v3-mobile-menu__utility-links {
     display: flex;
+    align-items: center;
     gap: var(--utility-gap);
+    height: 44px;
   }
   .v3-mobile-menu__utility-link {
     width: fit-content;
@@ -807,10 +841,10 @@
   }
 
   /* ═══ PRESSED STATES ═══ */
-  .v3-mobile-menu__close:active {
+  .v3-mobile-menu__close:active .v3-mobile-menu__close-circle {
     background-color: var(--color-pressed);
   }
-  .v3-mobile-menu__quick-pill:active {
+  .v3-mobile-menu__quick-btn:active .v3-mobile-menu__quick-pill {
     background-color: rgba(251, 250, 249, 0.15);
   }
 
