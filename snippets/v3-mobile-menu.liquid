@@ -25,6 +25,7 @@
 -%}
 
 <nav
+  id='v3-mobile-menu-{{ section_id }}'
   class='v3-mobile-menu'
   data-mobile-menu
   data-mobile-menu-context='shop'
@@ -61,7 +62,7 @@
           }}
         {%- else -%}
           <svg
-            class='v3-mobile-menu__logo h-auto'
+            class='v3-mobile-menu__logo overflow-visible'
             viewBox='0 0 193.235 14'
             fill='none'
             xmlns='http://www.w3.org/2000/svg'
@@ -135,15 +136,15 @@
           {%- comment -%} Shop L1 {%- endcomment -%}
           <div class='v3-mobile-menu__l1' data-mobile-menu-context='shop'>
             <div class='v3-mobile-menu__subgroup' role='group' aria-label='Shop categories'>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='skincare' data-has-l2>
-                <span>Skincare</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-shop-skincare' class='v3-mobile-menu__l1-link' data-mobile-l1='skincare' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-shop-skincare'>
+                <span class='text-submenu-l1'>Skincare</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
               <a href='/collections/bath-body-hair' class='v3-mobile-menu__l1-link text-submenu-l1'>Hair & Body</a>
               <a href='/collections/all?filter.p.tag=Tools+and+Accessories' class='v3-mobile-menu__l1-link text-submenu-l1'>Tools & Accessories</a>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='brands' data-has-l2>
-                <span>Brands</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-shop-brands' class='v3-mobile-menu__l1-link' data-mobile-l1='brands' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-shop-brands'>
+                <span class='text-submenu-l1'>Brands</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
               <a href='/collections/all' class='v3-mobile-menu__l1-link text-submenu-l1'>Shop All</a>
             </div>
@@ -160,29 +161,29 @@
           {%- comment -%} Studio L1 {%- endcomment -%}
           <div class='v3-mobile-menu__l1' data-mobile-menu-context='studio'>
             <div class='v3-mobile-menu__subgroup' role='group' aria-label='Studio treatments'>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='facials' data-has-l2>
-                <span>Facials</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-facials' class='v3-mobile-menu__l1-link' data-mobile-l1='facials' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-facials'>
+                <span class='text-submenu-l1'>Facials</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='body-contouring' data-has-l2>
-                <span>Body Contouring</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-body-contouring' class='v3-mobile-menu__l1-link' data-mobile-l1='body-contouring' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-body-contouring'>
+                <span class='text-submenu-l1'>Body Contouring</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='hair-removal' data-has-l2>
-                <span>Hair Removal</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-hair-removal' class='v3-mobile-menu__l1-link' data-mobile-l1='hair-removal' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-hair-removal'>
+                <span class='text-submenu-l1'>Hair Removal</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='injectables' data-has-l2>
-                <span>Injectables</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-injectables' class='v3-mobile-menu__l1-link' data-mobile-l1='injectables' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-injectables'>
+                <span class='text-submenu-l1'>Injectables</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='skin-improvement' data-has-l2>
-                <span>Skin Improvement</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-skin-improvement' class='v3-mobile-menu__l1-link' data-mobile-l1='skin-improvement' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-skin-improvement'>
+                <span class='text-submenu-l1'>Skin Improvement</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
-              <button type='button' class='v3-mobile-menu__l1-link text-submenu-l1' data-mobile-l1='skin-tightening' data-has-l2>
-                <span>Skin Tightening</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 6 -%}</span>
+              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-skin-tightening' class='v3-mobile-menu__l1-link' data-mobile-l1='skin-tightening' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-skin-tightening'>
+                <span class='text-submenu-l1'>Skin Tightening</span>
+                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
               </button>
               <a href='/pages/skin-treatments/?type=body-contouring' class='v3-mobile-menu__l1-link text-submenu-l1'>All Treatments</a>
             </div>
@@ -198,9 +199,9 @@
         {%- comment -%} ── L2 views (drill-in panels) ── {%- endcomment -%}
 
         {%- comment -%} Shop L2: Skincare {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='skincare' data-mobile-l2-context='shop'>
+        <div id='v3-mobile-l2-{{ section_id }}-shop-skincare' class='v3-mobile-menu__l2' data-mobile-l2='skincare' data-mobile-l2-context='shop'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Shop'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Skincare</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -218,9 +219,9 @@
         </div>
 
         {%- comment -%} Shop L2: Brands {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='brands' data-mobile-l2-context='shop'>
+        <div id='v3-mobile-l2-{{ section_id }}-shop-brands' class='v3-mobile-menu__l2' data-mobile-l2='brands' data-mobile-l2-context='shop'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Shop'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Brands</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -243,9 +244,9 @@
         </div>
 
         {%- comment -%} Studio L2: Facials {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='facials' data-mobile-l2-context='studio'>
+        <div id='v3-mobile-l2-{{ section_id }}-studio-facials' class='v3-mobile-menu__l2' data-mobile-l2='facials' data-mobile-l2-context='studio'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Facials</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -260,9 +261,9 @@
         </div>
 
         {%- comment -%} Studio L2: Body Contouring {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='body-contouring' data-mobile-l2-context='studio'>
+        <div id='v3-mobile-l2-{{ section_id }}-studio-body-contouring' class='v3-mobile-menu__l2' data-mobile-l2='body-contouring' data-mobile-l2-context='studio'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Body Contouring</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -273,9 +274,9 @@
         </div>
 
         {%- comment -%} Studio L2: Hair Removal {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='hair-removal' data-mobile-l2-context='studio'>
+        <div id='v3-mobile-l2-{{ section_id }}-studio-hair-removal' class='v3-mobile-menu__l2' data-mobile-l2='hair-removal' data-mobile-l2-context='studio'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Hair Removal</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -285,9 +286,9 @@
         </div>
 
         {%- comment -%} Studio L2: Injectables {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='injectables' data-mobile-l2-context='studio'>
+        <div id='v3-mobile-l2-{{ section_id }}-studio-injectables' class='v3-mobile-menu__l2' data-mobile-l2='injectables' data-mobile-l2-context='studio'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Injectables</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -298,9 +299,9 @@
         </div>
 
         {%- comment -%} Studio L2: Skin Improvement {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='skin-improvement' data-mobile-l2-context='studio'>
+        <div id='v3-mobile-l2-{{ section_id }}-studio-skin-improvement' class='v3-mobile-menu__l2' data-mobile-l2='skin-improvement' data-mobile-l2-context='studio'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Skin Improvement</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -312,9 +313,9 @@
         </div>
 
         {%- comment -%} Studio L2: Skin Tightening {%- endcomment -%}
-        <div class='v3-mobile-menu__l2' data-mobile-l2='skin-tightening' data-mobile-l2-context='studio'>
+        <div id='v3-mobile-l2-{{ section_id }}-studio-skin-tightening' class='v3-mobile-menu__l2' data-mobile-l2='skin-tightening' data-mobile-l2-context='studio'>
           <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 6 -%}</span>
+            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
             <span class='text-submenu-caption'>Skin Tightening</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
@@ -369,28 +370,28 @@
     --panel-inset: 7px;
     --panel-r: 19px;
     --header-pl: 20px;
-    --header-pr: 6px;
-    --header-py: 18px;
+    --header-pr: 2px;
+    --header-py: 14px;
     --content-px: 20px;
     --content-pb: 22px;
     --close-touch: 44px;
     --close-size: 32px;
-    --close-icon: 9px;
+    --close-icon: 11px;
     --toggle-nav-gap: 28px;
     --link-gap: 13px;
     --subgroup-gap: 48px;
     --title-gap: 27px;
     --toggle-track-h: 38px;
     --toggle-btn-h: 34px;
-    --toggle-px: 6px;
+    --toggle-px: 26px;
     --quick-h: 28px;
     --quick-px: 13px;
     --quick-touch: 44px;
-    --levels-pb: 9px;
+    --levels-pb: 8px;
     --utility-px: 20px;
-    --utility-py: 6px;
+    --utility-py: 4.5px;
     --utility-gap: 14px;
-    --l2-back-gap: 28px;
+    --l2-back-gap: 27px;
     --l2-links-gap: 28px;
   }
   /* XXS — 375px+ */
@@ -399,24 +400,24 @@
       --panel-inset: 8px;
       --panel-r: 19px;
       --header-pl: 22px;
-      --header-pr: 6px;
-      --header-py: 19px;
+      --header-pr: 5px;
+      --header-py: 18px;
       --content-px: 22px;
       --content-pb: 23px;
       --close-size: 36px;
-      --close-icon: 10px;
+      --close-icon: 12px;
       --toggle-nav-gap: 30px;
       --link-gap: 14px;
       --subgroup-gap: 52px;
       --title-gap: 28px;
       --toggle-track-h: 40px;
       --toggle-btn-h: 36px;
-      --toggle-px: 8px;
+      --toggle-px: 30px;
       --quick-h: 29px;
       --quick-px: 13px;
-      --levels-pb: 10px;
+      --levels-pb: 9.5px;
       --utility-px: 22px;
-      --utility-py: 7px;
+      --utility-py: 6px;
       --l2-back-gap: 30px;
       --l2-links-gap: 30px;
     }
@@ -432,14 +433,14 @@
       --content-px: 24px;
       --content-pb: 24px;
       --close-size: 38px;
-      --close-icon: 10px;
+      --close-icon: 12px;
       --toggle-nav-gap: 32px;
-      --link-gap: 15px;
+      --link-gap: 14.5px;
       --subgroup-gap: 56px;
       --title-gap: 30px;
       --toggle-track-h: 40px;
       --toggle-btn-h: 36px;
-      --toggle-px: 8px;
+      --toggle-px: 32px;
       --quick-h: 30px;
       --quick-px: 14px;
       --levels-pb: 11px;
@@ -576,15 +577,18 @@
   }
   .v3-mobile-menu__logo {
     width: 193px;
+    height: 14px;
   }
   @media (min-width: 375px) {
     .v3-mobile-menu__logo {
       width: 207px;
+      height: 15px;
     }
   }
   @media (min-width: 428px) {
     .v3-mobile-menu__logo {
       width: 221px;
+      height: 16px;
     }
   }
 
@@ -633,7 +637,6 @@
     height: calc(100% - 4px);
     background: var(--color-bg);
     pointer-events: none;
-    transition: left 200ms ease-out, width 200ms ease-out;
   }
   .v3-mobile-menu__toggle-btn {
     position: relative;
@@ -644,7 +647,13 @@
     padding: 0 14px;
     border: none;
     background: transparent;
+    font-size: 14px;
     transition: color 150ms ease-out;
+  }
+  @media (min-width: 375px) {
+    .v3-mobile-menu__toggle-btn {
+      font-size: 15px;
+    }
   }
   .v3-mobile-menu__toggle-btn[aria-pressed='true'] {
     color: var(--color-ink);
@@ -668,7 +677,6 @@
     overflow-y: auto;
     scrollbar-width: none;
     padding-top: var(--toggle-nav-gap);
-    padding-bottom: var(--levels-pb);
   }
   .v3-mobile-menu__levels::-webkit-scrollbar {
     display: none;
@@ -696,8 +704,7 @@
 
   /* ── L1 links ── */
   .v3-mobile-menu__l1-link {
-    display: flex;
-    align-items: center;
+    display: block;
     width: 100%;
     color: var(--color-ink);
     text-align: left;
@@ -706,11 +713,9 @@
     padding: 0;
   }
   .v3-mobile-menu__l1-link[data-has-l2] {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-  }
-  .v3-mobile-menu__l1-link[data-has-l2]::before,
-  .v3-mobile-menu__l1-link[data-has-l2]::after {
-    display: none;
   }
   .v3-mobile-menu__chevron {
     display: flex;
@@ -729,13 +734,13 @@
   }
   .v3-mobile-menu__l2.is-active {
     display: flex;
-    animation: mobile-l2-in 200ms ease-out;
   }
 
   /* ── Back button (ReturnLevel) ── */
   .v3-mobile-menu__back {
     display: flex;
     align-items: center;
+    width: fit-content;
     gap: 24px;
     background: none;
     border: none;
@@ -763,24 +768,15 @@
     width: fit-content;
     color: var(--color-ink);
   }
+  @media (min-width: 375px) and (max-width: 427px) {
+    .v3-mobile-menu__l2-link {
+      height: 12px;
+    }
+  }
 
-  /* ═══ DRILL-IN/OUT TRANSITIONS ═══ */
-  .v3-mobile-menu__l1-view {
-    transition: opacity 200ms ease-out;
-  }
-  .v3-mobile-menu__l1-view.is-exiting {
-    opacity: 0;
-  }
+  /* ═══ DRILL-IN/OUT ═══ */
   .v3-mobile-menu__l1-view.is-hidden {
     display: none;
-  }
-  @keyframes mobile-l2-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  .v3-mobile-menu__l2.is-exiting {
-    opacity: 0;
-    transition: opacity 200ms ease-out;
   }
 
   /* ═══ QUICK ACTIONS ═══ */
@@ -789,7 +785,7 @@
     justify-content: center;
     flex-shrink: 0;
     gap: 8px;
-    padding: 0 32px var(--levels-pb);
+    padding: var(--levels-pb) 32px;
   }
   .v3-mobile-menu__quick-btn {
     display: flex;
@@ -823,9 +819,11 @@
     display: flex;
     align-items: center;
     gap: var(--utility-gap);
-    height: 44px;
   }
   .v3-mobile-menu__utility-link {
+    display: flex;
+    align-items: center;
+    height: 44px;
     width: fit-content;
     color: var(--color-ink);
   }
@@ -854,6 +852,31 @@
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
     border-radius: 9999px;
+  }
+
+  /* ═══ SHORT-VIEWPORT SAFETY ═══
+     In landscape, split-screen, or small-height devices the viewport may
+     be shorter than the panel's content. The panel is the sole scroll
+     container — levels flows at natural height (no independent scroll)
+     so the user never hits a nested-scroll wall. */
+  @media (max-width: 767px) {
+    .v3-mobile-menu__panel {
+      overflow-x: hidden;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .v3-mobile-menu__panel::-webkit-scrollbar {
+      display: none;
+    }
+    .v3-mobile-menu__nav {
+      flex-shrink: 0;
+      min-height: auto;
+    }
+    .v3-mobile-menu__levels {
+      flex-shrink: 0;
+      overflow-y: visible;
+      min-height: auto;
+    }
   }
 
   /* ═══ REDUCED MOTION ═══ */

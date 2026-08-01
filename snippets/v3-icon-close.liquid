@@ -1,6 +1,7 @@
 {% comment %}
   V3 Close icon — X mark (two crossed strokes).
-  Renders at currentColor; size controlled by parent.
+  Renders at currentColor. ViewBox is cropped to artwork bounds
+  so the icon renders at exactly the specified size.
 
   Parameters:
     size   — width/height in px (default: 10)
@@ -13,11 +14,12 @@
   class="{{ class }}"
   width="{{ _size }}"
   height="{{ _size }}"
-  viewBox="0 0 10 10"
+  viewBox="0.4 0.4 9.2 9.2"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   aria-hidden="true"
   focusable="false"
+  style="display:block"
 >
   <path d="M1 1L9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
   <path d="M9 1L1 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>

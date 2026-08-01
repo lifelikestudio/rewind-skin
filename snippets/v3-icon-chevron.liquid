@@ -1,26 +1,28 @@
 {% comment %}
   V3 Chevron icon — right or left pointing.
-  Renders at currentColor; size controlled by parent.
+  Renders at currentColor. ViewBox is cropped to artwork bounds (4×6)
+  so the icon renders at exactly the specified size.
 
   Parameters:
     direction — 'right' (default) or 'left'
-    size      — width/height in px (default: 6)
+    size      — height in px; width scales proportionally (default: 6)
     class     — CSS classes on the <svg>
 {% endcomment %}
 {%- liquid
   assign _size = size | default: 6
   assign _dir = direction | default: 'right'
+  assign _w = _size | times: 4.0 | divided_by: 6.0 | round: 2
 -%}
 <svg
   class="{{ class }}"
-  width="{{ _size }}"
+  width="{{ _w }}"
   height="{{ _size }}"
-  viewBox="0 0 6 6"
+  viewBox="1 0 4 6"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   aria-hidden="true"
   focusable="false"
-  {% if _dir == 'left' %}style="transform: rotate(180deg);"{% endif %}
+  style="display:block;{% if _dir == 'left' %}transform:rotate(180deg);{% endif %}"
 >
   <path d="M1.5 0.5L4.5 3L1.5 5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

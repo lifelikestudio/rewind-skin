@@ -22,6 +22,7 @@
 -%}
 
 <nav
+  id='v3-submenu-{{ section_id }}'
   class='v3-submenu'
   data-submenu
   data-context='shop'
@@ -61,7 +62,7 @@
           }}
         {%- else -%}
           <svg
-            class='h-auto w-[220px] lg:w-[248px]'
+            class='h-[16px] w-[220px] overflow-visible lg:h-[18px] lg:w-[248px]'
             viewBox='0 0 193.235 14'
             fill='none'
             xmlns='http://www.w3.org/2000/svg'
@@ -120,7 +121,7 @@
           data-submenu-close
           aria-label='Close menu'
         >
-          {%- render 'v3-icon-close', size: 10, class: 'text-ink' -%}
+          {%- render 'v3-icon-close', size: 12, class: 'text-ink' -%}
         </button>
       </div>
     </div>
@@ -134,10 +135,10 @@
           {%- comment -%} ── Shop L1 ── {%- endcomment -%}
           <div class='v3-submenu__l1' data-submenu-context='shop'>
             <div class='v3-submenu__subgroup' data-l1-group role='group' aria-label='Shop categories'>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='skincare' data-has-l2 aria-expanded='false'>Skincare</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-shop-skincare' class='v3-submenu__l1-link text-submenu-l1' data-l1='skincare' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-shop-skincare'>Skincare</button>
               <a href='/collections/bath-body-hair' class='v3-submenu__l1-link text-submenu-l1'>Hair & Body</a>
               <a href='/collections/all?filter.p.tag=Tools+and+Accessories' class='v3-submenu__l1-link text-submenu-l1'>Tools & Accessories</a>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='brands' data-has-l2 aria-expanded='false'>Brands</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-shop-brands' class='v3-submenu__l1-link text-submenu-l1' data-l1='brands' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-shop-brands'>Brands</button>
               <a href='/collections/all' class='v3-submenu__l1-link text-submenu-l1'>Shop All</a>
             </div>
             <div class='v3-submenu__subgroup' data-l1-group role='group' aria-label='Shop featured'>
@@ -153,12 +154,12 @@
           {%- comment -%} ── Studio L1 ── {%- endcomment -%}
           <div class='v3-submenu__l1' data-submenu-context='studio'>
             <div class='v3-submenu__subgroup' data-l1-group role='group' aria-label='Studio treatments'>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='facials' data-has-l2 aria-expanded='false'>Facials</button>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='body-contouring' data-has-l2 aria-expanded='false'>Body Contouring</button>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='hair-removal' data-has-l2 aria-expanded='false'>Hair Removal</button>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='injectables' data-has-l2 aria-expanded='false'>Injectables</button>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-improvement' data-has-l2 aria-expanded='false'>Skin Improvement</button>
-              <button type='button' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-tightening' data-has-l2 aria-expanded='false'>Skin Tightening</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-studio-facials' class='v3-submenu__l1-link text-submenu-l1' data-l1='facials' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-studio-facials'>Facials</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-studio-body-contouring' class='v3-submenu__l1-link text-submenu-l1' data-l1='body-contouring' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-studio-body-contouring'>Body Contouring</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-studio-hair-removal' class='v3-submenu__l1-link text-submenu-l1' data-l1='hair-removal' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-studio-hair-removal'>Hair Removal</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-studio-injectables' class='v3-submenu__l1-link text-submenu-l1' data-l1='injectables' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-studio-injectables'>Injectables</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-studio-skin-improvement' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-improvement' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-studio-skin-improvement'>Skin Improvement</button>
+              <button type='button' id='v3-submenu-l1-{{ section_id }}-studio-skin-tightening' class='v3-submenu__l1-link text-submenu-l1' data-l1='skin-tightening' data-has-l2 aria-expanded='false' aria-controls='v3-submenu-l2-{{ section_id }}-studio-skin-tightening'>Skin Tightening</button>
               <a href='/pages/skin-treatments/?type=body-contouring' class='v3-submenu__l1-link text-submenu-l1'>All Treatments</a>
             </div>
             <div class='v3-submenu__subgroup' data-l1-group role='group' aria-label='Studio featured'>
@@ -170,7 +171,7 @@
           </div>
 
           {%- comment -%} ── L2 panels (Shop) ── {%- endcomment -%}
-          <div class='v3-submenu__l2' data-l2='skincare' data-l2-context='shop' role='group' aria-label='Skincare subcategories'>
+          <div id='v3-submenu-l2-{{ section_id }}-shop-skincare' class='v3-submenu__l2' data-l2='skincare' data-l2-context='shop' role='group' aria-label='Skincare subcategories'>
             <a href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists' class='v3-submenu__l2-link text-submenu-l2'>Cleansers</a>
             <a href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists' class='v3-submenu__l2-link text-submenu-l2'>Toners and Mists</a>
             <a href='/collections/all?filter.p.tag=Creams_+Lotions+and+Moisturizers' class='v3-submenu__l2-link text-submenu-l2'>Creams and Moisturizers</a>
@@ -182,7 +183,7 @@
             <a href='/collections/all?filter.p.tag=Travel' class='v3-submenu__l2-link text-submenu-l2'>Travel</a>
             <a href='/collections/all' class='v3-submenu__l2-link text-submenu-l2'>All Skincare</a>
           </div>
-          <div class='v3-submenu__l2' data-l2='brands' data-l2-context='shop' role='group' aria-label='Brands'>
+          <div id='v3-submenu-l2-{{ section_id }}-shop-brands' class='v3-submenu__l2' data-l2='brands' data-l2-context='shop' role='group' aria-label='Brands'>
             <a href='/collections/adipeau' class='v3-submenu__l2-link text-submenu-l2'>Adipeau</a>
             <a href='/collections/biologique-recherche' class='v3-submenu__l2-link text-submenu-l2'>Biologique Recherche</a>
             <a href='/collections/calecim-professional' class='v3-submenu__l2-link text-submenu-l2'>Calecim Professional</a>
@@ -201,7 +202,7 @@
           </div>
 
           {%- comment -%} ── L2 panels (Studio) ── {%- endcomment -%}
-          <div class='v3-submenu__l2' data-l2='facials' data-l2-context='studio' role='group' aria-label='Facials treatments'>
+          <div id='v3-submenu-l2-{{ section_id }}-studio-facials' class='v3-submenu__l2' data-l2='facials' data-l2-context='studio' role='group' aria-label='Facials treatments'>
             <a href='https://rewindskinco-book.as.me/light-facial' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Light Facial</a>
             <a href='https://rewindskinco-book.as.me/essential-facial' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Essential Facial</a>
             <a href='https://rewindskinco-book.as.me/bespoke-advanced-facial' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Bespoke Advanced Facial</a>
@@ -210,27 +211,27 @@
             <a href='https://rewindskinco-book.as.me/?appointmentType=category:FORMA™%20Skin%20Tightening' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Forma Facial</a>
             <a href='/pages/skin-treatments/?type=facials' class='v3-submenu__l2-link text-submenu-l2'>All Facials</a>
           </div>
-          <div class='v3-submenu__l2' data-l2='body-contouring' data-l2-context='studio' role='group' aria-label='Body contouring treatments'>
+          <div id='v3-submenu-l2-{{ section_id }}-studio-body-contouring' class='v3-submenu__l2' data-l2='body-contouring' data-l2-context='studio' role='group' aria-label='Body contouring treatments'>
             <a href='https://rewindskinco-book.as.me/bodyfx' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>BodyFX</a>
             <a href='https://rewindskinco-book.as.me/forma-plus' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Forma Plus</a>
             <a href='/pages/skin-treatments?type=body-contouring' class='v3-submenu__l2-link text-submenu-l2'>All Body Contouring</a>
           </div>
-          <div class='v3-submenu__l2' data-l2='hair-removal' data-l2-context='studio' role='group' aria-label='Hair removal treatments'>
+          <div id='v3-submenu-l2-{{ section_id }}-studio-hair-removal' class='v3-submenu__l2' data-l2='hair-removal' data-l2-context='studio' role='group' aria-label='Hair removal treatments'>
             <a href='https://rewindskinco-book.as.me/?appointmentType=category:DIOLAZE™%20Laser%20Hair%20Removal' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Diolaze</a>
             <a href='/pages/skin-treatments?type=hair-removal' class='v3-submenu__l2-link text-submenu-l2'>All Hair Removal</a>
           </div>
-          <div class='v3-submenu__l2' data-l2='injectables' data-l2-context='studio' role='group' aria-label='Injectable treatments'>
+          <div id='v3-submenu-l2-{{ section_id }}-studio-injectables' class='v3-submenu__l2' data-l2='injectables' data-l2-context='studio' role='group' aria-label='Injectable treatments'>
             <a href='https://rewindskinco-book.as.me/dermal-fillers' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Dermal Fillers</a>
             <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Neuromodulators</a>
             <a href='/pages/skin-treatments?type=injectables' class='v3-submenu__l2-link text-submenu-l2'>All Injectables</a>
           </div>
-          <div class='v3-submenu__l2' data-l2='skin-improvement' data-l2-context='studio' role='group' aria-label='Skin improvement treatments'>
+          <div id='v3-submenu-l2-{{ section_id }}-studio-skin-improvement' class='v3-submenu__l2' data-l2='skin-improvement' data-l2-context='studio' role='group' aria-label='Skin improvement treatments'>
             <a href='https://rewindskinco-book.as.me/lumecca' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Lumecca IPL</a>
             <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Morpheus8</a>
             <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>SkinPen®</a>
             <a href='/pages/skin-treatments?type=skin-improvement' class='v3-submenu__l2-link text-submenu-l2'>All Skin Improvement</a>
           </div>
-          <div class='v3-submenu__l2' data-l2='skin-tightening' data-l2-context='studio' role='group' aria-label='Skin tightening treatments'>
+          <div id='v3-submenu-l2-{{ section_id }}-studio-skin-tightening' class='v3-submenu__l2' data-l2='skin-tightening' data-l2-context='studio' role='group' aria-label='Skin tightening treatments'>
             <a href='https://rewindskinco-book.as.me/forma-plus' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Forma Plus</a>
             <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>Morpheus8</a>
             <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling' target='_blank' rel='noopener noreferrer' class='v3-submenu__l2-link text-submenu-l2'>SkinPen®</a>
@@ -288,7 +289,7 @@
     --l1-pl: 24px;
     --l1-pr: 32px;
     --l1-py: 24px;
-    --link-gap-l1: 15px;
+    --link-gap-l1: 14.5px;
     --subgroup-gap: 56px;
     --title-gap: 30px;
     --l2-pl: 32px;
@@ -498,7 +499,6 @@
     top: 4px;
     height: calc(100% - 8px);
     pointer-events: none;
-    transition: left 200ms ease-out, width 200ms ease-out;
   }
   .v3-submenu__toggle-btn {
     position: relative;
@@ -607,7 +607,6 @@
     overflow-y: auto;
     scrollbar-width: none;
     opacity: 0;
-    transition: opacity 200ms ease-out;
   }
   .v3-submenu__l2::-webkit-scrollbar {
     display: none;
@@ -615,15 +614,6 @@
   .v3-submenu__l2.is-active {
     display: flex;
     opacity: 1;
-    animation: submenu-l2-in 250ms ease-out;
-  }
-  .v3-submenu__l2.is-closing {
-    display: flex;
-    opacity: 0;
-  }
-  @keyframes submenu-l2-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
   }
   .v3-submenu__l2-link {
     display: block;

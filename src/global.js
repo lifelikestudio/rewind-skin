@@ -1,4 +1,7 @@
 import './global.css';
+import { gsap } from 'gsap';
+
+window.gsap = gsap;
 
 import Drawers from './components/Drawers/Drawers';
 import VideoMask from './components/VideoMask';
