@@ -42,6 +42,7 @@
         href='{{ routes.root_url }}'
         class='block shrink-0'
         aria-label='{{ shop.name }}'
+        data-nav-logo
       >
         {%- if section.settings.logo != blank -%}
           {{
@@ -93,6 +94,7 @@
             type='button'
             class='v3-nav__switch-btn rounded-pill text-nav-label font-base text-ink relative z-[1] h-[30px] px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
             data-nav-toggle='shop'
+            aria-expanded='false'
           >
             {{ section.settings.shop_label | default: 'Shop' }}
           </button>
@@ -100,6 +102,7 @@
             type='button'
             class='v3-nav__switch-btn rounded-pill text-nav-label font-base text-ink relative z-[1] h-[30px] px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
             data-nav-toggle='studio'
+            aria-expanded='false'
           >
             {{ section.settings.studio_label | default: 'Studio' }}
           </button>
@@ -507,6 +510,19 @@
     border-radius: 9999px;
   }
 
+  /* ═══ TIER 2: SHARED-ELEMENT FADE ═══
+     When the drawer opens, the nav bar logo and toggle fade out,
+     creating a visual hand-off to their counterparts in the drawer heading. */
+  .v3-nav [data-nav-logo],
+  .v3-nav [data-nav-paths] {
+    transition: opacity 200ms ease-out;
+  }
+  .v3-nav[data-nav-shared-fade] [data-nav-logo],
+  .v3-nav[data-nav-shared-fade] [data-nav-paths] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   /* ═══ REDUCED MOTION ═══ */
   @media (prefers-reduced-motion: reduce) {
     .v3-nav,
@@ -648,6 +664,10 @@
         clearTimeout(closeTimer);
         closeTimer = null;
       }
+      nav.setAttribute('data-nav-shared-fade', '');
+      toggleBtns.forEach(function (btn) {
+        btn.setAttribute('aria-expanded', String(btn.getAttribute('data-nav-toggle') === context));
+      });
       submenu.setAttribute('data-context', context);
       submenu.setAttribute('data-submenu-state', 'open');
       submenu.setAttribute('aria-hidden', 'false');
@@ -664,6 +684,10 @@
     function closeDrawer() {
       if (closeTimer) return;
       submenu.setAttribute('data-submenu-state', 'closing');
+      nav.removeAttribute('data-nav-shared-fade');
+      toggleBtns.forEach(function (btn) {
+        btn.setAttribute('aria-expanded', 'false');
+      });
       hideL2();
       document.documentElement.style.overflow = '';
 
@@ -708,6 +732,27 @@
 
     /* Context toggle inside the drawer */
     var drawerToggles = submenu.querySelectorAll('[data-submenu-toggle]');
+    var announceEl = submenu.querySelector('[data-submenu-announce]');
+    var contextSwitching = false;
+    var contextFadeEls = [submenu.querySelector('[data-submenu-primary]')]
+      .concat(Array.from(submenu.querySelectorAll('.v3-submenu__utility-links')))
+      .filter(Boolean);
+
+    function setContextFade(opacity, duration) {
+      var t = reducedMotion ? 'none' : 'opacity ' + duration + 'ms ease-out';
+      contextFadeEls.forEach(function (el) {
+        el.style.transition = t;
+        el.style.opacity = opacity;
+      });
+    }
+
+    function clearContextFade() {
+      contextFadeEls.forEach(function (el) {
+        el.style.transition = '';
+        el.style.opacity = '';
+      });
+    }
+
     drawerToggles.forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (pillIntentTimer) {
@@ -719,11 +764,29 @@
 
         if (context === currentContext) {
           closeDrawer();
-        } else {
-          submenu.setAttribute('data-context', context);
-          nav.setAttribute('data-nav-context', context);
+        } else if (!contextSwitching) {
+          contextSwitching = true;
           updateDrawerToggle(context);
           hideL2();
+
+          /* Fade out links + utility, swap context while invisible, fade back in.
+             Quick actions and utility border stay solid throughout. */
+          setContextFade('0', 150);
+
+          setTimeout(function () {
+            submenu.setAttribute('data-context', context);
+            nav.setAttribute('data-nav-context', context);
+            if (announceEl) {
+              announceEl.textContent = 'Now showing ' + context.charAt(0).toUpperCase() + context.slice(1) + ' navigation';
+            }
+
+            setContextFade('1', 200);
+
+            setTimeout(function () {
+              clearContextFade();
+              contextSwitching = false;
+            }, 200);
+          }, 150);
         }
       });
     });
@@ -807,8 +870,9 @@
       });
     }
 
-    /* ═══ L2 HOVER REVEAL (pointer devices only) ═══ */
+    /* ═══ L2 REVEAL ═══ */
     if (primary && hasHover) {
+      /* Pointer devices: hover intent */
       primary.addEventListener('mouseover', function (e) {
         if (submenu.getAttribute('data-submenu-state') !== 'open') return;
         if (e.target.closest('.v3-submenu__l2')) return;
@@ -826,6 +890,26 @@
       });
     }
 
+    if (primary && !hasHover) {
+      /* Touch devices: tap to toggle L2 */
+      var l2Buttons = primary.querySelectorAll('[data-has-l2]');
+      l2Buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (submenu.getAttribute('data-submenu-state') !== 'open') return;
+          var slug = btn.getAttribute('data-l1');
+          var context = submenu.getAttribute('data-context');
+          var panel = submenu.querySelector(
+            '[data-l2="' + slug + '"][data-l2-context="' + context + '"]'
+          );
+          if (activeL2 === panel) {
+            hideL2();
+          } else {
+            showL2(slug, btn);
+          }
+        });
+      });
+    }
+
     function showL2(slug, l1Link) {
       var context = submenu.getAttribute('data-context');
       var panel = submenu.querySelector(
@@ -837,6 +921,10 @@
         activeL2.classList.remove('is-active', 'is-closing');
         activeL2.style.paddingTop = '';
       }
+
+      var prevTrigger = submenu.querySelector('[data-has-l2][aria-expanded="true"]');
+      if (prevTrigger) prevTrigger.setAttribute('aria-expanded', 'false');
+      l1Link.setAttribute('aria-expanded', 'true');
 
       panel.classList.add('is-active');
       primary.classList.add('has-l2');
@@ -862,6 +950,9 @@
       closing.classList.remove('is-active');
       activeL2 = null;
       if (primary) primary.classList.remove('has-l2');
+
+      var expandedTrigger = submenu.querySelector('[data-has-l2][aria-expanded="true"]');
+      if (expandedTrigger) expandedTrigger.setAttribute('aria-expanded', 'false');
 
       setTimeout(function () {
         closing.classList.remove('is-closing');
@@ -932,6 +1023,53 @@
         e.preventDefault();
         first.focus();
       }
+    });
+
+    /* ═══ NAVIGATION EXIT (internal link → fade → navigate) ═══
+       When a visitor clicks an internal link inside the open drawer,
+       play the closing fade before navigating so the transition feels
+       resolved rather than torn away. External links, modifier-key
+       clicks, and reduced-motion preferences all bypass this. */
+    var navigating = false;
+
+    drawer.addEventListener('click', function (e) {
+      if (navigating) return;
+      if (submenu.getAttribute('data-submenu-state') !== 'open') return;
+
+      var link = e.target.closest('a[href]');
+      if (!link || !drawer.contains(link)) return;
+      if (link.target === '_blank' || link.hasAttribute('download')) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      try {
+        var url = new URL(link.href, window.location.origin);
+        if (url.origin !== window.location.origin) return;
+      } catch (_) {
+        return;
+      }
+
+      if (reducedMotion) return;
+
+      e.preventDefault();
+      navigating = true;
+
+      submenu.setAttribute('data-submenu-state', 'closing');
+      nav.removeAttribute('data-nav-shared-fade');
+      document.documentElement.style.overflow = '';
+
+      setTimeout(function () {
+        link.click();
+      }, 200);
+    });
+
+    /* Restore clean state if page is returned to via back-forward cache */
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted || !navigating) return;
+      navigating = false;
+      submenu.setAttribute('data-submenu-state', 'closed');
+      submenu.setAttribute('aria-hidden', 'true');
+      nav.removeAttribute('data-nav-shared-fade');
+      document.documentElement.style.overflow = '';
     });
   })();
 </script>
