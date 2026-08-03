@@ -292,6 +292,9 @@
   .h-1\/2 {
     height: calc(1/2 * 100%);
   }
+  .h-12 {
+    height: var(--size-12);
+  }
   .h-\[10px\] {
     height: 10px;
   }
@@ -334,11 +337,11 @@
   .h-full {
     height: 100%;
   }
+  .w-12 {
+    width: var(--size-12);
+  }
   .w-\[10px\] {
     width: 10px;
-  }
-  .w-\[12px\] {
-    width: 12px;
   }
   .w-\[24px\] {
     width: 24px;
@@ -1013,6 +1016,7 @@
     --font-weight-regular: 400;
     --font-weight-medium: 500;
     --tracking-base: -0.005em;
+    --size-1: 1px;
     --size-4: 4px;
     --size-5: 5px;
     --size-6: 6px;
@@ -1020,6 +1024,7 @@
     --size-10: 10px;
     --size-11: 11px;
     --size-12: 12px;
+    --size-13: 13px;
     --size-14: 14px;
     --size-15: 15px;
     --size-16: 16px;

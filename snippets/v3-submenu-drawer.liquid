@@ -245,17 +245,21 @@
       <div class='v3-submenu__quick'>
         <button
           type='button'
-          class='v3-submenu__quick-pill text-submenu-caption'
+          class='v3-submenu__quick-pill'
           data-submenu-search
         >
-          Search rewindskinco.com
+          <span class='v3-submenu__quick-text text-submenu-caption'>
+            Search rewindskinco.com
+          </span>
         </button>
         <button
           type='button'
-          class='v3-submenu__quick-pill text-submenu-caption'
+          class='v3-submenu__quick-pill'
           data-submenu-bag
         >
-          {{ cart_bag_label }}
+          <span class='v3-submenu__quick-text text-submenu-caption'>
+            {{- cart_bag_label -}}
+          </span>
         </button>
       </div>
 
@@ -279,7 +283,7 @@
   .v3-submenu {
     --drawer-w: 522px;
     --drawer-inset: 12px;
-    --drawer-max-h: 704px;
+    --drawer-max-h: none;
     --drawer-r: 20px;
     --header-h: 86px;
     --header-pl: 24px;
@@ -300,17 +304,10 @@
     --utility-gap: 14px;
     --levels-pb: 18px;
   }
-  /* MD */
-  @media (min-width: 1024px) {
-    .v3-submenu {
-      --drawer-max-h: 672px;
-    }
-  }
   /* MD-LG */
   @media (min-width: 1280px) {
     .v3-submenu {
       --drawer-inset: 14px;
-      --drawer-max-h: 736px;
     }
   }
   /* LG/XL plateau */
@@ -336,8 +333,14 @@
       --quick-h: 32px;
       --utility-p: 32px;
       --utility-gap: 16px;
-      --drawer-max-h: 864px;
       --levels-pb: 20px;
+    }
+  }
+  /* Cap exceptionally tall desktop drawers while preserving the current XL
+     ceiling. Landscape SM–LG drawers otherwise fill the available viewport. */
+  @media (min-width: 768px) and (orientation: portrait), (min-width: 1920px) {
+    .v3-submenu {
+      --drawer-max-h: 864px;
     }
   }
   /* ═══ TYPOGRAPHY FOUNDATION ═══ */
@@ -631,7 +634,10 @@
     padding: var(--levels-pb) 32px;
   }
   .v3-submenu__quick-pill {
+    display: flex;
     height: var(--quick-h);
+    align-items: center;
+    justify-content: center;
     padding: 0 14px;
     background: var(--color-rest);
     border: none;
@@ -639,6 +645,9 @@
     color: var(--color-action);
     text-align: center;
     transition: background-color 150ms ease-out;
+  }
+  .v3-submenu__quick-text {
+    display: block;
   }
 
   /* ═══ UTILITY LINKS ═══ */
@@ -715,6 +724,40 @@
     .v3-submenu__utility-links[data-link-focused] .v3-submenu__utility-link[data-focused] {
       color: var(--color-ink);
     }
+  }
+
+  /* ═══ FOCUS FALLBACKS — mirror hover feedback where no focus state exists ═══ */
+  .v3-submenu__close:focus-visible {
+    background-color: var(--color-rest);
+  }
+  .v3-submenu__quick-pill:focus-visible {
+    background-color: var(--color-hover);
+  }
+
+  /* Text links use the hover de-emphasis treatment for keyboard focus and
+     touch press until dedicated states are designed. */
+  [data-l1-group]:has(.v3-submenu__l1-link:is(:focus-visible, :active))
+    .v3-submenu__l1-link,
+  .v3-submenu__l2:has(.v3-submenu__l2-link:is(:focus-visible, :active))
+    .v3-submenu__l2-link,
+  .v3-submenu__utility-links:has(
+      .v3-submenu__utility-link:is(:focus-visible, :active)
+    )
+    .v3-submenu__utility-link {
+    color: var(--color-demoted);
+    transition: color 220ms ease-out;
+  }
+  [data-l1-group]:has(.v3-submenu__l1-link:is(:focus-visible, :active))
+    .v3-submenu__l1-link:is(:focus-visible, :active),
+  .v3-submenu__l2:has(
+      .v3-submenu__l2-link:is(:focus-visible, :active)
+    )
+    .v3-submenu__l2-link:is(:focus-visible, :active),
+  .v3-submenu__utility-links:has(
+      .v3-submenu__utility-link:is(:focus-visible, :active)
+    )
+    .v3-submenu__utility-link:is(:focus-visible, :active) {
+    color: var(--color-ink);
   }
 
   /* ═══ PRESSED STATES ═══ */

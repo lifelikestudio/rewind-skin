@@ -56,7 +56,7 @@
           }}
         {%- else -%}
           <svg
-            class='w-[220px] h-[16px] lg:w-[248px] lg:h-[18px] overflow-visible'
+            class='h-[16px] w-[220px] overflow-visible lg:h-[18px] lg:w-[248px]'
             viewBox='0 0 193.235 14'
             fill='none'
             xmlns='http://www.w3.org/2000/svg'
@@ -204,7 +204,7 @@
         }}
       {%- else -%}
         <svg
-          class='w-[165px] h-[12px] xxs:w-[179px] xxs:h-[13px] xs:w-[193px] xs:h-[14px] overflow-visible'
+          class='xxs:w-[179px] xxs:h-[13px] xs:w-[193px] xs:h-[14px] h-[12px] w-[165px] overflow-visible'
           viewBox='0 0 193.235 14'
           fill='none'
           xmlns='http://www.w3.org/2000/svg'
@@ -233,6 +233,7 @@
           class='text-ink flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
           aria-label='Search'
           aria-expanded='false'
+          aria-controls='v3-search-drawer-{{ section.id }}'
           data-nav-search-mobile
         >
           {%- render 'v3-icon-search',
@@ -325,8 +326,7 @@
   logo: section.settings.logo,
   section_id: section.id,
   popular_terms: section.settings.search_popular_terms,
-  popular_collection: section.settings.search_popular_collection,
-  treatment_menu: section.settings.search_treatment_menu
+  popular_collection: section.settings.search_popular_collection
 -%}
 
 {%- render 'v3-mobile-menu',
@@ -474,6 +474,53 @@
     }
   }
 
+  /* ═══ FOCUS FALLBACKS — mirror hover feedback where no focus state exists ═══ */
+  .v3-nav__search-pill:focus-visible {
+    background-color: var(--color-hover);
+  }
+  .v3-nav__search-pill:focus-visible > span:last-child {
+    background-color: var(--color-rest);
+  }
+  .v3-nav__naked-btn:focus-visible {
+    background-color: var(--color-rest);
+  }
+
+  .group\/supporting:has(.v3-nav__naked-btn:focus-visible)
+    .v3-nav__naked-btn {
+    color: var(--color-muted);
+  }
+  .group\/supporting:has(.v3-nav__naked-btn:focus-visible)
+    .v3-nav__naked-btn:focus-visible {
+    color: var(--color-ink);
+  }
+
+  .group\/priority:has(
+      .v3-nav__switch-btn:focus-visible,
+      .v3-nav__search-pill:focus-visible
+    )
+    .v3-nav__switch-btn,
+  .group\/priority:has(
+      .v3-nav__switch-btn:focus-visible,
+      .v3-nav__search-pill:focus-visible
+    )
+    .v3-nav__search-pill
+    span:first-child {
+    color: var(--color-muted);
+  }
+  .group\/priority:has(
+      .v3-nav__switch-btn:focus-visible,
+      .v3-nav__search-pill:focus-visible
+    )
+    .v3-nav__switch-btn:focus-visible,
+  .group\/priority:has(
+      .v3-nav__switch-btn:focus-visible,
+      .v3-nav__search-pill:focus-visible
+    )
+    .v3-nav__search-pill:focus-visible
+    span:first-child {
+    color: var(--color-ink);
+  }
+
   /* ═══ MOBILE: cart badge ═══
      Capsize trim pseudos (display: table) become flex items inside the
      badge pill and fight against flex centering. Disable them here —
@@ -536,17 +583,49 @@
     border-radius: 9999px;
   }
 
-  /* ═══ TIER 2: SHARED-ELEMENT FADE ═══
-     When the drawer opens, the nav bar logo and toggle fade out,
-     creating a visual hand-off to their counterparts in the drawer heading. */
+  /* ═══ TIER 2: DRAWER HAND-OFFS ═══
+     The logo fades whenever its drawer counterpart appears. The path toggle
+     only fades for the submenu, where the same controls reappear. */
   .v3-nav [data-nav-logo],
   .v3-nav [data-nav-paths] {
     transition: opacity 200ms ease-out;
   }
   .v3-nav[data-nav-shared-fade] [data-nav-logo],
+  .v3-nav[data-nav-search-fade] [data-nav-logo],
   .v3-nav[data-nav-shared-fade] [data-nav-paths] {
     opacity: 0;
     pointer-events: none;
+  }
+
+  /* Modal-to-modal transfer is orchestrated by GSAP. Disable the drawers'
+     independent CSS transitions so the shared backdrop remains visually still. */
+  .v3-submenu[data-drawer-transfer] .v3-submenu__overlay,
+  .v3-submenu[data-drawer-transfer] .v3-submenu__drawer,
+  .v3-submenu[data-drawer-transfer] .v3-submenu__heading > a,
+  .v3-submenu[data-drawer-transfer] .v3-submenu__actions,
+  .v3-submenu[data-drawer-transfer] .v3-submenu__nav,
+  .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__panel,
+  .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__heading,
+  .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__toggle-wrap,
+  .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__nav,
+  .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__utility,
+  .v3-search[data-drawer-transfer] .v3-search__overlay,
+  .v3-search[data-drawer-transfer] .v3-search__drawer,
+  .v3-search[data-drawer-transfer] .v3-search__logo,
+  .v3-search[data-drawer-transfer] .v3-search__close,
+  .v3-search[data-drawer-transfer] .v3-search__body {
+    transition: none !important;
+  }
+  .v3-search[data-search-reveal] .v3-search__body {
+    transition: none !important;
+  }
+
+  /* Shared surface used while the mobile menu hands off to search. */
+  .v3-drawer-transfer-surface {
+    position: fixed;
+    pointer-events: none;
+    z-index: 55;
+    overflow: clip;
   }
 
   /* ═══ REDUCED MOTION ═══ */
@@ -565,10 +644,21 @@
 
     var submenu = document.getElementById('v3-submenu-{{ section.id }}');
     var drawer = submenu ? submenu.querySelector('.v3-submenu__drawer') : null;
-    var overlay = submenu ? submenu.querySelector('[data-submenu-overlay]') : null;
-    var primary = submenu ? submenu.querySelector('[data-submenu-primary]') : null;
-    var searchDrawer = document.getElementById('v3-search-drawer-{{ section.id }}');
+    var overlay = submenu
+      ? submenu.querySelector('[data-submenu-overlay]')
+      : null;
+    var primary = submenu
+      ? submenu.querySelector('[data-submenu-primary]')
+      : null;
+    var searchDrawer = document.getElementById(
+      'v3-search-drawer-{{ section.id }}'
+    );
     var searchTrigger = nav.querySelector('[data-nav-search]');
+    var searchMobileTriggers = Array.from(
+      document.querySelectorAll(
+        '[data-section-id="{{ section.id }}"] [data-nav-search-mobile], #v3-mobile-menu-{{ section.id }} [data-mobile-menu-search]'
+      )
+    );
     var openTrigger = null;
     var inertRecords = [];
 
@@ -584,7 +674,7 @@
           if (child === branch) return;
           inertRecords.push({
             element: child,
-            wasInert: child.inert || child.hasAttribute('inert')
+            wasInert: child.inert || child.hasAttribute('inert'),
           });
           child.inert = true;
         });
@@ -612,8 +702,11 @@
     toggleBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var context = btn.getAttribute('data-nav-toggle');
-        var isOpen = submenu && submenu.getAttribute('data-submenu-state') === 'open';
-        var currentContext = submenu ? submenu.getAttribute('data-context') : null;
+        var isOpen =
+          submenu && submenu.getAttribute('data-submenu-state') === 'open';
+        var currentContext = submenu
+          ? submenu.getAttribute('data-context')
+          : null;
 
         nav.setAttribute('data-nav-context', context);
         document.dispatchEvent(
@@ -655,11 +748,15 @@
             left: btn.offsetLeft,
             opacity: 1,
             duration: motionDur,
-            ease: 'power1.out'
+            ease: 'power1.out',
           });
         } else {
           gsap.set(slider, { width: btn.offsetWidth, left: btn.offsetLeft });
-          gsap.to(slider, { opacity: 1, duration: motionDurFast, ease: 'power1.out' });
+          gsap.to(slider, {
+            opacity: 1,
+            duration: motionDurFast,
+            ease: 'power1.out',
+          });
         }
       }
 
@@ -671,7 +768,7 @@
           ease: 'power1.out',
           onComplete: function () {
             gsap.set(slider, { clearProps: 'left,width,opacity' });
-          }
+          },
         });
         sliderActive = false;
       }
@@ -716,10 +813,14 @@
 
     /* ═══ MOBILE MENU ═══ */
     var mobileMenu = document.getElementById('v3-mobile-menu-{{ section.id }}');
-    var mobilePanel = mobileMenu ? mobileMenu.querySelector('.v3-mobile-menu__panel') : null;
+    var mobilePanel = mobileMenu
+      ? mobileMenu.querySelector('.v3-mobile-menu__panel')
+      : null;
     var hamburger = nav.querySelector('[data-nav-hamburger]');
     var mobileCloseTimer = null;
-    var mobileL1View = mobileMenu ? mobileMenu.querySelector('[data-mobile-menu-l1-view]') : null;
+    var mobileL1View = mobileMenu
+      ? mobileMenu.querySelector('[data-mobile-menu-l1-view]')
+      : null;
     var activeMobileL2 = null;
     var activeMobileTrigger = null;
     var mobileDrillTimeline = null;
@@ -733,33 +834,295 @@
     /* ═══ SEARCH DRAWER — SM–XL ═══ */
     if (searchDrawer && searchTrigger) {
       var searchInput = searchDrawer.querySelector('[data-search-input]');
+      var searchInputField = searchDrawer.querySelector(
+        '[data-search-input-field]'
+      );
       var searchForm = searchDrawer.querySelector('[data-search-form]');
       var searchClear = searchDrawer.querySelector('[data-search-clear]');
+      var searchBack = searchDrawer.querySelector('[data-search-back]');
       var searchClose = searchDrawer.querySelector('[data-search-close]');
+      var searchStickyClose = searchDrawer.querySelector(
+        '[data-search-sticky-close]'
+      );
       var searchOverlay = searchDrawer.querySelector('[data-search-overlay]');
       var searchStates = searchDrawer.querySelector('[data-search-states]');
-      var searchPredictive = searchDrawer.querySelector('[data-search-predictive-results]');
+      var searchPredictive = searchDrawer.querySelector(
+        '[data-search-predictive-results]'
+      );
       var searchQueryLabel = searchDrawer.querySelector('[data-search-query]');
       var searchViewAll = searchDrawer.querySelector('[data-search-view-all]');
-      var searchFooterHint = searchDrawer.querySelector('[data-search-footer-hint]');
+      var searchFooterHint = searchDrawer.querySelector(
+        '[data-search-footer-hint]'
+      );
+      var searchFooter = searchDrawer.querySelector('[data-search-footer]');
+      var searchFooterInner = searchFooter
+        ? searchFooter.querySelector('.v3-search__footer-inner')
+        : null;
       var searchAnnounce = searchDrawer.querySelector('[data-search-announce]');
       var searchScroll = searchDrawer.querySelector('[data-search-scroll]');
-      var searchTreatmentSource = searchDrawer.querySelector('[data-search-treatment-source]');
+      var searchRecentSection = searchDrawer.querySelector(
+        '[data-search-recent-section]'
+      );
+      var searchRecentList = searchDrawer.querySelector(
+        '[data-search-recent-list]'
+      );
+      var searchRecentClear = searchDrawer.querySelector(
+        '[data-search-recent-clear]'
+      );
+      var searchPanel = searchDrawer.querySelector('.v3-search__drawer');
+      var searchLogo = searchDrawer.querySelector('.v3-search__logo');
+      var searchBody = searchDrawer.querySelector('.v3-search__body');
+      var submenuLogo = submenu
+        ? submenu.querySelector('.v3-submenu__heading > a')
+        : null;
+      var submenuActions = submenu
+        ? submenu.querySelector('.v3-submenu__actions')
+        : null;
+      var submenuToggleGroup = submenu
+        ? submenu.querySelector('[data-submenu-toggle-group]')
+        : null;
+      var submenuClose = submenu
+        ? submenu.querySelector('[data-submenu-close]')
+        : null;
+      var submenuNav = submenu
+        ? submenu.querySelector('.v3-submenu__nav')
+        : null;
+      var mobileMenuHeading = mobileMenu
+        ? mobileMenu.querySelector('.v3-mobile-menu__heading')
+        : null;
+      var mobileMenuLogo = mobileMenuHeading
+        ? mobileMenuHeading.querySelector('a')
+        : null;
+      var mobileMenuClose = mobileMenu
+        ? mobileMenu.querySelector('[data-mobile-menu-close]')
+        : null;
+      var mobileMenuToggleWrap = mobileMenu
+        ? mobileMenu.querySelector('.v3-mobile-menu__toggle-wrap')
+        : null;
+      var mobileMenuNav = mobileMenu
+        ? mobileMenu.querySelector('.v3-mobile-menu__nav')
+        : null;
+      var mobileMenuUtility = mobileMenu
+        ? mobileMenu.querySelector('.v3-mobile-menu__utility')
+        : null;
       var searchCloseTimer = null;
       var searchDebounceTimer = null;
+      var searchLoadingTimer = null;
       var searchRequest = null;
+      var searchRequestSequence = 0;
+      var searchCompletedRequestId = 0;
+      var searchCompletedQuery = '';
+      var searchCompletedHasResults = false;
+      var searchCache = new Map();
+      var searchHasRenderedResults = false;
+      var searchLoadingPreview =
+        new URLSearchParams(window.location.search).get('v3-search-preview') ===
+        'loading';
       var searchOpenTrigger = null;
+      var searchOriginTrigger = null;
       var searchNavigating = false;
+      var searchTransferTimeline = null;
+      var searchRevealTimeline = null;
+      var mobileTransferSurface = null;
+      var mobileMenuLogoParent = mobileMenuLogo
+        ? mobileMenuLogo.parentNode
+        : null;
+      var mobileMenuLogoNextSibling = mobileMenuLogo
+        ? mobileMenuLogo.nextSibling
+        : null;
+      var mobileMenuLogoIsShared = false;
+      var searchTransferElements = [
+        overlay,
+        drawer,
+        submenuLogo,
+        submenuActions,
+        submenuToggleGroup,
+        submenuClose,
+        submenuNav,
+        mobilePanel,
+        mobileMenuHeading,
+        mobileMenuLogo,
+        mobileMenuClose,
+        mobileMenuToggleWrap,
+        mobileMenuNav,
+        mobileMenuUtility,
+        searchOverlay,
+        searchPanel,
+        searchLogo,
+        searchClose,
+        searchBody,
+      ].filter(Boolean);
 
-      function setSearchView(view, immediate) {
-        if (!searchStates) {
+      function shareMobileMenuLogoWithSearch() {
+        if (
+          mobileMenuLogoIsShared ||
+          !mobileMenuLogo ||
+          !searchLogo ||
+          !searchLogo.parentNode
+        ) {
+          return;
+        }
+        searchLogo.style.display = 'none';
+        searchLogo.parentNode.insertBefore(mobileMenuLogo, searchLogo);
+        gsap.set(mobileMenuLogo, { opacity: 1 });
+        mobileMenuLogoIsShared = true;
+      }
+
+      function restoreMobileMenuLogo() {
+        if (!mobileMenuLogoIsShared || !mobileMenuLogoParent) return;
+        mobileMenuLogoParent.insertBefore(
+          mobileMenuLogo,
+          mobileMenuLogoNextSibling
+        );
+        if (searchLogo) searchLogo.style.display = '';
+        gsap.set(mobileMenuLogo, { clearProps: 'opacity' });
+        mobileMenuLogoIsShared = false;
+      }
+
+      function createMobileTransferLayers(panelRect, panelStyles) {
+        destroyMobileTransferLayers();
+
+        mobileTransferSurface = document.createElement('div');
+        mobileTransferSurface.className = 'v3-drawer-transfer-surface';
+        mobileTransferSurface.setAttribute('aria-hidden', 'true');
+        gsap.set(mobileTransferSurface, {
+          top: panelRect.top,
+          left: panelRect.left,
+          width: panelRect.width,
+          height: panelRect.height,
+          borderRadius: panelStyles.borderRadius,
+          backgroundColor: panelStyles.backgroundColor,
+          backdropFilter: panelStyles.backdropFilter,
+          webkitBackdropFilter: panelStyles.webkitBackdropFilter,
+          opacity: 1,
+        });
+        document.body.appendChild(mobileTransferSurface);
+      }
+
+      function destroyMobileTransferLayers() {
+        if (mobileTransferSurface) {
+          gsap.killTweensOf(mobileTransferSurface);
+          mobileTransferSurface.remove();
+        }
+        mobileTransferSurface = null;
+        restoreMobileMenuLogo();
+      }
+
+      function getSearchRevealParts() {
+        var supporting = [];
+        var products = Array.from(
+          searchDrawer.querySelectorAll(
+            '[data-search-fallback] .v3-search__product-card'
+          )
+        );
+        var fallbackSections = searchDrawer.querySelectorAll(
+          '[data-search-fallback] > .v3-search__subgroup'
+        );
+
+        if (searchRecentSection && !searchRecentSection.hidden) {
+          supporting.push(searchRecentSection);
+        }
+
+        fallbackSections.forEach(function (section) {
+          if (section.querySelector('.v3-search__product-card')) {
+            var heading = section.querySelector('.v3-search__subgroup-title');
+            if (heading) supporting.push(heading);
+          } else {
+            supporting.push(section);
+          }
+        });
+
+        var field = searchForm ? [searchForm] : [];
+        return {
+          field: field,
+          supporting: supporting,
+          products: products,
+          all: field.concat(supporting, products),
+        };
+      }
+
+      function clearSearchRevealStyles() {
+        var parts = getSearchRevealParts();
+        gsap.killTweensOf(parts.all);
+        gsap.set(parts.all, { clearProps: 'opacity' });
+        if (searchBody) gsap.set(searchBody, { clearProps: 'opacity' });
+        searchDrawer.removeAttribute('data-search-reveal');
+      }
+
+      function stopSearchReveal() {
+        if (searchRevealTimeline) {
+          searchRevealTimeline.kill();
+          searchRevealTimeline = null;
+        }
+        clearSearchRevealStyles();
+      }
+
+      function addSearchReveal(timeline, fieldStart) {
+        var parts = getSearchRevealParts();
+        var revealDuration = reducedMotion ? 0 : 0.25;
+        var supportingStart = fieldStart + (reducedMotion ? 0 : 0.07);
+        var productStagger = reducedMotion ? 0 : 0.03;
+
+        searchDrawer.setAttribute('data-search-reveal', '');
+        if (searchBody) gsap.set(searchBody, { opacity: 1 });
+        gsap.set(parts.all, { opacity: 0 });
+
+        timeline.addLabel('search-field-reveal', fieldStart);
+        timeline.addLabel('search-supporting-reveal', supportingStart);
+
+        if (parts.field.length) {
+          timeline.to(
+            parts.field,
+            { opacity: 1, duration: revealDuration, ease: 'power1.out' },
+            'search-field-reveal'
+          );
+        }
+        if (parts.supporting.length) {
+          timeline.to(
+            parts.supporting,
+            { opacity: 1, duration: revealDuration, ease: 'power1.out' },
+            'search-supporting-reveal'
+          );
+        }
+        if (parts.products.length) {
+          timeline.to(
+            parts.products,
+            {
+              opacity: 1,
+              duration: revealDuration,
+              ease: 'power1.out',
+              stagger: productStagger,
+            },
+            'search-supporting-reveal'
+          );
+        }
+      }
+
+      function playSearchReveal(fieldStart) {
+        stopSearchReveal();
+        searchRevealTimeline = gsap.timeline({
+          onComplete: function () {
+            clearSearchRevealStyles();
+            searchRevealTimeline = null;
+          },
+        });
+        addSearchReveal(searchRevealTimeline, fieldStart);
+      }
+
+      function setSearchView(view, immediate, onViewChange) {
+        function applyView() {
           searchDrawer.setAttribute('data-search-view', view);
+          if (onViewChange) onViewChange();
+        }
+
+        if (!searchStates) {
+          applyView();
           return;
         }
 
         gsap.killTweensOf(searchStates);
         if (immediate || reducedMotion) {
-          searchDrawer.setAttribute('data-search-view', view);
+          applyView();
           gsap.set(searchStates, { clearProps: 'opacity' });
           return;
         }
@@ -769,17 +1132,47 @@
           duration: motionDurFast,
           ease: 'power1.out',
           onComplete: function () {
-            searchDrawer.setAttribute('data-search-view', view);
+            applyView();
             gsap.to(searchStates, {
               opacity: 1,
               duration: motionDur,
               ease: 'power1.out',
               onComplete: function () {
                 gsap.set(searchStates, { clearProps: 'opacity' });
-              }
+              },
             });
-          }
+          },
         });
+      }
+
+      function revealSearchFooter() {
+        if (!searchFooter) return;
+        var footerLayers = [searchFooterInner].filter(Boolean);
+        gsap.killTweensOf(footerLayers);
+        if (reducedMotion) {
+          gsap.set(footerLayers, { clearProps: 'opacity,transform' });
+          return;
+        }
+
+        var footerTimeline = gsap.timeline({
+          delay: motionDurFast / 2,
+          onComplete: function () {
+            gsap.set(footerLayers, { clearProps: 'opacity,transform' });
+          },
+        });
+        if (searchFooterInner) {
+          footerTimeline.fromTo(
+            searchFooterInner,
+            { opacity: 0, y: 4 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: motionDur,
+              ease: 'power1.out',
+            },
+            motionDurFast / 2
+          );
+        }
       }
 
       function updateSearchQueryState() {
@@ -792,7 +1185,135 @@
         return query;
       }
 
-      function resetSearchResults() {
+      function normalizeSearchText(value) {
+        return String(value || '')
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/&/g, ' and ')
+          .replace(/['’]/g, '')
+          .replace(/[^\p{L}\p{N}]+/gu, ' ')
+          .trim()
+          .replace(/\s+/g, ' ')
+          .toLocaleLowerCase();
+      }
+
+      var recentSearchStorageKey = 'rewind:v3:recent-searches';
+
+      function readRecentSearches() {
+        try {
+          var stored = JSON.parse(
+            window.localStorage.getItem(recentSearchStorageKey) || '[]'
+          );
+          if (!Array.isArray(stored)) return [];
+          var recent = stored
+            .filter(function (item) {
+              return (
+                item &&
+                typeof item.key === 'string' &&
+                typeof item.label === 'string'
+              );
+            })
+            .slice(0, 3);
+          if (stored.length !== recent.length) {
+            try {
+              window.localStorage.setItem(
+                recentSearchStorageKey,
+                JSON.stringify(recent)
+              );
+            } catch (_) {
+              return recent;
+            }
+          }
+          return recent;
+        } catch (_) {
+          return [];
+        }
+      }
+
+      function renderRecentSearches() {
+        if (!searchRecentSection || !searchRecentList) return;
+        var recent = readRecentSearches().slice(0, 3);
+        searchRecentList.innerHTML = '';
+        recent.forEach(function (item) {
+          var button = document.createElement('button');
+          var text = document.createElement('span');
+          button.type = 'button';
+          button.className = 'v3-search__suggestion';
+          button.setAttribute('data-search-suggestion', '');
+          button.setAttribute('data-search-suggestion-value', item.label);
+          text.className =
+            'v3-search__suggestion-text text-search-suggestion';
+          text.textContent = item.label;
+          button.appendChild(text);
+          searchRecentList.appendChild(button);
+        });
+        searchRecentSection.hidden = recent.length === 0;
+      }
+
+      function recordRecentSearch(value) {
+        var label = String(value || '')
+          .trim()
+          .replace(/\s+/g, ' ');
+        var key = normalizeSearchText(label);
+        if (!key) return;
+        var recent = readRecentSearches().filter(function (item) {
+          return item.key !== key;
+        });
+        recent.unshift({ key: key, label: label });
+        try {
+          window.localStorage.setItem(
+            recentSearchStorageKey,
+            JSON.stringify(recent.slice(0, 3))
+          );
+        } catch (_) {
+          return;
+        }
+        renderRecentSearches();
+      }
+
+      function recordCompletedSearch() {
+        var query = searchInput ? searchInput.value : '';
+        if (searchCompletedRequestId !== searchRequestSequence) return;
+        if (!searchCompletedHasResults) return;
+        if (
+          normalizeSearchText(query) !==
+          normalizeSearchText(searchCompletedQuery)
+        )
+          return;
+        recordRecentSearch(query);
+      }
+
+      function stopSearchLoading() {
+        if (searchLoadingTimer) {
+          clearTimeout(searchLoadingTimer);
+          searchLoadingTimer = null;
+        }
+        searchDrawer.removeAttribute('data-search-loading');
+      }
+
+      function beginSearchLoading(requestId) {
+        stopSearchLoading();
+        if (searchStates) searchStates.setAttribute('aria-busy', 'true');
+        searchLoadingTimer = setTimeout(function () {
+          searchLoadingTimer = null;
+          if (requestId !== searchRequestSequence) return;
+          if (
+            searchHasRenderedResults &&
+            searchPredictive &&
+            searchPredictive.children.length
+          ) {
+            searchDrawer.setAttribute('data-search-loading', 'retained');
+          } else {
+            searchDrawer.setAttribute('data-search-loading', 'first');
+            setSearchView('loading');
+          }
+          if (searchAnnounce)
+            searchAnnounce.textContent = 'Loading search results';
+        }, 300);
+      }
+
+      function resetSearchResults(animate) {
+        searchRequestSequence += 1;
         if (searchDebounceTimer) {
           clearTimeout(searchDebounceTimer);
           searchDebounceTimer = null;
@@ -801,48 +1322,647 @@
           searchRequest.abort();
           searchRequest = null;
         }
+        stopSearchLoading();
+        searchHasRenderedResults = false;
+        searchCompletedHasResults = false;
         searchDrawer.removeAttribute('data-search-has-results');
-        if (searchPredictive) searchPredictive.innerHTML = '';
-        if (searchInput) searchInput.setAttribute('aria-expanded', 'false');
+        if (searchLoadingPreview) {
+          searchDrawer.setAttribute('data-search-loading', 'first');
+          if (searchStates) searchStates.setAttribute('aria-busy', 'true');
+          setSearchView('loading', true, function () {
+            if (searchPredictive) searchPredictive.innerHTML = '';
+          });
+          return;
+        }
         if (searchStates) searchStates.setAttribute('aria-busy', 'false');
-        setSearchView('initial', true);
+        setSearchView('initial', !animate, function () {
+          if (searchPredictive) searchPredictive.innerHTML = '';
+        });
+      }
+
+      renderRecentSearches();
+      if (searchLoadingPreview) {
+        searchDrawer.setAttribute('data-search-loading', 'first');
+        searchDrawer.setAttribute('data-search-view', 'loading');
+        if (searchStates) searchStates.setAttribute('aria-busy', 'true');
+      }
+
+      if (searchRecentClear) {
+        searchRecentClear.addEventListener('click', function () {
+          try {
+            window.localStorage.removeItem(recentSearchStorageKey);
+          } catch (_) {
+            return;
+          }
+
+          if (
+            !searchRecentSection ||
+            reducedMotion ||
+            searchRecentSection.hidden
+          ) {
+            renderRecentSearches();
+          } else {
+            var recentParts = Array.from(
+              searchRecentSection.querySelectorAll(
+                '.v3-search__subgroup-heading, .v3-search__suggestion'
+              )
+            );
+            var parentGap = searchStates
+              ? parseFloat(window.getComputedStyle(searchStates).rowGap) || 0
+              : 0;
+
+            searchRecentClear.disabled = true;
+            searchRecentSection.setAttribute('aria-hidden', 'true');
+            gsap.killTweensOf([searchRecentSection].concat(recentParts));
+            gsap
+              .timeline({
+                onComplete: function () {
+                  renderRecentSearches();
+                  searchRecentSection.removeAttribute('aria-hidden');
+                  searchRecentClear.disabled = false;
+                  gsap.set([searchRecentSection].concat(recentParts), {
+                    clearProps:
+                      'height,marginBottom,opacity,overflow,pointerEvents,transform',
+                  });
+                },
+              })
+              .to(
+                recentParts,
+                {
+                  opacity: 0,
+                  y: -4,
+                  duration: motionDurFast,
+                  ease: 'power1.in',
+                  stagger: 0.02,
+                },
+                0
+              )
+              .to(
+                searchRecentSection,
+                {
+                  height: 0,
+                  marginBottom: -parentGap,
+                  opacity: 0,
+                  overflow: 'hidden',
+                  pointerEvents: 'none',
+                  duration: motionDur,
+                  ease: 'power2.inOut',
+                },
+                0
+              );
+          }
+
+          if (searchAnnounce)
+            searchAnnounce.textContent = 'Recent searches cleared';
+          if (searchInput) searchInput.focus();
+        });
+      }
+
+      function updateSearchScrolledState() {
+        if (!searchScroll) return;
+        searchDrawer.toggleAttribute(
+          'data-search-scrolled',
+          searchScroll.scrollTop > 0
+        );
+      }
+
+      function setSearchOrigin(origin, context, trigger, level) {
+        searchDrawer.setAttribute('data-search-origin', origin);
+        if (context) {
+          searchDrawer.setAttribute('data-search-origin-context', context);
+        } else {
+          searchDrawer.removeAttribute('data-search-origin-context');
+        }
+        if (level) {
+          searchDrawer.setAttribute('data-search-origin-level', level);
+        } else {
+          searchDrawer.removeAttribute('data-search-origin-level');
+        }
+        searchOriginTrigger = trigger || null;
+        if (searchBack) searchBack.hidden = false;
+      }
+
+      function clearSearchOrigin() {
+        searchDrawer.removeAttribute('data-search-origin');
+        searchDrawer.removeAttribute('data-search-origin-context');
+        searchDrawer.removeAttribute('data-search-origin-level');
+        searchOriginTrigger = null;
+        if (searchBack) searchBack.hidden = true;
+      }
+
+      function clearSearchTransferStyles() {
+        gsap.killTweensOf(searchTransferElements);
+        gsap.set(searchTransferElements, {
+          clearProps:
+            'opacity,top,left,width,height,borderRadius,backgroundColor,backdropFilter,webkitBackdropFilter',
+        });
+        if (submenu) submenu.removeAttribute('data-drawer-transfer');
+        if (mobileMenu) mobileMenu.removeAttribute('data-drawer-transfer');
+        searchDrawer.removeAttribute('data-drawer-transfer');
+        clearSearchRevealStyles();
+        destroyMobileTransferLayers();
+      }
+
+      function discardSearchTransfer() {
+        if (!searchTransferTimeline) return;
+
+        var origin = searchDrawer.getAttribute('data-search-origin');
+        searchTransferTimeline.kill();
+        searchTransferTimeline = null;
+        clearSearchTransferStyles();
+
+        if (origin === 'submenu') {
+          resetDesktopDrawerState();
+        } else if (origin === 'mobile-menu') {
+          resetMobileMenuState();
+        }
+      }
+
+      function completeSearchTransferReverse() {
+        var origin = searchDrawer.getAttribute('data-search-origin');
+        var context = searchDrawer.getAttribute('data-search-origin-context');
+        var focusTarget = searchOriginTrigger;
+
+        searchDrawer.setAttribute('data-search-state', 'closed');
+        searchDrawer.setAttribute('aria-hidden', 'true');
+        searchDrawer.removeAttribute('data-search-scrolled');
+        [searchTrigger]
+          .concat(searchMobileTriggers)
+          .filter(Boolean)
+          .forEach(function (trigger) {
+            trigger.setAttribute('aria-expanded', 'false');
+          });
+        nav.removeAttribute('data-nav-search-fade');
+
+        if (origin === 'submenu' && submenu) {
+          submenu.setAttribute('data-submenu-state', 'open');
+          submenu.setAttribute('aria-hidden', 'false');
+          nav.setAttribute('data-nav-shared-fade', '');
+          toggleBtns.forEach(function (btn) {
+            btn.setAttribute(
+              'aria-expanded',
+              String(btn.getAttribute('data-nav-toggle') === context)
+            );
+          });
+          isolateModal(submenu);
+        } else if (origin === 'mobile-menu' && mobileMenu) {
+          mobileMenu.setAttribute('data-mobile-menu-state', 'open');
+          mobileMenu.setAttribute('aria-hidden', 'false');
+          if (hamburger) hamburger.setAttribute('aria-expanded', 'true');
+          isolateModal(mobileMenu);
+        }
+
+        document.documentElement.style.overflow = 'hidden';
+        clearSearchTransferStyles();
+        if (searchTransferTimeline) searchTransferTimeline.kill();
+        searchTransferTimeline = null;
+        if (searchInput) searchInput.value = '';
+        updateSearchQueryState();
+        resetSearchResults();
+        searchOpenTrigger = null;
+        clearSearchOrigin();
+
+        window.setTimeout(function () {
+          if (focusTarget && focusTarget.isConnected) {
+            focusTarget.focus({ preventScroll: true });
+          }
+        }, 0);
       }
 
       function resetSearchDrawerState() {
         if (!searchDrawer) return;
+        if (searchDrawer.getAttribute('data-search-state') !== 'closed') {
+          recordCompletedSearch();
+        }
+        if (searchTransferTimeline) {
+          searchTransferTimeline.kill();
+          searchTransferTimeline = null;
+        }
         if (searchCloseTimer) {
           clearTimeout(searchCloseTimer);
           searchCloseTimer = null;
         }
+        stopSearchReveal();
+        gsap.killTweensOf(searchTransferElements);
+        gsap.set(searchTransferElements, {
+          clearProps:
+            'opacity,top,left,width,height,borderRadius,backgroundColor,backdropFilter,webkitBackdropFilter',
+        });
+        if (submenu) submenu.removeAttribute('data-drawer-transfer');
+        if (mobileMenu) mobileMenu.removeAttribute('data-drawer-transfer');
+        searchDrawer.removeAttribute('data-drawer-transfer');
+        destroyMobileTransferLayers();
+        searchDrawer.removeAttribute('data-search-scrolled');
+        clearSearchOrigin();
         if (searchInput) searchInput.value = '';
         updateSearchQueryState();
         resetSearchResults();
         searchDrawer.setAttribute('data-search-state', 'closed');
         searchDrawer.setAttribute('aria-hidden', 'true');
-        searchTrigger.setAttribute('aria-expanded', 'false');
+        [searchTrigger]
+          .concat(searchMobileTriggers)
+          .filter(Boolean)
+          .forEach(function (trigger) {
+            trigger.setAttribute('aria-expanded', 'false');
+          });
+        nav.removeAttribute('data-nav-search-fade');
         searchOpenTrigger = null;
         searchNavigating = false;
       }
 
+      function completeSubmenuSearchTransfer() {
+        searchDrawer.setAttribute('data-search-state', 'open');
+        searchDrawer.setAttribute('aria-hidden', 'false');
+        window.setTimeout(function () {
+          if (
+            searchInput &&
+            searchDrawer.getAttribute('data-search-state') === 'open' &&
+            document.activeElement !== searchInput
+          ) {
+            searchInput.focus();
+          }
+        }, 0);
+      }
+
+      function transferSubmenuToSearch(trigger) {
+        if (searchTransferTimeline) return;
+
+        var emptyDuration = reducedMotion ? 0 : 0.14;
+        var morphDuration = reducedMotion ? 0 : 0.32;
+        var sharedDuration = reducedMotion ? 0 : 0.16;
+        var morphStart = reducedMotion ? 0 : 0.04;
+        var contentStart = reducedMotion ? 0 : 0.23;
+        var sharedStart = reducedMotion ? 0 : 0.16;
+        var closeStart = reducedMotion
+          ? 0
+          : morphStart + morphDuration - 0.04;
+
+        searchOpenTrigger = searchTrigger;
+        setSearchOrigin(
+          'submenu',
+          submenu.getAttribute('data-context'),
+          trigger,
+          activeL2 ? activeL2.getAttribute('data-l2') : null
+        );
+        submenu.setAttribute('data-drawer-transfer', '');
+        searchDrawer.setAttribute('data-drawer-transfer', '');
+        submenu.setAttribute('data-submenu-state', 'closing');
+        submenu.setAttribute('aria-hidden', 'true');
+        searchDrawer.setAttribute('data-search-state', 'open');
+        searchDrawer.setAttribute('aria-hidden', 'false');
+        searchTrigger.setAttribute('aria-expanded', 'true');
+        toggleBtns.forEach(function (btn) {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+        nav.removeAttribute('data-nav-shared-fade');
+        nav.setAttribute('data-nav-search-fade', '');
+        document.documentElement.style.overflow = 'hidden';
+        isolateModal(searchDrawer);
+
+        var submenuRect = drawer.getBoundingClientRect();
+        var searchRect = searchPanel.getBoundingClientRect();
+
+        gsap.killTweensOf(searchTransferElements);
+        gsap.set(
+          [
+            drawer,
+            submenuLogo,
+            submenuActions,
+            submenuToggleGroup,
+            submenuClose,
+            submenuNav,
+          ].filter(Boolean),
+          { opacity: 1 }
+        );
+        gsap.set(searchPanel, {
+          width: submenuRect.width,
+          backgroundColor: 'transparent',
+          opacity: 1,
+        });
+        gsap.set(drawer, {
+          width: submenuRect.width,
+        });
+        gsap.set([searchLogo, searchClose].filter(Boolean), {
+          opacity: 0,
+        });
+        gsap.set(overlay, { opacity: 1 });
+        gsap.set(searchOverlay, { opacity: 0 });
+
+        requestAnimationFrame(function () {
+          if (searchInput) searchInput.focus();
+        });
+
+        searchTransferTimeline = gsap.timeline({
+          defaults: { ease: 'power1.out' },
+          onComplete: completeSubmenuSearchTransfer,
+          onReverseComplete: completeSearchTransferReverse,
+        });
+        addSearchReveal(searchTransferTimeline, contentStart);
+
+        if (submenuNav) {
+          searchTransferTimeline.to(
+            submenuNav,
+            { opacity: 0, duration: emptyDuration },
+            0
+          );
+        }
+        if (submenuToggleGroup) {
+          searchTransferTimeline.to(
+            submenuToggleGroup,
+            { opacity: 0, duration: emptyDuration },
+            0
+          );
+        }
+        if (drawer && searchPanel) {
+          searchTransferTimeline.to(
+            [drawer, searchPanel],
+            {
+              width: searchRect.width,
+              duration: morphDuration,
+              ease: 'power1.inOut',
+            },
+            morphStart
+          );
+        }
+        if (submenuLogo) {
+          searchTransferTimeline.to(
+            submenuLogo,
+            { opacity: 0, duration: sharedDuration },
+            sharedStart
+          );
+        }
+        if (searchLogo) {
+          searchTransferTimeline.to(
+            searchLogo,
+            { opacity: 1, duration: sharedDuration },
+            sharedStart
+          );
+        }
+        if (submenuClose) {
+          searchTransferTimeline.to(
+            submenuClose,
+            { opacity: 0, duration: emptyDuration },
+            0
+          );
+        }
+        if (searchClose) {
+          searchTransferTimeline.to(
+            searchClose,
+            { opacity: 1, duration: sharedDuration },
+            closeStart
+          );
+        }
+      }
+
+      function completeMobileMenuSearchTransfer() {
+        searchDrawer.setAttribute('data-search-state', 'open');
+        searchDrawer.setAttribute('aria-hidden', 'false');
+        window.setTimeout(function () {
+          if (
+            searchInput &&
+            searchDrawer.getAttribute('data-search-state') === 'open' &&
+            document.activeElement !== searchInput
+          ) {
+            searchInput.focus();
+          }
+        }, 0);
+      }
+
+      function transferMobileMenuToSearch(trigger) {
+        if (searchTransferTimeline || !mobileMenu || !mobilePanel) return;
+
+        var emptyDuration = reducedMotion ? 0 : 0.14;
+        var morphDuration = reducedMotion ? 0 : 0.32;
+        var morphStart = reducedMotion ? 0 : 0.04;
+        var contentStart = reducedMotion ? 0 : 0.23;
+        var morphEnd = morphStart + morphDuration;
+        var overlayDuration = reducedMotion ? 0 : 0.1;
+        var mobileRect = mobilePanel.getBoundingClientRect();
+        var searchRect = searchPanel.getBoundingClientRect();
+        var mobileStyles = window.getComputedStyle(mobilePanel);
+        var searchStyles = window.getComputedStyle(searchPanel);
+        var mobileBorderRadius = mobileStyles.borderRadius;
+        var searchBorderRadius = searchStyles.borderRadius;
+        var searchBackgroundColor = searchStyles.backgroundColor;
+
+        searchOpenTrigger = nav.querySelector('[data-nav-search-mobile]');
+        setSearchOrigin(
+          'mobile-menu',
+          mobileMenu.getAttribute('data-mobile-menu-context'),
+          trigger,
+          activeMobileL2 ? activeMobileL2.getAttribute('data-mobile-l2') : null
+        );
+        mobileMenu.setAttribute('data-drawer-transfer', '');
+        searchDrawer.setAttribute('data-drawer-transfer', '');
+        mobileMenu.setAttribute('data-mobile-menu-state', 'closing');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        searchDrawer.setAttribute('data-search-state', 'open');
+        searchDrawer.setAttribute('aria-hidden', 'false');
+        if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
+        [searchTrigger]
+          .concat(searchMobileTriggers)
+          .filter(Boolean)
+          .forEach(function (item) {
+            item.setAttribute('aria-expanded', 'true');
+          });
+        document.documentElement.style.overflow = 'hidden';
+        isolateModal(searchDrawer);
+        if (searchInput) searchInput.focus();
+
+        if (mobileDrillTimeline) {
+          mobileDrillTimeline.kill();
+          mobileDrillTimeline = null;
+          mobileDrilling = false;
+        }
+        if (mobileContextTimeline) {
+          mobileContextTimeline.kill();
+          mobileContextTimeline = null;
+          mobileContextSwitching = false;
+        }
+
+        createMobileTransferLayers(mobileRect, mobileStyles);
+        shareMobileMenuLogoWithSearch();
+        gsap.killTweensOf(searchTransferElements);
+        gsap.set(
+          [
+            mobilePanel,
+            mobileMenuHeading,
+            mobileMenuLogo,
+            mobileMenuClose,
+            mobileMenuToggleWrap,
+            mobileMenuNav,
+            mobileMenuUtility,
+          ].filter(Boolean),
+          { opacity: 1 }
+        );
+        gsap.set(mobilePanel, {
+          top: mobileRect.top,
+          left: mobileRect.left,
+          width: mobileRect.width,
+          height: mobileRect.height,
+          borderRadius: mobileBorderRadius,
+          backgroundColor: 'transparent',
+          backdropFilter: 'blur(0px)',
+          webkitBackdropFilter: 'blur(0px)',
+        });
+        gsap.set(searchPanel, {
+          top: mobileRect.top,
+          left: mobileRect.left,
+          width: mobileRect.width,
+          height: mobileRect.height,
+          borderRadius: mobileBorderRadius,
+          backgroundColor: 'transparent',
+          opacity: 1,
+        });
+        if (mobileMenuClose) gsap.set(mobileMenuClose, { opacity: 0 });
+        if (searchClose) gsap.set(searchClose, { opacity: 1 });
+        gsap.set(searchOverlay, { opacity: 0 });
+
+        searchTransferTimeline = gsap.timeline({
+          paused: true,
+          defaults: { ease: 'power1.out' },
+          onComplete: completeMobileMenuSearchTransfer,
+          onReverseComplete: completeSearchTransferReverse,
+        });
+        addSearchReveal(searchTransferTimeline, contentStart);
+
+        searchTransferTimeline.to(
+          [mobileMenuToggleWrap, mobileMenuNav, mobileMenuUtility].filter(
+            Boolean
+          ),
+          { opacity: 0, duration: emptyDuration },
+          0
+        );
+        searchTransferTimeline.to(
+          [mobilePanel, searchPanel],
+          {
+            top: searchRect.top,
+            left: searchRect.left,
+            width: searchRect.width,
+            height: searchRect.height,
+            borderRadius: searchBorderRadius,
+            duration: morphDuration,
+            ease: 'power1.inOut',
+          },
+          morphStart
+        );
+        if (mobileTransferSurface) {
+          searchTransferTimeline.to(
+            mobileTransferSurface,
+            {
+              top: searchRect.top,
+              left: searchRect.left,
+              width: searchRect.width,
+              height: searchRect.height,
+              borderRadius: searchBorderRadius,
+              backgroundColor: searchBackgroundColor,
+              backdropFilter: 'blur(0px)',
+              webkitBackdropFilter: 'blur(0px)',
+              duration: morphDuration,
+              ease: 'power1.inOut',
+            },
+            morphStart
+          );
+        }
+        searchTransferTimeline.set(
+          searchPanel,
+          { backgroundColor: searchBackgroundColor },
+          morphEnd
+        );
+        searchTransferTimeline.set(
+          mobileTransferSurface,
+          { opacity: 0 },
+          morphEnd
+        );
+        searchTransferTimeline.to(
+          searchOverlay,
+          { opacity: 1, duration: overlayDuration },
+          morphEnd
+        );
+
+        requestAnimationFrame(function () {
+          if (searchTransferTimeline) searchTransferTimeline.play(0);
+        });
+      }
+
       function openSearchDrawer(trigger) {
-        if (window.innerWidth < 768) return;
         if (searchCloseTimer) {
           clearTimeout(searchCloseTimer);
           searchCloseTimer = null;
+        }
+        clearSearchOrigin();
+        if (searchScroll) {
+          searchScroll.scrollTop = 0;
+          updateSearchScrolledState();
+        }
+
+        var isMobileSearch = window.innerWidth < 768;
+        if (isMobileSearch) {
+          if (
+            mobileMenu &&
+            mobileMenu.getAttribute('data-mobile-menu-state') === 'open' &&
+            trigger &&
+            trigger.closest('[data-mobile-menu]')
+          ) {
+            transferMobileMenuToSearch(trigger);
+            return;
+          }
+          if (
+            mobileMenu &&
+            mobileMenu.getAttribute('data-mobile-menu-state') !== 'closed'
+          ) {
+            resetMobileMenuState();
+          }
+          searchOpenTrigger =
+            trigger && trigger.closest('[data-mobile-menu]')
+              ? nav.querySelector('[data-nav-search-mobile]')
+              : trigger;
+          searchDrawer.setAttribute('data-search-state', 'open');
+          searchDrawer.setAttribute('aria-hidden', 'false');
+          [searchTrigger]
+            .concat(searchMobileTriggers)
+            .filter(Boolean)
+            .forEach(function (item) {
+              item.setAttribute('aria-expanded', 'true');
+            });
+          document.documentElement.style.overflow = 'hidden';
+          isolateModal(searchDrawer);
+          playSearchReveal(reducedMotion ? 0 : 0.16);
+          requestAnimationFrame(function () {
+            if (searchInput) searchInput.focus();
+          });
+          return;
+        }
+
+        var fromSubmenu = trigger && trigger.closest('[data-submenu]');
+        if (
+          fromSubmenu &&
+          submenu &&
+          submenu.getAttribute('data-submenu-state') === 'open'
+        ) {
+          transferSubmenuToSearch(trigger);
+          return;
         }
 
         if (submenu && submenu.getAttribute('data-submenu-state') === 'open') {
           closeDrawer();
         }
 
-        searchOpenTrigger =
-          trigger && trigger.closest('[data-submenu]') ? searchTrigger : trigger || searchTrigger;
+        searchOpenTrigger = fromSubmenu
+          ? searchTrigger
+          : trigger || searchTrigger;
         searchDrawer.setAttribute('data-search-state', 'open');
         searchDrawer.setAttribute('aria-hidden', 'false');
-        searchTrigger.setAttribute('aria-expanded', 'true');
-        nav.setAttribute('data-nav-shared-fade', '');
+        [searchTrigger]
+          .concat(searchMobileTriggers)
+          .filter(Boolean)
+          .forEach(function (item) {
+            item.setAttribute('aria-expanded', 'true');
+          });
+        nav.setAttribute('data-nav-search-fade', '');
         document.documentElement.style.overflow = 'hidden';
         isolateModal(searchDrawer);
+        playSearchReveal(reducedMotion ? 0 : 0.3);
 
         requestAnimationFrame(function () {
           if (searchInput) searchInput.focus();
@@ -850,11 +1970,20 @@
       }
 
       function closeSearchDrawer(restoreFocus) {
+        discardSearchTransfer();
+        stopSearchReveal();
         if (searchCloseTimer) return;
+        recordCompletedSearch();
         searchDrawer.setAttribute('data-search-state', 'closing');
         searchDrawer.setAttribute('aria-hidden', 'true');
-        searchTrigger.setAttribute('aria-expanded', 'false');
-        nav.removeAttribute('data-nav-shared-fade');
+        clearSearchOrigin();
+        [searchTrigger]
+          .concat(searchMobileTriggers)
+          .filter(Boolean)
+          .forEach(function (trigger) {
+            trigger.setAttribute('aria-expanded', 'false');
+          });
+        nav.removeAttribute('data-nav-search-fade');
         document.documentElement.style.overflow = '';
         clearModalIsolation();
 
@@ -874,65 +2003,164 @@
         }
       }
 
-      function buildTreatmentGroup(query, response) {
-        if (!searchTreatmentSource || !response) return 0;
-        var normalizedQuery = query.toLocaleLowerCase();
-        var matches = Array.from(
-          searchTreatmentSource.querySelectorAll('[data-search-treatment]')
-        )
-          .filter(function (link) {
-            return link.textContent.trim().toLocaleLowerCase().indexOf(normalizedQuery) !== -1;
-          })
-          .slice(0, 6);
+      function returnToSearchOrigin() {
+        var origin = searchDrawer.getAttribute('data-search-origin');
+        if (!origin) return;
 
-        if (!matches.length) return 0;
+        if (searchTransferTimeline) {
+          recordCompletedSearch();
+          searchDrawer.setAttribute('data-search-state', 'closing');
+          searchDrawer.setAttribute('aria-hidden', 'true');
+          if (searchBody) {
+            gsap.to(searchBody, {
+              opacity: 0,
+              duration: reducedMotion ? 0 : 0.14,
+              ease: 'power1.out',
+            });
+          }
+          var reverseTargetDuration = reducedMotion ? 0 : 0.28;
+          var transferDuration = searchTransferTimeline.duration();
+          searchTransferTimeline.timeScale(
+            reverseTargetDuration &&
+              transferDuration > reverseTargetDuration
+              ? transferDuration / reverseTargetDuration
+              : 1
+          );
+          searchTransferTimeline.reverse();
+          return;
+        }
 
-        var section = document.createElement('section');
-        section.className = 'v3-search__subgroup';
-        section.setAttribute('data-search-results-group', 'treatments');
+        var context =
+          searchDrawer.getAttribute('data-search-origin-context') ||
+          nav.getAttribute('data-nav-context') ||
+          'shop';
+        var level = searchDrawer.getAttribute('data-search-origin-level');
+        var originTrigger = searchOriginTrigger;
+        var returnToMobileMenu = window.innerWidth < 768;
+        var focusTarget = originTrigger;
 
-        var heading = document.createElement('h2');
-        heading.className = 'v3-search__subgroup-title text-submenu-caption';
-        heading.textContent = 'Treatments';
-        section.appendChild(heading);
+        closeSearchDrawer(false);
+        searchOpenTrigger = null;
 
-        var list = document.createElement('div');
-        list.className = 'v3-search__link-list';
-        matches.forEach(function (sourceLink) {
-          var link = document.createElement('a');
-          link.className = 'v3-search__result-link text-submenu-l1';
-          link.href = sourceLink.href;
-          link.textContent = sourceLink.textContent.trim();
-          link.setAttribute('data-search-result-link', '');
-          list.appendChild(link);
+        window.requestAnimationFrame(function () {
+          if (returnToMobileMenu && mobileMenu && hamburger) {
+            mobileMenu.setAttribute('data-mobile-menu-context', context);
+            nav.setAttribute('data-nav-context', context);
+            mobileMenu
+              .querySelectorAll('[data-mobile-menu-toggle]')
+              .forEach(function (toggle) {
+                toggle.setAttribute(
+                  'aria-pressed',
+                  String(
+                    toggle.getAttribute('data-mobile-menu-toggle') === context
+                  )
+                );
+              });
+            if (!focusTarget || !focusTarget.closest('[data-mobile-menu]')) {
+              focusTarget = mobileMenu.querySelector(
+                '[data-mobile-menu-search]'
+              );
+            }
+            hamburger.click();
+            if (level) {
+              var mobileLevelTrigger = mobileMenu.querySelector(
+                '[data-mobile-l1="' + level + '"]'
+              );
+              if (mobileLevelTrigger) mobileLevelTrigger.click();
+            }
+          } else {
+            var drawerTrigger = nav.querySelector(
+              '[data-nav-toggle="' + context + '"]'
+            );
+            if (!focusTarget || !focusTarget.closest('[data-submenu]')) {
+              focusTarget = submenu
+                ? submenu.querySelector('[data-submenu-search]')
+                : null;
+            }
+            if (drawerTrigger) drawerTrigger.click();
+            if (level && submenu) {
+              var drawerLevelTrigger = submenu.querySelector(
+                '[data-l1="' + level + '"][data-has-l2]'
+              );
+              if (drawerLevelTrigger) drawerLevelTrigger.click();
+            }
+          }
+
+          window.setTimeout(function () {
+            if (focusTarget && focusTarget.isConnected) {
+              focusTarget.focus({ preventScroll: true });
+            }
+          }, 0);
         });
-        section.appendChild(list);
-        response.appendChild(section);
-        return matches.length;
       }
 
-      function updateSearchLinks(query, clickedSuggestion) {
-        var searchUrl = searchForm ? searchForm.action : '{{ routes.search_url }}';
+      function updateSearchLinks(query) {
+        var searchUrl = searchForm
+          ? searchForm.action
+          : '{{ routes.search_url }}';
         if (searchViewAll) {
           searchViewAll.href = searchUrl + '?q=' + encodeURIComponent(query);
         }
         if (searchFooterHint) {
-          searchFooterHint.textContent = clickedSuggestion ? 'Press Enter' : 'or press Enter';
+          searchFooterHint.textContent = 'or press enter';
         }
       }
 
-      function renderSearchResponse(markup, query, clickedSuggestion) {
-        var documentFragment = new DOMParser().parseFromString(markup, 'text/html');
+      function renderSearchResponse(
+        markup,
+        query,
+        clickedSuggestion,
+        requestId
+      ) {
+        if (requestId !== searchRequestSequence) return;
+        if (
+          normalizeSearchText(searchInput ? searchInput.value : '') !==
+          normalizeSearchText(query)
+        ) {
+          return;
+        }
+        var documentFragment = new DOMParser().parseFromString(
+          markup,
+          'text/html'
+        );
         var response = documentFragment.querySelector('[data-search-response]');
-        var serverCount = response
-          ? parseInt(response.getAttribute('data-search-result-count') || '0', 10)
+        var suggestionGroup = response
+          ? response.querySelector('[data-search-results-group="suggestions"]')
+          : null;
+        if (clickedSuggestion && suggestionGroup) {
+          suggestionGroup.remove();
+        } else if (suggestionGroup) {
+          var normalizedQuery = normalizeSearchText(query);
+          var renderedSuggestionCount = 0;
+          suggestionGroup
+            .querySelectorAll('[data-search-suggestion]')
+            .forEach(function (suggestion) {
+              var suggestionValue =
+                suggestion.getAttribute('data-search-suggestion-value') || '';
+              var isDuplicate =
+                normalizeSearchText(suggestionValue) === normalizedQuery;
+              if (isDuplicate || renderedSuggestionCount >= 3) {
+                suggestion.remove();
+                return;
+              }
+              renderedSuggestionCount += 1;
+            });
+          if (!suggestionGroup.querySelector('[data-search-suggestion]')) {
+            suggestionGroup.remove();
+          }
+        }
+        var suggestionCount = response
+          ? response.querySelectorAll('[data-search-suggestion]').length
           : 0;
         var actionableCount = response
-          ? parseInt(response.getAttribute('data-search-actionable-count') || '0', 10)
+          ? response.querySelectorAll('[data-search-result-link]').length
           : 0;
-        var treatmentCount = buildTreatmentGroup(query, response);
-        var totalCount = serverCount + treatmentCount;
-        actionableCount += treatmentCount;
+        var totalCount = suggestionCount + actionableCount;
+        var footerWasVisible =
+          searchFooter &&
+          window.getComputedStyle(searchFooter).display !== 'none';
+
+        stopSearchLoading();
 
         if (searchPredictive) {
           searchPredictive.innerHTML = '';
@@ -940,51 +2168,95 @@
         }
 
         if (searchQueryLabel) searchQueryLabel.textContent = query;
-        searchDrawer.toggleAttribute('data-search-has-results', actionableCount > 0);
-        if (searchInput) searchInput.setAttribute('aria-expanded', String(totalCount > 0));
-        updateSearchLinks(query, clickedSuggestion);
+        searchDrawer.toggleAttribute(
+          'data-search-has-results',
+          actionableCount > 0
+        );
+        updateSearchLinks(query);
+        searchHasRenderedResults = totalCount > 0;
+
+        if (response) {
+          response.setAttribute('data-search-result-count', String(totalCount));
+          response.setAttribute(
+            'data-search-actionable-count',
+            String(actionableCount)
+          );
+        }
 
         if (totalCount > 0) {
-          setSearchView(clickedSuggestion ? 'clicked' : 'autocomplete');
+          setSearchView(
+            clickedSuggestion ? 'clicked' : 'autocomplete',
+            false,
+            function () {
+              if (actionableCount > 0 && !footerWasVisible)
+                revealSearchFooter();
+            }
+          );
           if (searchAnnounce) {
             searchAnnounce.textContent =
-              totalCount + ' ' + (totalCount === 1 ? 'result' : 'results') + ' available';
+              totalCount +
+              ' ' +
+              (totalCount === 1 ? 'result' : 'results') +
+              ' available';
           }
         } else {
           setSearchView('no-results');
-          if (searchAnnounce) searchAnnounce.textContent = 'No search results found';
+          if (searchAnnounce)
+            searchAnnounce.textContent = 'No search results found';
         }
 
         if (searchStates) searchStates.setAttribute('aria-busy', 'false');
+        searchCompletedRequestId = requestId;
+        searchCompletedQuery = query;
+        searchCompletedHasResults = actionableCount > 0;
         searchRequest = null;
       }
 
-      function requestSearch(query, clickedSuggestion) {
+      function requestSearch(query, clickedSuggestion, requestId) {
+        var normalizedQuery = normalizeSearchText(query);
+        if (requestId !== searchRequestSequence || !normalizedQuery) return;
         if (searchRequest) searchRequest.abort();
-        searchRequest = new AbortController();
-        if (searchStates) searchStates.setAttribute('aria-busy', 'true');
+        if (searchCache.has(normalizedQuery)) {
+          stopSearchLoading();
+          if (searchStates) searchStates.setAttribute('aria-busy', 'false');
+          renderSearchResponse(
+            searchCache.get(normalizedQuery),
+            query,
+            clickedSuggestion,
+            requestId
+          );
+          return;
+        }
+
+        var requestController = new AbortController();
+        searchRequest = requestController;
+        beginSearchLoading(requestId);
 
         var predictiveUrl = searchDrawer.getAttribute('data-predictive-url');
         var url =
           predictiveUrl +
           '?q=' +
           encodeURIComponent(query) +
-          '&resources[type]=query,product,collection' +
-          '&resources[limit]=6' +
+          '&resources[type]=query,product,collection,page' +
+          '&resources[limit]=10' +
+          '&resources[limit_scope]=each' +
           '&section_id=v3-predictive-search';
 
-        fetch(url, { signal: searchRequest.signal })
+        fetch(url, { signal: requestController.signal })
           .then(function (response) {
             if (!response.ok) throw new Error('Search request failed');
             return response.text();
           })
           .then(function (markup) {
-            renderSearchResponse(markup, query, clickedSuggestion);
+            searchCache.set(normalizedQuery, markup);
+            renderSearchResponse(markup, query, clickedSuggestion, requestId);
           })
           .catch(function (error) {
             if (error.name === 'AbortError') return;
+            if (requestId !== searchRequestSequence) return;
+            stopSearchLoading();
             if (searchStates) searchStates.setAttribute('aria-busy', 'false');
-            searchRequest = null;
+            if (searchRequest === requestController) searchRequest = null;
             if (searchAnnounce) {
               searchAnnounce.textContent = 'Search is temporarily unavailable';
             }
@@ -993,22 +2265,40 @@
 
       function scheduleSearch(clickedSuggestion) {
         var query = updateSearchQueryState();
+        if (searchLoadingPreview) {
+          resetSearchResults();
+          return;
+        }
         if (!query) {
           resetSearchResults();
           return;
         }
 
         if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+        if (searchRequest) {
+          searchRequest.abort();
+          searchRequest = null;
+        }
+        stopSearchLoading();
+        searchRequestSequence += 1;
+        var requestId = searchRequestSequence;
         searchDebounceTimer = setTimeout(
           function () {
-            requestSearch(query, clickedSuggestion);
+            searchDebounceTimer = null;
+            requestSearch(query, clickedSuggestion, requestId);
           },
-          clickedSuggestion ? 0 : 180
+          clickedSuggestion ? 0 : 120
         );
       }
 
       [searchTrigger]
-        .concat(Array.from(submenu ? submenu.querySelectorAll('[data-submenu-search]') : []))
+        .concat(
+          Array.from(
+            submenu ? submenu.querySelectorAll('[data-submenu-search]') : []
+          )
+        )
+        .concat(searchMobileTriggers)
+        .filter(Boolean)
         .forEach(function (trigger) {
           trigger.addEventListener('click', function () {
             openSearchDrawer(trigger);
@@ -1017,6 +2307,14 @@
 
       if (searchClose) {
         searchClose.addEventListener('click', function () {
+          closeSearchDrawer();
+        });
+      }
+      if (searchBack) {
+        searchBack.addEventListener('click', returnToSearchOrigin);
+      }
+      if (searchStickyClose) {
+        searchStickyClose.addEventListener('click', function () {
           closeSearchDrawer();
         });
       }
@@ -1029,8 +2327,19 @@
         searchClear.addEventListener('click', function () {
           if (searchInput) searchInput.value = '';
           updateSearchQueryState();
-          resetSearchResults();
+          resetSearchResults(true);
           if (searchInput) searchInput.focus();
+        });
+      }
+      if (searchScroll) {
+        searchScroll.addEventListener('scroll', updateSearchScrolledState, {
+          passive: true,
+        });
+      }
+      if (searchInputField && searchInput) {
+        searchInputField.addEventListener('click', function (event) {
+          if (event.target.closest('button')) return;
+          searchInput.focus();
         });
       }
       if (searchInput) {
@@ -1038,11 +2347,26 @@
           scheduleSearch(false);
         });
       }
+      if (searchForm) {
+        searchForm.addEventListener('submit', function (event) {
+          if (searchLoadingPreview) {
+            event.preventDefault();
+            return;
+          }
+          recordCompletedSearch();
+        });
+      }
+      if (searchViewAll) {
+        searchViewAll.addEventListener('click', function () {
+          recordCompletedSearch();
+        });
+      }
 
       searchDrawer.addEventListener('click', function (event) {
         var suggestion = event.target.closest('[data-search-suggestion]');
         if (suggestion) {
-          var value = suggestion.getAttribute('data-search-suggestion-value') || '';
+          var value =
+            suggestion.getAttribute('data-search-suggestion-value') || '';
           searchInput.value = value;
           updateSearchQueryState();
           scheduleSearch(true);
@@ -1051,37 +2375,81 @@
         }
 
         var resultLink = event.target.closest('[data-search-result-link]');
-        if (resultLink && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-          event.preventDefault();
-          searchNavigating = true;
-          closeSearchDrawer(false);
-          var destination = resultLink.href;
-          gsap.delayedCall(motionDur, function () {
-            window.location.href = destination;
-          });
+        if (resultLink) {
+          recordRecentSearch(searchInput ? searchInput.value : '');
         }
+        if (!resultLink) return;
+        if (
+          resultLink.target === '_blank' ||
+          resultLink.hasAttribute('download')
+        ) {
+          return;
+        }
+        if (
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey
+        ) {
+          return;
+        }
+
+        try {
+          var resultUrl = new URL(resultLink.href, window.location.origin);
+          if (resultUrl.origin !== window.location.origin) return;
+        } catch (_) {
+          return;
+        }
+
+        event.preventDefault();
+        searchNavigating = true;
+        closeSearchDrawer(false);
+        var destination = resultUrl.href;
+        gsap.delayedCall(motionDur, function () {
+          window.location.href = destination;
+        });
       });
 
-      searchDrawer.addEventListener('mouseover', function (event) {
-        if (!hasHover) return;
-        var link = event.target.closest('.v3-search__result-link');
-        if (!link) return;
-        var group = link.closest('[data-search-results-group]');
-        if (!group) return;
-        group.setAttribute('data-link-focused', '');
-        link.setAttribute('data-focused', '');
-      });
+      if (hasHover) {
+        var searchLinkIntentTimer = null;
+        var searchFocusedLink = null;
 
-      searchDrawer.addEventListener('mouseout', function (event) {
-        if (!hasHover) return;
-        var link = event.target.closest('.v3-search__result-link');
-        if (!link) return;
-        var group = link.closest('[data-search-results-group]');
-        link.removeAttribute('data-focused');
-        if (group && !group.querySelector('[data-focused]')) {
-          group.removeAttribute('data-link-focused');
+        function clearSearchLinkIntent() {
+          if (searchLinkIntentTimer) {
+            clearTimeout(searchLinkIntentTimer);
+            searchLinkIntentTimer = null;
+          }
+          if (searchFocusedLink) {
+            var focusedGroup = searchFocusedLink.closest(
+              '[data-search-results-group]'
+            );
+            if (focusedGroup)
+              focusedGroup.removeAttribute('data-link-focused');
+            searchFocusedLink.removeAttribute('data-focused');
+            searchFocusedLink = null;
+          }
         }
-      });
+
+        searchDrawer.addEventListener('mouseover', function (event) {
+          var link = event.target.closest('.v3-search__result-link');
+          if (link === searchFocusedLink) return;
+
+          clearSearchLinkIntent();
+          if (!link) return;
+
+          searchLinkIntentTimer = setTimeout(function () {
+            var group = link.closest('[data-search-results-group]');
+            if (group) group.setAttribute('data-link-focused', '');
+            link.setAttribute('data-focused', '');
+            searchFocusedLink = link;
+            searchLinkIntentTimer = null;
+          }, 150);
+        });
+
+        searchDrawer.addEventListener('mouseleave', function () {
+          clearSearchLinkIntent();
+        });
+      }
 
       document.addEventListener('keydown', function (event) {
         if (
@@ -1091,17 +2459,48 @@
           closeSearchDrawer();
         }
       });
+
+      searchPanel.addEventListener('keydown', function (event) {
+        if (event.key !== 'Tab') return;
+        if (searchDrawer.getAttribute('data-search-state') !== 'open') return;
+        var focusables = searchPanel.querySelectorAll(
+          'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"])'
+        );
+        var visible = Array.from(focusables).filter(function (element) {
+          return element.offsetParent !== null;
+        });
+        if (!visible.length) return;
+        var first = visible[0];
+        var last = visible[visible.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      });
     }
 
     if (mobileMenu && mobilePanel) {
-      var mobileAnnounce = mobileMenu.querySelector('[data-mobile-menu-announce]');
+      var mobileAnnounce = mobileMenu.querySelector(
+        '[data-mobile-menu-announce]'
+      );
       var mobilePill = mobileMenu.querySelector('[data-mobile-menu-pill]');
-      var mobileToggleGroup = mobileMenu.querySelector('[data-mobile-menu-toggle-group]');
-      var mobileToggles = mobileMenu.querySelectorAll('[data-mobile-menu-toggle]');
+      var mobileToggleGroup = mobileMenu.querySelector(
+        '[data-mobile-menu-toggle-group]'
+      );
+      var mobileToggles = mobileMenu.querySelectorAll(
+        '[data-mobile-menu-toggle]'
+      );
       var mobileContextSwitching = false;
       var mobileContextTimeline = null;
       var mobileContextFadeEls = [mobileL1View]
-        .concat(Array.from(mobileMenu.querySelectorAll('.v3-mobile-menu__utility-links')))
+        .concat(
+          Array.from(
+            mobileMenu.querySelectorAll('.v3-mobile-menu__utility-links')
+          )
+        )
         .filter(Boolean);
 
       /* ── Open / Close ── */
@@ -1141,7 +2540,8 @@
       /* ── Hamburger trigger ── */
       if (hamburger) {
         hamburger.addEventListener('click', function () {
-          var isOpen = mobileMenu.getAttribute('data-mobile-menu-state') === 'open';
+          var isOpen =
+            mobileMenu.getAttribute('data-mobile-menu-state') === 'open';
           if (isOpen) {
             closeMobileMenu();
           } else {
@@ -1152,7 +2552,8 @@
 
       /* ── Close button + Escape ── */
       var mobileCloseBtn = mobileMenu.querySelector('[data-mobile-menu-close]');
-      if (mobileCloseBtn) mobileCloseBtn.addEventListener('click', closeMobileMenu);
+      if (mobileCloseBtn)
+        mobileCloseBtn.addEventListener('click', closeMobileMenu);
 
       document.addEventListener('keydown', function (e) {
         if (
@@ -1172,15 +2573,20 @@
             width: btn.offsetWidth,
             left: btn.offsetLeft,
             duration: motionDur,
-            ease: 'power1.out'
+            ease: 'power1.out',
           });
         } else {
-          gsap.set(mobilePill, { width: btn.offsetWidth, left: btn.offsetLeft });
+          gsap.set(mobilePill, {
+            width: btn.offsetWidth,
+            left: btn.offsetLeft,
+          });
         }
       }
 
       function initMobilePill() {
-        var activeBtn = mobileMenu.querySelector('[data-mobile-menu-toggle][aria-pressed="true"]');
+        var activeBtn = mobileMenu.querySelector(
+          '[data-mobile-menu-toggle][aria-pressed="true"]'
+        );
         if (!activeBtn || !mobilePill || !mobileToggleGroup) return;
 
         var width = activeBtn.offsetWidth;
@@ -1189,7 +2595,8 @@
 
         /* Ignore measurements taken while a breakpoint/orientation change
            has temporarily removed the toggle group from layout. */
-        if (!width || !groupWidth || left < 0 || left + width > groupWidth + 1) return;
+        if (!width || !groupWidth || left < 0 || left + width > groupWidth + 1)
+          return;
 
         if (window.gsap) gsap.killTweensOf(mobilePill);
         mobilePill.style.width = width + 'px';
@@ -1197,7 +2604,9 @@
       }
 
       function parkMobilePill() {
-        var activeBtn = mobileMenu.querySelector('[data-mobile-menu-toggle][aria-pressed="true"]');
+        var activeBtn = mobileMenu.querySelector(
+          '[data-mobile-menu-toggle][aria-pressed="true"]'
+        );
         if (activeBtn) positionMobilePill(activeBtn, true);
       }
 
@@ -1206,7 +2615,8 @@
       var mobilePillSyncFrame = null;
 
       function scheduleMobilePillSync() {
-        if (mobilePillSyncFrame !== null) cancelAnimationFrame(mobilePillSyncFrame);
+        if (mobilePillSyncFrame !== null)
+          cancelAnimationFrame(mobilePillSyncFrame);
         mobilePillSyncFrame = requestAnimationFrame(function () {
           mobilePillSyncFrame = null;
           initMobilePill();
@@ -1223,7 +2633,10 @@
       /* ── Context switch (Shop/Studio) ── */
       function updateMobileToggle(context) {
         mobileToggles.forEach(function (btn) {
-          btn.setAttribute('aria-pressed', String(btn.getAttribute('data-mobile-menu-toggle') === context));
+          btn.setAttribute(
+            'aria-pressed',
+            String(btn.getAttribute('data-mobile-menu-toggle') === context)
+          );
         });
         parkMobilePill();
       }
@@ -1231,7 +2644,9 @@
       mobileToggles.forEach(function (btn) {
         btn.addEventListener('click', function () {
           var context = btn.getAttribute('data-mobile-menu-toggle');
-          var currentContext = mobileMenu.getAttribute('data-mobile-menu-context');
+          var currentContext = mobileMenu.getAttribute(
+            'data-mobile-menu-context'
+          );
 
           if (context === currentContext) return;
           if (mobileContextSwitching) return;
@@ -1240,11 +2655,18 @@
           updateMobileToggle(context);
 
           var fadeOutTarget = activeMobileL2 || mobileL1View;
-          var utilityLinks = Array.from(mobileMenu.querySelectorAll('.v3-mobile-menu__utility-links'));
+          var utilityLinks = Array.from(
+            mobileMenu.querySelectorAll('.v3-mobile-menu__utility-links')
+          );
           var fadeOutEls = [fadeOutTarget].concat(utilityLinks).filter(Boolean);
 
           mobileContextTimeline = gsap.timeline();
-          mobileContextTimeline.to(fadeOutEls, { opacity: 0, duration: motionDurFast, ease: 'power1.out' })
+          mobileContextTimeline
+            .to(fadeOutEls, {
+              opacity: 0,
+              duration: motionDurFast,
+              ease: 'power1.out',
+            })
             .call(function () {
               if (activeMobileL2) {
                 activeMobileL2.classList.remove('is-active');
@@ -1261,10 +2683,18 @@
               mobileMenu.setAttribute('data-mobile-menu-context', context);
               nav.setAttribute('data-nav-context', context);
               if (mobileAnnounce) {
-                mobileAnnounce.textContent = 'Now showing ' + context.charAt(0).toUpperCase() + context.slice(1) + ' navigation';
+                mobileAnnounce.textContent =
+                  'Now showing ' +
+                  context.charAt(0).toUpperCase() +
+                  context.slice(1) +
+                  ' navigation';
               }
             })
-            .to(mobileContextFadeEls, { opacity: 1, duration: motionDur, ease: 'power1.out' })
+            .to(mobileContextFadeEls, {
+              opacity: 1,
+              duration: motionDur,
+              ease: 'power1.out',
+            })
             .call(function () {
               gsap.set(mobileContextFadeEls, { clearProps: 'opacity' });
               mobileContextTimeline = null;
@@ -1278,7 +2708,8 @@
 
       mobileL1Buttons.forEach(function (btn) {
         btn.addEventListener('click', function () {
-          if (mobileMenu.getAttribute('data-mobile-menu-state') !== 'open') return;
+          if (mobileMenu.getAttribute('data-mobile-menu-state') !== 'open')
+            return;
           if (mobileDrilling) return;
           var slug = btn.getAttribute('data-mobile-l1');
           mobileShowL2(slug, btn);
@@ -1288,7 +2719,11 @@
       function mobileShowL2(slug, trigger) {
         var context = mobileMenu.getAttribute('data-mobile-menu-context');
         var panel = mobileMenu.querySelector(
-          '[data-mobile-l2="' + slug + '"][data-mobile-l2-context="' + context + '"]'
+          '[data-mobile-l2="' +
+            slug +
+            '"][data-mobile-l2-context="' +
+            context +
+            '"]'
         );
         if (!panel) return;
 
@@ -1299,7 +2734,12 @@
         var levels = mobileMenu.querySelector('.v3-mobile-menu__levels');
 
         mobileDrillTimeline = gsap.timeline();
-        mobileDrillTimeline.to(mobileL1View, { opacity: 0, duration: motionDur, ease: 'power1.out' })
+        mobileDrillTimeline
+          .to(mobileL1View, {
+            opacity: 0,
+            duration: motionDur,
+            ease: 'power1.out',
+          })
           .call(function () {
             mobileL1View.classList.add('is-hidden');
             gsap.set(mobileL1View, { clearProps: 'opacity' });
@@ -1314,7 +2754,8 @@
             mobileDrilling = false;
             if (mobileAnnounce) {
               var label = panel.querySelector('.text-submenu-caption');
-              mobileAnnounce.textContent = (label ? label.textContent : slug) + ' subcategories';
+              mobileAnnounce.textContent =
+                (label ? label.textContent : slug) + ' subcategories';
             }
             var backBtn = panel.querySelector('[data-mobile-menu-back]');
             if (backBtn) backBtn.focus();
@@ -1322,7 +2763,9 @@
       }
 
       /* ── L2 drill-out (back) ── */
-      var mobileBackBtns = mobileMenu.querySelectorAll('[data-mobile-menu-back]');
+      var mobileBackBtns = mobileMenu.querySelectorAll(
+        '[data-mobile-menu-back]'
+      );
 
       mobileBackBtns.forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -1334,7 +2777,8 @@
       function mobileHideL2(instant) {
         if (!activeMobileL2) return;
         var returningTrigger = activeMobileTrigger;
-        if (returningTrigger) returningTrigger.setAttribute('aria-expanded', 'false');
+        if (returningTrigger)
+          returningTrigger.setAttribute('aria-expanded', 'false');
 
         if (instant) {
           if (mobileDrillTimeline) {
@@ -1358,7 +2802,8 @@
         var levels = mobileMenu.querySelector('.v3-mobile-menu__levels');
 
         mobileDrillTimeline = gsap.timeline();
-        mobileDrillTimeline.to(closing, { opacity: 0, duration: motionDur, ease: 'power1.out' })
+        mobileDrillTimeline
+          .to(closing, { opacity: 0, duration: motionDur, ease: 'power1.out' })
           .call(function () {
             closing.classList.remove('is-active');
             gsap.set(closing, { clearProps: 'opacity' });
@@ -1367,7 +2812,11 @@
             gsap.set(mobileL1View, { opacity: 0 });
             if (levels) levels.scrollTop = 0;
           })
-          .to(mobileL1View, { opacity: 1, duration: motionDur, ease: 'power1.out' })
+          .to(mobileL1View, {
+            opacity: 1,
+            duration: motionDur,
+            ease: 'power1.out',
+          })
           .call(function () {
             gsap.set(mobileL1View, { clearProps: 'opacity' });
             activeMobileTrigger = null;
@@ -1385,7 +2834,8 @@
       /* ── Focus trap ── */
       mobilePanel.addEventListener('keydown', function (e) {
         if (e.key !== 'Tab') return;
-        if (mobileMenu.getAttribute('data-mobile-menu-state') !== 'open') return;
+        if (mobileMenu.getAttribute('data-mobile-menu-state') !== 'open')
+          return;
 
         var focusables = mobilePanel.querySelectorAll(
           'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"])'
@@ -1410,7 +2860,8 @@
       /* ── Navigation exit (internal link → fade → navigate) ── */
       mobilePanel.addEventListener('click', function (e) {
         if (mobileNavigating) return;
-        if (mobileMenu.getAttribute('data-mobile-menu-state') !== 'open') return;
+        if (mobileMenu.getAttribute('data-mobile-menu-state') !== 'open')
+          return;
 
         var link = e.target.closest('a[href]');
         if (!link || !mobilePanel.contains(link)) return;
@@ -1439,7 +2890,6 @@
           link.click();
         });
       });
-
     } else if (hamburger) {
       /* Fallback: no mobile menu element, just dispatch event */
       hamburger.addEventListener('click', function () {
@@ -1465,7 +2915,10 @@
       }
       nav.setAttribute('data-nav-shared-fade', '');
       toggleBtns.forEach(function (btn) {
-        btn.setAttribute('aria-expanded', String(btn.getAttribute('data-nav-toggle') === context));
+        btn.setAttribute(
+          'aria-expanded',
+          String(btn.getAttribute('data-nav-toggle') === context)
+        );
       });
       submenu.setAttribute('data-context', context);
       submenu.setAttribute('data-submenu-state', 'open');
@@ -1538,7 +2991,9 @@
     var contextSwitching = false;
     var drawerContextTimeline = null;
     var contextFadeEls = [submenu.querySelector('[data-submenu-primary]')]
-      .concat(Array.from(submenu.querySelectorAll('.v3-submenu__utility-links')))
+      .concat(
+        Array.from(submenu.querySelectorAll('.v3-submenu__utility-links'))
+      )
       .filter(Boolean);
 
     drawerToggles.forEach(function (btn) {
@@ -1558,15 +3013,28 @@
           hideL2();
 
           drawerContextTimeline = gsap.timeline();
-          drawerContextTimeline.to(contextFadeEls, { opacity: 0, duration: motionDurFast, ease: 'power1.out' })
+          drawerContextTimeline
+            .to(contextFadeEls, {
+              opacity: 0,
+              duration: motionDurFast,
+              ease: 'power1.out',
+            })
             .call(function () {
               submenu.setAttribute('data-context', context);
               nav.setAttribute('data-nav-context', context);
               if (announceEl) {
-                announceEl.textContent = 'Now showing ' + context.charAt(0).toUpperCase() + context.slice(1) + ' navigation';
+                announceEl.textContent =
+                  'Now showing ' +
+                  context.charAt(0).toUpperCase() +
+                  context.slice(1) +
+                  ' navigation';
               }
             })
-            .to(contextFadeEls, { opacity: 1, duration: motionDur, ease: 'power1.out' })
+            .to(contextFadeEls, {
+              opacity: 1,
+              duration: motionDur,
+              ease: 'power1.out',
+            })
             .call(function () {
               gsap.set(contextFadeEls, { clearProps: 'opacity' });
               drawerContextTimeline = null;
@@ -1588,7 +3056,7 @@
           width: btn.offsetWidth,
           left: btn.offsetLeft,
           duration: motionDur,
-          ease: 'power1.out'
+          ease: 'power1.out',
         });
       } else {
         gsap.set(pill, { width: btn.offsetWidth, left: btn.offsetLeft });
@@ -1596,12 +3064,16 @@
     }
 
     function parkPill() {
-      var activeBtn = submenu.querySelector('[data-submenu-toggle][aria-pressed="true"]');
+      var activeBtn = submenu.querySelector(
+        '[data-submenu-toggle][aria-pressed="true"]'
+      );
       if (activeBtn) positionPill(activeBtn, true);
     }
 
     function initPill() {
-      var activeBtn = submenu.querySelector('[data-submenu-toggle][aria-pressed="true"]');
+      var activeBtn = submenu.querySelector(
+        '[data-submenu-toggle][aria-pressed="true"]'
+      );
       if (activeBtn && pill) {
         pill.style.width = activeBtn.offsetWidth + 'px';
         pill.style.left = activeBtn.offsetLeft + 'px';
@@ -1718,7 +3190,9 @@
         gsap.set(activeL2, { clearProps: 'opacity' });
       }
 
-      var prevTrigger = submenu.querySelector('[data-has-l2][aria-expanded="true"]');
+      var prevTrigger = submenu.querySelector(
+        '[data-has-l2][aria-expanded="true"]'
+      );
       if (prevTrigger) prevTrigger.setAttribute('aria-expanded', 'false');
       l1Link.setAttribute('aria-expanded', 'true');
 
@@ -1749,7 +3223,7 @@
             var firstLink = panel.querySelector('.v3-submenu__l2-link');
             if (firstLink) firstLink.focus();
           }
-        }
+        },
       });
     }
 
@@ -1760,8 +3234,11 @@
       activeL2 = null;
       if (primary) primary.classList.remove('has-l2');
 
-      var expandedTrigger = submenu.querySelector('[data-has-l2][aria-expanded="true"]');
-      if (expandedTrigger) expandedTrigger.setAttribute('aria-expanded', 'false');
+      var expandedTrigger = submenu.querySelector(
+        '[data-has-l2][aria-expanded="true"]'
+      );
+      if (expandedTrigger)
+        expandedTrigger.setAttribute('aria-expanded', 'false');
 
       gsap.to(closing, {
         opacity: 0,
@@ -1771,7 +3248,7 @@
           closing.classList.remove('is-active');
           closing.style.paddingTop = '';
           gsap.set(closing, { clearProps: 'opacity' });
-        }
+        },
       });
     }
 
@@ -1786,7 +3263,9 @@
           linkIntentTimer = null;
         }
         if (focusedLink) {
-          var group = focusedLink.closest('[data-l1-group], .v3-submenu__l2, .v3-submenu__utility-links');
+          var group = focusedLink.closest(
+            '[data-l1-group], .v3-submenu__l2, .v3-submenu__utility-links'
+          );
           if (group) group.removeAttribute('data-link-focused');
           focusedLink.removeAttribute('data-focused');
           focusedLink = null;
@@ -1794,7 +3273,9 @@
       }
 
       drawer.addEventListener('mouseover', function (e) {
-        var link = e.target.closest('.v3-submenu__l1-link, .v3-submenu__l2-link, .v3-submenu__utility-link');
+        var link = e.target.closest(
+          '.v3-submenu__l1-link, .v3-submenu__l2-link, .v3-submenu__utility-link'
+        );
         if (link === focusedLink) return;
 
         clearLinkIntent();
@@ -1802,7 +3283,9 @@
         if (!link) return;
 
         linkIntentTimer = setTimeout(function () {
-          var group = link.closest('[data-l1-group], .v3-submenu__l2, .v3-submenu__utility-links');
+          var group = link.closest(
+            '[data-l1-group], .v3-submenu__l2, .v3-submenu__utility-links'
+          );
           if (group) group.setAttribute('data-link-focused', '');
           link.setAttribute('data-focused', '');
           focusedLink = link;
@@ -1893,15 +3376,19 @@
         mobileContextTimeline.kill();
         mobileContextTimeline = null;
       }
-      mobileMenu.querySelectorAll('.v3-mobile-menu__l2.is-active').forEach(function (panel) {
-        gsap.killTweensOf(panel);
-        panel.classList.remove('is-active');
-        gsap.set(panel, { clearProps: 'opacity' });
-      });
+      mobileMenu
+        .querySelectorAll('.v3-mobile-menu__l2.is-active')
+        .forEach(function (panel) {
+          gsap.killTweensOf(panel);
+          panel.classList.remove('is-active');
+          gsap.set(panel, { clearProps: 'opacity' });
+        });
       activeMobileL2 = null;
-      mobileMenu.querySelectorAll('[data-mobile-l1][aria-expanded="true"]').forEach(function (btn) {
-        btn.setAttribute('aria-expanded', 'false');
-      });
+      mobileMenu
+        .querySelectorAll('[data-mobile-l1][aria-expanded="true"]')
+        .forEach(function (btn) {
+          btn.setAttribute('aria-expanded', 'false');
+        });
       activeMobileTrigger = null;
       mobileDrilling = false;
       mobileContextSwitching = false;
@@ -1925,17 +3412,21 @@
         drawerContextTimeline.kill();
         drawerContextTimeline = null;
       }
-      submenu.querySelectorAll('.v3-submenu__l2.is-active').forEach(function (panel) {
-        gsap.killTweensOf(panel);
-        panel.classList.remove('is-active');
-        panel.style.paddingTop = '';
-        gsap.set(panel, { clearProps: 'opacity' });
-      });
+      submenu
+        .querySelectorAll('.v3-submenu__l2.is-active')
+        .forEach(function (panel) {
+          gsap.killTweensOf(panel);
+          panel.classList.remove('is-active');
+          panel.style.paddingTop = '';
+          gsap.set(panel, { clearProps: 'opacity' });
+        });
       activeL2 = null;
       if (primary) primary.classList.remove('has-l2');
-      submenu.querySelectorAll('[data-has-l2][aria-expanded="true"]').forEach(function (btn) {
-        btn.setAttribute('aria-expanded', 'false');
-      });
+      submenu
+        .querySelectorAll('[data-has-l2][aria-expanded="true"]')
+        .forEach(function (btn) {
+          btn.setAttribute('aria-expanded', 'false');
+        });
       toggleBtns.forEach(function (btn) {
         btn.setAttribute('aria-expanded', 'false');
       });
@@ -1947,8 +3438,9 @@
       navigating = false;
     }
 
-    /* Dismiss the modal belonging to the layout being left. Isolation is
-       removed before focus moves to the newly visible layout's trigger. */
+    /* Dismiss only the navigation modal belonging to the layout being left.
+       Search is shared across layouts, so keep it open and move its eventual
+       focus return to the newly visible trigger. */
     var navigationBreakpoint = 768;
     var wasDesktop = window.innerWidth >= navigationBreakpoint;
 
@@ -1957,33 +3449,42 @@
       if (isDesktop === wasDesktop) return;
       wasDesktop = isDesktop;
 
+      var searchIsOpen =
+        searchDrawer &&
+        searchDrawer.getAttribute('data-search-state') === 'open';
+      if (searchIsOpen) {
+        discardSearchTransfer();
+        nav.toggleAttribute('data-nav-search-fade', isDesktop);
+        searchOpenTrigger = isDesktop
+          ? searchTrigger
+          : nav.querySelector('[data-nav-search-mobile]');
+      }
+
       if (isDesktop && mobileMenu) {
         var mobileState = mobileMenu.getAttribute('data-mobile-menu-state');
         if (mobileState === 'open' || mobileState === 'closing') {
           resetMobileMenuState();
-          document.documentElement.style.overflow = '';
-          clearModalIsolation();
-          var desktopContext = mobileMenu.getAttribute('data-mobile-menu-context');
-          var desktopTrigger = nav.querySelector(
-            '[data-nav-toggle="' + desktopContext + '"]'
-          );
-          if (desktopTrigger) desktopTrigger.focus();
-        }
-      } else if (!isDesktop) {
-        if (searchDrawer) {
-          var searchState = searchDrawer.getAttribute('data-search-state');
-          if (searchState === 'open' || searchState === 'closing') {
-            resetSearchDrawerState();
+          if (!searchIsOpen) {
             document.documentElement.style.overflow = '';
             clearModalIsolation();
+            var desktopContext = mobileMenu.getAttribute(
+              'data-mobile-menu-context'
+            );
+            var desktopTrigger = nav.querySelector(
+              '[data-nav-toggle="' + desktopContext + '"]'
+            );
+            if (desktopTrigger) desktopTrigger.focus();
           }
         }
+      } else if (!isDesktop) {
         var desktopState = submenu.getAttribute('data-submenu-state');
         if (desktopState === 'open' || desktopState === 'closing') {
           resetDesktopDrawerState();
-          document.documentElement.style.overflow = '';
-          clearModalIsolation();
-          if (hamburger) hamburger.focus();
+          if (!searchIsOpen) {
+            document.documentElement.style.overflow = '';
+            clearModalIsolation();
+            if (hamburger) hamburger.focus();
+          }
         }
       }
     });
@@ -2006,7 +3507,6 @@
       document.documentElement.style.overflow = '';
       clearModalIsolation();
     });
-
   })();
 </script>
 
@@ -2073,12 +3573,6 @@
       "type": "collection",
       "id": "search_popular_collection",
       "label": "Most searched products"
-    },
-    {
-      "type": "link_list",
-      "id": "search_treatment_menu",
-      "label": "Searchable treatments",
-      "info": "Links from this menu can appear in treatment search results."
     },
     {
       "type": "checkbox",

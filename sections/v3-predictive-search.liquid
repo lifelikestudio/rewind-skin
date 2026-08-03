@@ -1,10 +1,20 @@
 {%- if predictive_search.performed -%}
   {%- liquid
-    assign query_count = predictive_search.resources.queries.size
-    assign collection_count = predictive_search.resources.collections.size
-    assign product_count = predictive_search.resources.products.size
-    assign result_count = query_count | plus: collection_count | plus: product_count
-    assign actionable_count = collection_count | plus: product_count
+    assign query_count = predictive_search.resources.queries.size | at_most: 6
+    assign collection_count = predictive_search.resources.collections.size | at_most: 3
+    assign product_count = predictive_search.resources.products.size | at_most: 4
+    assign specific_treatment_count = 0
+
+    for page in predictive_search.resources.pages
+      if page.metafields.custom.treatment_page.value == true
+        assign specific_treatment_count = specific_treatment_count | plus: 1
+      endif
+    endfor
+
+    assign treatment_count = specific_treatment_count
+
+    assign result_count = query_count | plus: collection_count | plus: treatment_count | plus: product_count
+    assign actionable_count = collection_count | plus: treatment_count | plus: product_count
   -%}
 
   <div
@@ -12,26 +22,63 @@
     data-search-result-count='{{ result_count }}'
     data-search-actionable-count='{{ actionable_count }}'
     data-search-product-count='{{ product_count }}'
+    data-search-treatment-count='{{ treatment_count }}'
   >
     {%- if query_count > 0 -%}
       <section
         class='v3-search__subgroup v3-search__suggestions'
         data-search-results-group='suggestions'
       >
-        <h2 class='v3-search__subgroup-title text-submenu-caption'>
+        <h2 class='v3-search__subgroup-title text-search-caption'>
           Suggestions
         </h2>
-        <div class='v3-search__suggestion-list' role='list'>
-          {%- for query in predictive_search.resources.queries -%}
+        <div class='v3-search__suggestion-list'>
+          {%- for query in predictive_search.resources.queries limit: 6 -%}
             <button
               type='button'
-              class='v3-search__suggestion text-search-suggestion'
+              class='v3-search__suggestion'
               data-search-suggestion
               data-search-suggestion-value='{{ query.text | escape }}'
-              role='listitem'
             >
-              {{- query.styled_text -}}
+              <span class='v3-search__suggestion-text text-search-suggestion'>
+                {{- query.styled_text -}}
+              </span>
             </button>
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- if treatment_count > 0 -%}
+      <section
+        class='v3-search__subgroup'
+        data-search-results-group='treatments'
+      >
+        <h2 class='v3-search__subgroup-title text-search-caption'>
+          Treatments
+        </h2>
+        <div class='v3-search__link-list'>
+          {%- for page in predictive_search.resources.pages -%}
+            {%- if page.metafields.custom.treatment_page.value == true -%}
+              {%- liquid
+                assign treatment_url = page.url
+                assign booking_url = page.metafields.custom.booking_link_treatments.value
+                if booking_url != blank
+                  assign treatment_url = booking_url
+                endif
+              -%}
+              <a
+                href='{{ treatment_url | escape }}'
+                class='v3-search__result-link text-search-result-link'
+                data-search-result-link
+                {%- if booking_url != blank %}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                {%- endif %}
+              >
+                {{- page.title | escape -}}
+              </a>
+            {%- endif -%}
           {%- endfor -%}
         </div>
       </section>
@@ -42,14 +89,16 @@
         class='v3-search__subgroup'
         data-search-results-group='collections'
       >
-        <h2 class='v3-search__subgroup-title text-submenu-caption'>
+        <h2 class='v3-search__subgroup-title text-search-caption'>
           Collections
         </h2>
         <div class='v3-search__link-list'>
-          {%- for collection in predictive_search.resources.collections -%}
+          {%- for collection in predictive_search.resources.collections
+            limit: 3
+          -%}
             <a
               href='{{ collection.url }}'
-              class='v3-search__result-link text-submenu-l1'
+              class='v3-search__result-link text-search-result-link'
               data-search-result-link
             >
               {{- collection.title | escape -}}
@@ -61,11 +110,9 @@
 
     {%- if product_count > 0 -%}
       <section class='v3-search__subgroup' data-search-results-group='products'>
-        <h2 class='v3-search__subgroup-title text-submenu-caption'>
-          Products ({{ product_count }})
-        </h2>
+        <h2 class='v3-search__subgroup-title text-search-caption'>Products</h2>
         <div class='v3-search__product-list'>
-          {%- for product in predictive_search.resources.products -%}
+          {%- for product in predictive_search.resources.products limit: 4 -%}
             {%- render 'v3-search-product-card', product: product -%}
           {%- endfor -%}
         </div>

@@ -9,8 +9,8 @@
         "show_cart": true,
         "show_wishlist": false,
         "show_account": true,
+        "search_popular_terms": "Future 5 Elements, Serums, Facials, Mansard",
         "search_popular_collection": "bestsellers",
-        "search_treatment_menu": "main-menu",
         "shop_label": "Shop",
         "studio_label": "Studio",
         "sticky_type": "always"

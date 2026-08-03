@@ -334,8 +334,10 @@
           class='v3-mobile-menu__quick-btn'
           data-mobile-menu-search
         >
-          <span class='v3-mobile-menu__quick-pill text-submenu-caption'>
-            Search rewindskinco.com
+          <span class='v3-mobile-menu__quick-pill'>
+            <span class='v3-mobile-menu__quick-text text-submenu-caption'>
+              Search rewindskinco.com
+            </span>
           </span>
         </button>
         <button
@@ -343,8 +345,10 @@
           class='v3-mobile-menu__quick-btn'
           data-mobile-menu-bag
         >
-          <span class='v3-mobile-menu__quick-pill text-submenu-caption'>
-            {{ cart_bag_label }}
+          <span class='v3-mobile-menu__quick-pill'>
+            <span class='v3-mobile-menu__quick-text text-submenu-caption'>
+              {{- cart_bag_label -}}
+            </span>
           </span>
         </button>
       </div>
@@ -807,6 +811,9 @@
     color: var(--color-action);
     white-space: nowrap;
     transition: background-color 150ms ease-out;
+  }
+  .v3-mobile-menu__quick-text {
+    display: block;
   }
 
   /* ═══ UTILITY LINKS ═══ */

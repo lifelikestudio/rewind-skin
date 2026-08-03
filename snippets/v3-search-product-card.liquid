@@ -7,12 +7,119 @@
 
 {%- liquid
   assign feature_badge = blank
-  if product.compare_at_price > product.price
+  assign display_title = product.title
+  assign vendor_title_prefix = product.vendor | append: ' - '
+  assign vendor_title_prefix_size = vendor_title_prefix | size
+  assign product_title_prefix = product.title | slice: 0, vendor_title_prefix_size
+  assign currency_code = cart.currency.iso_code | downcase
+  assign formatted_price = product.price | divided_by: 100.0 | round | times: 100 | money_without_trailing_zeros
+  assign formatted_price_min = product.price_min | divided_by: 100.0 | round | times: 100 | money_without_trailing_zeros
+  assign formatted_price_max = product.price_max | divided_by: 100.0 | round | times: 100 | money_without_trailing_zeros
+  assign formatted_compare_at_price_min = product.compare_at_price_min | divided_by: 100.0 | round | times: 100 | money_without_trailing_zeros
+  assign formatted_compare_at_price_max = product.compare_at_price_max | divided_by: 100.0 | round | times: 100 | money_without_trailing_zeros
+  assign variant_summary_count = product.variants | size
+  assign variant_summary_label = 'variant'
+  assign variant_summary = blank
+  assign product_option_count = product.options_with_values | size
+  assign sale_variant_count = 0
+  assign is_bestseller = false
+  assign has_subscription = false
+
+  for variant in product.variants
+    if variant.compare_at_price > variant.price
+      assign sale_variant_count = sale_variant_count | plus: 1
+    endif
+  endfor
+
+  for product_collection in product.collections
+    if product_collection.handle == 'bestsellers'
+      assign is_bestseller = true
+      break
+    endif
+  endfor
+
+  for selling_plan_group in product.selling_plan_groups
+    if selling_plan_group.app_id == 'subi' or selling_plan_group.app_id == 'subify'
+      assign has_subscription = true
+      break
+    endif
+  endfor
+
+  assign is_on_sale = false
+  assign all_variants_on_sale = false
+  if sale_variant_count > 0
+    assign is_on_sale = true
+    if sale_variant_count == product.variants.size
+      assign all_variants_on_sale = true
+    endif
+  endif
+
+  if product_option_count == 1
+    assign variant_option = product.options_with_values | first
+    unless variant_option.name == 'Title'
+      assign variant_summary_count = variant_option.values | size
+      assign variant_summary_label = variant_option.name | downcase
+    endunless
+  endif
+
+  if variant_summary_count != 1
+    assign variant_summary_label_last_character = variant_summary_label | slice: -1
+    unless variant_summary_label_last_character == 's'
+      assign variant_summary_label = variant_summary_label | append: 's'
+    endunless
+  endif
+
+  if product.variants.size > 1
+    capture variant_summary
+      echo variant_summary_count
+      echo ' '
+      echo variant_summary_label
+    endcapture
+  elsif product.variants.size == 1
+    unless product.has_only_default_variant
+      assign single_variant = product.variants | first
+      assign variant_summary = single_variant.title
+    endunless
+  endif
+
+  assign variant_summary = variant_summary | strip
+
+  if product_title_prefix == vendor_title_prefix
+    assign display_title = product.title | remove_first: vendor_title_prefix
+  endif
+
+  capture display_price
+    if product.variants.size > 1
+      echo formatted_price_min
+      if product.price_varies
+        echo ' - '
+        echo formatted_price_max
+      endif
+    else
+      echo formatted_price
+    endif
+    echo ' '
+    echo currency_code
+  endcapture
+
+  assign display_price = display_price | strip
+
+  capture display_compare_at_price
+    echo formatted_compare_at_price_min
+    if product.compare_at_price_varies
+      echo ' - '
+      echo formatted_compare_at_price_max
+    endif
+  endcapture
+
+  assign display_compare_at_price = display_compare_at_price | strip
+
+  if is_on_sale
     assign feature_badge = 'Sale'
-  elsif product.tags contains 'Bestseller'
-    assign feature_badge = 'Bestseller'
-  elsif product.tags contains 'Subscribe'
+  elsif has_subscription
     assign feature_badge = 'Subscribe'
+  elsif is_bestseller
+    assign feature_badge = 'Bestseller'
   endif
 -%}
 
@@ -25,57 +132,56 @@
     {%- if product.featured_image != blank -%}
       {{
         product.featured_image
-        | image_url: width: 372, height: 372, crop: 'center'
+        | image_url: width: 320, height: 320, crop: 'center'
         | image_tag:
           loading: 'lazy',
-          widths: '186, 372',
-          sizes: '186px',
-          alt: product.featured_image.alt
+          widths: '160, 320',
+          sizes: '160px',
+          alt: ''
       }}
     {%- endif -%}
 
     {%- if feature_badge != blank -%}
-      <span class='v3-search__product-badge text-search-small'>
-        {{- feature_badge -}}
+      <span class='v3-search__product-badge'>
+        <span class='v3-search__product-badge-text text-search-small'>
+          {{- feature_badge -}}
+        </span>
       </span>
     {%- endif -%}
   </span>
 
-  <span class='v3-search__product-data'>
-    <span class='v3-search__product-meta text-search-product-meta'>
-      <span>{{ product.vendor | escape }}</span>
-      <span>{{ product.title | escape }}</span>
-      <span class='v3-search__product-price text-search-product-price'>
-        {%- if product.compare_at_price > product.price -%}
-          <s>
-            {%- if settings.currency_code_enabled -%}
-              {{- product.compare_at_price | money_with_currency -}}
-            {%- else -%}
-              {{- product.compare_at_price | money -}}
-            {%- endif -%}
+  <div class='v3-search__product-data'>
+    <div class='v3-search__product-meta'>
+      <p class='v3-search__product-vendor text-search-product-meta'>
+        {{- product.vendor | escape -}}
+      </p>
+      <h3 class='v3-search__product-title text-search-product-meta'>
+        {{- display_title | escape -}}
+      </h3>
+      <p class='v3-search__product-price'>
+        {%- if all_variants_on_sale -%}
+          <s class='v3-search__product-price-text text-search-product-price'>
+            {{- display_compare_at_price -}}
           </s>
-          <span class='v3-search__product-sale'>
-            {%- if settings.currency_code_enabled -%}
-              {{- product.price | money_with_currency -}}
-            {%- else -%}
-              {{- product.price | money -}}
-            {%- endif -%}
+          <span class='v3-search__product-price-text v3-search__product-sale text-search-product-price'>
+            {{- display_price -}}
+          </span>
+        {%- elsif is_on_sale -%}
+          <span class='v3-search__product-price-text v3-search__product-sale text-search-product-price'>
+            {{- display_price -}}
           </span>
         {%- else -%}
-          {%- if settings.currency_code_enabled -%}
-            {{- product.price | money_with_currency -}}
-          {%- else -%}
-            {{- product.price | money -}}
-          {%- endif -%}
+          <span class='v3-search__product-price-text text-search-product-price'>
+            {{- display_price -}}
+          </span>
         {%- endif -%}
-      </span>
-    </span>
+      </p>
+    </div>
 
-    {%- if product.variants.size > 1 -%}
-      <span class='v3-search__product-variants text-search-small'>
-        {{- product.variants.size }}
-        {{ product.variants.size | pluralize: 'variant', 'variants' -}}
-      </span>
+    {%- if variant_summary != blank -%}
+      <p class='v3-search__product-variants text-search-small'>
+        {{- variant_summary | escape -}}
+      </p>
     {%- endif -%}
-  </span>
+  </div>
 </a>
