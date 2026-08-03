@@ -752,8 +752,10 @@
         </div>
       </section>
       {% sections 'header-group' %}
+      {% comment %} Keep shared page hero imagery separate from the hidden legacy navigation. {% endcomment %}
+      <div class='hero' aria-hidden='true'></div>
       <div hidden>
-      <header class='hero'>
+      <header>
         <nav class='main-nav'>
           <div class='main-nav__container wrapper wrapper--lg'>
             <ul class='main-nav__column main-nav__linklist'>
