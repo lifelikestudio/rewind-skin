@@ -334,6 +334,12 @@
   </div>
 </nav>
 
+<div
+  class='v3-modal-backdrop'
+  data-v3-modal-backdrop
+  aria-hidden='true'
+></div>
+
 {%- render 'v3-submenu-drawer',
   logo: section.settings.logo,
   shop_label: section.settings.shop_label,
@@ -356,6 +362,22 @@
 -%}
 
 <style>
+  .v3-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    background: var(--color-overlay-light);
+    backdrop-filter: blur(var(--blur-overlay));
+    -webkit-backdrop-filter: blur(var(--blur-overlay));
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+  .v3-modal-backdrop[data-v3-modal-backdrop-open] {
+    opacity: 1;
+    transition-duration: 250ms;
+  }
+
   .v3-nav {
     position: sticky;
     top: 0;
@@ -630,7 +652,6 @@
 
   /* Modal-to-modal transfer is orchestrated by GSAP. Disable the drawers'
      independent CSS transitions so the shared backdrop remains visually still. */
-  .v3-submenu[data-drawer-transfer] .v3-submenu__overlay,
   .v3-submenu[data-drawer-transfer] .v3-submenu__drawer,
   .v3-submenu[data-drawer-transfer] .v3-submenu__heading > a,
   .v3-submenu[data-drawer-transfer] .v3-submenu__actions,
@@ -640,7 +661,6 @@
   .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__toggle-wrap,
   .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__nav,
   .v3-mobile-menu[data-drawer-transfer] .v3-mobile-menu__utility,
-  .v3-search[data-drawer-transfer] .v3-search__overlay,
   .v3-search[data-drawer-transfer] .v3-search__drawer,
   .v3-search[data-drawer-transfer] .v3-search__logo,
   .v3-search[data-drawer-transfer] .v3-search__close,
@@ -661,6 +681,7 @@
 
   /* ═══ REDUCED MOTION ═══ */
   @media (prefers-reduced-motion: reduce) {
+    .v3-modal-backdrop,
     .v3-nav,
     .v3-nav * {
       transition-duration: 0.01ms !important;
@@ -696,8 +717,38 @@
     if (!modalCoordinator) {
       modalCoordinator = (function () {
         var activeOwner = null;
+        var activeUsesBackdrop = false;
+        var backdropCloseFrame = null;
         var inertRecords = [];
         var previousOverflow = '';
+
+        function getBackdrop() {
+          return document.querySelector('[data-v3-modal-backdrop]');
+        }
+
+        function showBackdrop() {
+          var backdrop = getBackdrop();
+          if (backdropCloseFrame !== null) {
+            window.cancelAnimationFrame(backdropCloseFrame);
+            backdropCloseFrame = null;
+          }
+          if (backdrop) {
+            backdrop.setAttribute('data-v3-modal-backdrop-open', '');
+          }
+        }
+
+        function scheduleBackdropClose() {
+          if (backdropCloseFrame !== null) {
+            window.cancelAnimationFrame(backdropCloseFrame);
+          }
+          backdropCloseFrame = window.requestAnimationFrame(function () {
+            var backdrop = getBackdrop();
+            backdropCloseFrame = null;
+            if ((!activeOwner || !activeUsesBackdrop) && backdrop) {
+              backdrop.removeAttribute('data-v3-modal-backdrop-open');
+            }
+          });
+        }
 
         function clearIsolation() {
           inertRecords.forEach(function (record) {
@@ -732,7 +783,7 @@
         }
 
         return {
-          acquire: function (owner, activeRoot) {
+          acquire: function (owner, activeRoot, options) {
             if (!owner || !activeRoot) return;
 
             if (activeOwner && activeOwner !== owner) {
@@ -747,6 +798,7 @@
               clearIsolation();
               document.documentElement.style.overflow = previousOverflow;
               activeOwner = null;
+              activeUsesBackdrop = false;
             }
 
             if (activeOwner !== owner) {
@@ -758,6 +810,12 @@
 
             document.documentElement.style.overflow = 'hidden';
             applyIsolation(activeRoot);
+            activeUsesBackdrop = !options || options.useBackdrop !== false;
+            if (activeUsesBackdrop) {
+              showBackdrop();
+            } else {
+              scheduleBackdropClose();
+            }
           },
           refresh: function (owner, activeRoot) {
             if (activeOwner !== owner || !activeRoot) return;
@@ -765,10 +823,15 @@
             applyIsolation(activeRoot);
           },
           release: function (owner) {
-            if (activeOwner !== owner) return false;
+            if (activeOwner !== owner) {
+              if (!activeOwner) scheduleBackdropClose();
+              return false;
+            }
             clearIsolation();
             document.documentElement.style.overflow = previousOverflow;
             activeOwner = null;
+            activeUsesBackdrop = false;
+            scheduleBackdropClose();
             return true;
           },
           getOwner: function () {
@@ -782,7 +845,9 @@
     /* Keep only the active modal branch exposed to keyboard and assistive
        technology, while preserving any inert states owned by the theme. */
     function isolateModal(activeRoot) {
-      modalCoordinator.acquire('navigation', activeRoot);
+      modalCoordinator.acquire('navigation', activeRoot, {
+        useBackdrop: activeRoot !== mobileMenu,
+      });
     }
 
     function clearModalIsolation() {
@@ -1024,7 +1089,6 @@
         : null;
       var mobileMenuLogoIsShared = false;
       var searchTransferElements = [
-        overlay,
         drawer,
         submenuLogo,
         submenuActions,
@@ -1038,7 +1102,6 @@
         mobileMenuToggleWrap,
         mobileMenuNav,
         mobileMenuUtility,
-        searchOverlay,
         searchPanel,
         searchLogo,
         searchClose,
@@ -1732,8 +1795,6 @@
         gsap.set([searchLogo, searchClose].filter(Boolean), {
           opacity: 0,
         });
-        gsap.set(overlay, { opacity: 1 });
-        gsap.set(searchOverlay, { opacity: 0 });
 
         requestAnimationFrame(function () {
           if (searchInput) searchInput.focus();
@@ -1823,7 +1884,6 @@
         var morphStart = reducedMotion ? 0 : 0.04;
         var contentStart = reducedMotion ? 0 : 0.23;
         var morphEnd = morphStart + morphDuration;
-        var overlayDuration = reducedMotion ? 0 : 0.1;
         var mobileRect = mobilePanel.getBoundingClientRect();
         var searchRect = searchPanel.getBoundingClientRect();
         var mobileStyles = window.getComputedStyle(mobilePanel);
@@ -1902,7 +1962,6 @@
         });
         if (mobileMenuClose) gsap.set(mobileMenuClose, { opacity: 0 });
         if (searchClose) gsap.set(searchClose, { opacity: 1 });
-        gsap.set(searchOverlay, { opacity: 0 });
 
         searchTransferTimeline = gsap.timeline({
           paused: true,
@@ -1958,11 +2017,6 @@
         searchTransferTimeline.set(
           mobileTransferSurface,
           { opacity: 0 },
-          morphEnd
-        );
-        searchTransferTimeline.to(
-          searchOverlay,
-          { opacity: 1, duration: overlayDuration },
           morphEnd
         );
 

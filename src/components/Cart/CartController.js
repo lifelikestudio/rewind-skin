@@ -33,8 +33,36 @@ function getDrawer() {
 
 function createFallbackModalCoordinator() {
   let activeOwner = null;
+  let activeUsesBackdrop = false;
+  let backdropCloseFrame = null;
   let inertRecords = [];
   let previousOverflow = '';
+
+  function getBackdrop() {
+    return document.querySelector('[data-v3-modal-backdrop]');
+  }
+
+  function showBackdrop() {
+    const backdrop = getBackdrop();
+    if (backdropCloseFrame !== null) {
+      window.cancelAnimationFrame(backdropCloseFrame);
+      backdropCloseFrame = null;
+    }
+    backdrop?.setAttribute('data-v3-modal-backdrop-open', '');
+  }
+
+  function scheduleBackdropClose() {
+    if (backdropCloseFrame !== null) {
+      window.cancelAnimationFrame(backdropCloseFrame);
+    }
+    backdropCloseFrame = window.requestAnimationFrame(() => {
+      const backdrop = getBackdrop();
+      backdropCloseFrame = null;
+      if (!activeOwner || !activeUsesBackdrop) {
+        backdrop?.removeAttribute('data-v3-modal-backdrop-open');
+      }
+    });
+  }
 
   function clearIsolation() {
     inertRecords.forEach(({ element, wasInert }) => {
@@ -69,7 +97,7 @@ function createFallbackModalCoordinator() {
   }
 
   return {
-    acquire(owner, activeRoot) {
+    acquire(owner, activeRoot, options) {
       if (!owner || !activeRoot) return;
 
       if (activeOwner && activeOwner !== owner) {
@@ -84,6 +112,7 @@ function createFallbackModalCoordinator() {
         clearIsolation();
         document.documentElement.style.overflow = previousOverflow;
         activeOwner = null;
+        activeUsesBackdrop = false;
       }
 
       if (activeOwner !== owner) {
@@ -95,6 +124,12 @@ function createFallbackModalCoordinator() {
 
       document.documentElement.style.overflow = 'hidden';
       applyIsolation(activeRoot);
+      activeUsesBackdrop = options?.useBackdrop !== false;
+      if (activeUsesBackdrop) {
+        showBackdrop();
+      } else {
+        scheduleBackdropClose();
+      }
     },
     refresh(owner, activeRoot) {
       if (activeOwner !== owner || !activeRoot) return;
@@ -102,10 +137,15 @@ function createFallbackModalCoordinator() {
       applyIsolation(activeRoot);
     },
     release(owner) {
-      if (activeOwner !== owner) return false;
+      if (activeOwner !== owner) {
+        if (!activeOwner) scheduleBackdropClose();
+        return false;
+      }
       clearIsolation();
       document.documentElement.style.overflow = previousOverflow;
       activeOwner = null;
+      activeUsesBackdrop = false;
+      scheduleBackdropClose();
       return true;
     },
     getOwner() {
@@ -1176,7 +1216,7 @@ export function openCartDrawer(trigger = null, { revealLineKeys = null } = {}) {
   drawer.dataset.cartState = 'open';
   drawer.setAttribute('aria-hidden', 'false');
   syncTriggerExpansion(true);
-  modalCoordinator.acquire(MODAL_OWNER, drawer);
+  modalCoordinator.acquire(MODAL_OWNER, drawer, { useBackdrop: true });
   syncDrawerBusy(drawer);
   playCartReveal(drawer, revealLineKeys, 0.3);
   focusReplacement(drawer, '[data-cart-close]');

@@ -320,7 +320,9 @@
                     <span class='v3-search__product-image'></span>
                     <div class='v3-search__product-data'>
                       <div class='v3-search__product-meta'>
-                        <span class='v3-search__silhouette-line text-search-product-meta'></span>
+                        <span
+                          class='v3-search__silhouette-line text-search-product-meta'
+                        ></span>
                         <span
                           class='v3-search__silhouette-line v3-search__silhouette-line--title text-search-product-meta'
                         ></span>
@@ -527,20 +529,7 @@
     position: absolute;
     inset: 0;
     border: 0;
-    background: rgba(251, 250, 249, 0.5);
-    backdrop-filter: blur(32px);
-    -webkit-backdrop-filter: blur(32px);
-    opacity: 0;
-    transition: opacity 250ms ease-out;
-  }
-
-  .v3-search[data-search-state='open'] .v3-search__overlay {
-    opacity: 1;
-  }
-
-  .v3-search[data-search-state='closing'] .v3-search__overlay {
-    opacity: 0;
-    transition-duration: 200ms;
+    background: transparent;
   }
 
   .v3-search__drawer {
