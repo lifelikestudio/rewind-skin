@@ -41,7 +41,7 @@
               data-search-suggestion-value='{{ query.text | escape }}'
             >
               <span class='v3-search__suggestion-text text-search-suggestion'>
-                {{- query.styled_text -}}
+                <span>{{- query.styled_text -}}</span>
               </span>
             </button>
           {%- endfor -%}
