@@ -25,7 +25,7 @@
     type='button'
     class='v3-cart__overlay'
     data-cart-overlay
-    aria-label='Close {{ drawer_title | escape }}'
+    aria-hidden='true'
     tabindex='-1'
   ></button>
 
@@ -284,11 +284,6 @@
   .v3-cart[data-cart-state='open'] .v3-cart__footer {
     opacity: 1;
     transition-delay: 300ms;
-  }
-
-  .v3-cart[data-cart-reveal] .v3-cart__scroll {
-    opacity: 1;
-    transition: none;
   }
 
   .v3-cart[data-cart-state='closing'] .v3-cart__title-group,

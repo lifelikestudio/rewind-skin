@@ -13,17 +13,110 @@ const FOCUSABLE_SELECTOR = [
   'input:not([disabled]):not([tabindex="-1"])',
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
+const ADD_FEEDBACK_DELAY = 150;
+const FALLBACK_ADD_ERROR_SELECTOR = '[data-cart-global-error]';
+const MODAL_OWNER = 'cart';
 
 let openTrigger = null;
 let closeTimer = null;
-let inertRecords = [];
-let previousOverflow = '';
-let mutationId = 0;
 let cartRevealTimeline = null;
+let cartEmptyMorph = null;
+let mutationQueue = Promise.resolve();
+const submitFeedbackRecords = new WeakMap();
+const drawerBusyOperations = new Set();
+const navigationCountTimelines = new WeakMap();
+const navigationBadgeTimelines = new WeakMap();
 
 function getDrawer() {
   return document.querySelector(DRAWER_SELECTOR);
 }
+
+function createFallbackModalCoordinator() {
+  let activeOwner = null;
+  let inertRecords = [];
+  let previousOverflow = '';
+
+  function clearIsolation() {
+    inertRecords.forEach(({ element, wasInert }) => {
+      if (wasInert) {
+        element.inert = true;
+      } else {
+        element.inert = false;
+        element.removeAttribute('inert');
+      }
+    });
+    inertRecords = [];
+  }
+
+  function applyIsolation(activeRoot) {
+    let branch = activeRoot;
+    let parent = branch?.parentElement;
+
+    while (parent) {
+      Array.from(parent.children).forEach((child) => {
+        if (child === branch) return;
+        inertRecords.push({
+          element: child,
+          wasInert: child.inert || child.hasAttribute('inert'),
+        });
+        child.inert = true;
+      });
+
+      if (parent === document.body) break;
+      branch = parent;
+      parent = parent.parentElement;
+    }
+  }
+
+  return {
+    acquire(owner, activeRoot) {
+      if (!owner || !activeRoot) return;
+
+      if (activeOwner && activeOwner !== owner) {
+        document.dispatchEvent(
+          new CustomEvent('v3:modal-release-request', {
+            detail: { owner: activeOwner, nextOwner: owner },
+          })
+        );
+      }
+
+      if (activeOwner && activeOwner !== owner) {
+        clearIsolation();
+        document.documentElement.style.overflow = previousOverflow;
+        activeOwner = null;
+      }
+
+      if (activeOwner !== owner) {
+        previousOverflow = document.documentElement.style.overflow;
+        activeOwner = owner;
+      } else {
+        clearIsolation();
+      }
+
+      document.documentElement.style.overflow = 'hidden';
+      applyIsolation(activeRoot);
+    },
+    refresh(owner, activeRoot) {
+      if (activeOwner !== owner || !activeRoot) return;
+      clearIsolation();
+      applyIsolation(activeRoot);
+    },
+    release(owner) {
+      if (activeOwner !== owner) return false;
+      clearIsolation();
+      document.documentElement.style.overflow = previousOverflow;
+      activeOwner = null;
+      return true;
+    },
+    getOwner() {
+      return activeOwner;
+    },
+  };
+}
+
+const modalCoordinator =
+  window.RewindV3ModalCoordinator ||
+  (window.RewindV3ModalCoordinator = createFallbackModalCoordinator());
 
 function getRoutesRoot() {
   const root = window.Shopify?.routes?.root || '/';
@@ -50,40 +143,10 @@ function closeCompetingDrawers() {
   });
 }
 
-function isolateModal(activeRoot) {
-  clearModalIsolation();
-
-  let branch = activeRoot;
-  let parent = branch?.parentElement;
-
-  while (parent) {
-    Array.from(parent.children).forEach((child) => {
-      if (child === branch) return;
-
-      inertRecords.push({
-        element: child,
-        wasInert: child.inert || child.hasAttribute('inert'),
-      });
-      child.inert = true;
-    });
-
-    if (parent === document.body) break;
-    branch = parent;
-    parent = parent.parentElement;
-  }
-}
-
-function clearModalIsolation() {
-  inertRecords.forEach(({ element, wasInert }) => {
-    if (wasInert) {
-      element.inert = true;
-      return;
-    }
-
-    element.inert = false;
-    element.removeAttribute('inert');
-  });
-  inertRecords = [];
+function enqueueMutation(operation) {
+  const result = mutationQueue.then(operation, operation);
+  mutationQueue = result.catch(() => {});
+  return result;
 }
 
 function stopCartReveal(drawer = getDrawer()) {
@@ -97,13 +160,15 @@ function stopCartReveal(drawer = getDrawer()) {
     gsap.killTweensOf(items);
     gsap.set(items, { clearProps: 'opacity' });
   }
-  drawer?.removeAttribute('data-cart-reveal');
 }
 
-function playCartReveal(drawer) {
+function playCartReveal(drawer, revealLineKeys, delay = 0) {
   stopCartReveal(drawer);
 
-  const items = Array.from(drawer.querySelectorAll('[data-cart-line]'));
+  const allItems = Array.from(drawer.querySelectorAll('[data-cart-line]'));
+  const items = Array.isArray(revealLineKeys)
+    ? allItems.filter((item) => revealLineKeys.includes(item.dataset.lineKey))
+    : allItems;
   if (
     !items.length ||
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -111,13 +176,11 @@ function playCartReveal(drawer) {
     return;
   }
 
-  drawer.setAttribute('data-cart-reveal', '');
   gsap.set(items, { opacity: 0 });
 
   cartRevealTimeline = gsap.timeline({
     onComplete: () => {
       gsap.set(items, { clearProps: 'opacity' });
-      drawer.removeAttribute('data-cart-reveal');
       cartRevealTimeline = null;
     },
   });
@@ -129,26 +192,259 @@ function playCartReveal(drawer) {
       ease: 'power1.out',
       stagger: 0.03,
     },
-    0.3
+    delay
   );
+}
+
+function stopCartEmptyMorph() {
+  cartEmptyMorph?.cancel();
+}
+
+function measureCartDialog(drawer) {
+  const dialog = drawer.querySelector('[data-cart-dialog]');
+  if (!dialog || !document.body) return null;
+
+  const drawerStyle = drawer.getAttribute('style');
+  const dialogStyle = dialog.getAttribute('style');
+
+  drawer.style.visibility = 'hidden';
+  drawer.style.pointerEvents = 'none';
+  drawer.style.zIndex = '-1';
+  dialog.style.opacity = '1';
+  dialog.style.transition = 'none';
+  document.body.append(drawer);
+
+  const rect = dialog.getBoundingClientRect();
+  drawer.remove();
+
+  if (drawerStyle === null) {
+    drawer.removeAttribute('style');
+  } else {
+    drawer.setAttribute('style', drawerStyle);
+  }
+  if (dialogStyle === null) {
+    dialog.removeAttribute('style');
+  } else {
+    dialog.setAttribute('style', dialogStyle);
+  }
+
+  return rect;
+}
+
+function playCartEmptyMorph(currentDrawer, nextDrawer) {
+  stopCartEmptyMorph();
+
+  if (
+    document.hidden ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    return Promise.resolve();
+  }
+
+  const currentDialog = currentDrawer.querySelector('[data-cart-dialog]');
+  const nextDialog = nextDrawer.querySelector('[data-cart-dialog]');
+  const emptyState = nextDrawer.querySelector('.v3-cart__empty');
+  const currentRect = currentDialog?.getBoundingClientRect();
+  const targetRect = measureCartDialog(nextDrawer);
+
+  if (
+    !currentDialog ||
+    !nextDialog ||
+    !emptyState ||
+    !currentRect?.width ||
+    !currentRect?.height ||
+    !targetRect?.width ||
+    !targetRect?.height
+  ) {
+    return Promise.resolve();
+  }
+
+  const header = currentDrawer.querySelector('.v3-cart__header');
+  const count = currentDrawer.querySelector('[data-cart-count]');
+  const outgoing = [
+    currentDrawer.querySelector('.v3-cart__scroll'),
+    currentDrawer.querySelector('.v3-cart__footer'),
+  ].filter(Boolean);
+  const incoming = emptyState.cloneNode(true);
+
+  incoming.setAttribute('aria-hidden', 'true');
+  incoming.inert = true;
+  currentDialog.append(incoming);
+  currentDrawer.setAttribute('data-cart-morph', 'empty');
+
+  gsap.set(currentDialog, {
+    width: currentRect.width,
+    height: currentRect.height,
+    willChange: 'width, height',
+  });
+  gsap.set(outgoing, { transition: 'none' });
+  if (count) {
+    gsap.set(count, {
+      transition: 'none',
+      transformOrigin: 'center',
+    });
+  }
+  gsap.set(incoming, {
+    position: 'absolute',
+    top: header?.getBoundingClientRect().height || 0,
+    right: 0,
+    left: 0,
+    autoAlpha: 0,
+    transition: 'none',
+  });
+
+  return new Promise((resolve) => {
+    let settled = false;
+    let timeline;
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+
+      currentDrawer.removeAttribute('data-cart-morph');
+      gsap.set(currentDialog, {
+        clearProps: 'width,height,willChange',
+      });
+      gsap.set(outgoing, {
+        clearProps: 'opacity,transition',
+      });
+      if (count) {
+        gsap.set(count, {
+          clearProps: 'opacity,visibility,transform,transformOrigin,transition',
+        });
+      }
+      incoming.remove();
+
+      if (cartEmptyMorph?.timeline === timeline) cartEmptyMorph = null;
+      resolve();
+    };
+
+    timeline = gsap.timeline({
+      defaults: { ease: 'power1.out' },
+      onComplete: finish,
+    });
+    cartEmptyMorph = {
+      timeline,
+      cancel() {
+        timeline.kill();
+        finish();
+      },
+    };
+
+    timeline.to(outgoing, { opacity: 0, duration: 0.14 }, 0);
+    if (count) {
+      timeline.to(
+        count,
+        {
+          autoAlpha: 0,
+          scale: 0.85,
+          duration: 0.14,
+        },
+        0
+      );
+    }
+    timeline.to(
+      currentDialog,
+      {
+        width: targetRect.width,
+        height: targetRect.height,
+        duration: 0.32,
+        ease: 'power1.inOut',
+      },
+      0.04
+    );
+    timeline.to(incoming, { autoAlpha: 1, duration: 0.17 }, 0.23);
+  });
 }
 
 function getCartTriggers() {
   return Array.from(document.querySelectorAll(NAV_TRIGGER_SELECTOR));
 }
 
+function isFocusable(element, { excludeDrawer = false } = {}) {
+  if (!(element instanceof HTMLElement) || !element.isConnected) return false;
+  if (excludeDrawer && getDrawer()?.contains(element)) return false;
+  if (
+    element.hidden ||
+    element.matches(':disabled') ||
+    element.closest('[aria-hidden="true"], [inert]')
+  ) {
+    return false;
+  }
+
+  const styles = window.getComputedStyle(element);
+  if (styles.display === 'none' || styles.visibility === 'hidden') return false;
+  if (!element.getClientRects().length) return false;
+  return element.tabIndex >= 0;
+}
+
+function getExternalFocusFallback() {
+  return (
+    getCartTriggers().find((trigger) =>
+      isFocusable(trigger, { excludeDrawer: true })
+    ) ||
+    Array.from(
+      document.querySelectorAll(
+        'header a[href], main a[href], main button:not([disabled])'
+      )
+    ).find((element) => isFocusable(element, { excludeDrawer: true })) ||
+    null
+  );
+}
+
 function getReturnFocusTarget(trigger) {
-  if (!(trigger instanceof HTMLElement)) return trigger;
+  if (!(trigger instanceof HTMLElement)) return getExternalFocusFallback();
 
   if (trigger.closest('[data-mobile-menu]')) {
-    return document.querySelector('[data-nav-cart-mobile]') || trigger;
+    const mobileTrigger = document.querySelector('[data-nav-cart-mobile]');
+    return isFocusable(mobileTrigger, { excludeDrawer: true })
+      ? mobileTrigger
+      : getExternalFocusFallback();
   }
 
   if (trigger.closest('[data-submenu]')) {
-    return document.querySelector('[data-nav-cart]') || trigger;
+    const desktopTrigger = document.querySelector('[data-nav-cart]');
+    return isFocusable(desktopTrigger, { excludeDrawer: true })
+      ? desktopTrigger
+      : getExternalFocusFallback();
   }
 
-  return trigger;
+  return isFocusable(trigger, { excludeDrawer: true })
+    ? trigger
+    : getExternalFocusFallback();
+}
+
+function resolveAddSubmitter(form, submitter) {
+  if (
+    submitter instanceof HTMLButtonElement &&
+    submitter.form === form &&
+    submitter.isConnected
+  ) {
+    return submitter;
+  }
+
+  return (
+    Array.from(
+      form.querySelectorAll(
+        'button[type="submit"]:not([disabled]), button:not([type]):not([disabled])'
+      )
+    ).find((button) => button instanceof HTMLButtonElement) || null
+  );
+}
+
+function getAddReturnTarget(form, submitter) {
+  const activeElement = document.activeElement;
+  const candidates = [
+    submitter,
+    form.contains(activeElement) ? activeElement : null,
+    resolveAddSubmitter(form, submitter),
+  ];
+
+  return (
+    candidates.find((candidate) =>
+      isFocusable(candidate, { excludeDrawer: true })
+    ) || getExternalFocusFallback()
+  );
 }
 
 function syncTriggerExpansion(isOpen) {
@@ -157,17 +453,191 @@ function syncTriggerExpansion(isOpen) {
   });
 }
 
+function updateWrittenNavigationCount(count, displayCount, itemCount) {
+  const trigger = count.closest('[data-nav-cart]');
+  const willShow = itemCount > 0;
+  const wasShowing = !count.hidden;
+  const activeTimeline = trigger ? navigationCountTimelines.get(trigger) : null;
+
+  if (activeTimeline) {
+    activeTimeline.kill();
+    navigationCountTimelines.delete(trigger);
+  }
+  if (trigger) {
+    gsap.set(trigger, {
+      clearProps: 'width,overflow,willChange',
+    });
+  }
+  gsap.set(count, { clearProps: 'opacity,visibility' });
+  count.textContent = `\u00A0(${displayCount})`;
+
+  if (
+    !trigger ||
+    wasShowing === willShow ||
+    document.hidden ||
+    !trigger.getClientRects().length ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    count.hidden = !willShow;
+    return;
+  }
+
+  const startWidth = trigger.getBoundingClientRect().width;
+  let targetWidth;
+
+  if (willShow) {
+    count.hidden = false;
+    targetWidth = trigger.getBoundingClientRect().width;
+    gsap.set(count, { autoAlpha: 0 });
+  } else {
+    count.hidden = true;
+    targetWidth = trigger.getBoundingClientRect().width;
+    count.hidden = false;
+  }
+
+  if (!startWidth || !targetWidth) {
+    count.hidden = !willShow;
+    gsap.set(count, { clearProps: 'opacity,visibility' });
+    return;
+  }
+
+  gsap.set(trigger, {
+    width: startWidth,
+    overflow: 'hidden',
+    willChange: 'width',
+  });
+
+  let timeline;
+  const finish = () => {
+    count.hidden = !willShow;
+    gsap.set(trigger, {
+      clearProps: 'width,overflow,willChange',
+    });
+    gsap.set(count, { clearProps: 'opacity,visibility' });
+    if (navigationCountTimelines.get(trigger) === timeline) {
+      navigationCountTimelines.delete(trigger);
+    }
+  };
+
+  timeline = gsap.timeline({ onComplete: finish });
+  navigationCountTimelines.set(trigger, timeline);
+
+  if (willShow) {
+    timeline.to(
+      trigger,
+      {
+        width: targetWidth,
+        duration: 0.24,
+        ease: 'power1.inOut',
+      },
+      0
+    );
+    timeline.to(
+      count,
+      {
+        autoAlpha: 1,
+        duration: 0.16,
+        ease: 'power1.out',
+      },
+      0.08
+    );
+    return;
+  }
+
+  timeline.to(
+    count,
+    {
+      autoAlpha: 0,
+      duration: 0.12,
+      ease: 'power1.out',
+    },
+    0
+  );
+  timeline.to(
+    trigger,
+    {
+      width: targetWidth,
+      duration: 0.24,
+      ease: 'power1.inOut',
+    },
+    0.04
+  );
+}
+
+function updateMobileNavigationBadge(badge, itemCount) {
+  const content = badge.querySelector('[data-nav-cart-badge-content]') || badge;
+  const displayCount = itemCount > 9 ? '9+' : String(itemCount);
+  const willShow = itemCount > 0;
+  const wasShowing = !badge.hidden;
+  const activeTimeline = navigationBadgeTimelines.get(badge);
+
+  if (activeTimeline) {
+    activeTimeline.kill();
+    navigationBadgeTimelines.delete(badge);
+  }
+  gsap.set(content, {
+    clearProps: 'opacity,visibility,transform,transformOrigin,willChange',
+  });
+  content.textContent = displayCount;
+
+  if (
+    wasShowing === willShow ||
+    document.hidden ||
+    !badge.parentElement?.getClientRects().length ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    badge.hidden = !willShow;
+    return;
+  }
+
+  badge.hidden = false;
+  gsap.set(content, {
+    transformOrigin: 'center',
+    willChange: 'transform, opacity',
+  });
+
+  let timeline;
+  const finish = () => {
+    badge.hidden = !willShow;
+    gsap.set(content, {
+      clearProps: 'opacity,visibility,transform,transformOrigin,willChange',
+    });
+    if (navigationBadgeTimelines.get(badge) === timeline) {
+      navigationBadgeTimelines.delete(badge);
+    }
+  };
+
+  timeline = gsap.timeline({ onComplete: finish });
+  navigationBadgeTimelines.set(badge, timeline);
+
+  if (willShow) {
+    gsap.set(content, { autoAlpha: 0, scale: 0.86 });
+    timeline.to(content, {
+      autoAlpha: 1,
+      scale: 1,
+      duration: 0.2,
+      ease: 'power1.out',
+    });
+    return;
+  }
+
+  timeline.to(content, {
+    autoAlpha: 0,
+    scale: 0.9,
+    duration: 0.14,
+    ease: 'power1.out',
+  });
+}
+
 function updateNavigationCount(itemCount) {
   const displayCount = itemCount > 99 ? '99+' : String(itemCount);
 
   document.querySelectorAll('[data-nav-cart-count]').forEach((count) => {
-    count.textContent = `\u00A0(${displayCount})`;
-    count.hidden = itemCount === 0;
+    updateWrittenNavigationCount(count, displayCount, itemCount);
   });
 
   document.querySelectorAll('[data-nav-cart-badge]').forEach((badge) => {
-    badge.textContent = itemCount > 9 ? '9+' : String(itemCount);
-    badge.hidden = itemCount === 0;
+    updateMobileNavigationBadge(badge, itemCount);
   });
 
   document.querySelectorAll('[data-cart-quick-label]').forEach((label) => {
@@ -209,9 +679,173 @@ function clearError() {
   error.hidden = true;
 }
 
-function setBusy(isBusy) {
-  const drawer = getDrawer();
+function clearAddError(form) {
+  document.querySelector(FALLBACK_ADD_ERROR_SELECTOR)?.remove();
+  if (!form.isConnected) return;
+
+  const productForm = form.closest('product-form');
+  const errorWrapper = productForm?.querySelector(
+    '.product-form__error-message-wrapper'
+  );
+  const errorMessage = errorWrapper?.querySelector(
+    '.product-form__error-message'
+  );
+
+  if (errorMessage) errorMessage.textContent = '';
+  if (errorWrapper) errorWrapper.hidden = true;
+  form.querySelector('[data-cart-submit-error]')?.remove();
+}
+
+function showAddError(form, message) {
+  if (form.isConnected) {
+    const productForm = form.closest('product-form');
+    const errorWrapper = productForm?.querySelector(
+      '.product-form__error-message-wrapper'
+    );
+    const errorMessage = errorWrapper?.querySelector(
+      '.product-form__error-message'
+    );
+
+    if (errorWrapper && errorMessage) {
+      errorMessage.textContent = message;
+      errorWrapper.hidden = false;
+      return;
+    }
+
+    let error = form.querySelector('[data-cart-submit-error]');
+    if (!error) {
+      error = document.createElement('p');
+      error.className = 'cart-submit-error';
+      error.dataset.cartSubmitError = '';
+      error.setAttribute('role', 'alert');
+      form.append(error);
+    }
+    error.textContent = message;
+    return;
+  }
+
+  if (getDrawer()?.dataset.cartState === 'open') {
+    showError(message);
+    announce(message);
+    return;
+  }
+
+  document.querySelector(FALLBACK_ADD_ERROR_SELECTOR)?.remove();
+  const error = document.createElement('p');
+  error.className = 'cart-submit-error cart-submit-error--global';
+  error.dataset.cartGlobalError = '';
+  error.setAttribute('role', 'alert');
+  error.textContent = message;
+  const visibleHost =
+    document.querySelector(
+      '[data-search-drawer][data-search-state="open"] [role="dialog"]'
+    ) ||
+    document.querySelector(
+      '[data-mobile-menu][data-mobile-menu-state="open"] [role="dialog"]'
+    ) ||
+    document.querySelector(
+      '[data-submenu][data-submenu-state="open"] [role="dialog"]'
+    ) ||
+    document.querySelector('main') ||
+    document.querySelector('[role="main"]');
+  (visibleHost || document.body).prepend(error);
+}
+
+function beginSubmitFeedback(submitter) {
+  if (!(submitter instanceof HTMLButtonElement)) return null;
+
+  const existingRecord = submitFeedbackRecords.get(submitter);
+  if (existingRecord) {
+    existingRecord.pending += 1;
+    return { submitter, record: existingRecord, ended: false };
+  }
+
+  const status = document.createElement('span');
+  status.className = 'cart-submit-status';
+  status.dataset.cartSubmitStatus = '';
+  status.setAttribute('aria-hidden', 'true');
+  status.textContent = 'Adding\u2026';
+
+  const directTextNodes = Array.from(submitter.childNodes).filter(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim()
+  );
+  directTextNodes.forEach((node) => {
+    const content = document.createElement('span');
+    content.dataset.cartSubmitContent = '';
+    node.replaceWith(content);
+    content.append(node);
+  });
+
+  const record = {
+    status,
+    wasDisabled: submitter.disabled,
+    ariaBusy: submitter.getAttribute('aria-busy'),
+    ariaLabel: submitter.getAttribute('aria-label'),
+    ariaLabelledby: submitter.getAttribute('aria-labelledby'),
+    timer: null,
+    pending: 1,
+  };
+
+  submitter.append(status);
+  submitter.disabled = true;
+  submitter.setAttribute('aria-busy', 'true');
+  submitter.setAttribute('aria-label', 'Adding item to bag');
+  submitter.removeAttribute('aria-labelledby');
+  submitter.dataset.cartSubmitState = 'loading';
+
+  record.timer = window.setTimeout(() => {
+    if (submitter.isConnected) {
+      submitter.dataset.cartSubmitProgress = 'visible';
+    }
+  }, ADD_FEEDBACK_DELAY);
+
+  submitFeedbackRecords.set(submitter, record);
+  return { submitter, record, ended: false };
+}
+
+function endSubmitFeedback(feedback) {
+  if (!feedback || feedback.ended) return;
+  feedback.ended = true;
+
+  const { submitter, record } = feedback;
+  record.pending -= 1;
+  if (record.pending > 0) return;
+
+  window.clearTimeout(record.timer);
+  record.status.remove();
+  submitter.disabled = record.wasDisabled;
+  delete submitter.dataset.cartSubmitState;
+  delete submitter.dataset.cartSubmitProgress;
+
+  if (record.ariaBusy === null) {
+    submitter.removeAttribute('aria-busy');
+  } else {
+    submitter.setAttribute('aria-busy', record.ariaBusy);
+  }
+
+  if (record.ariaLabel === null) {
+    submitter.removeAttribute('aria-label');
+  } else {
+    submitter.setAttribute('aria-label', record.ariaLabel);
+  }
+
+  if (record.ariaLabelledby === null) {
+    submitter.removeAttribute('aria-labelledby');
+  } else {
+    submitter.setAttribute('aria-labelledby', record.ariaLabelledby);
+  }
+
+  submitter
+    .querySelectorAll('[data-cart-submit-content]')
+    .forEach((content) => {
+      content.replaceWith(...content.childNodes);
+    });
+  submitFeedbackRecords.delete(submitter);
+}
+
+function syncDrawerBusy(drawer = getDrawer()) {
   if (!drawer) return;
+  const isBusy = drawerBusyOperations.size > 0;
 
   const dialog = drawer.querySelector('[data-cart-dialog]');
   dialog?.setAttribute('aria-busy', String(isBusy));
@@ -229,40 +863,111 @@ function setBusy(isBusy) {
   });
 }
 
+function beginDrawerBusy() {
+  const token = Symbol('cart-mutation');
+  drawerBusyOperations.add(token);
+  syncDrawerBusy();
+  return token;
+}
+
+function endDrawerBusy(token) {
+  drawerBusyOperations.delete(token);
+  syncDrawerBusy();
+}
+
 function parseSection(html) {
-  if (!html) return null;
+  if (typeof html !== 'string' || !html.trim()) return null;
 
   const documentFragment = new DOMParser().parseFromString(html, 'text/html');
   return documentFragment.querySelector(DRAWER_SELECTOR);
 }
 
-function applyRenderedSection(html, focusTarget = null) {
+function getReplacementFocusSelector(drawer, preferredSelector) {
+  if (preferredSelector) return preferredSelector;
+
+  const activeElement = document.activeElement;
+  if (
+    !(activeElement instanceof HTMLElement) ||
+    !drawer.contains(activeElement)
+  ) {
+    return '[data-cart-close]';
+  }
+  if (activeElement.matches('[data-cart-close]')) return '[data-cart-close]';
+  if (activeElement.matches('[name="checkout"]')) return '[name="checkout"]';
+  if (activeElement.matches('.v3-cart__start-shopping')) {
+    return '.v3-cart__start-shopping';
+  }
+
+  const line = activeElement.closest('[data-cart-line]');
+  const lineKey = line?.dataset.lineKey;
+  if (lineKey) {
+    const lineSelector = `[data-line-key="${CSS.escape(lineKey)}"]`;
+    const action = activeElement.dataset.cartAction;
+    if (action) {
+      return `${lineSelector} [data-cart-action="${CSS.escape(action)}"]`;
+    }
+    if (activeElement.matches('[data-cart-remove]')) {
+      return `${lineSelector} [data-cart-remove]`;
+    }
+    const href = activeElement.getAttribute('href');
+    if (href) return `${lineSelector} [href="${CSS.escape(href)}"]`;
+  }
+
+  return '[data-cart-close]';
+}
+
+function focusReplacement(drawer, selector) {
+  const target =
+    drawer.querySelector(selector) || drawer.querySelector('[data-cart-close]');
+  if (isFocusable(target)) target.focus({ preventScroll: true });
+}
+
+async function applyRenderedSection(
+  html,
+  { focusTarget = null, revealLineKeys = [] } = {}
+) {
   const currentDrawer = getDrawer();
   const nextDrawer = parseSection(html);
   if (!currentDrawer || !nextDrawer) return false;
 
   const wasOpen = currentDrawer.dataset.cartState === 'open';
+  const replacementFocus = wasOpen
+    ? getReplacementFocusSelector(currentDrawer, focusTarget)
+    : null;
   const nextCount = Number(
     nextDrawer.querySelector('[data-cart-count]')?.textContent.trim() || 0
   );
+  const shouldMorphToEmpty =
+    wasOpen &&
+    currentDrawer.dataset.cartEmpty === 'false' &&
+    nextDrawer.dataset.cartEmpty === 'true';
 
   if (wasOpen) {
     nextDrawer.dataset.cartState = 'open';
-    nextDrawer.setAttribute('aria-hidden', 'false');
     stopCartReveal(currentDrawer);
   }
 
-  currentDrawer.replaceWith(nextDrawer);
-  updateNavigationCount(nextCount);
-
-  if (wasOpen) {
-    isolateModal(nextDrawer);
+  if (shouldMorphToEmpty) {
+    updateNavigationCount(nextCount);
+    focusReplacement(currentDrawer, replacementFocus);
+    await playCartEmptyMorph(currentDrawer, nextDrawer);
+    nextDrawer.dataset.cartState = currentDrawer.dataset.cartState;
+    nextDrawer.setAttribute(
+      'aria-hidden',
+      currentDrawer.getAttribute('aria-hidden') || 'true'
+    );
+  } else if (wasOpen) {
+    nextDrawer.setAttribute('aria-hidden', 'false');
   }
 
-  if (focusTarget) {
-    window.requestAnimationFrame(() => {
-      nextDrawer.querySelector(focusTarget)?.focus();
-    });
+  currentDrawer.replaceWith(nextDrawer);
+  if (!shouldMorphToEmpty) updateNavigationCount(nextCount);
+  syncDrawerBusy(nextDrawer);
+
+  if (nextDrawer.dataset.cartState === 'open') {
+    modalCoordinator.refresh(MODAL_OWNER, nextDrawer);
+    focusReplacement(nextDrawer, replacementFocus);
+    playCartReveal(nextDrawer, revealLineKeys);
   }
 
   return true;
@@ -280,76 +985,123 @@ async function requestRenderedSection() {
   const url = new URL(window.location.href);
   url.searchParams.set('section_id', sectionId);
 
-  const response = await fetch(url, {
-    headers: {
-      Accept: 'text/html',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-  });
-
-  return response.ok ? response.text() : null;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'text/html',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
+    return response.ok ? response.text() : null;
+  } catch {
+    return null;
+  }
 }
 
-async function renderCartResponse(response, focusTarget = null) {
-  if (applyRenderedSection(getRenderedSection(response), focusTarget)) {
+async function renderCartResponse(response, options = {}) {
+  if (await applyRenderedSection(getRenderedSection(response), options)) {
     return true;
   }
 
   const fallbackSection = await requestRenderedSection();
-  return applyRenderedSection(fallbackSection, focusTarget);
+  return await applyRenderedSection(fallbackSection, options);
 }
 
-async function parseCartResponse(response) {
-  const data = await response.json();
+function getCustomerErrorMessage(data, fallbackMessage) {
+  const candidate =
+    typeof data?.description === 'string'
+      ? data.description
+      : typeof data?.message === 'string'
+        ? data.message
+        : '';
+  const message = candidate
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
-  if (!response.ok || data.status) {
-    const message =
-      data.description || data.message || 'We could not update your bag.';
-    throw new Error(message);
+  if (
+    !message ||
+    /unexpected token|json|parse error|syntax error/i.test(message)
+  ) {
+    return fallbackMessage;
+  }
+  return message;
+}
+
+async function parseCartResponse(response, fallbackMessage) {
+  let text = '';
+  try {
+    text = await response.text();
+  } catch {
+    throw new Error(fallbackMessage);
   }
 
+  let data = null;
+  if (text.trim()) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(fallbackMessage);
+    }
+  }
+
+  if (!response.ok || data?.status) {
+    throw new Error(getCustomerErrorMessage(data, fallbackMessage));
+  }
+  if (!data || typeof data !== 'object') throw new Error(fallbackMessage);
   return data;
 }
 
 async function requestCartChange(lineKey, quantity) {
   const sectionId = getSectionId();
-  const response = await fetch(getCartEndpoint('change'), {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-    body: JSON.stringify({
-      id: lineKey,
-      quantity,
-      sections: sectionId ? [sectionId] : [],
-      sections_url: `${window.location.pathname}${window.location.search}`,
-    }),
-  });
-
-  return parseCartResponse(response);
+  try {
+    const response = await fetch(getCartEndpoint('change'), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: JSON.stringify({
+        id: lineKey,
+        quantity,
+        sections: sectionId ? [sectionId] : [],
+        sections_url: `${window.location.pathname}${window.location.search}`,
+      }),
+    });
+    return parseCartResponse(response, 'We could not update your bag.');
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(
+        'We could not update your bag. Check your connection and try again.'
+      );
+    }
+    throw error;
+  }
 }
 
-async function requestAddToCart(form) {
-  const sectionId = getSectionId();
-  const formData = new FormData(form);
-  if (sectionId) formData.set('sections', sectionId);
-  formData.set(
-    'sections_url',
-    `${window.location.pathname}${window.location.search}`
-  );
-
-  const response = await fetch(getCartEndpoint('add'), {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-    body: formData,
-  });
-
-  return parseCartResponse(response);
+async function requestAddToCart(formData) {
+  try {
+    const response = await fetch(getCartEndpoint('add'), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: formData,
+    });
+    return parseCartResponse(
+      response,
+      'We could not add this item to your bag.'
+    );
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(
+        'We could not add this item to your bag. Check your connection and try again.'
+      );
+    }
+    throw error;
+  }
 }
 
 function dispatchCartUpdated(response, source, message) {
@@ -369,7 +1121,48 @@ function dispatchCartUpdated(response, source, message) {
   );
 }
 
-export function openCartDrawer(trigger = null) {
+function getAddedLineKeys(response) {
+  const addedItems = Array.isArray(response?.items)
+    ? response.items
+    : [response];
+
+  return addedItems
+    .map((item) => item?.key)
+    .filter((key) => typeof key === 'string' && key);
+}
+
+function waitForClosedDrawerFrame() {
+  const drawer = getDrawer();
+  if (
+    !drawer ||
+    drawer.dataset.cartState !== 'closed' ||
+    document.hidden ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    let resolved = false;
+    const finish = () => {
+      if (resolved) return;
+      resolved = true;
+      window.clearTimeout(fallbackTimer);
+      resolve();
+    };
+    const fallbackTimer = window.setTimeout(finish, 100);
+
+    window.requestAnimationFrame(() => {
+      if (document.hidden) {
+        finish();
+        return;
+      }
+      window.requestAnimationFrame(finish);
+    });
+  });
+}
+
+export function openCartDrawer(trigger = null, { revealLineKeys = null } = {}) {
   const drawer = getDrawer();
   if (!drawer || drawer.dataset.cartState === 'open') return;
 
@@ -380,17 +1173,13 @@ export function openCartDrawer(trigger = null) {
 
   closeCompetingDrawers();
   openTrigger = getReturnFocusTarget(trigger || document.activeElement);
-  previousOverflow = document.documentElement.style.overflow;
   drawer.dataset.cartState = 'open';
   drawer.setAttribute('aria-hidden', 'false');
   syncTriggerExpansion(true);
-  document.documentElement.style.overflow = 'hidden';
-  isolateModal(drawer);
-  playCartReveal(drawer);
-
-  window.requestAnimationFrame(() => {
-    drawer.querySelector('[data-cart-close]')?.focus();
-  });
+  modalCoordinator.acquire(MODAL_OWNER, drawer);
+  syncDrawerBusy(drawer);
+  playCartReveal(drawer, revealLineKeys, 0.3);
+  focusReplacement(drawer, '[data-cart-close]');
 }
 
 export function closeCartDrawer({ restoreFocus = true } = {}) {
@@ -400,13 +1189,14 @@ export function closeCartDrawer({ restoreFocus = true } = {}) {
   stopCartReveal(drawer);
   drawer.dataset.cartState = 'closing';
   syncTriggerExpansion(false);
-  document.documentElement.style.overflow = previousOverflow;
-  clearModalIsolation();
+  modalCoordinator.release(MODAL_OWNER);
 
-  if (restoreFocus && openTrigger instanceof HTMLElement) {
-    openTrigger.focus();
-  } else if (drawer.contains(document.activeElement)) {
-    document.activeElement.blur();
+  const returnTarget =
+    restoreFocus && isFocusable(openTrigger, { excludeDrawer: true })
+      ? openTrigger
+      : getExternalFocusFallback();
+  if (returnTarget) {
+    returnTarget.focus({ preventScroll: true });
   }
   drawer.setAttribute('aria-hidden', 'true');
 
@@ -423,84 +1213,113 @@ export async function changeCartLine(
   quantity,
   { focusAction = '', source = 'drawer' } = {}
 ) {
-  const requestId = ++mutationId;
   clearError();
-  setBusy(true);
+  const busyToken = beginDrawerBusy();
+  let completedFocusTarget = null;
 
-  try {
-    const response = await requestCartChange(lineKey, quantity);
-    if (requestId !== mutationId) return response;
+  return enqueueMutation(async () => {
+    try {
+      const response = await requestCartChange(lineKey, quantity);
 
-    const focusTarget =
-      source !== 'drawer'
-        ? null
-        : quantity > 0 && focusAction
-          ? `[data-line-key="${CSS.escape(
-              lineKey
-            )}"] [data-cart-action="${focusAction}"]`
-          : quantity > 0
-            ? `[data-line-key="${CSS.escape(lineKey)}"] [data-cart-remove]`
-            : '[data-cart-close]';
+      const focusTarget =
+        source !== 'drawer'
+          ? null
+          : quantity > 0 && focusAction
+            ? `[data-line-key="${CSS.escape(
+                lineKey
+              )}"] [data-cart-action="${CSS.escape(focusAction)}"]`
+            : quantity > 0
+              ? `[data-line-key="${CSS.escape(lineKey)}"] [data-cart-remove]`
+              : '[data-cart-close]';
 
-    const message =
-      quantity > 0
-        ? `Quantity updated to ${quantity}.`
-        : 'Item removed from your bag.';
-    const rendered = await renderCartResponse(response, focusTarget);
-    if (!rendered) {
+      const message =
+        quantity > 0
+          ? `Quantity updated to ${quantity}.`
+          : 'Item removed from your bag.';
+      const rendered = await renderCartResponse(response, {
+        focusTarget,
+        revealLineKeys: quantity > 0 ? [lineKey] : [],
+      });
+      if (!rendered) {
+        dispatchCartUpdated(response, source, message);
+        throw new Error(
+          'Your bag was updated, but it could not be refreshed. Reload the page to see the latest items.'
+        );
+      }
+
+      completedFocusTarget = focusTarget;
+      announce(message);
       dispatchCartUpdated(response, source, message);
-      throw new Error(
-        'Your bag was updated, but it could not be refreshed. Reload the page to see the latest items.'
-      );
+      return response;
+    } catch (error) {
+      showError(error.message);
+      announce(error.message);
+      throw error;
+    } finally {
+      endDrawerBusy(busyToken);
+      const drawer = getDrawer();
+      if (completedFocusTarget && drawer?.dataset.cartState === 'open') {
+        focusReplacement(drawer, completedFocusTarget);
+      }
     }
-
-    announce(message);
-    dispatchCartUpdated(response, source, message);
-    return response;
-  } catch (error) {
-    showError(error.message);
-    announce(error.message);
-    throw error;
-  } finally {
-    if (requestId === mutationId) setBusy(false);
-  }
+  });
 }
 
-async function addProductForm(form, submitter) {
-  const requestId = ++mutationId;
-  clearError();
-
-  if (submitter instanceof HTMLButtonElement) {
-    submitter.disabled = true;
-    submitter.setAttribute('aria-busy', 'true');
-  }
-
+function createAddFormData(form, submitter) {
+  let formData;
   try {
-    const response = await requestAddToCart(form);
-    if (requestId !== mutationId) return;
-
-    const message = 'Item added to your bag.';
-    const rendered = await renderCartResponse(response);
-    if (!rendered) {
-      dispatchCartUpdated(response, 'add', message);
-      throw new Error(
-        'The item was added, but your bag could not be refreshed. Reload the page to see the latest items.'
-      );
-    }
-
-    dispatchCartUpdated(response, 'add', message);
-    openCartDrawer(submitter || form);
-    announce(message);
-  } catch (error) {
-    openCartDrawer(submitter || form);
-    showError(error.message);
-    announce(error.message);
-  } finally {
-    if (submitter instanceof HTMLButtonElement && submitter.isConnected) {
-      submitter.disabled = false;
-      submitter.removeAttribute('aria-busy');
-    }
+    formData = submitter ? new FormData(form, submitter) : new FormData(form);
+  } catch {
+    formData = new FormData(form);
   }
+
+  const variantId = formData.get('id');
+  if (!formData.has('quantity') && variantId) {
+    const legacyQuantity = formData.get(`quantity-${variantId}`);
+    if (legacyQuantity !== null) formData.set('quantity', legacyQuantity);
+  }
+
+  const sectionId = getSectionId();
+  if (sectionId) formData.set('sections', sectionId);
+  formData.set(
+    'sections_url',
+    `${window.location.pathname}${window.location.search}`
+  );
+  return formData;
+}
+
+function addProductForm(form, submitter) {
+  const feedbackSubmitter = resolveAddSubmitter(form, submitter);
+  const returnTarget = getAddReturnTarget(form, submitter);
+  const formData = createAddFormData(form, submitter);
+  const feedback = beginSubmitFeedback(feedbackSubmitter);
+  clearError();
+  clearAddError(form);
+
+  return enqueueMutation(async () => {
+    try {
+      const response = await requestAddToCart(formData);
+      const message = 'Item added to your bag.';
+      const revealLineKeys = getAddedLineKeys(response);
+      const rendered = await renderCartResponse(response, { revealLineKeys });
+      if (!rendered) {
+        dispatchCartUpdated(response, 'add', message);
+        throw new Error(
+          'The item was added, but your bag could not be refreshed. Reload the page to see the latest items.'
+        );
+      }
+
+      dispatchCartUpdated(response, 'add', message);
+      await waitForClosedDrawerFrame();
+      endSubmitFeedback(feedback);
+      openCartDrawer(returnTarget, { revealLineKeys });
+      announce(message);
+    } catch (error) {
+      showAddError(form, error.message);
+    } finally {
+      endSubmitFeedback(feedback);
+    }
+  });
 }
 
 function isAddToCartForm(form) {
@@ -531,7 +1350,7 @@ function handleSubmit(event) {
 
   if (!isAddToCartForm(form)) return;
   event.preventDefault();
-  addProductForm(form, event.submitter);
+  addProductForm(form, event.submitter).catch(() => {});
 }
 
 function handleClick(event) {
@@ -573,7 +1392,7 @@ function handleKeydown(event) {
   const dialog = drawer.querySelector('[data-cart-dialog]');
   const focusables = Array.from(
     dialog?.querySelectorAll(FOCUSABLE_SELECTOR) || []
-  ).filter((element) => !element.hasAttribute('hidden'));
+  ).filter((element) => isFocusable(element));
   if (!focusables.length) return;
 
   const first = focusables[0];
@@ -588,6 +1407,15 @@ function handleKeydown(event) {
   }
 }
 
+function handleModalReleaseRequest(event) {
+  if (
+    event.detail?.owner === MODAL_OWNER &&
+    event.detail?.nextOwner !== MODAL_OWNER
+  ) {
+    closeCartDrawer({ restoreFocus: false });
+  }
+}
+
 function resetOnPageLifecycle() {
   if (closeTimer) {
     window.clearTimeout(closeTimer);
@@ -597,12 +1425,14 @@ function resetOnPageLifecycle() {
   const drawer = getDrawer();
   if (drawer) {
     stopCartReveal(drawer);
+    stopCartEmptyMorph();
     drawer.dataset.cartState = 'closed';
     drawer.setAttribute('aria-hidden', 'true');
   }
+  drawerBusyOperations.clear();
+  syncDrawerBusy(drawer);
   syncTriggerExpansion(false);
-  document.documentElement.style.overflow = previousOverflow;
-  clearModalIsolation();
+  modalCoordinator.release(MODAL_OWNER);
   openTrigger = null;
 }
 
@@ -612,6 +1442,10 @@ const CartController = () => {
   document.addEventListener('submit', handleSubmit);
   document.addEventListener('click', handleClick);
   document.addEventListener('keydown', handleKeydown);
+  document.addEventListener(
+    'v3:modal-release-request',
+    handleModalReleaseRequest
+  );
   window.addEventListener('pagehide', resetOnPageLifecycle);
   window.addEventListener('pageshow', (event) => {
     if (event.persisted) resetOnPageLifecycle();
