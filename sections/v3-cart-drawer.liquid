@@ -1,0 +1,756 @@
+{% comment %}
+  V3 cart drawer.
+
+  This section is rendered in the header group so Cart AJAX responses can
+  refresh it independently from navigation and page content.
+{% endcomment %}
+
+{%- liquid
+  assign drawer_title = section.settings.bag_label | default: 'Bag'
+  assign start_shopping_url = section.settings.start_shopping_link
+  if start_shopping_url == blank
+    assign start_shopping_url = routes.all_products_collection_url
+  endif
+-%}
+
+<v3-cart-drawer
+  id='v3-cart-drawer'
+  class='v3-cart'
+  data-section-id='{{ section.id }}'
+  data-cart-state='closed'
+  data-cart-empty='{% if cart == empty %}true{% else %}false{% endif %}'
+  aria-hidden='true'
+>
+  <button
+    type='button'
+    class='v3-cart__overlay'
+    data-cart-overlay
+    aria-label='Close {{ drawer_title | escape }}'
+    tabindex='-1'
+  ></button>
+
+  <div
+    class='v3-cart__drawer'
+    role='dialog'
+    aria-modal='true'
+    aria-labelledby='v3-cart-title'
+    data-cart-dialog
+    tabindex='-1'
+  >
+    <header class='v3-cart__header'>
+      <div class='v3-cart__title-group'>
+        <h2 id='v3-cart-title' class='text-cart-title'>
+          {{- drawer_title | escape -}}
+        </h2>
+        {%- if cart.item_count > 0 -%}
+          <span
+            class='v3-cart__count text-cart-badge'
+            data-cart-count
+            aria-label='{{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}'
+          >
+            {{- cart.item_count -}}
+          </span>
+        {%- endif -%}
+      </div>
+
+      <button
+        type='button'
+        class='v3-cart__close'
+        data-cart-close
+        aria-label='Close {{ drawer_title | escape }}'
+      >
+        <span class='v3-cart__close-circle'>
+          {%- render 'v3-icon-close', class: 'v3-cart__close-icon text-ink' -%}
+        </span>
+      </button>
+    </header>
+
+    {%- if cart == empty -%}
+      <div class='v3-cart__empty'>
+        <div class='v3-cart__callout'>
+          <p class='text-cart-callout-title'>
+            {{- section.settings.empty_title | escape -}}
+          </p>
+          {%- unless customer -%}
+            <p class='text-cart-callout-body'>
+              {{ section.settings.empty_account_prefix | escape }}
+              <a href='{{ routes.account_login_url }}'>
+                {{- section.settings.empty_login_label | escape -}}
+              </a>
+              {{ section.settings.empty_account_suffix | escape }}
+            </p>
+          {%- endunless -%}
+        </div>
+
+        <a
+          class='v3-cart__start-shopping text-cart-button'
+          href='{{ start_shopping_url }}'
+        >
+          {{- section.settings.start_shopping_label | escape -}}
+        </a>
+      </div>
+    {%- else -%}
+      <div class='v3-cart__scroll' data-cart-scroll>
+        <div class='v3-cart__items'>
+          {%- for item in cart.items -%}
+            {%- render 'v3-cart-line-item', item: item -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <footer class='v3-cart__footer'>
+        <div class='v3-cart__subtotal'>
+          <div class='v3-cart__subtotal-row text-cart-subtotal'>
+            <span>Subtotal</span>
+            <span data-cart-subtotal>
+              {{- cart.total_price | money_with_currency -}}
+            </span>
+          </div>
+          <p class='v3-cart__shipping text-cart-shipping'>
+            {{- section.settings.shipping_note | escape -}}
+          </p>
+        </div>
+
+        <form action='{{ routes.cart_url }}' method='post'>
+          <button
+            type='submit'
+            name='checkout'
+            class='v3-cart__checkout text-cart-button'
+          >
+            <span>{{ section.settings.checkout_label | escape }}</span>
+            <span data-cart-checkout-total>
+              {{- cart.total_price | money_with_currency -}}
+            </span>
+          </button>
+        </form>
+      </footer>
+    {%- endif -%}
+
+    <p
+      class='sr-only'
+      role='status'
+      aria-live='polite'
+      aria-atomic='true'
+      data-cart-status
+    ></p>
+    <p
+      class='v3-cart__error text-cart-small'
+      role='alert'
+      data-cart-error
+      hidden
+    ></p>
+  </div>
+</v3-cart-drawer>
+
+<style>
+  .v3-cart {
+    --cart-inset: 7px;
+    --cart-width: 346px;
+    --cart-radius: var(--radius-drawer-compact);
+    --cart-header-h: 72px;
+    --cart-header-pl: 20px;
+    --cart-header-pr: 8px;
+    --cart-content-p: 20px;
+    --cart-footer-gap: 20px;
+    --cart-close-size: 32px;
+    --cart-close-icon: 9px;
+    --cart-button-h: 42px;
+    position: fixed;
+    z-index: 70;
+    inset: 0;
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+    color: var(--color-ink);
+    font-family: var(--font-family-base);
+    font-weight: var(--font-weight-regular);
+    letter-spacing: var(--tracking-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .v3-cart[data-cart-state='open'],
+  .v3-cart[data-cart-state='closing'] {
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .v3-cart[data-cart-state='closing'] {
+    pointer-events: none;
+  }
+
+  .v3-cart :where(button, a, input, output) {
+    color: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+  }
+
+  .v3-cart button {
+    border: 0;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+  }
+
+  .v3-cart :where(a, a:visited) {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .v3-cart__overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-overlay-light);
+    backdrop-filter: blur(var(--blur-overlay));
+    -webkit-backdrop-filter: blur(var(--blur-overlay));
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+  }
+
+  .v3-cart[data-cart-state='open'] .v3-cart__overlay {
+    opacity: 1;
+  }
+
+  .v3-cart[data-cart-state='closing'] .v3-cart__overlay {
+    opacity: 0;
+    transition-duration: 200ms;
+  }
+
+  .v3-cart__drawer {
+    position: absolute;
+    top: var(--cart-inset);
+    left: 50%;
+    display: flex;
+    width: min(var(--cart-width), calc(100vw - (var(--cart-inset) * 2)));
+    max-height: calc(100dvh - (var(--cart-inset) * 2));
+    flex-direction: column;
+    overflow: clip;
+    border-radius: var(--cart-radius);
+    background: var(--color-bg);
+    opacity: 0;
+    outline: none;
+    transform: translateX(-50%);
+    transition: opacity 250ms ease-out 80ms;
+  }
+
+  .v3-cart[data-cart-empty='false'] .v3-cart__drawer {
+    height: calc(100dvh - (var(--cart-inset) * 2));
+  }
+
+  .v3-cart[data-cart-state='open'] .v3-cart__drawer {
+    opacity: 1;
+  }
+
+  .v3-cart[data-cart-state='closing'] .v3-cart__drawer {
+    opacity: 0;
+    transition-duration: 180ms;
+    transition-delay: 0ms;
+  }
+
+  .v3-cart__header {
+    display: flex;
+    height: var(--cart-header-h);
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: var(--cart-header-pr);
+    padding-left: var(--cart-header-pl);
+  }
+
+  .v3-cart__title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .v3-cart__count {
+    display: inline-flex;
+    min-width: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: var(--color-rest);
+    color: var(--color-action);
+    font-weight: var(--font-weight-medium);
+    padding: 6px 10px;
+  }
+
+  .v3-cart__count::before,
+  .v3-cart__count::after {
+    display: none;
+  }
+
+  .v3-cart__close {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .v3-cart__close-circle {
+    display: flex;
+    width: var(--cart-close-size);
+    height: var(--cart-close-size);
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    transition: background-color 150ms ease-out;
+  }
+
+  .v3-cart__close-icon {
+    width: var(--cart-close-icon);
+    height: var(--cart-close-icon);
+  }
+
+  .v3-cart__scroll {
+    min-height: 0;
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .v3-cart__scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .v3-cart__items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: var(--cart-content-p);
+  }
+
+  .v3-cart__item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .v3-cart__item-image {
+    position: relative;
+    min-width: 0;
+    flex: 1 0 0;
+    overflow: clip;
+    border-radius: var(--radius-product);
+    aspect-ratio: 1;
+    background: var(--color-rest);
+  }
+
+  .v3-cart__item-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .v3-cart__item-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-weight: var(--font-weight-medium);
+    padding: 6px 10px;
+  }
+
+  .v3-cart__item-badge .text-cart-badge::before,
+  .v3-cart__item-badge .text-cart-badge::after {
+    display: none;
+  }
+
+  .v3-cart__item-data {
+    display: flex;
+    min-width: 0;
+    flex: 1 0 0;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .v3-cart__item-copy,
+  .v3-cart__item-meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .v3-cart__item-copy {
+    gap: 16px;
+  }
+
+  .v3-cart__item-meta {
+    gap: 12px;
+  }
+
+  .v3-cart__item-meta h3,
+  .v3-cart__item-meta p,
+  .v3-cart__item-variant,
+  .v3-cart__item-property {
+    margin: 0;
+  }
+
+  .v3-cart__item-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .v3-cart__item-sale {
+    color: var(--color-price-sale);
+  }
+
+  .v3-cart__item-frequency,
+  .v3-cart__item-variant {
+    color: var(--color-action);
+  }
+
+  .v3-cart__item-property {
+    color: var(--color-muted);
+  }
+
+  .v3-cart__quantity-field {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .v3-cart__quantity {
+    display: flex;
+    width: 96px;
+    height: 40px;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: var(--radius-pill);
+    background: var(--color-pressed);
+    color: var(--color-action);
+    padding: 0 8px;
+  }
+
+  .v3-cart__quantity-button {
+    display: flex;
+    width: 28px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-action);
+    transition: background-color 150ms ease-out;
+  }
+
+  .v3-cart__quantity-value {
+    min-width: 16px;
+    text-align: center;
+  }
+
+  .v3-cart__quantity-button::before,
+  .v3-cart__quantity-button::after,
+  .v3-cart__quantity-value::before,
+  .v3-cart__quantity-value::after {
+    display: none;
+  }
+
+  .v3-cart__remove {
+    color: var(--color-muted);
+    text-align: right;
+    text-underline-offset: 0.18em;
+  }
+
+  .v3-cart__footer {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: var(--cart-footer-gap);
+    border-top: var(--border-width-default) solid var(--color-hover);
+    background: var(--color-bg);
+    padding: var(--cart-content-p);
+  }
+
+  .v3-cart__subtotal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .v3-cart__subtotal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .v3-cart__shipping {
+    margin: 0;
+    color: var(--color-action);
+  }
+
+  .v3-cart__checkout,
+  .v3-cart__start-shopping {
+    display: inline-flex;
+    min-height: var(--cart-button-h);
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: var(--color-ink);
+    color: var(--color-bg);
+    transition: background-color 150ms ease-out;
+  }
+
+  .v3-cart__checkout {
+    width: 100%;
+    gap: 10px;
+    padding: 0 14px;
+  }
+
+  .v3-cart__start-shopping {
+    align-self: flex-start;
+    padding: 0 14px;
+  }
+
+  .v3-cart__empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cart-content-p);
+    padding: var(--cart-content-p);
+  }
+
+  .v3-cart__callout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .v3-cart__callout p {
+    margin: 0;
+  }
+
+  .v3-cart__callout a {
+    text-decoration: underline;
+    text-underline-offset: 0.06em;
+  }
+
+  .v3-cart__error {
+    position: absolute;
+    right: var(--cart-content-p);
+    bottom: calc(var(--cart-content-p) / 2);
+    left: var(--cart-content-p);
+    border-radius: var(--radius-product);
+    background: var(--color-bg);
+    color: var(--color-price-sale);
+    padding: 8px 10px;
+  }
+
+  .v3-cart [aria-busy='true'] {
+    cursor: wait;
+  }
+
+  .v3-cart button:disabled {
+    cursor: wait;
+    opacity: 0.55;
+  }
+
+  .v3-cart button:focus-visible,
+  .v3-cart a:focus-visible {
+    border-radius: var(--radius-pill);
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) {
+    .v3-cart__close:hover .v3-cart__close-circle,
+    .v3-cart__quantity-button:hover {
+      background: var(--color-rest);
+    }
+
+    .v3-cart__remove:hover,
+    .v3-cart__callout a:hover {
+      text-decoration: underline;
+    }
+
+    .v3-cart__checkout:hover,
+    .v3-cart__start-shopping:hover {
+      background: var(--color-action);
+    }
+  }
+
+  .v3-cart__close:active .v3-cart__close-circle,
+  .v3-cart__quantity-button:active {
+    background: var(--color-hover);
+  }
+
+  .v3-cart__checkout:active,
+  .v3-cart__start-shopping:active {
+    background: var(--color-muted);
+  }
+
+  @media (min-width: 375px) {
+    .v3-cart {
+      --cart-inset: 8px;
+      --cart-width: 374px;
+      --cart-header-h: 80px;
+      --cart-header-pl: 22px;
+      --cart-header-pr: 9px;
+      --cart-content-p: 22px;
+      --cart-footer-gap: 22px;
+      --cart-close-size: 36px;
+      --cart-close-icon: 10px;
+    }
+  }
+
+  @media (min-width: 428px) {
+    .v3-cart {
+      --cart-width: 414px;
+      --cart-radius: var(--radius-drawer);
+      --cart-header-h: 86px;
+      --cart-header-pl: 24px;
+      --cart-header-pr: 10px;
+      --cart-content-p: 24px;
+      --cart-footer-gap: 24px;
+      --cart-close-size: 38px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .v3-cart {
+      --cart-inset: 12px;
+      --cart-width: 440px;
+    }
+
+    .v3-cart__drawer {
+      right: var(--cart-inset);
+      left: auto;
+      transform: none;
+    }
+
+    .v3-cart[data-cart-empty='true'] .v3-cart__drawer {
+      min-width: 456px;
+    }
+  }
+
+  @media (min-width: 768px) and (orientation: portrait), (min-width: 1920px) {
+    .v3-cart__drawer {
+      max-height: 864px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .v3-cart {
+      --cart-inset: 14px;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .v3-cart {
+      --cart-inset: 16px;
+      --cart-width: 456px;
+      --cart-radius: var(--radius-md);
+      --cart-header-h: 104px;
+      --cart-header-pl: 32px;
+      --cart-header-pr: 17px;
+      --cart-content-p: 32px;
+      --cart-footer-gap: 24px;
+      --cart-close-size: 40px;
+      --cart-close-icon: 10px;
+      --cart-button-h: 44px;
+    }
+
+    .v3-cart__subtotal {
+      gap: 14px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .v3-cart,
+    .v3-cart * {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "V3 Cart drawer",
+  "tag": "section",
+  "class": "v3-cart-drawer-section",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "bag_label",
+      "label": "Bag label",
+      "default": "Bag"
+    },
+    {
+      "type": "header",
+      "content": "Empty state"
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Empty message",
+      "default": "Your shopping bag is empty."
+    },
+    {
+      "type": "text",
+      "id": "empty_account_prefix",
+      "label": "Account prompt before login link",
+      "default": "Already have an account?"
+    },
+    {
+      "type": "text",
+      "id": "empty_login_label",
+      "label": "Login link label",
+      "default": "Log in"
+    },
+    {
+      "type": "text",
+      "id": "empty_account_suffix",
+      "label": "Account prompt after login link",
+      "default": "to checkout faster."
+    },
+    {
+      "type": "text",
+      "id": "start_shopping_label",
+      "label": "Start shopping label",
+      "default": "Start shopping"
+    },
+    {
+      "type": "url",
+      "id": "start_shopping_link",
+      "label": "Start shopping link"
+    },
+    {
+      "type": "header",
+      "content": "Checkout"
+    },
+    {
+      "type": "text",
+      "id": "shipping_note",
+      "label": "Shipping note",
+      "default": "Taxes and shipping calculated at checkout."
+    },
+    {
+      "type": "text",
+      "id": "checkout_label",
+      "label": "Checkout label",
+      "default": "Checkout"
+    }
+  ],
+  "presets": [
+    {
+      "name": "V3 Cart drawer"
+    }
+  ]
+}
+{% endschema %}

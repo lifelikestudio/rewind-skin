@@ -3,9 +3,7 @@ import SerializeForm from './SerializeForm';
 import SyncCheckboxes from './SyncCheckboxes';
 import DeduplicateQueryParameters from './DeduplicateQueryParameters';
 import UpdatePaginationLinks from './UpdatePaginationLinks';
-import { openDrawer, closeDrawer } from '../Drawers/DrawerHandlers';
 import {
-  drawerCart,
   setupFiltersCategoriesMobileDrawer,
   setupFiltersConcernsMobileDrawer,
   setupFiltersTypesMobileDrawer,
@@ -19,8 +17,6 @@ import {
   setupFeaturedDrawerElements,
   setupAreasDrawerElements,
 } from '../Drawers/Drawers.js';
-import { updateCart } from '../Drawers/CartDrawer.js';
-import { attachEventListeners } from '../Drawers/CartDrawer';
 
 const Shop = () => {
   const collectionsProductsElement = document.querySelector(
@@ -161,28 +157,6 @@ const Shop = () => {
               window.history.pushState(null, null, url);
               UpdatePaginationLinks(deduplicatedQueryString);
 
-              // Delay re-attachment of event listeners to 'add to cart' buttons
-              setTimeout(() => {
-                const addToCart = document.querySelectorAll(
-                  'form[action="/cart/add"]'
-                );
-                addToCart.forEach((form) => {
-                  form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-
-                    // Submit form with AJAX
-                    await fetch('/cart/add', {
-                      method: 'post',
-                      body: new FormData(form),
-                    });
-                    // Update cart without page reload
-                    await updateCart();
-                    // Open cart drawer
-                    openDrawer(drawerCart);
-                  });
-                });
-                attachEventListeners();
-              }, 0);
               // Re-setup checkboxes and specific drawers after loading new products
               setupCheckboxes();
               setupFiltersCategoriesMobileDrawer();

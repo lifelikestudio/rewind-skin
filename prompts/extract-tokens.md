@@ -113,6 +113,16 @@ Log George's answers in the extraction file under a **Behaviour** section.
   - **Conflict:** different from an existing token — flag for decision
 - Present proposals to George. Nothing gets added to `tokens.css` or `tokens.json` without approval.
 
+### Step 6: Capsize implementation handoff
+
+After George accepts the extraction:
+
+- Compare every extracted text treatment with `src/capsize-v3.js`
+- Record which existing Capsize classes match exactly and which new classes are required
+- Add missing component text styles before building Liquid templates
+- Run `npm run capsize:v3` and verify the generated classes in `assets/capsize-v3.css`
+- Never approximate a text treatment with a near match
+
 ---
 
 ## Page-Level Extraction
@@ -146,5 +156,6 @@ For structural and layout values that apply across the page, not to a specific c
 - [ ] Behaviour section completed with George's input
 - [ ] Comparison against existing tokens completed
 - [ ] New tokens proposed but not committed without approval
+- [ ] Capsize coverage audited and implementation handoff recorded
 - [ ] Extraction log saved to `design-system/extractions/`
 - [ ] Component inventory updated in `docs/component-inventory.md`

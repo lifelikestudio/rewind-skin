@@ -1,7 +1,6 @@
 import { gsap } from 'gsap';
 import ScrollSelect from './ScrollSelect';
 import SwiperEmbla from './Swiper/SwiperEmbla';
-import { attachEventListenersToProduct } from './Drawers/CartDrawer.js';
 import { createPopup, nurseLedId } from './Utility/Forms';
 
 const countryCode = document.documentElement.dataset.shopifyCountryCode || 'CA';
@@ -548,7 +547,6 @@ function displayProducts(selectedConcern) {
 
           button.append(addToBag, price);
           form.append(idInput, button);
-          attachEventListenersToProduct(form);
 
           card.append(info, form);
         }

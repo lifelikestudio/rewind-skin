@@ -9,8 +9,9 @@
     "tailwind": "npx @tailwindcss/cli -i ./src/v2-1-0.input.css -o ./assets/v2-1-0.output.css --watch",
     "tailwind:v3": "npx @tailwindcss/cli -i ./src/v3.input.css -o ./assets/v3.output.css --watch",
     "tailwind:v3:build": "npx @tailwindcss/cli -i ./src/v3.input.css -o ./assets/v3.output.css",
+    "build:v3": "npm run capsize:v3 && npm run tailwind:v3:build",
     "start": "webpack --watch",
-    "build": "webpack && npm run capsize"
+    "build": "webpack && npm run capsize && npm run build:v3"
   },
   "dependencies": {
     "@capsizecss/core": "^4.1.2",

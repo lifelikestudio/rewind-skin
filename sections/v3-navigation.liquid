@@ -144,15 +144,23 @@
           type='button'
           class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
           id='v3-cart-btn'
+          aria-label='Bag{% if cart_count > 0 %}, {{ cart_count }} {{ cart_count | pluralize: 'item', 'items' }}{% endif %}'
+          aria-expanded='false'
+          aria-controls='v3-cart-drawer'
           data-nav-cart
         >
           Bag
-          {%- if cart_count > 0 -%}
-            &nbsp;
-            <span class='v3-nav__cart-count' aria-live='polite'>
-              ({{ cart_count_desktop }})</span
-            >
-          {%- endif %}
+          &nbsp;
+          <span
+            class='v3-nav__cart-count'
+            data-nav-cart-count
+            aria-live='polite'
+            {% if cart_count == 0 %}
+              hidden
+            {% endif %}
+          >
+            ({{ cart_count_desktop }})</span
+          >
         </button>
       {%- endif -%}
 
@@ -248,8 +256,9 @@
         <button
           type='button'
           class='text-ink flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
-          aria-label='Cart{% if cart_count > 0 %}, {{ cart_count }} {{ cart_count | pluralize: 'item', 'items' }}{% endif %}'
+          aria-label='Bag{% if cart_count > 0 %}, {{ cart_count }} {{ cart_count | pluralize: 'item', 'items' }}{% endif %}'
           aria-expanded='false'
+          aria-controls='v3-cart-drawer'
           id='v3-cart-mobile'
           data-nav-cart-mobile
         >
@@ -259,22 +268,24 @@
               frame_size: 26,
               class: 'w-[24px] xxs:w-[25px] xs:w-[26px] h-[24px] xxs:h-[25px] xs:h-[26px]'
             -%}
-            {%- if cart_count > 0 -%}
-              <span
-                class='
-                  v3-nav__cart-badge
-                  bg-ink text-bg rounded-pill
-                  text-nav-badge ring-bg
-                  absolute flex h-[18px]
-                  w-[26px] items-center
-                  justify-center text-center
-                  font-medium tracking-tight ring-2
-                '
-                aria-hidden='true'
-              >
-                {{- cart_count_badge -}}
-              </span>
-            {%- endif -%}
+            <span
+              class='
+                v3-nav__cart-badge
+                bg-ink text-bg rounded-pill
+                text-nav-badge ring-bg
+                absolute flex h-[18px]
+                w-[26px] items-center
+                justify-center text-center
+                font-medium tracking-tight ring-2
+              '
+              data-nav-cart-badge
+              aria-hidden='true'
+              {% if cart_count == 0 %}
+                hidden
+              {% endif %}
+            >
+              {{- cart_count_badge -}}
+            </span>
           </span>
         </button>
       {%- endif -%}
@@ -530,6 +541,10 @@
     right: 0;
     transform: translate(50%, -50%) scale(0.923);
     padding-top: 1px;
+  }
+  .v3-nav__cart-badge[hidden],
+  .v3-nav__cart-count[hidden] {
+    display: none;
   }
   @media (min-width: 375px) {
     .v3-nav__cart-badge {

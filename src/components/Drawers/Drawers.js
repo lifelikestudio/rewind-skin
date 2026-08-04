@@ -26,10 +26,8 @@ if (shopHeader) {
 // Triggers
 const treatmentsAction = document.getElementById('treatments-action');
 const shopAction = document.getElementById('shop-action');
-const cartAction = document.getElementById('cart-action');
 const refineAction = document.getElementById('refine-action');
 const mobileAction = document.getElementById('mobile-action');
-const mobileCartAction = document.getElementById('mobile-cart-action');
 const treatmentsMobileAction = document.getElementById(
   'treatments-mobile-action'
 );
@@ -54,7 +52,6 @@ const searchMobileAction = document.getElementById('search-mobile-action');
 // Drawers
 const treatmentsMenu = document.getElementById('treatments-menu');
 const shopMenu = document.getElementById('shop-menu');
-export const drawerCart = document.getElementById('drawer-cart');
 
 const refineMenu = document.getElementById('mobile-refine');
 const mobileMenu = document.getElementById('mobile-menu');
@@ -73,7 +70,6 @@ const filtersAreasMobileMenu = document.getElementById('filters-areas-menu');
 const searchDrawer = document.getElementById('search-drawer');
 
 // Close Buttons
-const cartClose = document.getElementById('cart-close');
 const refineClose = document.getElementById('refine-close');
 const mobileMenuClose = document.getElementById('menu-close');
 const treatmentsClose = treatmentsMenu.querySelector('.menu-back');
@@ -284,9 +280,7 @@ const dismissDrawer = (drawer, closeButton) => {
         closeDrawer(drawer, undefined, false);
       } else {
         // For other drawers, dismiss the drawer and close the popover
-        if (drawer === drawerCart) {
-          closeDrawer(drawer, '100%');
-        } else if (drawer === searchDrawer) {
+        if (drawer === searchDrawer) {
           closeDrawer(drawer, undefined, undefined, 'y');
         } else {
           closeDrawer(drawer);
@@ -329,9 +323,7 @@ const dismissDrawer = (drawer, closeButton) => {
         }
       }
 
-      if (drawer === drawerCart) {
-        closeDrawer(drawer, '100%');
-      } else if (drawer === searchDrawer) {
+      if (drawer === searchDrawer) {
         closeDrawer(drawer, undefined, undefined, 'y');
       } else {
         closeDrawer(drawer);
@@ -364,7 +356,6 @@ const resizeEvents = () => {
         [
           treatmentsMenu,
           shopMenu,
-          drawerCart,
           refineMenu,
           mobileMenu,
           filtersCategoriesMobileMenu,
@@ -376,9 +367,7 @@ const resizeEvents = () => {
           searchDrawer,
         ].forEach((menu) => {
           if (menu && menu.classList.contains('drawer--active')) {
-            if (menu === drawerCart) {
-              closeDrawer(menu, '100%');
-            } else if (menu === searchDrawer) {
+            if (menu === searchDrawer) {
               closeDrawer(menu, undefined, undefined, 'y');
             } else {
               closeDrawer(menu);
@@ -392,10 +381,8 @@ const resizeEvents = () => {
         // Re-trigger drawers
         triggerDrawer(treatmentsAction, treatmentsMenu);
         triggerDrawer(shopAction, shopMenu);
-        triggerDrawer(cartAction, drawerCart);
         triggerDrawer(refineAction, refineMenu);
         triggerDrawer(mobileAction, mobileMenu);
-        triggerDrawer(mobileCartAction, drawerCart);
         triggerDrawer(
           filtersCategoriesMobileAction,
           filtersCategoriesMobileMenu
@@ -599,9 +586,6 @@ const Drawers = () => {
   triggerDrawer(shopAction, shopMenu);
   triggerDrawer(shopMobileAction, shopMenu);
   dismissDrawer(shopMenu, shopClose);
-  triggerDrawer(cartAction, drawerCart);
-  triggerDrawer(mobileCartAction, drawerCart);
-  dismissDrawer(drawerCart, cartClose);
   triggerDrawer(refineAction, refineMenu);
   dismissDrawer(refineMenu, refineClose);
   triggerDrawer(mobileAction, mobileMenu);
@@ -675,7 +659,6 @@ const Drawers = () => {
         filtersAreasMobileMenu,
         treatmentsMenu,
         shopMenu,
-        drawerCart,
         mobileMenu,
         searchDrawer,
       ];

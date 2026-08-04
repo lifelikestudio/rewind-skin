@@ -21,7 +21,7 @@ const sctoGroteskA = {
  * Add new styles here as components are built. Run `npm run capsize:v3` to regenerate.
  *
  * Sources: design-system/extractions/navigation.md, submenu-drawer.md,
- * search-drawer.md
+ * search-drawer.md, cart-drawer.md
  */
 const textStyles = {
   'nav-label': {
@@ -128,6 +128,44 @@ const textStyles = {
   },
   'search-footer-hint': {
     tiny: { fontSize: 16, lineHeight: 1 },
+  },
+  'cart-title': {
+    tiny: { fontSize: 24, lineHeight: 1 },
+  },
+  'cart-badge': {
+    tiny: { fontSize: 12, lineHeight: 1 },
+  },
+  'cart-product-meta': {
+    tiny: { fontSize: 14, lineHeight: 1.3 },
+  },
+  'cart-price': {
+    tiny: { fontSize: 14, lineHeight: 1 },
+  },
+  'cart-small': {
+    tiny: { fontSize: 12, lineHeight: 1 },
+  },
+  'cart-quantity': {
+    tiny: { fontSize: 14, lineHeight: 1 },
+  },
+  'cart-subtotal': {
+    tiny: { fontSize: 14, lineHeight: 1 },
+    lg: { fontSize: 16, lineHeight: 1 },
+  },
+  'cart-shipping': {
+    tiny: { fontSize: 14, lineHeight: 1.35 },
+    lg: { fontSize: 16, lineHeight: 1.35 },
+  },
+  'cart-button': {
+    tiny: { fontSize: 18, lineHeight: 1 },
+    lg: { fontSize: 20, lineHeight: 1 },
+  },
+  'cart-callout-title': {
+    tiny: { fontSize: 14, lineHeight: 1.3 },
+    lg: { fontSize: 16, lineHeight: 1.3 },
+  },
+  'cart-callout-body': {
+    tiny: { fontSize: 14, lineHeight: 1.35 },
+    lg: { fontSize: 16, lineHeight: 1.35 },
   },
 };
 

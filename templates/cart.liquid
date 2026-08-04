@@ -1,7 +1,19 @@
-<main class="cart-page" data-money-format="{{ shop.money_format }}">
+{%- liquid
+  assign cart_has_subscription = false
+  for item in cart.items
+    if item.selling_plan_allocation != blank
+      assign cart_has_subscription = true
+      break
+    endif
+  endfor
+-%}
+
+<main class="cart-page" data-money-format="{{ shop.money_format }}" tabindex="-1">
+  <p class="visually-hidden" role="status" aria-live="polite" data-cart-page-status></p>
+  <p class="visually-hidden" role="alert" data-cart-page-error hidden></p>
   <div class="drawer__header drawer__header--cart-page">
     <div class="wrapper wrapper--sm">
-      <h1 class="drawer__top-level-heading">Bag</h1>
+      <h1 class="drawer__top-level-heading" tabindex="-1">Bag</h1>
     </div>
   </div>
   {% if cart.item_count == 0 %}
@@ -185,7 +197,12 @@
                 <p class="subtotal__title">Subtotal</p>
                 <p class="subtotal__total" id="total-price">{{ cart.total_price | money_with_currency }}</p>
               </div>
-              <p class="subtotal__payment-plan sezzle-payment-plan" style="display: none;">
+              <p
+                class="subtotal__payment-plan sezzle-payment-plan"
+                {% if cart_has_subscription %}
+                  hidden
+                {% endif %}
+              >
                 or 4 interest-free payments of {% assign divided_price = cart.total_price | divided_by: 4 %}
                 {{ divided_price | money }} with
                 <span class="is--emphasized">Sezzle</span>

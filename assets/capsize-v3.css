@@ -933,3 +933,233 @@
   margin-top: -0.2em;
   display: table;
 }
+
+.text-cart-title {
+  font-size: 24px;
+  line-height: 24px;
+}
+.text-cart-title::before {
+  content: "";
+  margin-bottom: -0.106em;
+  display: table;
+}
+.text-cart-title::after {
+  content: "";
+  margin-top: -0.2em;
+  display: table;
+}
+
+.text-cart-badge {
+  font-size: 12px;
+  line-height: 12px;
+}
+.text-cart-badge::before {
+  content: "";
+  margin-bottom: -0.106em;
+  display: table;
+}
+.text-cart-badge::after {
+  content: "";
+  margin-top: -0.2em;
+  display: table;
+}
+
+.text-cart-product-meta {
+  font-size: 14px;
+  line-height: 18.2px;
+}
+.text-cart-product-meta::before {
+  content: "";
+  margin-bottom: -0.256em;
+  display: table;
+}
+.text-cart-product-meta::after {
+  content: "";
+  margin-top: -0.35em;
+  display: table;
+}
+
+.text-cart-price {
+  font-size: 14px;
+  line-height: 14px;
+}
+.text-cart-price::before {
+  content: "";
+  margin-bottom: -0.106em;
+  display: table;
+}
+.text-cart-price::after {
+  content: "";
+  margin-top: -0.2em;
+  display: table;
+}
+
+.text-cart-small {
+  font-size: 12px;
+  line-height: 12px;
+}
+.text-cart-small::before {
+  content: "";
+  margin-bottom: -0.106em;
+  display: table;
+}
+.text-cart-small::after {
+  content: "";
+  margin-top: -0.2em;
+  display: table;
+}
+
+.text-cart-quantity {
+  font-size: 14px;
+  line-height: 14px;
+}
+.text-cart-quantity::before {
+  content: "";
+  margin-bottom: -0.106em;
+  display: table;
+}
+.text-cart-quantity::after {
+  content: "";
+  margin-top: -0.2em;
+  display: table;
+}
+
+.text-cart-subtotal {
+  font-size: 14px;
+  line-height: 14px;
+}
+.text-cart-subtotal::before {
+  content: "";
+  margin-bottom: -0.106em;
+  display: table;
+}
+.text-cart-subtotal::after {
+  content: "";
+  margin-top: -0.2em;
+  display: table;
+}
+
+@media (min-width: 1440px) {
+  .text-cart-subtotal {
+    font-size: 16px;
+    line-height: 16px;
+  }
+  .text-cart-subtotal::before {
+    margin-bottom: -0.106em;
+  }
+  .text-cart-subtotal::after {
+    margin-top: -0.2em;
+  }
+}
+
+.text-cart-shipping {
+  font-size: 14px;
+  line-height: 18.9px;
+}
+.text-cart-shipping::before {
+  content: "";
+  margin-bottom: -0.281em;
+  display: table;
+}
+.text-cart-shipping::after {
+  content: "";
+  margin-top: -0.375em;
+  display: table;
+}
+
+@media (min-width: 1440px) {
+  .text-cart-shipping {
+    font-size: 16px;
+    line-height: 21.6px;
+  }
+  .text-cart-shipping::before {
+    margin-bottom: -0.281em;
+  }
+  .text-cart-shipping::after {
+    margin-top: -0.375em;
+  }
+}
+
+.text-cart-button {
+  font-size: 18px;
+  line-height: 18px;
+}
+.text-cart-button::before {
+  content: "";
+  margin-bottom: -0.106em;
+  display: table;
+}
+.text-cart-button::after {
+  content: "";
+  margin-top: -0.2em;
+  display: table;
+}
+
+@media (min-width: 1440px) {
+  .text-cart-button {
+    font-size: 20px;
+    line-height: 20px;
+  }
+  .text-cart-button::before {
+    margin-bottom: -0.106em;
+  }
+  .text-cart-button::after {
+    margin-top: -0.2em;
+  }
+}
+
+.text-cart-callout-title {
+  font-size: 14px;
+  line-height: 18.2px;
+}
+.text-cart-callout-title::before {
+  content: "";
+  margin-bottom: -0.256em;
+  display: table;
+}
+.text-cart-callout-title::after {
+  content: "";
+  margin-top: -0.35em;
+  display: table;
+}
+
+@media (min-width: 1440px) {
+  .text-cart-callout-title {
+    font-size: 16px;
+    line-height: 20.8px;
+  }
+  .text-cart-callout-title::before {
+    margin-bottom: -0.256em;
+  }
+  .text-cart-callout-title::after {
+    margin-top: -0.35em;
+  }
+}
+
+.text-cart-callout-body {
+  font-size: 14px;
+  line-height: 18.9px;
+}
+.text-cart-callout-body::before {
+  content: "";
+  margin-bottom: -0.281em;
+  display: table;
+}
+.text-cart-callout-body::after {
+  content: "";
+  margin-top: -0.375em;
+  display: table;
+}
+
+@media (min-width: 1440px) {
+  .text-cart-callout-body {
+    font-size: 16px;
+    line-height: 21.6px;
+  }
+  .text-cart-callout-body::before {
+    margin-bottom: -0.281em;
+  }
+  .text-cart-callout-body::after {
+    margin-top: -0.375em;
+  }
+}

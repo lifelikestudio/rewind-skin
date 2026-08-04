@@ -1,0 +1,152 @@
+{% doc %}
+  Renders one V3 cart drawer line item.
+
+  @param {line_item} item - Shopify cart line item.
+{% enddoc %}
+
+{%- liquid
+  assign display_title = item.product.title
+  assign vendor_title_prefix = item.product.vendor | append: ' - '
+  assign vendor_title_prefix_size = vendor_title_prefix | size
+  assign product_title_prefix = item.product.title | slice: 0, vendor_title_prefix_size
+  assign compare_at_price = item.variant.compare_at_price | default: 0
+  assign is_on_sale = false
+  assign feature_badge = blank
+
+  if product_title_prefix == vendor_title_prefix
+    assign display_title = item.product.title | remove_first: vendor_title_prefix
+  endif
+
+  if compare_at_price > item.final_price
+    assign is_on_sale = true
+  endif
+
+  if item.selling_plan_allocation != blank
+    assign feature_badge = 'Subscription'
+  elsif is_on_sale
+    assign feature_badge = 'Sale'
+  endif
+
+  assign quantity_less = item.quantity | minus: 1
+  assign quantity_more = item.quantity | plus: 1
+-%}
+
+<article
+  class='v3-cart__item'
+  data-cart-line
+  data-line-key='{{ item.key | escape }}'
+>
+  <a
+    class='v3-cart__item-image'
+    href='{{ item.url }}'
+    aria-label='{{ display_title | escape }}'
+  >
+    {%- if item.image != blank -%}
+      {{
+        item.image
+        | image_url: width: 320, height: 320, crop: 'center'
+        | image_tag:
+          loading: 'lazy',
+          widths: '160, 240, 320',
+          sizes: '(min-width: 428px) 173px, 143px',
+          alt: item.image.alt
+      }}
+    {%- endif -%}
+
+    {%- if feature_badge != blank -%}
+      <span class='v3-cart__item-badge'>
+        <span class='text-cart-badge'>{{ feature_badge | escape }}</span>
+      </span>
+    {%- endif -%}
+  </a>
+
+  <div class='v3-cart__item-data'>
+    <div class='v3-cart__item-copy'>
+      <div class='v3-cart__item-meta'>
+        <p class='text-cart-product-meta'>
+          {{- item.product.vendor | escape -}}
+        </p>
+        <h3 class='text-cart-product-meta'>
+          <a href='{{ item.url }}'>{{ display_title | escape }}</a>
+        </h3>
+        <p class='v3-cart__item-price'>
+          {%- if is_on_sale -%}
+            <s class='text-cart-price'>
+              {{- compare_at_price | money_with_currency -}}
+            </s>
+          {%- endif -%}
+          <span class='text-cart-price{% if is_on_sale %} v3-cart__item-sale{% endif %}'>
+            {{- item.final_price | money_with_currency -}}
+          </span>
+          {%- if item.selling_plan_allocation != blank -%}
+            <span class='v3-cart__item-frequency text-cart-small'>
+              / {{ item.selling_plan_allocation.selling_plan.name | escape -}}
+            </span>
+          {%- endif -%}
+        </p>
+      </div>
+
+      {%- unless item.variant.title == 'Default Title' -%}
+        <p class='v3-cart__item-variant text-cart-small'>
+          {{- item.variant.title | escape -}}
+        </p>
+      {%- endunless -%}
+
+      {%- for property in item.properties -%}
+        {%- assign property_first_character = property.first | slice: 0 -%}
+        {%- if property.last != blank and property_first_character != '_' -%}
+          <p class='v3-cart__item-property text-cart-small'>
+            {{ property.first | escape }}: {{ property.last | escape }}
+          </p>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class='v3-cart__quantity-field'>
+      <form
+        action='{{ routes.cart_change_url }}'
+        method='post'
+        class='v3-cart__quantity'
+        data-cart-change-form
+      >
+        <input type='hidden' name='id' value='{{ item.key | escape }}'>
+        <button
+          type='submit'
+          name='quantity'
+          value='{{ quantity_less }}'
+          class='v3-cart__quantity-button text-cart-quantity'
+          data-cart-quantity-change
+          data-cart-action='decrease'
+          aria-label='Decrease quantity of {{ display_title | escape }}'
+        >
+          <span aria-hidden='true'>−</span>
+        </button>
+        <output
+          class='v3-cart__quantity-value text-cart-quantity'
+          aria-label='Quantity'
+        >
+          {{- item.quantity -}}
+        </output>
+        <button
+          type='submit'
+          name='quantity'
+          value='{{ quantity_more }}'
+          class='v3-cart__quantity-button text-cart-quantity'
+          data-cart-quantity-change
+          data-cart-action='increase'
+          aria-label='Increase quantity of {{ display_title | escape }}'
+        >
+          <span aria-hidden='true'>+</span>
+        </button>
+      </form>
+
+      <a
+        href='{{ item.url_to_remove }}'
+        class='v3-cart__remove text-cart-small'
+        data-cart-remove
+      >
+        Remove
+      </a>
+    </div>
+  </div>
+</article>

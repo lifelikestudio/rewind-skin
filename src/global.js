@@ -7,7 +7,7 @@ import Drawers from './components/Drawers/Drawers';
 import VideoMask from './components/VideoMask';
 import SkinConcernsSection from './components/SkinConcernsSection';
 import Shop from './components/Shop/Shop';
-import CartDrawer from './components/Drawers/CartDrawer';
+import CartController from './components/Cart/CartController';
 import TreatmentsSection from './components/TreatmentsSection';
 import TreatmentsPage from './components/TreatmentsPage';
 import Questions from './components/Questions';
@@ -38,8 +38,8 @@ const GlobalComponents = () => {
   CustomerLogin();
   Addresses();
   QuantityField();
+  CartController();
   CartPage();
-  CartDrawer();
   // Announcements();
   Forms();
   CollectionsRedirect();

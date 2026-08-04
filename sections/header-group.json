@@ -15,7 +15,20 @@
         "studio_label": "Studio",
         "sticky_type": "always"
       }
+    },
+    "v3-cart-drawer": {
+      "type": "v3-cart-drawer",
+      "settings": {
+        "bag_label": "Bag",
+        "empty_title": "Your shopping bag is empty.",
+        "empty_account_prefix": "Already have an account?",
+        "empty_login_label": "Log in",
+        "empty_account_suffix": "to checkout faster.",
+        "start_shopping_label": "Start shopping",
+        "shipping_note": "Taxes and shipping calculated at checkout.",
+        "checkout_label": "Checkout"
+      }
     }
   },
-  "order": ["v3-navigation"]
+  "order": ["v3-navigation", "v3-cart-drawer"]
 }
