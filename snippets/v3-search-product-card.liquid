@@ -128,12 +128,21 @@
   class='v3-search__product-card'
   data-search-result-link
 >
-  <span class='v3-search__product-image'>
+  <span
+    class='v3-search__product-image'
+    data-search-product-image
+    {% if product.featured_image != blank %}
+      data-search-image-loading
+    {%- else %}
+      data-search-image-loaded
+    {%- endif %}
+  >
     {%- if product.featured_image != blank -%}
       {{
         product.featured_image
         | image_url: width: 320, height: 320, crop: 'center'
         | image_tag:
+          class: 'v3-search__product-image-element',
           loading: 'lazy',
           widths: '160, 320',
           sizes: '160px',

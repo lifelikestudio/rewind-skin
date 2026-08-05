@@ -1008,6 +1008,9 @@
         '[data-search-predictive-results]'
       );
       var searchQueryLabel = searchDrawer.querySelector('[data-search-query]');
+      var searchInfiniteProducts = searchDrawer.hasAttribute(
+        'data-search-infinite-products'
+      );
       var searchViewAll = searchDrawer.querySelector('[data-search-view-all]');
       var searchFooterHint = searchDrawer.querySelector(
         '[data-search-footer-hint]'
@@ -1072,6 +1075,15 @@
       var searchCompletedQuery = '';
       var searchCompletedHasResults = false;
       var searchCache = new Map();
+      var searchProductsRequest = null;
+      var searchProductsObserver = null;
+      var searchProductsQuery = '';
+      var searchProductsPage = 0;
+      var searchProductsPages = 0;
+      var searchProductsCount = 0;
+      var searchProductsRetryPage = null;
+      var searchProductsLoading = false;
+      var searchProductsClickedSuggestion = false;
       var searchHasRenderedResults = false;
       var searchLoadingPreview =
         new URLSearchParams(window.location.search).get('v3-search-preview') ===
@@ -1530,6 +1542,352 @@
         }, 300);
       }
 
+      function disconnectSearchProductsObserver() {
+        if (!searchProductsObserver) return;
+        searchProductsObserver.disconnect();
+        searchProductsObserver = null;
+      }
+
+      function abortSearchProductsRequest() {
+        if (!searchProductsRequest) return;
+        searchProductsRequest.abort();
+        searchProductsRequest = null;
+      }
+
+      function setSearchProductsBusy(isBusy) {
+        searchProductsLoading = isBusy;
+        searchDrawer.toggleAttribute(
+          'data-search-products-loading-more',
+          isBusy && searchProductsPage > 0
+        );
+        var productsGroup = searchPredictive
+          ? searchPredictive.querySelector(
+              '[data-search-products-group], [data-search-results-group="products"]'
+            )
+          : null;
+        if (productsGroup) {
+          productsGroup.setAttribute('aria-busy', String(isBusy));
+        }
+      }
+
+      function initialiseSearchProductImages(root) {
+        if (!root) return;
+        root
+          .querySelectorAll('[data-search-product-image]')
+          .forEach(function (imageFrame) {
+            if (imageFrame.hasAttribute('data-search-image-bound')) return;
+            imageFrame.setAttribute('data-search-image-bound', '');
+
+            var image = imageFrame.querySelector('img');
+            if (!image) {
+              imageFrame.removeAttribute('data-search-image-loading');
+              imageFrame.setAttribute('data-search-image-loaded', '');
+              return;
+            }
+
+            function markImageLoaded() {
+              imageFrame.removeAttribute('data-search-image-loading');
+              imageFrame.setAttribute('data-search-image-loaded', '');
+            }
+
+            if (image.complete) {
+              markImageLoaded();
+              return;
+            }
+
+            image.addEventListener('load', markImageLoaded, { once: true });
+            image.addEventListener('error', markImageLoaded, { once: true });
+          });
+      }
+
+      searchDrawer.setAttribute('data-search-images-enhanced', '');
+      initialiseSearchProductImages(searchDrawer);
+
+      function updateSearchProductsAvailability() {
+        var hasMore =
+          searchProductsRetryPage !== null ||
+          (searchProductsPages > 0 && searchProductsPage < searchProductsPages);
+        searchDrawer.toggleAttribute('data-search-has-more-products', hasMore);
+        return hasMore;
+      }
+
+      function resetSearchProducts() {
+        abortSearchProductsRequest();
+        disconnectSearchProductsObserver();
+        searchProductsQuery = '';
+        searchProductsPage = 0;
+        searchProductsPages = 0;
+        searchProductsCount = 0;
+        searchProductsRetryPage = null;
+        searchProductsClickedSuggestion = false;
+        setSearchProductsBusy(false);
+        searchDrawer.removeAttribute('data-search-has-more-products');
+      }
+
+      function buildSearchProductsUrl(query, page) {
+        var searchUrl = searchForm
+          ? searchForm.action
+          : '{{ routes.search_url }}';
+        var url = new URL(searchUrl, window.location.origin);
+        url.searchParams.set('q', query);
+        url.searchParams.set('type', 'product');
+        url.searchParams.set('options[unavailable_products]', 'hide');
+        url.searchParams.set('options[prefix]', 'last');
+        url.searchParams.set('page', String(page));
+        url.searchParams.set('section_id', 'v3-search-products');
+        return url.toString();
+      }
+
+      function setupSearchProductsObserver() {
+        disconnectSearchProductsObserver();
+        if (
+          !searchScroll ||
+          !('IntersectionObserver' in window) ||
+          !updateSearchProductsAvailability()
+        ) {
+          return;
+        }
+
+        var sentinel = searchPredictive
+          ? searchPredictive.querySelector('[data-search-products-sentinel]')
+          : null;
+        if (!sentinel) return;
+
+        searchProductsObserver = new IntersectionObserver(
+          function (entries) {
+            if (
+              entries.some(function (entry) {
+                return entry.isIntersecting;
+              })
+            ) {
+              loadNextSearchProducts();
+            }
+          },
+          { root: searchScroll, threshold: 0 }
+        );
+        searchProductsObserver.observe(sentinel);
+      }
+
+      function applySearchProductsResponse(
+        markup,
+        query,
+        page,
+        requestId,
+        replaceProducts
+      ) {
+        if (requestId !== searchRequestSequence) return;
+        if (
+          normalizeSearchText(searchInput ? searchInput.value : '') !==
+          normalizeSearchText(query)
+        ) {
+          return;
+        }
+
+        var documentFragment = new DOMParser().parseFromString(
+          markup,
+          'text/html'
+        );
+        var productsResponse = documentFragment.querySelector(
+          '[data-search-products-response]'
+        );
+        if (!productsResponse) {
+          throw new Error('Product search response is missing');
+        }
+
+        var responsePage = Number(
+          productsResponse.getAttribute('data-search-products-page')
+        );
+        var responsePages = Number(
+          productsResponse.getAttribute('data-search-products-pages')
+        );
+        var responseCount = Number(
+          productsResponse.getAttribute('data-search-products-count')
+        );
+        var incomingGroup = productsResponse.querySelector(
+          '[data-search-products-group]'
+        );
+        var currentResponse = searchPredictive
+          ? searchPredictive.querySelector('[data-search-response]')
+          : null;
+        var currentGroup = currentResponse
+          ? currentResponse.querySelector(
+              '[data-search-results-group="products"]'
+            )
+          : null;
+        var appendedCount = 0;
+        var appendedCards = [];
+
+        if (replaceProducts) {
+          if (incomingGroup && currentGroup) {
+            currentGroup.replaceWith(incomingGroup);
+          } else if (incomingGroup && currentResponse) {
+            currentResponse.appendChild(incomingGroup);
+          } else if (currentGroup) {
+            currentGroup.remove();
+          }
+        } else {
+          var incomingList = incomingGroup
+            ? incomingGroup.querySelector('[data-search-products-list]')
+            : null;
+          var currentList = currentGroup
+            ? currentGroup.querySelector('[data-search-products-list]')
+            : null;
+          if (!incomingList || !currentList) {
+            throw new Error('Product search page is missing');
+          }
+          appendedCount = incomingList.children.length;
+          Array.from(incomingList.children).forEach(function (productCard) {
+            appendedCards.push(productCard);
+            currentList.appendChild(productCard);
+          });
+        }
+
+        initialiseSearchProductImages(currentResponse);
+        if (appendedCards.length && !reducedMotion) {
+          gsap.fromTo(
+            appendedCards,
+            { opacity: 0, y: 4 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.25,
+              ease: 'power1.out',
+              stagger: 0.03,
+              clearProps: 'opacity,transform',
+              overwrite: 'auto',
+            }
+          );
+        }
+
+        searchProductsQuery = query;
+        searchProductsPage = responsePage || page;
+        searchProductsPages = responsePages || 0;
+        searchProductsCount = responseCount || 0;
+        searchProductsRetryPage = null;
+        setSearchProductsBusy(false);
+
+        var actionableCount = currentResponse
+          ? currentResponse.querySelectorAll('[data-search-result-link]').length
+          : 0;
+        searchDrawer.toggleAttribute(
+          'data-search-has-results',
+          actionableCount > 0
+        );
+        searchCompletedRequestId = requestId;
+        searchCompletedQuery = query;
+        searchCompletedHasResults = actionableCount > 0;
+
+        var footerWasVisible =
+          searchFooter &&
+          window.getComputedStyle(searchFooter).display !== 'none';
+        var hasMore = updateSearchProductsAvailability();
+        if (hasMore) {
+          setupSearchProductsObserver();
+          if (!footerWasVisible) revealSearchFooter();
+        } else {
+          disconnectSearchProductsObserver();
+        }
+
+        if (
+          searchProductsCount > 0 &&
+          searchDrawer.getAttribute('data-search-view') === 'no-results'
+        ) {
+          setSearchView(
+            searchProductsClickedSuggestion ? 'clicked' : 'autocomplete'
+          );
+        }
+
+        if (searchAnnounce) {
+          if (replaceProducts) {
+            searchAnnounce.textContent =
+              searchProductsCount +
+              ' product ' +
+              (searchProductsCount === 1 ? 'result' : 'results') +
+              ' available';
+          } else if (hasMore) {
+            searchAnnounce.textContent =
+              'Loaded ' + appendedCount + ' more products';
+          } else {
+            searchAnnounce.textContent =
+              'All ' + searchProductsCount + ' products loaded';
+          }
+        }
+      }
+
+      function requestSearchProducts(query, page, requestId, replaceProducts) {
+        if (
+          requestId !== searchRequestSequence ||
+          !normalizeSearchText(query) ||
+          searchProductsLoading
+        ) {
+          return;
+        }
+
+        abortSearchProductsRequest();
+        disconnectSearchProductsObserver();
+        searchProductsQuery = query;
+        searchProductsRetryPage = null;
+        setSearchProductsBusy(true);
+
+        var requestController = new AbortController();
+        searchProductsRequest = requestController;
+
+        fetch(buildSearchProductsUrl(query, page), {
+          signal: requestController.signal,
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Product search request failed');
+            return response.text();
+          })
+          .then(function (markup) {
+            applySearchProductsResponse(
+              markup,
+              query,
+              page,
+              requestId,
+              replaceProducts
+            );
+            if (searchProductsRequest === requestController) {
+              searchProductsRequest = null;
+            }
+          })
+          .catch(function (error) {
+            if (error.name === 'AbortError') return;
+            if (requestId !== searchRequestSequence) return;
+            searchProductsRequest = null;
+            searchProductsRetryPage = page;
+            setSearchProductsBusy(false);
+            updateSearchProductsAvailability();
+            disconnectSearchProductsObserver();
+            if (searchAnnounce) {
+              searchAnnounce.textContent =
+                'More products could not be loaded. Try again.';
+            }
+          });
+      }
+
+      function loadNextSearchProducts() {
+        if (searchProductsLoading || !searchProductsQuery) return;
+        var nextPage =
+          searchProductsRetryPage !== null
+            ? searchProductsRetryPage
+            : searchProductsPage + 1;
+        if (
+          searchProductsRetryPage === null &&
+          (!searchProductsPages || nextPage > searchProductsPages)
+        ) {
+          searchDrawer.removeAttribute('data-search-has-more-products');
+          disconnectSearchProductsObserver();
+          return;
+        }
+        requestSearchProducts(
+          searchProductsQuery,
+          nextPage,
+          searchRequestSequence,
+          nextPage === 1
+        );
+      }
+
       function resetSearchResults(animate) {
         searchRequestSequence += 1;
         if (searchDebounceTimer) {
@@ -1541,6 +1899,7 @@
           searchRequest = null;
         }
         stopSearchLoading();
+        resetSearchProducts();
         searchHasRenderedResults = false;
         searchCompletedHasResults = false;
         searchDrawer.removeAttribute('data-search-has-results');
@@ -2198,6 +2557,7 @@
         stopSearchReveal();
         if (searchCloseTimer) return;
         recordCompletedSearch();
+        resetSearchProducts();
         searchDrawer.setAttribute('data-search-state', 'closing');
         searchDrawer.setAttribute('aria-hidden', 'true');
         clearSearchOrigin();
@@ -2389,20 +2749,20 @@
         var footerWasVisible =
           searchFooter &&
           window.getComputedStyle(searchFooter).display !== 'none';
-
         stopSearchLoading();
 
         if (searchPredictive) {
           searchPredictive.innerHTML = '';
           if (response) searchPredictive.appendChild(response);
         }
+        initialiseSearchProductImages(response);
 
         if (searchQueryLabel) searchQueryLabel.textContent = query;
         searchDrawer.toggleAttribute(
           'data-search-has-results',
           actionableCount > 0
         );
-        updateSearchLinks(query);
+        if (!searchInfiniteProducts) updateSearchLinks(query);
         searchHasRenderedResults = totalCount > 0;
 
         if (response) {
@@ -2418,8 +2778,13 @@
             clickedSuggestion ? 'clicked' : 'autocomplete',
             false,
             function () {
-              if (actionableCount > 0 && !footerWasVisible)
+              if (
+                !searchInfiniteProducts &&
+                actionableCount > 0 &&
+                !footerWasVisible
+              ) {
                 revealSearchFooter();
+              }
             }
           );
           if (searchAnnounce) {
@@ -2440,6 +2805,10 @@
         searchCompletedQuery = query;
         searchCompletedHasResults = actionableCount > 0;
         searchRequest = null;
+        if (searchInfiniteProducts) {
+          searchProductsClickedSuggestion = clickedSuggestion;
+          requestSearchProducts(query, 1, requestId, true);
+        }
       }
 
       function requestSearch(query, clickedSuggestion, requestId) {
@@ -2493,7 +2862,7 @@
           });
       }
 
-      function scheduleSearch(clickedSuggestion) {
+      function scheduleSearch(clickedSuggestion, immediate) {
         var query = updateSearchQueryState();
         if (searchLoadingPreview) {
           resetSearchResults();
@@ -2509,6 +2878,7 @@
           searchRequest.abort();
           searchRequest = null;
         }
+        resetSearchProducts();
         stopSearchLoading();
         searchRequestSequence += 1;
         var requestId = searchRequestSequence;
@@ -2517,7 +2887,7 @@
             searchDebounceTimer = null;
             requestSearch(query, clickedSuggestion, requestId);
           },
-          clickedSuggestion ? 0 : 120
+          clickedSuggestion || immediate ? 0 : 120
         );
       }
 
@@ -2583,7 +2953,26 @@
             event.preventDefault();
             return;
           }
-          recordCompletedSearch();
+          if (!searchInfiniteProducts) {
+            recordCompletedSearch();
+            return;
+          }
+          event.preventDefault();
+          var query = updateSearchQueryState();
+          if (!query) {
+            resetSearchResults(true);
+            return;
+          }
+          recordRecentSearch(query);
+          var isCurrentProductQuery =
+            normalizeSearchText(query) ===
+            normalizeSearchText(searchProductsQuery);
+          if (isCurrentProductQuery && searchProductsLoading) return;
+          if (isCurrentProductQuery && searchProductsPage > 0) {
+            loadNextSearchProducts();
+            return;
+          }
+          scheduleSearch(false, true);
         });
       }
       if (searchViewAll) {

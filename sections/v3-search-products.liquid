@@ -1,0 +1,57 @@
+{%- paginate search.results by 8 -%}
+  <div
+    data-search-products-response
+    data-search-products-count='{{ search.results_count }}'
+    data-search-products-page='{{ paginate.current_page }}'
+    data-search-products-pages='{{ paginate.pages }}'
+  >
+    {%- if search.results_count > 0 -%}
+      <section
+        class='v3-search__subgroup'
+        data-search-results-group='products'
+        data-search-products-group
+        aria-busy='false'
+      >
+        <h2 class='v3-search__subgroup-title text-search-caption'>
+          Products ({{ search.results_count }})
+        </h2>
+        <div class='v3-search__product-list' data-search-products-list>
+          {%- for product in search.results -%}
+            {%- render 'v3-search-product-card', product: product -%}
+          {%- endfor -%}
+        </div>
+        <div
+          class='v3-search__product-list v3-search__products-loader'
+          data-search-products-loader
+          aria-hidden='true'
+        >
+          {%- for index in (1..2) -%}
+            <div class='v3-search__product-card v3-search__product-silhouette'>
+              <span class='v3-search__product-image'></span>
+              <div class='v3-search__product-data'>
+                <div class='v3-search__product-meta'>
+                  <span
+                    class='v3-search__silhouette-line text-search-product-meta'
+                  ></span>
+                  <span
+                    class='v3-search__silhouette-line v3-search__silhouette-line--title text-search-product-meta'
+                  ></span>
+                  <div class='v3-search__product-price'>
+                    <span
+                      class='v3-search__silhouette-line v3-search__silhouette-line--price text-search-product-price'
+                    ></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+        <span
+          class='v3-search__products-sentinel'
+          data-search-products-sentinel
+          aria-hidden='true'
+        ></span>
+      </section>
+    {%- endif -%}
+  </div>
+{%- endpaginate -%}
