@@ -313,6 +313,11 @@ function clearCartBackdropTransfer({ preserveBackdrop = false } = {}) {
     clearProps:
       'opacity,clipPath,backgroundColor,backdropFilter,webkitBackdropFilter,transition,willChange',
   });
+  const drawer = getDrawer();
+  if (drawer?.dataset.cartState === 'opening') {
+    drawer.dataset.cartState = 'closed';
+    drawer.setAttribute('aria-hidden', 'true');
+  }
   cartBackdropTransfer = null;
 }
 
@@ -349,6 +354,7 @@ function transferMobileMenuToCart(trigger, drawer, context, revealLineKeys) {
     backdropTransfer;
 
   context.mobileMenu.setAttribute('data-drawer-transfer', '');
+  drawer.dataset.cartState = 'opening';
   gsap.killTweensOf([context.mobilePanel, ...context.content]);
   gsap.set(context.content, { opacity: 1 });
 
@@ -400,7 +406,9 @@ function transferMobileMenuToCart(trigger, drawer, context, revealLineKeys) {
     0.29
   );
 
-  timeline.play(0);
+  waitForNextPaint().then(() => {
+    if (cartBackdropTransfer?.timeline === timeline) timeline.play(0);
+  });
 }
 
 function enqueueMutation(operation) {
@@ -1426,14 +1434,8 @@ function getAddedLineKeys(response) {
     .filter((key) => typeof key === 'string' && key);
 }
 
-function waitForClosedDrawerFrame() {
-  const drawer = getDrawer();
-  if (
-    !drawer ||
-    drawer.dataset.cartState !== 'closed' ||
-    document.hidden ||
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  ) {
+function waitForNextPaint() {
+  if (document.hidden) {
     return Promise.resolve();
   }
 
@@ -1457,9 +1459,27 @@ function waitForClosedDrawerFrame() {
   });
 }
 
+function waitForClosedDrawerFrame() {
+  const drawer = getDrawer();
+  if (
+    !drawer ||
+    drawer.dataset.cartState !== 'closed' ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    return Promise.resolve();
+  }
+
+  return waitForNextPaint();
+}
+
 export function openCartDrawer(trigger = null, { revealLineKeys = null } = {}) {
   const drawer = getDrawer();
-  if (!drawer || drawer.dataset.cartState === 'open' || cartBackdropTransfer) {
+  if (
+    !drawer ||
+    drawer.dataset.cartState === 'open' ||
+    drawer.dataset.cartState === 'opening' ||
+    cartBackdropTransfer
+  ) {
     return;
   }
 
@@ -1481,18 +1501,41 @@ export function openCartDrawer(trigger = null, { revealLineKeys = null } = {}) {
 
   closeCompetingDrawers();
   openTrigger = getReturnFocusTarget(trigger || document.activeElement);
-  drawer.dataset.cartState = 'open';
+  const stageFirstPaint =
+    !document.hidden &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  drawer.dataset.cartState = stageFirstPaint ? 'opening' : 'open';
   drawer.setAttribute('aria-hidden', 'false');
   syncTriggerExpansion(true);
   modalCoordinator.acquire(MODAL_OWNER, drawer, { useBackdrop: true });
   syncDrawerBusy(drawer);
-  playCartReveal(drawer, revealLineKeys, 0.3);
-  focusReplacement(drawer, '[data-cart-close]');
+
+  const completeOpen = () => {
+    if (
+      getDrawer() !== drawer ||
+      (drawer.dataset.cartState !== 'opening' &&
+        drawer.dataset.cartState !== 'open')
+    ) {
+      return;
+    }
+
+    drawer.dataset.cartState = 'open';
+    playCartReveal(drawer, revealLineKeys, 0.3);
+    focusReplacement(drawer, '[data-cart-close]');
+  };
+
+  if (stageFirstPaint) {
+    waitForNextPaint().then(completeOpen);
+  } else {
+    completeOpen();
+  }
 }
 
 export function closeCartDrawer({ restoreFocus = true } = {}) {
   const drawer = getDrawer();
-  if (!drawer || drawer.dataset.cartState !== 'open') return;
+  if (!drawer || !['open', 'opening'].includes(drawer.dataset.cartState)) {
+    return;
+  }
 
   clearCartBackdropTransfer();
   stopCartReveal(drawer);

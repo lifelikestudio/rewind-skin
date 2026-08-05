@@ -194,12 +194,14 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  .v3-cart[data-cart-state='opening'],
   .v3-cart[data-cart-state='open'],
   .v3-cart[data-cart-state='closing'] {
     visibility: visible;
     pointer-events: auto;
   }
 
+  .v3-cart[data-cart-state='opening'],
   .v3-cart[data-cart-state='closing'] {
     pointer-events: none;
   }

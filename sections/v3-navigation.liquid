@@ -1109,6 +1109,36 @@
         searchBody,
       ].filter(Boolean);
 
+      /* Give newly visible transfer layers a painted starting state before
+         GSAP advances them. This prevents the first hand-off from snapping
+         while the browser creates the backdrop-filter compositor layer. */
+      function playSearchTransferAfterPaint(timeline) {
+        if (!timeline) return;
+
+        var completed = false;
+        var fallbackTimer = window.setTimeout(play, 100);
+
+        function play() {
+          if (completed) return;
+          completed = true;
+          window.clearTimeout(fallbackTimer);
+          if (searchTransferTimeline === timeline) timeline.play(0);
+        }
+
+        if (document.hidden) {
+          play();
+          return;
+        }
+
+        window.requestAnimationFrame(function () {
+          if (document.hidden) {
+            play();
+            return;
+          }
+          window.requestAnimationFrame(play);
+        });
+      }
+
       function shareMobileMenuLogoWithSearch() {
         if (
           mobileMenuLogoIsShared ||
@@ -1835,6 +1865,7 @@
         });
 
         searchTransferTimeline = gsap.timeline({
+          paused: true,
           defaults: { ease: 'power1.out' },
           onComplete: completeSubmenuSearchTransfer,
           onReverseComplete: completeSearchTransferReverse,
@@ -1894,6 +1925,8 @@
             closeStart
           );
         }
+
+        playSearchTransferAfterPaint(searchTransferTimeline);
       }
 
       function completeMobileMenuSearchTransfer() {
@@ -2075,9 +2108,7 @@
           panelStart
         );
 
-        requestAnimationFrame(function () {
-          if (searchTransferTimeline) searchTransferTimeline.play(0);
-        });
+        playSearchTransferAfterPaint(searchTransferTimeline);
       }
 
       function openSearchDrawer(trigger) {
@@ -3056,6 +3087,7 @@
 
         var link = e.target.closest('a[href]');
         if (!link || !mobilePanel.contains(link)) return;
+        if (link.hasAttribute('data-mobile-menu-bag')) return;
         if (link.target === '_blank' || link.hasAttribute('download')) return;
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
