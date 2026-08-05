@@ -6,7 +6,14 @@
 {% endcomment %}
 
 {%- liquid
-  assign drawer_title = section.settings.bag_label | default: 'Bag'
+  assign drawer_title = section.settings.bag_label
+  if drawer_title == blank
+    assign drawer_title = 'sections.v3_cart.bag' | t
+  endif
+  assign cart_item_label = 'sections.v3_cart.items' | t
+  if cart.item_count == 1
+    assign cart_item_label = 'sections.v3_cart.item' | t
+  endif
   assign start_shopping_url = section.settings.start_shopping_link
   if start_shopping_url == blank
     assign start_shopping_url = routes.all_products_collection_url
@@ -19,8 +26,27 @@
   data-section-id='{{ section.id }}'
   data-cart-state='closed'
   data-cart-empty='{% if cart == empty %}true{% else %}false{% endif %}'
+  data-cart-label='{{ drawer_title | escape }}'
   aria-hidden='true'
 >
+  <script type='application/json' data-cart-copy>
+    {
+      "item": {{ 'sections.v3_cart.item' | t | json }},
+      "items": {{ 'sections.v3_cart.items' | t | json }},
+      "adding": {{ 'sections.v3_cart.adding' | t | json }},
+      "addingAria": {{ 'sections.v3_cart.adding_aria' | t | json }},
+      "quantityUpdated": {{ 'sections.v3_cart.status.quantity_updated' | t: quantity: '__quantity__' | json }},
+      "removed": {{ 'sections.v3_cart.status.removed' | t | json }},
+      "added": {{ 'sections.v3_cart.status.added' | t | json }},
+      "updateError": {{ 'sections.v3_cart.errors.update' | t | json }},
+      "updateConnectionError": {{ 'sections.v3_cart.errors.update_connection' | t | json }},
+      "addError": {{ 'sections.v3_cart.errors.add' | t | json }},
+      "addConnectionError": {{ 'sections.v3_cart.errors.add_connection' | t | json }},
+      "refreshUpdatedError": {{ 'sections.v3_cart.errors.refresh_updated' | t | json }},
+      "refreshAddedError": {{ 'sections.v3_cart.errors.refresh_added' | t | json }}
+    }
+  </script>
+
   <button
     type='button'
     class='v3-cart__overlay'
@@ -46,7 +72,7 @@
           <span
             class='v3-cart__count text-cart-badge'
             data-cart-count
-            aria-label='{{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}'
+            aria-label='{{ cart.item_count }} {{ cart_item_label | escape }}'
           >
             {{- cart.item_count -}}
           </span>
@@ -57,7 +83,7 @@
         type='button'
         class='v3-cart__close'
         data-cart-close
-        aria-label='Close {{ drawer_title | escape }}'
+        aria-label='{{ 'sections.v3_cart.close' | t: label: drawer_title | escape }}'
       >
         <span class='v3-cart__close-circle'>
           {%- render 'v3-icon-close', class: 'v3-cart__close-icon text-ink' -%}
@@ -101,7 +127,7 @@
       <footer class='v3-cart__footer'>
         <div class='v3-cart__subtotal'>
           <div class='v3-cart__subtotal-row text-cart-subtotal'>
-            <span>Subtotal</span>
+            <span>{{ 'sections.v3_cart.subtotal' | t }}</span>
             <span data-cart-subtotal>
               {{- cart.total_price | money_with_currency -}}
             </span>
@@ -142,14 +168,13 @@
   </div>
 </v3-cart-drawer>
 
-<style>
+{% stylesheet %}
   .v3-cart {
     --cart-inset: 7px;
-    --cart-width: 346px;
     --cart-radius: var(--radius-drawer-compact);
     --cart-header-h: 72px;
     --cart-header-pl: 20px;
-    --cart-header-pr: 8px;
+    --cart-header-pr: 2px;
     --cart-content-p: 20px;
     --cart-footer-gap: 20px;
     --cart-close-size: 32px;
@@ -198,20 +223,21 @@
     text-decoration: none;
   }
 
-  .v3-cart__overlay {
+  .v3-cart button.v3-cart__overlay {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     background: transparent;
+    cursor: default;
   }
 
   .v3-cart__drawer {
     position: absolute;
     top: var(--cart-inset);
-    left: 50%;
+    left: var(--cart-inset);
     display: flex;
-    width: min(var(--cart-width), calc(100vw - (var(--cart-inset) * 2)));
+    width: calc(100vw - (var(--cart-inset) * 2));
     max-height: calc(100dvh - (var(--cart-inset) * 2));
     flex-direction: column;
     overflow: clip;
@@ -219,7 +245,6 @@
     background: var(--color-bg);
     opacity: 0;
     outline: none;
-    transform: translateX(-50%);
     transition: opacity 250ms ease-out 80ms;
   }
 
@@ -229,6 +254,12 @@
 
   .v3-cart[data-cart-state='open'] .v3-cart__drawer {
     opacity: 1;
+  }
+
+  .v3-cart[data-cart-state='open']:focus-within .v3-cart__drawer,
+  .v3-cart[data-cart-state='open']:focus-within .v3-cart__close {
+    opacity: 1;
+    transition-delay: 0ms;
   }
 
   .v3-cart[data-cart-state='closing'] .v3-cart__drawer {
@@ -481,7 +512,10 @@
   }
 
   .v3-cart__quantity-value {
+    position: relative;
+    display: grid;
     min-width: 16px;
+    place-items: center;
     text-align: center;
   }
 
@@ -493,9 +527,44 @@
   }
 
   .v3-cart__remove {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
     color: var(--color-muted);
     text-align: right;
     text-underline-offset: 0.18em;
+  }
+
+  .v3-cart__line-loader {
+    display: none;
+    width: var(--size-12);
+    height: var(--size-12);
+    flex: none;
+    border: var(--border-width-default) solid currentColor;
+    border-right-color: transparent;
+    border-radius: var(--radius-pill);
+    animation: v3-cart-line-loader 800ms linear infinite;
+  }
+
+  .v3-cart__item[data-cart-line-progress='quantity'] [data-cart-quantity-value],
+  .v3-cart__item[data-cart-line-progress='remove'] [data-cart-remove-label] {
+    visibility: hidden;
+  }
+
+  .v3-cart__item[data-cart-line-progress='quantity']
+    [data-cart-quantity-loader],
+  .v3-cart__item[data-cart-line-progress='remove'] [data-cart-remove-loader] {
+    position: absolute;
+    display: block;
+    inset: 0;
+    margin: auto;
+  }
+
+  @keyframes v3-cart-line-loader {
+    to {
+      transform: rotate(1turn);
+    }
   }
 
   .v3-cart__footer {
@@ -587,7 +656,6 @@
 
   .v3-cart button:disabled {
     cursor: wait;
-    opacity: 0.55;
   }
 
   .v3-cart button:focus-visible,
@@ -627,10 +695,9 @@
   @media (min-width: 375px) {
     .v3-cart {
       --cart-inset: 8px;
-      --cart-width: 374px;
       --cart-header-h: 80px;
       --cart-header-pl: 22px;
-      --cart-header-pr: 9px;
+      --cart-header-pr: 5px;
       --cart-content-p: 22px;
       --cart-footer-gap: 22px;
       --cart-close-size: 36px;
@@ -640,11 +707,10 @@
 
   @media (min-width: 428px) {
     .v3-cart {
-      --cart-width: 414px;
       --cart-radius: var(--radius-drawer);
       --cart-header-h: 86px;
       --cart-header-pl: 24px;
-      --cart-header-pr: 10px;
+      --cart-header-pr: 7px;
       --cart-content-p: 24px;
       --cart-footer-gap: 24px;
       --cart-close-size: 38px;
@@ -660,6 +726,7 @@
     .v3-cart__drawer {
       right: var(--cart-inset);
       left: auto;
+      width: var(--cart-width);
       transform: none;
     }
 
@@ -704,11 +771,14 @@
     .v3-cart,
     .v3-cart * {
       scroll-behavior: auto !important;
-      transition-duration: 0.01ms !important;
-      transition-delay: 0ms !important;
+      transition: none !important;
+    }
+
+    .v3-cart__line-loader {
+      animation: none;
     }
   }
-</style>
+{% endstylesheet %}
 
 {% schema %}
 {

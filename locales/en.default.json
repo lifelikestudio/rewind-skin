@@ -288,6 +288,34 @@
         "paragraph_html": "<a href=\"{{ link }}\" class=\"link underlined-link\">Log in</a> to check out faster."
       }
     },
+    "v3_cart": {
+      "bag": "Bag",
+      "item": "item",
+      "items": "items",
+      "close": "Close {{ label }}",
+      "subtotal": "Subtotal",
+      "subscription": "Subscription",
+      "sale": "Sale",
+      "remove": "Remove",
+      "quantity": "Quantity",
+      "decrease_quantity": "Decrease quantity of {{ title }}",
+      "increase_quantity": "Increase quantity of {{ title }}",
+      "adding": "Adding…",
+      "adding_aria": "Adding item to bag",
+      "status": {
+        "quantity_updated": "Quantity updated to {{ quantity }}.",
+        "removed": "Item removed from your bag.",
+        "added": "Item added to your bag."
+      },
+      "errors": {
+        "update": "We could not update your bag.",
+        "update_connection": "We could not update your bag. Check your connection and try again.",
+        "add": "We could not add this item to your bag.",
+        "add_connection": "We could not add this item to your bag. Check your connection and try again.",
+        "refresh_updated": "Your bag was updated, but it could not be refreshed. Reload the page to see the latest items.",
+        "refresh_added": "The item was added, but your bag could not be refreshed. Reload the page to see the latest items."
+      }
+    },
     "footer": {
       "payment": "Payment methods"
     },

@@ -7,6 +7,11 @@
 
 {%- liquid
   assign cart_count = cart.item_count
+  assign cart_bag_label = 'sections.v3_cart.bag' | t
+  assign cart_item_label = 'sections.v3_cart.items' | t
+  if cart_count == 1
+    assign cart_item_label = 'sections.v3_cart.item' | t
+  endif
   if cart_count > 99
     assign cart_count_desktop = '99+'
   else
@@ -140,27 +145,27 @@
       style='padding-right: calc(var(--v3-nav-pr-offset, 0px));'
     >
       {%- if section.settings.show_cart -%}
-        <button
-          type='button'
+        <a
+          href='{{ routes.cart_url }}'
           class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
           id='v3-cart-btn'
-          aria-label='Bag{% if cart_count > 0 %}, {{ cart_count }} {{ cart_count | pluralize: 'item', 'items' }}{% endif %}'
+          aria-label='{{ cart_bag_label | escape }}{% if cart_count > 0 %}, {{ cart_count }} {{ cart_item_label | escape }}{% endif %}'
           aria-expanded='false'
           aria-controls='v3-cart-drawer'
           data-nav-cart
         >
-          Bag
+          <span data-nav-cart-label>{{ cart_bag_label | escape }}</span>
           <span
             class='v3-nav__cart-count'
             data-nav-cart-count
-            aria-live='polite'
+            aria-hidden='true'
             {% if cart_count == 0 %}
               hidden
             {% endif %}
           >
             &nbsp;({{ cart_count_desktop }})</span
           >
-        </button>
+        </a>
       {%- endif -%}
 
       {%- if section.settings.show_wishlist -%}
@@ -252,10 +257,10 @@
       {%- endif -%}
 
       {%- if section.settings.show_cart -%}
-        <button
-          type='button'
+        <a
+          href='{{ routes.cart_url }}'
           class='text-ink flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
-          aria-label='Bag{% if cart_count > 0 %}, {{ cart_count }} {{ cart_count | pluralize: 'item', 'items' }}{% endif %}'
+          aria-label='{{ cart_bag_label | escape }}{% if cart_count > 0 %}, {{ cart_count }} {{ cart_item_label | escape }}{% endif %}'
           aria-expanded='false'
           aria-controls='v3-cart-drawer'
           id='v3-cart-mobile'
@@ -295,7 +300,7 @@
               </span>
             </span>
           </span>
-        </button>
+        </a>
       {%- endif -%}
 
       {%- comment -%} Hamburger pill (MobileMenuBtn) {%- endcomment -%}
@@ -344,6 +349,8 @@
   logo: section.settings.logo,
   shop_label: section.settings.shop_label,
   studio_label: section.settings.studio_label,
+  bag_label: cart_bag_label,
+  show_cart: section.settings.show_cart,
   section_id: section.id
 -%}
 
@@ -358,6 +365,8 @@
   logo: section.settings.logo,
   shop_label: section.settings.shop_label,
   studio_label: section.settings.studio_label,
+  bag_label: cart_bag_label,
+  show_cart: section.settings.show_cart,
   section_id: section.id
 -%}
 
@@ -669,14 +678,6 @@
   }
   .v3-search[data-search-reveal] .v3-search__body {
     transition: none !important;
-  }
-
-  /* Shared surface used while the mobile menu hands off to search. */
-  .v3-drawer-transfer-surface {
-    position: fixed;
-    pointer-events: none;
-    z-index: 55;
-    overflow: clip;
   }
 
   /* ═══ REDUCED MOTION ═══ */
@@ -1080,7 +1081,7 @@
       var searchNavigating = false;
       var searchTransferTimeline = null;
       var searchRevealTimeline = null;
-      var mobileTransferSurface = null;
+      var mobileTransferBackdrop = null;
       var mobileMenuLogoParent = mobileMenuLogo
         ? mobileMenuLogo.parentNode
         : null;
@@ -1134,33 +1135,66 @@
         mobileMenuLogoIsShared = false;
       }
 
-      function createMobileTransferLayers(panelRect, panelStyles) {
-        destroyMobileTransferLayers();
+      function prepareMobileBackdropTransfer(panelRect, panelStyles) {
+        clearMobileBackdropTransfer();
 
-        mobileTransferSurface = document.createElement('div');
-        mobileTransferSurface.className = 'v3-drawer-transfer-surface';
-        mobileTransferSurface.setAttribute('aria-hidden', 'true');
-        gsap.set(mobileTransferSurface, {
-          top: panelRect.top,
-          left: panelRect.left,
-          width: panelRect.width,
-          height: panelRect.height,
-          borderRadius: panelStyles.borderRadius,
+        var backdrop = document.querySelector('[data-v3-modal-backdrop]');
+        if (!backdrop) return null;
+
+        var backdropStyles = window.getComputedStyle(backdrop);
+        var viewportWidth = document.documentElement.clientWidth;
+        var viewportHeight = window.innerHeight;
+        var clip = [
+          Math.max(0, panelRect.top),
+          Math.max(0, viewportWidth - panelRect.right),
+          Math.max(0, viewportHeight - panelRect.bottom),
+          Math.max(0, panelRect.left),
+        ];
+
+        mobileTransferBackdrop = backdrop;
+        gsap.set(backdrop, {
+          clipPath:
+            'inset(' +
+            clip.join('px ') +
+            'px round ' +
+            panelStyles.borderRadius +
+            ')',
           backgroundColor: panelStyles.backgroundColor,
           backdropFilter: panelStyles.backdropFilter,
           webkitBackdropFilter: panelStyles.webkitBackdropFilter,
-          opacity: 1,
+          opacity: 0,
+          transition: 'none',
+          willChange: 'clip-path, background-color, backdrop-filter',
         });
-        document.body.appendChild(mobileTransferSurface);
+
+        return {
+          backgroundColor: backdropStyles.backgroundColor,
+          backdropFilter: backdropStyles.backdropFilter,
+          webkitBackdropFilter: backdropStyles.webkitBackdropFilter,
+        };
       }
 
-      function destroyMobileTransferLayers() {
-        if (mobileTransferSurface) {
-          gsap.killTweensOf(mobileTransferSurface);
-          mobileTransferSurface.remove();
-        }
-        mobileTransferSurface = null;
+      function clearMobileBackdropTransfer(deferClear) {
         restoreMobileMenuLogo();
+        if (!mobileTransferBackdrop) return;
+
+        var backdrop = mobileTransferBackdrop;
+        mobileTransferBackdrop = null;
+        gsap.killTweensOf(backdrop);
+
+        function clearBackdropStyles() {
+          if (mobileTransferBackdrop) return;
+          gsap.set(backdrop, {
+            clearProps:
+              'opacity,clipPath,backgroundColor,backdropFilter,webkitBackdropFilter,transition,willChange',
+          });
+        }
+
+        if (deferClear) {
+          window.requestAnimationFrame(clearBackdropStyles);
+        } else {
+          clearBackdropStyles();
+        }
       }
 
       function getSearchRevealParts() {
@@ -1604,7 +1638,7 @@
         if (searchBack) searchBack.hidden = true;
       }
 
-      function clearSearchTransferStyles() {
+      function clearSearchTransferStyles(deferMobileBackdropClear) {
         gsap.killTweensOf(searchTransferElements);
         gsap.set(searchTransferElements, {
           clearProps:
@@ -1614,7 +1648,7 @@
         if (mobileMenu) mobileMenu.removeAttribute('data-drawer-transfer');
         searchDrawer.removeAttribute('data-drawer-transfer');
         clearSearchRevealStyles();
-        destroyMobileTransferLayers();
+        clearMobileBackdropTransfer(deferMobileBackdropClear);
       }
 
       function discardSearchTransfer() {
@@ -1666,7 +1700,7 @@
           isolateModal(mobileMenu);
         }
 
-        clearSearchTransferStyles();
+        clearSearchTransferStyles(origin === 'mobile-menu');
         if (searchTransferTimeline) searchTransferTimeline.kill();
         searchTransferTimeline = null;
         if (searchInput) searchInput.value = '';
@@ -1704,7 +1738,7 @@
         if (submenu) submenu.removeAttribute('data-drawer-transfer');
         if (mobileMenu) mobileMenu.removeAttribute('data-drawer-transfer');
         searchDrawer.removeAttribute('data-drawer-transfer');
-        destroyMobileTransferLayers();
+        clearMobileBackdropTransfer();
         searchDrawer.removeAttribute('data-search-scrolled');
         clearSearchOrigin();
         if (searchInput) searchInput.value = '';
@@ -1865,6 +1899,7 @@
       function completeMobileMenuSearchTransfer() {
         searchDrawer.setAttribute('data-search-state', 'open');
         searchDrawer.setAttribute('aria-hidden', 'false');
+        playSearchReveal(0);
         window.setTimeout(function () {
           if (
             searchInput &&
@@ -1879,18 +1914,16 @@
       function transferMobileMenuToSearch(trigger) {
         if (searchTransferTimeline || !mobileMenu || !mobilePanel) return;
 
-        var emptyDuration = reducedMotion ? 0 : 0.14;
-        var morphDuration = reducedMotion ? 0 : 0.32;
-        var morphStart = reducedMotion ? 0 : 0.04;
-        var contentStart = reducedMotion ? 0 : 0.23;
-        var morphEnd = morphStart + morphDuration;
+        var emptyDuration = reducedMotion ? 0 : 0.15;
+        var backdropDuration = reducedMotion ? 0 : 0.3;
+        var backdropStart = reducedMotion ? 0 : 0.12;
+        var panelStart = reducedMotion ? 0 : 0.37;
         var mobileRect = mobilePanel.getBoundingClientRect();
         var searchRect = searchPanel.getBoundingClientRect();
         var mobileStyles = window.getComputedStyle(mobilePanel);
         var searchStyles = window.getComputedStyle(searchPanel);
-        var mobileBorderRadius = mobileStyles.borderRadius;
-        var searchBorderRadius = searchStyles.borderRadius;
         var searchBackgroundColor = searchStyles.backgroundColor;
+        var searchBorderRadius = searchStyles.borderRadius;
 
         searchOpenTrigger = nav.querySelector('[data-nav-search-mobile]');
         setSearchOrigin(
@@ -1899,6 +1932,36 @@
           trigger,
           activeMobileL2 ? activeMobileL2.getAttribute('data-mobile-l2') : null
         );
+
+        function openSearchWithoutTransfer() {
+          resetMobileMenuState();
+          searchDrawer.setAttribute('data-search-state', 'open');
+          searchDrawer.setAttribute('aria-hidden', 'false');
+          [searchTrigger]
+            .concat(searchMobileTriggers)
+            .filter(Boolean)
+            .forEach(function (item) {
+              item.setAttribute('aria-expanded', 'true');
+            });
+          isolateModal(searchDrawer);
+          playSearchReveal(reducedMotion ? 0 : 0.16);
+          if (searchInput) searchInput.focus();
+        }
+
+        if (reducedMotion) {
+          openSearchWithoutTransfer();
+          return;
+        }
+
+        var backdropTarget = prepareMobileBackdropTransfer(
+          mobileRect,
+          mobileStyles
+        );
+        if (!backdropTarget) {
+          openSearchWithoutTransfer();
+          return;
+        }
+
         mobileMenu.setAttribute('data-drawer-transfer', '');
         searchDrawer.setAttribute('data-drawer-transfer', '');
         mobileMenu.setAttribute('data-mobile-menu-state', 'closing');
@@ -1926,7 +1989,6 @@
           mobileContextSwitching = false;
         }
 
-        createMobileTransferLayers(mobileRect, mobileStyles);
         shareMobileMenuLogoWithSearch();
         gsap.killTweensOf(searchTransferElements);
         gsap.set(
@@ -1941,25 +2003,16 @@
           ].filter(Boolean),
           { opacity: 1 }
         );
-        gsap.set(mobilePanel, {
-          top: mobileRect.top,
-          left: mobileRect.left,
-          width: mobileRect.width,
-          height: mobileRect.height,
-          borderRadius: mobileBorderRadius,
-          backgroundColor: 'transparent',
-          backdropFilter: 'blur(0px)',
-          webkitBackdropFilter: 'blur(0px)',
-        });
         gsap.set(searchPanel, {
           top: mobileRect.top,
           left: mobileRect.left,
           width: mobileRect.width,
           height: mobileRect.height,
-          borderRadius: mobileBorderRadius,
+          borderRadius: mobileStyles.borderRadius,
           backgroundColor: 'transparent',
           opacity: 1,
         });
+        gsap.set(searchBody, { opacity: 0 });
         if (mobileMenuClose) gsap.set(mobileMenuClose, { opacity: 0 });
         if (searchClose) gsap.set(searchClose, { opacity: 1 });
 
@@ -1969,7 +2022,6 @@
           onComplete: completeMobileMenuSearchTransfer,
           onReverseComplete: completeSearchTransferReverse,
         });
-        addSearchReveal(searchTransferTimeline, contentStart);
 
         searchTransferTimeline.to(
           [mobileMenuToggleWrap, mobileMenuNav, mobileMenuUtility].filter(
@@ -1978,46 +2030,49 @@
           { opacity: 0, duration: emptyDuration },
           0
         );
+        searchTransferTimeline.call(
+          function () {
+            var isReversing = searchTransferTimeline.reversed();
+            gsap.set(mobileTransferBackdrop, {
+              opacity: isReversing ? 0 : 1,
+            });
+            gsap.set(mobilePanel, { opacity: isReversing ? 1 : 0 });
+          },
+          null,
+          backdropStart
+        );
         searchTransferTimeline.to(
-          [mobilePanel, searchPanel],
+          mobileTransferBackdrop,
+          {
+            clipPath: 'inset(0px round 0px)',
+            backgroundColor: backdropTarget.backgroundColor,
+            backdropFilter: backdropTarget.backdropFilter,
+            webkitBackdropFilter: backdropTarget.webkitBackdropFilter,
+            duration: backdropDuration,
+            ease: 'power2.inOut',
+          },
+          backdropStart
+        );
+        searchTransferTimeline.to(
+          searchPanel,
           {
             top: searchRect.top,
             left: searchRect.left,
             width: searchRect.width,
             height: searchRect.height,
             borderRadius: searchBorderRadius,
-            duration: morphDuration,
-            ease: 'power1.inOut',
+            duration: backdropDuration,
+            ease: 'power2.inOut',
           },
-          morphStart
+          backdropStart
         );
-        if (mobileTransferSurface) {
-          searchTransferTimeline.to(
-            mobileTransferSurface,
-            {
-              top: searchRect.top,
-              left: searchRect.left,
-              width: searchRect.width,
-              height: searchRect.height,
-              borderRadius: searchBorderRadius,
-              backgroundColor: searchBackgroundColor,
-              backdropFilter: 'blur(0px)',
-              webkitBackdropFilter: 'blur(0px)',
-              duration: morphDuration,
-              ease: 'power1.inOut',
-            },
-            morphStart
-          );
-        }
-        searchTransferTimeline.set(
+        searchTransferTimeline.to(
           searchPanel,
-          { backgroundColor: searchBackgroundColor },
-          morphEnd
-        );
-        searchTransferTimeline.set(
-          mobileTransferSurface,
-          { opacity: 0 },
-          morphEnd
+          {
+            backgroundColor: searchBackgroundColor,
+            duration: reducedMotion ? 0 : 0.25,
+          },
+          panelStart
         );
 
         requestAnimationFrame(function () {
@@ -2146,6 +2201,10 @@
 
         if (searchTransferTimeline) {
           recordCompletedSearch();
+          if (origin === 'mobile-menu') {
+            stopSearchReveal();
+            if (searchBody) gsap.set(searchBody, { opacity: 1 });
+          }
           searchDrawer.setAttribute('data-search-state', 'closing');
           searchDrawer.setAttribute('aria-hidden', 'true');
           if (searchBody) {
@@ -2155,7 +2214,11 @@
               ease: 'power1.out',
             });
           }
-          var reverseTargetDuration = reducedMotion ? 0 : 0.28;
+          var reverseTargetDuration = reducedMotion
+            ? 0
+            : origin === 'mobile-menu'
+              ? 0.4
+              : 0.28;
           var transferDuration = searchTransferTimeline.duration();
           searchTransferTimeline.timeScale(
             reverseTargetDuration && transferDuration > reverseTargetDuration

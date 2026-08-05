@@ -7,17 +7,23 @@
     logo        — image object from section settings
     shop_label  — text label for Shop toggle
     studio_label — text label for Studio toggle
+    bag_label   — cart label
+    show_cart   — whether cart entry points are enabled
     section_id  — parent section id
 {% endcomment %}
 
 {%- liquid
   assign cart_count = cart.item_count
+  assign cart_bag_label = bag_label
+  if cart_bag_label == blank
+    assign cart_bag_label = 'sections.v3_cart.bag' | t
+  endif
   if cart_count > 99
-    assign cart_bag_label = 'Bag (99+)'
+    assign cart_trigger_label = cart_bag_label | append: ' (99+)'
   elsif cart_count > 0
-    assign cart_bag_label = 'Bag (' | append: cart_count | append: ')'
+    assign cart_trigger_label = cart_bag_label | append: ' (' | append: cart_count | append: ')'
   else
-    assign cart_bag_label = 'Bag (0)'
+    assign cart_trigger_label = cart_bag_label
   endif
 -%}
 
@@ -698,18 +704,22 @@
             Search rewindskinco.com
           </span>
         </button>
-        <button
-          type='button'
-          class='v3-submenu__quick-pill'
-          data-submenu-bag
-        >
-          <span
-            class='v3-submenu__quick-text text-submenu-caption'
-            data-cart-quick-label
+        {%- if show_cart -%}
+          <a
+            href='{{ routes.cart_url }}'
+            class='v3-submenu__quick-pill'
+            data-submenu-bag
+            aria-controls='v3-cart-drawer'
+            aria-expanded='false'
           >
-            {{- cart_bag_label -}}
-          </span>
-        </button>
+            <span
+              class='v3-submenu__quick-text text-submenu-caption'
+              data-cart-quick-label
+            >
+              {{- cart_trigger_label | escape -}}
+            </span>
+          </a>
+        {%- endif -%}
       </div>
 
       {%- comment -%} UtilityLinks {%- endcomment -%}

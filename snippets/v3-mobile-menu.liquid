@@ -1,5 +1,5 @@
 {% comment %}
-  V3 Mobile Menu — full-screen frosted glass overlay (<SM)
+  V3 Mobile Menu — full-screen frosted glass overlay below SM.
   Rendered by v3-navigation section. Content is hardcoded for development;
   will be replaced with dynamic link_list loops when the site transitions.
 
@@ -10,17 +10,23 @@
     logo         — image object from section settings
     shop_label   — text label for Shop toggle
     studio_label — text label for Studio toggle
+    bag_label    — cart label
+    show_cart    — whether cart entry points are enabled
     section_id   — parent section id
 {% endcomment %}
 
 {%- liquid
   assign cart_count = cart.item_count
+  assign cart_bag_label = bag_label
+  if cart_bag_label == blank
+    assign cart_bag_label = 'sections.v3_cart.bag' | t
+  endif
   if cart_count > 99
-    assign cart_bag_label = 'Bag (99+)'
+    assign cart_trigger_label = cart_bag_label | append: ' (99+)'
   elsif cart_count > 0
-    assign cart_bag_label = 'Bag (' | append: cart_count | append: ')'
+    assign cart_trigger_label = cart_bag_label | append: ' (' | append: cart_count | append: ')'
   else
-    assign cart_bag_label = 'Bag (0)'
+    assign cart_trigger_label = cart_bag_label
   endif
 -%}
 
@@ -34,7 +40,12 @@
   aria-label='Mobile navigation'
 >
   {%- comment -%} Screen-reader announcement for context/level changes {%- endcomment -%}
-  <span class='sr-only' aria-live='polite' aria-atomic='true' data-mobile-menu-announce></span>
+  <span
+    class='sr-only'
+    aria-live='polite'
+    aria-atomic='true'
+    data-mobile-menu-announce
+  ></span>
 
   {%- comment -%} Panel (frosted glass surface) {%- endcomment -%}
   <div
@@ -90,7 +101,9 @@
         aria-label='Close menu'
       >
         <span class='v3-mobile-menu__close-circle'>
-          {%- render 'v3-icon-close', class: 'v3-mobile-menu__close-icon text-ink' -%}
+          {%- render 'v3-icon-close',
+            class: 'v3-mobile-menu__close-icon text-ink'
+          -%}
         </span>
       </button>
     </div>
@@ -132,66 +145,221 @@
       <div class='v3-mobile-menu__levels'>
         {%- comment -%} ── L1 views ── {%- endcomment -%}
         <div class='v3-mobile-menu__l1-view' data-mobile-menu-l1-view>
-
           {%- comment -%} Shop L1 {%- endcomment -%}
           <div class='v3-mobile-menu__l1' data-mobile-menu-context='shop'>
-            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Shop categories'>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-shop-skincare' class='v3-mobile-menu__l1-link' data-mobile-l1='skincare' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-shop-skincare'>
+            <div
+              class='v3-mobile-menu__subgroup'
+              role='group'
+              aria-label='Shop categories'
+            >
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-shop-skincare'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='skincare'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-shop-skincare'
+              >
                 <span class='text-submenu-l1'>Skincare</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <a href='/collections/bath-body-hair' class='v3-mobile-menu__l1-link text-submenu-l1'>Hair & Body</a>
-              <a href='/collections/all?filter.p.tag=Tools+and+Accessories' class='v3-mobile-menu__l1-link text-submenu-l1'>Tools & Accessories</a>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-shop-brands' class='v3-mobile-menu__l1-link' data-mobile-l1='brands' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-shop-brands'>
+              <a
+                href='/collections/bath-body-hair'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Hair & Body</a
+              >
+              <a
+                href='/collections/all?filter.p.tag=Tools+and+Accessories'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Tools & Accessories</a
+              >
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-shop-brands'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='brands'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-shop-brands'
+              >
                 <span class='text-submenu-l1'>Brands</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <a href='/collections/all' class='v3-mobile-menu__l1-link text-submenu-l1'>Shop All</a>
+              <a
+                href='/collections/all'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Shop All</a
+              >
             </div>
-            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Shop featured'>
-              <span class='v3-mobile-menu__subgroup-title text-submenu-caption' aria-hidden='true'>Featured</span>
-              <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l1-link text-submenu-l1'>Concierge</a>
-              <a href='/collections/bestsellers' class='v3-mobile-menu__l1-link text-submenu-l1'>Bestsellers</a>
-              <a href='/collections/subscribe-save' class='v3-mobile-menu__l1-link text-submenu-l1'>Subscribe & Save</a>
-              <a href='/collections/gifting' class='v3-mobile-menu__l1-link text-submenu-l1'>Gifting</a>
-              <a href='/collections/sales-offers' class='v3-mobile-menu__l1-link text-submenu-l1'>Sales & Offers</a>
+            <div
+              class='v3-mobile-menu__subgroup'
+              role='group'
+              aria-label='Shop featured'
+            >
+              <span
+                class='v3-mobile-menu__subgroup-title text-submenu-caption'
+                aria-hidden='true'
+                >Featured</span
+              >
+              <a
+                href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326'
+                target='_blank'
+                rel='noopener noreferrer'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Concierge</a
+              >
+              <a
+                href='/collections/bestsellers'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Bestsellers</a
+              >
+              <a
+                href='/collections/subscribe-save'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Subscribe & Save</a
+              >
+              <a
+                href='/collections/gifting'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Gifting</a
+              >
+              <a
+                href='/collections/sales-offers'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Sales & Offers</a
+              >
             </div>
           </div>
 
           {%- comment -%} Studio L1 {%- endcomment -%}
           <div class='v3-mobile-menu__l1' data-mobile-menu-context='studio'>
-            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Studio treatments'>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-facials' class='v3-mobile-menu__l1-link' data-mobile-l1='facials' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-facials'>
+            <div
+              class='v3-mobile-menu__subgroup'
+              role='group'
+              aria-label='Studio treatments'
+            >
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-studio-facials'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='facials'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-studio-facials'
+              >
                 <span class='text-submenu-l1'>Facials</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-body-contouring' class='v3-mobile-menu__l1-link' data-mobile-l1='body-contouring' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-body-contouring'>
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-studio-body-contouring'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='body-contouring'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-studio-body-contouring'
+              >
                 <span class='text-submenu-l1'>Body Contouring</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-hair-removal' class='v3-mobile-menu__l1-link' data-mobile-l1='hair-removal' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-hair-removal'>
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-studio-hair-removal'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='hair-removal'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-studio-hair-removal'
+              >
                 <span class='text-submenu-l1'>Hair Removal</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-injectables' class='v3-mobile-menu__l1-link' data-mobile-l1='injectables' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-injectables'>
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-studio-injectables'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='injectables'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-studio-injectables'
+              >
                 <span class='text-submenu-l1'>Injectables</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-skin-improvement' class='v3-mobile-menu__l1-link' data-mobile-l1='skin-improvement' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-skin-improvement'>
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-studio-skin-improvement'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='skin-improvement'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-studio-skin-improvement'
+              >
                 <span class='text-submenu-l1'>Skin Improvement</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <button type='button' id='v3-mobile-l1-{{ section_id }}-studio-skin-tightening' class='v3-mobile-menu__l1-link' data-mobile-l1='skin-tightening' data-has-l2 aria-expanded='false' aria-controls='v3-mobile-l2-{{ section_id }}-studio-skin-tightening'>
+              <button
+                type='button'
+                id='v3-mobile-l1-{{ section_id }}-studio-skin-tightening'
+                class='v3-mobile-menu__l1-link'
+                data-mobile-l1='skin-tightening'
+                data-has-l2
+                aria-expanded='false'
+                aria-controls='v3-mobile-l2-{{ section_id }}-studio-skin-tightening'
+              >
                 <span class='text-submenu-l1'>Skin Tightening</span>
-                <span class='v3-mobile-menu__chevron'>{%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}</span>
+                <span class='v3-mobile-menu__chevron'>
+                  {%- render 'v3-icon-chevron', direction: 'right', size: 7 -%}
+                </span>
               </button>
-              <a href='/pages/skin-treatments/?type=body-contouring' class='v3-mobile-menu__l1-link text-submenu-l1'>All Treatments</a>
+              <a
+                href='/pages/skin-treatments/?type=body-contouring'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >All Treatments</a
+              >
             </div>
-            <div class='v3-mobile-menu__subgroup' role='group' aria-label='Studio featured'>
-              <span class='v3-mobile-menu__subgroup-title text-submenu-caption' aria-hidden='true'>Featured</span>
-              <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l1-link text-submenu-l1'>Virtual Consult</a>
-              <a href='/collections/gifting' class='v3-mobile-menu__l1-link text-submenu-l1'>Gifting</a>
-              <a href='/pages/our-founder' class='v3-mobile-menu__l1-link text-submenu-l1'>Your Therapist</a>
+            <div
+              class='v3-mobile-menu__subgroup'
+              role='group'
+              aria-label='Studio featured'
+            >
+              <span
+                class='v3-mobile-menu__subgroup-title text-submenu-caption'
+                aria-hidden='true'
+                >Featured</span
+              >
+              <a
+                href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326'
+                target='_blank'
+                rel='noopener noreferrer'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Virtual Consult</a
+              >
+              <a
+                href='/collections/gifting'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Gifting</a
+              >
+              <a
+                href='/pages/our-founder'
+                class='v3-mobile-menu__l1-link text-submenu-l1'
+                >Your Therapist</a
+              >
             </div>
           </div>
         </div>
@@ -199,130 +367,452 @@
         {%- comment -%} ── L2 views (drill-in panels) ── {%- endcomment -%}
 
         {%- comment -%} Shop L2: Skincare {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-shop-skincare' class='v3-mobile-menu__l2' data-mobile-l2='skincare' data-mobile-l2-context='shop'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Shop'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-shop-skincare'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='skincare'
+          data-mobile-l2-context='shop'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Shop'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Skincare</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists' class='v3-mobile-menu__l2-link text-submenu-l1'>Cleansers</a>
-            <a href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists' class='v3-mobile-menu__l2-link text-submenu-l1'>Toners and Mists</a>
-            <a href='/collections/all?filter.p.tag=Creams_+Lotions+and+Moisturizers' class='v3-mobile-menu__l2-link text-submenu-l1'>Creams and Moisturizers</a>
-            <a href='/collections/all?filter.p.tag=Exfoliants' class='v3-mobile-menu__l2-link text-submenu-l1'>Exfoliants</a>
-            <a href='/collections/all?filter.p.tag=Eyes_+Lips+and+Neck' class='v3-mobile-menu__l2-link text-submenu-l1'>Eyes & Lips</a>
-            <a href='/collections/all?filter.p.tag=Masks+and+Treatments' class='v3-mobile-menu__l2-link text-submenu-l1'>Masks and Treatments</a>
-            <a href='/collections/all?filter.p.tag=Serums+and+Oils' class='v3-mobile-menu__l2-link text-submenu-l1'>Serums and Oils</a>
-            <a href='/collections/all?filter.p.tag=Suncare' class='v3-mobile-menu__l2-link text-submenu-l1'>Suncare</a>
-            <a href='/collections/all?filter.p.tag=Travel' class='v3-mobile-menu__l2-link text-submenu-l1'>Travel</a>
-            <a href='/collections/all' class='v3-mobile-menu__l2-link text-submenu-l1'>All Skincare</a>
+            <a
+              href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Cleansers</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Cleansers_+Toners+and+Mists'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Toners and Mists</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Creams_+Lotions+and+Moisturizers'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Creams and Moisturizers</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Exfoliants'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Exfoliants</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Eyes_+Lips+and+Neck'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Eyes & Lips</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Masks+and+Treatments'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Masks and Treatments</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Serums+and+Oils'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Serums and Oils</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Suncare'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Suncare</a
+            >
+            <a
+              href='/collections/all?filter.p.tag=Travel'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Travel</a
+            >
+            <a
+              href='/collections/all'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Skincare</a
+            >
           </div>
         </div>
 
         {%- comment -%} Shop L2: Brands {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-shop-brands' class='v3-mobile-menu__l2' data-mobile-l2='brands' data-mobile-l2-context='shop'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Shop'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-shop-brands'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='brands'
+          data-mobile-l2-context='shop'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Shop'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Brands</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='/collections/adipeau' class='v3-mobile-menu__l2-link text-submenu-l1'>Adipeau</a>
-            <a href='/collections/biologique-recherche' class='v3-mobile-menu__l2-link text-submenu-l1'>Biologique Recherche</a>
-            <a href='/collections/calecim-professional' class='v3-mobile-menu__l2-link text-submenu-l1'>Calecim Professional</a>
-            <a href='/collections/colorescience' class='v3-mobile-menu__l2-link text-submenu-l1'>Colorescience</a>
-            <a href='/collections/ecotao' class='v3-mobile-menu__l2-link text-submenu-l1'>Ecotao</a>
-            <a href='/collections/elta-md' class='v3-mobile-menu__l2-link text-submenu-l1'>Elta MD</a>
-            <a href='/collections/future-5-elements' class='v3-mobile-menu__l2-link text-submenu-l1'>Future 5 Elements</a>
-            <a href='/collections/loeuvre-de-beaute' class='v3-mobile-menu__l2-link text-submenu-l1'>L'oeuvre de Beaut&eacute;</a>
-            <a href='/collections/mansard' class='v3-mobile-menu__l2-link text-submenu-l1'>Laboratoires Mansard</a>
-            <a href='/collections/the-light-salon' class='v3-mobile-menu__l2-link text-submenu-l1'>The Light Salon</a>
-            <a href='/collections/manta' class='v3-mobile-menu__l2-link text-submenu-l1'>Manta</a>
-            <a href='/collections/monika-heiligmann' class='v3-mobile-menu__l2-link text-submenu-l1'>Monika Heiligmann</a>
-            <a href='/collections/nemat' class='v3-mobile-menu__l2-link text-submenu-l1'>Nemat</a>
-            <a href='/collections/nuface-microcurrent' class='v3-mobile-menu__l2-link text-submenu-l1'>NuFACE</a>
-            <a href='/collections/all' class='v3-mobile-menu__l2-link text-submenu-l1'>All Brands</a>
+            <a
+              href='/collections/adipeau'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Adipeau</a
+            >
+            <a
+              href='/collections/biologique-recherche'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Biologique Recherche</a
+            >
+            <a
+              href='/collections/calecim-professional'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Calecim Professional</a
+            >
+            <a
+              href='/collections/colorescience'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Colorescience</a
+            >
+            <a
+              href='/collections/ecotao'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Ecotao</a
+            >
+            <a
+              href='/collections/elta-md'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Elta MD</a
+            >
+            <a
+              href='/collections/future-5-elements'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Future 5 Elements</a
+            >
+            <a
+              href='/collections/loeuvre-de-beaute'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >L'oeuvre de Beaut&eacute;</a
+            >
+            <a
+              href='/collections/mansard'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Laboratoires Mansard</a
+            >
+            <a
+              href='/collections/the-light-salon'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >The Light Salon</a
+            >
+            <a
+              href='/collections/manta'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Manta</a
+            >
+            <a
+              href='/collections/monika-heiligmann'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Monika Heiligmann</a
+            >
+            <a
+              href='/collections/nemat'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Nemat</a
+            >
+            <a
+              href='/collections/nuface-microcurrent'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >NuFACE</a
+            >
+            <a
+              href='/collections/all'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Brands</a
+            >
           </div>
         </div>
 
         {%- comment -%} Studio L2: Facials {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-studio-facials' class='v3-mobile-menu__l2' data-mobile-l2='facials' data-mobile-l2-context='studio'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-studio-facials'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='facials'
+          data-mobile-l2-context='studio'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Studio'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Facials</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='https://rewindskinco-book.as.me/light-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Light Facial</a>
-            <a href='https://rewindskinco-book.as.me/essential-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Essential Facial</a>
-            <a href='https://rewindskinco-book.as.me/bespoke-advanced-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Bespoke Advanced Facial</a>
-            <a href='https://rewindskinco-book.as.me/ayas-touch-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Aya's Touch Facial</a>
-            <a href='https://rewindskinco-book.as.me/microcurrent-facial' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Microcurrent Facial</a>
-            <a href='https://rewindskinco-book.as.me/?appointmentType=category:FORMA™%20Skin%20Tightening' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Forma Facial</a>
-            <a href='/pages/skin-treatments/?type=facials' class='v3-mobile-menu__l2-link text-submenu-l1'>All Facials</a>
+            <a
+              href='https://rewindskinco-book.as.me/light-facial'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Light Facial</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/essential-facial'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Essential Facial</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/bespoke-advanced-facial'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Bespoke Advanced Facial</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/ayas-touch-facial'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Aya's Touch Facial</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/microcurrent-facial'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Microcurrent Facial</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/?appointmentType=category:FORMA™%20Skin%20Tightening'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Forma Facial</a
+            >
+            <a
+              href='/pages/skin-treatments/?type=facials'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Facials</a
+            >
           </div>
         </div>
 
         {%- comment -%} Studio L2: Body Contouring {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-studio-body-contouring' class='v3-mobile-menu__l2' data-mobile-l2='body-contouring' data-mobile-l2-context='studio'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-studio-body-contouring'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='body-contouring'
+          data-mobile-l2-context='studio'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Studio'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Body Contouring</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='https://rewindskinco-book.as.me/bodyfx' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>BodyFX</a>
-            <a href='https://rewindskinco-book.as.me/forma-plus' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Forma Plus</a>
-            <a href='/pages/skin-treatments?type=body-contouring' class='v3-mobile-menu__l2-link text-submenu-l1'>All Body Contouring</a>
+            <a
+              href='https://rewindskinco-book.as.me/bodyfx'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >BodyFX</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/forma-plus'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Forma Plus</a
+            >
+            <a
+              href='/pages/skin-treatments?type=body-contouring'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Body Contouring</a
+            >
           </div>
         </div>
 
         {%- comment -%} Studio L2: Hair Removal {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-studio-hair-removal' class='v3-mobile-menu__l2' data-mobile-l2='hair-removal' data-mobile-l2-context='studio'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-studio-hair-removal'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='hair-removal'
+          data-mobile-l2-context='studio'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Studio'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Hair Removal</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='https://rewindskinco-book.as.me/?appointmentType=category:DIOLAZE™%20Laser%20Hair%20Removal' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Diolaze</a>
-            <a href='/pages/skin-treatments?type=hair-removal' class='v3-mobile-menu__l2-link text-submenu-l1'>All Hair Removal</a>
+            <a
+              href='https://rewindskinco-book.as.me/?appointmentType=category:DIOLAZE™%20Laser%20Hair%20Removal'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Diolaze</a
+            >
+            <a
+              href='/pages/skin-treatments?type=hair-removal'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Hair Removal</a
+            >
           </div>
         </div>
 
         {%- comment -%} Studio L2: Injectables {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-studio-injectables' class='v3-mobile-menu__l2' data-mobile-l2='injectables' data-mobile-l2-context='studio'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-studio-injectables'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='injectables'
+          data-mobile-l2-context='studio'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Studio'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Injectables</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='https://rewindskinco-book.as.me/dermal-fillers' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Dermal Fillers</a>
-            <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Neuromodulators</a>
-            <a href='/pages/skin-treatments?type=injectables' class='v3-mobile-menu__l2-link text-submenu-l1'>All Injectables</a>
+            <a
+              href='https://rewindskinco-book.as.me/dermal-fillers'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Dermal Fillers</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/nurse-led-treatments'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Neuromodulators</a
+            >
+            <a
+              href='/pages/skin-treatments?type=injectables'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Injectables</a
+            >
           </div>
         </div>
 
         {%- comment -%} Studio L2: Skin Improvement {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-studio-skin-improvement' class='v3-mobile-menu__l2' data-mobile-l2='skin-improvement' data-mobile-l2-context='studio'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-studio-skin-improvement'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='skin-improvement'
+          data-mobile-l2-context='studio'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Studio'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Skin Improvement</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='https://rewindskinco-book.as.me/lumecca' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Lumecca IPL</a>
-            <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Morpheus8</a>
-            <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>SkinPen&reg;</a>
-            <a href='/pages/skin-treatments?type=skin-improvement' class='v3-mobile-menu__l2-link text-submenu-l1'>All Skin Improvement</a>
+            <a
+              href='https://rewindskinco-book.as.me/lumecca'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Lumecca IPL</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/nurse-led-treatments'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Morpheus8</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >SkinPen&reg;</a
+            >
+            <a
+              href='/pages/skin-treatments?type=skin-improvement'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Skin Improvement</a
+            >
           </div>
         </div>
 
         {%- comment -%} Studio L2: Skin Tightening {%- endcomment -%}
-        <div id='v3-mobile-l2-{{ section_id }}-studio-skin-tightening' class='v3-mobile-menu__l2' data-mobile-l2='skin-tightening' data-mobile-l2-context='studio'>
-          <button type='button' class='v3-mobile-menu__back' data-mobile-menu-back aria-label='Back to Studio'>
-            <span class='v3-mobile-menu__back-chevron'>{%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}</span>
+        <div
+          id='v3-mobile-l2-{{ section_id }}-studio-skin-tightening'
+          class='v3-mobile-menu__l2'
+          data-mobile-l2='skin-tightening'
+          data-mobile-l2-context='studio'
+        >
+          <button
+            type='button'
+            class='v3-mobile-menu__back'
+            data-mobile-menu-back
+            aria-label='Back to Studio'
+          >
+            <span class='v3-mobile-menu__back-chevron'>
+              {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
+            </span>
             <span class='text-submenu-caption'>Skin Tightening</span>
           </button>
           <div class='v3-mobile-menu__l2-links'>
-            <a href='https://rewindskinco-book.as.me/forma-plus' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Forma Plus</a>
-            <a href='https://rewindskinco-book.as.me/nurse-led-treatments' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>Morpheus8</a>
-            <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__l2-link text-submenu-l1'>SkinPen&reg;</a>
-            <a href='/pages/skin-treatments?type=skin-tightening' class='v3-mobile-menu__l2-link text-submenu-l1'>All Skin Tightening</a>
+            <a
+              href='https://rewindskinco-book.as.me/forma-plus'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Forma Plus</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/nurse-led-treatments'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >Morpheus8</a
+            >
+            <a
+              href='https://rewindskinco-book.as.me/schedule/4a0c3baa/?categories[]=SKINPEN™%20Microneedling'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >SkinPen&reg;</a
+            >
+            <a
+              href='/pages/skin-treatments?type=skin-tightening'
+              class='v3-mobile-menu__l2-link text-submenu-l1'
+              >All Skin Tightening</a
+            >
           </div>
         </div>
       </div>
@@ -340,29 +830,64 @@
             </span>
           </span>
         </button>
-        <button
-          type='button'
-          class='v3-mobile-menu__quick-btn'
-          data-mobile-menu-bag
-        >
-          <span class='v3-mobile-menu__quick-pill'>
-            <span class='v3-mobile-menu__quick-text text-submenu-caption' data-cart-quick-label>
-              {{- cart_bag_label -}}
+        {%- if show_cart -%}
+          <a
+            href='{{ routes.cart_url }}'
+            class='v3-mobile-menu__quick-btn'
+            data-mobile-menu-bag
+            aria-controls='v3-cart-drawer'
+            aria-expanded='false'
+          >
+            <span class='v3-mobile-menu__quick-pill'>
+              <span
+                class='v3-mobile-menu__quick-text text-submenu-caption'
+                data-cart-quick-label
+              >
+                {{- cart_trigger_label | escape -}}
+              </span>
             </span>
-          </span>
-        </button>
+          </a>
+        {%- endif -%}
       </div>
     </div>
 
     {%- comment -%} UtilityLinks {%- endcomment -%}
     <div class='v3-mobile-menu__utility'>
-      <div class='v3-mobile-menu__utility-links' data-mobile-menu-context='shop' role='group' aria-label='Shop support'>
-        <a href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}' class='v3-mobile-menu__utility-link text-submenu-utility'>Account</a>
-        <a href='/pages/shipping-returns' class='v3-mobile-menu__utility-link text-submenu-utility'>Shipping & Returns</a>
+      <div
+        class='v3-mobile-menu__utility-links'
+        data-mobile-menu-context='shop'
+        role='group'
+        aria-label='Shop support'
+      >
+        <a
+          href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
+          class='v3-mobile-menu__utility-link text-submenu-utility'
+          >Account</a
+        >
+        <a
+          href='/pages/shipping-returns'
+          class='v3-mobile-menu__utility-link text-submenu-utility'
+          >Shipping & Returns</a
+        >
       </div>
-      <div class='v3-mobile-menu__utility-links' data-mobile-menu-context='studio' role='group' aria-label='Studio support'>
-        <a href='https://rewindskinco-book.as.me/schedule/4a0c3baa' target='_blank' rel='noopener noreferrer' class='v3-mobile-menu__utility-link text-submenu-utility'>Manage Appointments</a>
-        <a href='/pages/skin-treatments/?type=body-contouring#faq' class='v3-mobile-menu__utility-link text-submenu-utility'>FAQ</a>
+      <div
+        class='v3-mobile-menu__utility-links'
+        data-mobile-menu-context='studio'
+        role='group'
+        aria-label='Studio support'
+      >
+        <a
+          href='https://rewindskinco-book.as.me/schedule/4a0c3baa'
+          target='_blank'
+          rel='noopener noreferrer'
+          class='v3-mobile-menu__utility-link text-submenu-utility'
+          >Manage Appointments</a
+        >
+        <a
+          href='/pages/skin-treatments/?type=body-contouring#faq'
+          class='v3-mobile-menu__utility-link text-submenu-utility'
+          >FAQ</a
+        >
       </div>
     </div>
   </div>
@@ -564,7 +1089,8 @@
     transition: opacity 250ms ease-out 300ms;
   }
   .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__heading,
-  .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__toggle-wrap,
+  .v3-mobile-menu[data-mobile-menu-state='closing']
+    .v3-mobile-menu__toggle-wrap,
   .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__nav,
   .v3-mobile-menu[data-mobile-menu-state='closing'] .v3-mobile-menu__utility {
     opacity: 0;
@@ -836,12 +1362,16 @@
   }
 
   /* ═══ CONTEXT VISIBILITY ═══ */
-  .v3-mobile-menu[data-mobile-menu-context='shop'] [data-mobile-menu-context='studio'],
-  .v3-mobile-menu[data-mobile-menu-context='studio'] [data-mobile-menu-context='shop'] {
+  .v3-mobile-menu[data-mobile-menu-context='shop']
+    [data-mobile-menu-context='studio'],
+  .v3-mobile-menu[data-mobile-menu-context='studio']
+    [data-mobile-menu-context='shop'] {
     display: none;
   }
-  .v3-mobile-menu[data-mobile-menu-context='shop'] [data-mobile-l2-context='studio'],
-  .v3-mobile-menu[data-mobile-menu-context='studio'] [data-mobile-l2-context='shop'] {
+  .v3-mobile-menu[data-mobile-menu-context='shop']
+    [data-mobile-l2-context='studio'],
+  .v3-mobile-menu[data-mobile-menu-context='studio']
+    [data-mobile-l2-context='shop'] {
     display: none;
   }
 

@@ -22,9 +22,9 @@
   endif
 
   if item.selling_plan_allocation != blank
-    assign feature_badge = 'Subscription'
+    assign feature_badge = 'sections.v3_cart.subscription' | t
   elsif is_on_sale
-    assign feature_badge = 'Sale'
+    assign feature_badge = 'sections.v3_cart.sale' | t
   endif
 
   assign quantity_less = item.quantity | minus: 1
@@ -117,15 +117,20 @@
           class='v3-cart__quantity-button text-cart-quantity'
           data-cart-quantity-change
           data-cart-action='decrease'
-          aria-label='Decrease quantity of {{ display_title | escape }}'
+          aria-label='{{ 'sections.v3_cart.decrease_quantity' | t: title: display_title | escape }}'
         >
           <span aria-hidden='true'>−</span>
         </button>
         <output
           class='v3-cart__quantity-value text-cart-quantity'
-          aria-label='Quantity'
+          aria-label='{{ 'sections.v3_cart.quantity' | t | escape }}'
         >
-          {{- item.quantity -}}
+          <span data-cart-quantity-value>{{ item.quantity }}</span>
+          <span
+            class='v3-cart__line-loader'
+            data-cart-quantity-loader
+            aria-hidden='true'
+          ></span>
         </output>
         <button
           type='submit'
@@ -134,7 +139,7 @@
           class='v3-cart__quantity-button text-cart-quantity'
           data-cart-quantity-change
           data-cart-action='increase'
-          aria-label='Increase quantity of {{ display_title | escape }}'
+          aria-label='{{ 'sections.v3_cart.increase_quantity' | t: title: display_title | escape }}'
         >
           <span aria-hidden='true'>+</span>
         </button>
@@ -145,7 +150,12 @@
         class='v3-cart__remove text-cart-small'
         data-cart-remove
       >
-        Remove
+        <span data-cart-remove-label>{{ 'sections.v3_cart.remove' | t }}</span>
+        <span
+          class='v3-cart__line-loader'
+          data-cart-remove-loader
+          aria-hidden='true'
+        ></span>
       </a>
     </div>
   </div>

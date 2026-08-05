@@ -1,36 +1,41 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = {
-    mode: 'development',
+module.exports = (_env, argv = {}) => {
+  const isProduction = argv.mode === 'production';
+
+  return {
+    mode: isProduction ? 'production' : 'development',
+    devtool: isProduction ? false : 'eval',
     entry: {
-        global: './src/global.js',
+      global: './src/global.js',
     },
     output: {
-        filename: '[name].js',
-        path: path.resolve(__dirname, 'assets'),
+      filename: '[name].js',
+      path: path.resolve(__dirname, 'assets'),
     },
     module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env'],
-                    },
-                },
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
             },
-            {
-                test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader'],
-            },
-        ],
+          },
+        },
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        },
+      ],
     },
     plugins: [
-        new MiniCssExtractPlugin({
-            filename: '[name].css', // This will create global.css
-        }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+      }),
     ],
+  };
 };

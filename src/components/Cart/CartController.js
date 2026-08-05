@@ -7,6 +7,25 @@ const CART_TRIGGER_SELECTOR = [
   '[data-submenu-bag]',
   '[data-mobile-menu-bag]',
 ].join(',');
+const DEFAULT_CART_COPY = Object.freeze({
+  item: 'item',
+  items: 'items',
+  adding: 'Adding…',
+  addingAria: 'Adding item to bag',
+  quantityUpdated: 'Quantity updated to __quantity__.',
+  removed: 'Item removed from your bag.',
+  added: 'Item added to your bag.',
+  updateError: 'We could not update your bag.',
+  updateConnectionError:
+    'We could not update your bag. Check your connection and try again.',
+  addError: 'We could not add this item to your bag.',
+  addConnectionError:
+    'We could not add this item to your bag. Check your connection and try again.',
+  refreshUpdatedError:
+    'Your bag was updated, but it could not be refreshed. Reload the page to see the latest items.',
+  refreshAddedError:
+    'The item was added, but your bag could not be refreshed. Reload the page to see the latest items.',
+});
 const FOCUSABLE_SELECTOR = [
   'a[href]:not([tabindex="-1"])',
   'button:not([disabled]):not([tabindex="-1"])',
@@ -14,13 +33,16 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 const ADD_FEEDBACK_DELAY = 150;
+const DRAWER_FEEDBACK_DELAY = 150;
 const FALLBACK_ADD_ERROR_SELECTOR = '[data-cart-global-error]';
 const MODAL_OWNER = 'cart';
+const MOBILE_BREAKPOINT = 768;
 
 let openTrigger = null;
 let closeTimer = null;
 let cartRevealTimeline = null;
 let cartEmptyMorph = null;
+let cartBackdropTransfer = null;
 let mutationQueue = Promise.resolve();
 const submitFeedbackRecords = new WeakMap();
 const drawerBusyOperations = new Set();
@@ -29,6 +51,30 @@ const navigationBadgeTimelines = new WeakMap();
 
 function getDrawer() {
   return document.querySelector(DRAWER_SELECTOR);
+}
+
+function getCartCopy() {
+  const source = getDrawer()?.querySelector('[data-cart-copy]');
+  if (!source) return DEFAULT_CART_COPY;
+
+  try {
+    return { ...DEFAULT_CART_COPY, ...JSON.parse(source.textContent) };
+  } catch {
+    return DEFAULT_CART_COPY;
+  }
+}
+
+function getBagLabel() {
+  return getDrawer()?.dataset.cartLabel?.trim() || 'Bag';
+}
+
+function formatCartCopy(key, replacements = {}) {
+  const copy = getCartCopy();
+  return Object.entries(replacements).reduce(
+    (message, [token, value]) =>
+      message.replaceAll(`__${token}__`, String(value)),
+    copy[key] || DEFAULT_CART_COPY[key] || ''
+  );
 }
 
 function createFallbackModalCoordinator() {
@@ -181,6 +227,180 @@ function closeCompetingDrawers() {
   selectors.forEach((selector) => {
     document.querySelector(selector)?.click();
   });
+}
+
+function getMobileMenuCartContext(trigger) {
+  if (
+    !(trigger instanceof HTMLElement) ||
+    window.innerWidth >= MOBILE_BREAKPOINT
+  ) {
+    return null;
+  }
+
+  const mobileMenu = trigger.closest(
+    '[data-mobile-menu][data-mobile-menu-state="open"]'
+  );
+  const mobilePanel = mobileMenu?.querySelector('.v3-mobile-menu__panel');
+  const mobileClose = mobileMenu?.querySelector('[data-mobile-menu-close]');
+  if (!mobileMenu || !mobilePanel || !mobileClose) return null;
+
+  return {
+    mobileMenu,
+    mobilePanel,
+    mobileClose,
+    content: [
+      mobileMenu.querySelector('.v3-mobile-menu__heading'),
+      mobileMenu.querySelector('.v3-mobile-menu__toggle-wrap'),
+      mobileMenu.querySelector('.v3-mobile-menu__nav'),
+      mobileMenu.querySelector('.v3-mobile-menu__utility'),
+    ].filter(Boolean),
+  };
+}
+
+function prepareCartBackdropTransfer(mobilePanel) {
+  const panelRect = mobilePanel.getBoundingClientRect();
+  const panelStyles = window.getComputedStyle(mobilePanel);
+  const backdrop = document.querySelector('[data-v3-modal-backdrop]');
+  if (!backdrop) return null;
+
+  const backdropStyles = window.getComputedStyle(backdrop);
+  const viewportWidth = document.documentElement.clientWidth;
+  const viewportHeight = window.innerHeight;
+  const clip = [
+    Math.max(0, panelRect.top),
+    Math.max(0, viewportWidth - panelRect.right),
+    Math.max(0, viewportHeight - panelRect.bottom),
+    Math.max(0, panelRect.left),
+  ];
+
+  gsap.set(backdrop, {
+    clipPath: `inset(${clip.join('px ')}px round ${panelStyles.borderRadius})`,
+    backgroundColor: panelStyles.backgroundColor,
+    backdropFilter: panelStyles.backdropFilter,
+    webkitBackdropFilter: panelStyles.webkitBackdropFilter,
+    opacity: 0,
+    transition: 'none',
+    willChange: 'clip-path, background-color, backdrop-filter',
+  });
+
+  return {
+    backdrop,
+    backdropBackground: backdropStyles.backgroundColor,
+    backdropFilter: backdropStyles.backdropFilter,
+    backdropWebkitFilter: backdropStyles.webkitBackdropFilter,
+  };
+}
+
+function clearCartBackdropTransfer({ preserveBackdrop = false } = {}) {
+  if (!cartBackdropTransfer) return;
+
+  const { timeline, backdrop, mobileMenu, mobilePanel, content } =
+    cartBackdropTransfer;
+
+  if (!preserveBackdrop) timeline?.kill();
+  gsap.killTweensOf([mobilePanel, ...content]);
+  gsap.set(mobilePanel, { clearProps: 'opacity' });
+  gsap.set(content, { clearProps: 'opacity' });
+  mobileMenu.removeAttribute('data-drawer-transfer');
+
+  if (preserveBackdrop) {
+    cartBackdropTransfer.timeline = null;
+    return;
+  }
+
+  gsap.killTweensOf(backdrop);
+  gsap.set(backdrop, {
+    clearProps:
+      'opacity,clipPath,backgroundColor,backdropFilter,webkitBackdropFilter,transition,willChange',
+  });
+  cartBackdropTransfer = null;
+}
+
+function transferMobileMenuToCart(trigger, drawer, context, revealLineKeys) {
+  const reducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
+
+  openTrigger = getReturnFocusTarget(trigger);
+
+  const openCart = () => {
+    context.mobileClose.click();
+    drawer.dataset.cartState = 'open';
+    drawer.setAttribute('aria-hidden', 'false');
+    syncTriggerExpansion(true);
+    modalCoordinator.acquire(MODAL_OWNER, drawer, { useBackdrop: true });
+    syncDrawerBusy(drawer);
+    playCartReveal(drawer, revealLineKeys, 0.3);
+    focusReplacement(drawer, '[data-cart-close]');
+  };
+
+  if (reducedMotion) {
+    openCart();
+    return;
+  }
+
+  const backdropTransfer = prepareCartBackdropTransfer(context.mobilePanel);
+  if (!backdropTransfer) {
+    openCart();
+    return;
+  }
+
+  const { backdrop, backdropBackground, backdropFilter, backdropWebkitFilter } =
+    backdropTransfer;
+
+  context.mobileMenu.setAttribute('data-drawer-transfer', '');
+  gsap.killTweensOf([context.mobilePanel, ...context.content]);
+  gsap.set(context.content, { opacity: 1 });
+
+  const timeline = gsap.timeline({
+    paused: true,
+    defaults: { ease: 'power1.out' },
+    onComplete: () => clearCartBackdropTransfer({ preserveBackdrop: true }),
+  });
+
+  cartBackdropTransfer = {
+    timeline,
+    backdrop,
+    ...context,
+  };
+
+  timeline.to(
+    context.content,
+    {
+      opacity: 0,
+      duration: 0.15,
+    },
+    0
+  );
+  timeline.call(
+    () => {
+      gsap.set(backdrop, { opacity: 1 });
+      gsap.set(context.mobilePanel, { opacity: 0 });
+    },
+    null,
+    0.12
+  );
+  timeline.to(
+    backdrop,
+    {
+      clipPath: 'inset(0px round 0px)',
+      backgroundColor: backdropBackground,
+      backdropFilter,
+      webkitBackdropFilter: backdropWebkitFilter,
+      duration: 0.3,
+      ease: 'power2.inOut',
+    },
+    0.12
+  );
+  timeline.call(
+    () => {
+      openCart();
+    },
+    null,
+    0.29
+  );
+
+  timeline.play(0);
 }
 
 function enqueueMutation(operation) {
@@ -398,7 +618,7 @@ function playCartEmptyMorph(currentDrawer, nextDrawer) {
 }
 
 function getCartTriggers() {
-  return Array.from(document.querySelectorAll(NAV_TRIGGER_SELECTOR));
+  return Array.from(document.querySelectorAll(CART_TRIGGER_SELECTOR));
 }
 
 function isFocusable(element, { excludeDrawer = false } = {}) {
@@ -671,6 +891,8 @@ function updateMobileNavigationBadge(badge, itemCount) {
 
 function updateNavigationCount(itemCount) {
   const displayCount = itemCount > 99 ? '99+' : String(itemCount);
+  const bagLabel = getBagLabel();
+  const cartCopy = getCartCopy();
 
   document.querySelectorAll('[data-nav-cart-count]').forEach((count) => {
     updateWrittenNavigationCount(count, displayCount, itemCount);
@@ -681,14 +903,21 @@ function updateNavigationCount(itemCount) {
   });
 
   document.querySelectorAll('[data-cart-quick-label]').forEach((label) => {
-    label.textContent = `Bag (${displayCount})`;
+    label.textContent =
+      itemCount > 0 ? `${bagLabel} (${displayCount})` : bagLabel;
   });
 
-  document.querySelectorAll(NAV_TRIGGER_SELECTOR).forEach((trigger) => {
+  document.querySelectorAll('[data-nav-cart-label]').forEach((label) => {
+    label.textContent = bagLabel;
+  });
+
+  getCartTriggers().forEach((trigger) => {
     const label =
       itemCount > 0
-        ? `Bag, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`
-        : 'Bag';
+        ? `${bagLabel}, ${itemCount} ${
+            itemCount === 1 ? cartCopy.item : cartCopy.items
+          }`
+        : bagLabel;
     trigger.setAttribute('aria-label', label);
   });
 }
@@ -804,7 +1033,7 @@ function beginSubmitFeedback(submitter) {
   status.className = 'cart-submit-status';
   status.dataset.cartSubmitStatus = '';
   status.setAttribute('aria-hidden', 'true');
-  status.textContent = 'Adding\u2026';
+  status.textContent = getCartCopy().adding;
 
   const directTextNodes = Array.from(submitter.childNodes).filter(
     (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim()
@@ -829,7 +1058,7 @@ function beginSubmitFeedback(submitter) {
   submitter.append(status);
   submitter.disabled = true;
   submitter.setAttribute('aria-busy', 'true');
-  submitter.setAttribute('aria-label', 'Adding item to bag');
+  submitter.setAttribute('aria-label', getCartCopy().addingAria);
   submitter.removeAttribute('aria-labelledby');
   submitter.dataset.cartSubmitState = 'loading';
 
@@ -890,6 +1119,17 @@ function syncDrawerBusy(drawer = getDrawer()) {
   const dialog = drawer.querySelector('[data-cart-dialog]');
   dialog?.setAttribute('aria-busy', String(isBusy));
 
+  drawer.querySelectorAll('[data-cart-line-progress]').forEach((line) => {
+    line.removeAttribute('data-cart-line-progress');
+  });
+  drawerBusyOperations.forEach((operation) => {
+    if (!operation.progressVisible || !operation.lineKey) return;
+    const line = drawer.querySelector(
+      `[data-line-key="${CSS.escape(operation.lineKey)}"]`
+    );
+    line?.setAttribute('data-cart-line-progress', operation.type);
+  });
+
   const controls = drawer.querySelectorAll(
     '[data-cart-quantity-change], [data-cart-remove], [name="checkout"]'
   );
@@ -903,15 +1143,25 @@ function syncDrawerBusy(drawer = getDrawer()) {
   });
 }
 
-function beginDrawerBusy() {
-  const token = Symbol('cart-mutation');
-  drawerBusyOperations.add(token);
+function beginDrawerBusy(lineKey, type) {
+  const operation = {
+    lineKey,
+    type,
+    progressVisible: false,
+    timer: null,
+  };
+  operation.timer = window.setTimeout(() => {
+    operation.progressVisible = true;
+    syncDrawerBusy();
+  }, DRAWER_FEEDBACK_DELAY);
+  drawerBusyOperations.add(operation);
   syncDrawerBusy();
-  return token;
+  return operation;
 }
 
-function endDrawerBusy(token) {
-  drawerBusyOperations.delete(token);
+function endDrawerBusy(operation) {
+  window.clearTimeout(operation.timer);
+  drawerBusyOperations.delete(operation);
   syncDrawerBusy();
 }
 
@@ -959,7 +1209,19 @@ function getReplacementFocusSelector(drawer, preferredSelector) {
 function focusReplacement(drawer, selector) {
   const target =
     drawer.querySelector(selector) || drawer.querySelector('[data-cart-close]');
-  if (isFocusable(target)) target.focus({ preventScroll: true });
+  if (isFocusable(target)) {
+    target.focus({ preventScroll: true });
+  }
+
+  window.requestAnimationFrame(() => {
+    if (
+      drawer.dataset.cartState === 'open' &&
+      !drawer.contains(document.activeElement) &&
+      isFocusable(target)
+    ) {
+      target.focus({ preventScroll: true });
+    }
+  });
 }
 
 async function applyRenderedSection(
@@ -1109,12 +1371,10 @@ async function requestCartChange(lineKey, quantity) {
         sections_url: `${window.location.pathname}${window.location.search}`,
       }),
     });
-    return parseCartResponse(response, 'We could not update your bag.');
+    return parseCartResponse(response, getCartCopy().updateError);
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error(
-        'We could not update your bag. Check your connection and try again.'
-      );
+      throw new Error(getCartCopy().updateConnectionError);
     }
     throw error;
   }
@@ -1130,15 +1390,10 @@ async function requestAddToCart(formData) {
       },
       body: formData,
     });
-    return parseCartResponse(
-      response,
-      'We could not add this item to your bag.'
-    );
+    return parseCartResponse(response, getCartCopy().addError);
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error(
-        'We could not add this item to your bag. Check your connection and try again.'
-      );
+      throw new Error(getCartCopy().addConnectionError);
     }
     throw error;
   }
@@ -1204,11 +1459,24 @@ function waitForClosedDrawerFrame() {
 
 export function openCartDrawer(trigger = null, { revealLineKeys = null } = {}) {
   const drawer = getDrawer();
-  if (!drawer || drawer.dataset.cartState === 'open') return;
+  if (!drawer || drawer.dataset.cartState === 'open' || cartBackdropTransfer) {
+    return;
+  }
 
   if (closeTimer) {
     window.clearTimeout(closeTimer);
     closeTimer = null;
+  }
+
+  const mobileMenuContext = getMobileMenuCartContext(trigger);
+  if (mobileMenuContext) {
+    transferMobileMenuToCart(
+      trigger,
+      drawer,
+      mobileMenuContext,
+      revealLineKeys
+    );
+    return;
   }
 
   closeCompetingDrawers();
@@ -1226,6 +1494,7 @@ export function closeCartDrawer({ restoreFocus = true } = {}) {
   const drawer = getDrawer();
   if (!drawer || drawer.dataset.cartState !== 'open') return;
 
+  clearCartBackdropTransfer();
   stopCartReveal(drawer);
   drawer.dataset.cartState = 'closing';
   syncTriggerExpansion(false);
@@ -1254,7 +1523,10 @@ export async function changeCartLine(
   { focusAction = '', source = 'drawer' } = {}
 ) {
   clearError();
-  const busyToken = beginDrawerBusy();
+  const busyOperation = beginDrawerBusy(
+    lineKey,
+    quantity > 0 ? 'quantity' : 'remove'
+  );
   let completedFocusTarget = null;
 
   return enqueueMutation(async () => {
@@ -1274,17 +1546,15 @@ export async function changeCartLine(
 
       const message =
         quantity > 0
-          ? `Quantity updated to ${quantity}.`
-          : 'Item removed from your bag.';
+          ? formatCartCopy('quantityUpdated', { quantity })
+          : getCartCopy().removed;
       const rendered = await renderCartResponse(response, {
         focusTarget,
         revealLineKeys: quantity > 0 ? [lineKey] : [],
       });
       if (!rendered) {
         dispatchCartUpdated(response, source, message);
-        throw new Error(
-          'Your bag was updated, but it could not be refreshed. Reload the page to see the latest items.'
-        );
+        throw new Error(getCartCopy().refreshUpdatedError);
       }
 
       completedFocusTarget = focusTarget;
@@ -1296,7 +1566,7 @@ export async function changeCartLine(
       announce(error.message);
       throw error;
     } finally {
-      endDrawerBusy(busyToken);
+      endDrawerBusy(busyOperation);
       const drawer = getDrawer();
       if (completedFocusTarget && drawer?.dataset.cartState === 'open') {
         focusReplacement(drawer, completedFocusTarget);
@@ -1339,14 +1609,12 @@ function addProductForm(form, submitter) {
   return enqueueMutation(async () => {
     try {
       const response = await requestAddToCart(formData);
-      const message = 'Item added to your bag.';
+      const message = getCartCopy().added;
       const revealLineKeys = getAddedLineKeys(response);
       const rendered = await renderCartResponse(response, { revealLineKeys });
       if (!rendered) {
         dispatchCartUpdated(response, 'add', message);
-        throw new Error(
-          'The item was added, but your bag could not be refreshed. Reload the page to see the latest items.'
-        );
+        throw new Error(getCartCopy().refreshAddedError);
       }
 
       dispatchCartUpdated(response, 'add', message);
@@ -1407,9 +1675,11 @@ function handleClick(event) {
   }
 
   const remove = event.target.closest('[data-cart-remove]');
-  if (!remove || remove.getAttribute('aria-disabled') === 'true') return;
+  if (!remove) return;
 
   event.preventDefault();
+  if (remove.getAttribute('aria-disabled') === 'true') return;
+
   const line = remove.closest('[data-cart-line]');
   const lineKey = line?.dataset.lineKey;
   if (!lineKey) return;
@@ -1464,11 +1734,15 @@ function resetOnPageLifecycle() {
 
   const drawer = getDrawer();
   if (drawer) {
+    clearCartBackdropTransfer();
     stopCartReveal(drawer);
     stopCartEmptyMorph();
     drawer.dataset.cartState = 'closed';
     drawer.setAttribute('aria-hidden', 'true');
   }
+  drawerBusyOperations.forEach((operation) => {
+    window.clearTimeout(operation.timer);
+  });
   drawerBusyOperations.clear();
   syncDrawerBusy(drawer);
   syncTriggerExpansion(false);
@@ -1479,6 +1753,10 @@ function resetOnPageLifecycle() {
 const CartController = () => {
   if (!getDrawer()) return;
 
+  const initialCount = Number(
+    getDrawer()?.querySelector('[data-cart-count]')?.textContent.trim() || 0
+  );
+  updateNavigationCount(initialCount);
   document.addEventListener('submit', handleSubmit);
   document.addEventListener('click', handleClick);
   document.addEventListener('keydown', handleKeydown);
