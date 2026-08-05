@@ -316,6 +316,25 @@
         "refresh_added": "The item was added, but your bag could not be refreshed. Reload the page to see the latest items."
       }
     },
+    "v3_navigation": {
+      "main_navigation": "Main navigation",
+      "mobile_navigation": "Mobile navigation",
+      "submenu": "Sub-navigation",
+      "navigation_menu": "Navigation menu",
+      "navigation_context": "Navigation context",
+      "search": "Search",
+      "search_site": "Search rewindskinco.com",
+      "wishlist": "Wishlist",
+      "account": "Account",
+      "open_menu": "Open menu",
+      "close_menu": "Close menu",
+      "featured": "Featured",
+      "context_categories": "{{ context }} categories",
+      "context_featured": "{{ context }} featured",
+      "context_treatments": "{{ context }} treatments",
+      "context_support": "{{ context }} support",
+      "back_to_context": "Back to {{ context }}"
+    },
     "footer": {
       "payment": "Payment methods"
     },

@@ -3,6 +3,13 @@
   Two layouts: desktop (SM and above) and mobile (below SM).
   Desktop: Logotype | PriorityLinks (Shop/Studio toggle + Search pill) | SupportingLinks
   Mobile: Logotype | Triggers (Search + Cart + Hamburger)
+
+  Dynamic menu contract (settings are intentionally dormant for now):
+  - Desktop and mobile share Shop/Studio main, featured, and utility menus.
+  - Main menu top-level links are L1; their children are L2.
+  - L1 links with children are disclosures and ignore their own URL.
+  - Featured and utility menus are flat.
+  - External destinations open in a new tab with noopener/noreferrer.
 {% endcomment %}
 
 {%- liquid
@@ -26,7 +33,7 @@
 
 <nav
   class='v3-nav bg-bg'
-  aria-label='Main navigation'
+  aria-label='{{ 'sections.v3_navigation.main_navigation' | t | escape }}'
   data-section-id='{{ section.id }}'
   data-nav-context='shop'
 >
@@ -88,7 +95,7 @@
         <div
           class='bg-rest rounded-pill relative flex items-center gap-[4px] p-[4px]'
           role='group'
-          aria-label='Navigation context'
+          aria-label='{{ 'sections.v3_navigation.navigation_context' | t | escape }}'
           data-nav-paths
         >
           <span
@@ -120,14 +127,14 @@
           <button
             type='button'
             class='v3-nav__search-pill bg-rest rounded-pill flex h-[38px] items-center gap-[8px] pr-[5px] pl-[18px] transition-colors duration-150 ease-out lg:h-[40px] lg:pr-[6px]'
-            aria-label='Search'
+            aria-label='{{ 'sections.v3_navigation.search' | t | escape }}'
             aria-expanded='false'
             aria-controls='v3-search-drawer-{{ section.id }}'
             data-nav-search
           >
-            <span class='text-nav-label font-base text-ink tracking-tight transition-colors duration-150 ease-out'
-              >Search</span
-            >
+            <span class='text-nav-label font-base text-ink tracking-tight transition-colors duration-150 ease-out'>
+              {{- 'sections.v3_navigation.search' | t -}}
+            </span>
             <span class='bg-hover rounded-pill flex h-[28px] w-[28px] items-center justify-center transition-colors duration-150 ease-out'>
               {%- render 'v3-icon-search',
                 size: 11,
@@ -174,7 +181,7 @@
           class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
           data-nav-wishlist
         >
-          Wishlist
+          {{ 'sections.v3_navigation.wishlist' | t }}
         </button>
       {%- endif -%}
 
@@ -183,7 +190,7 @@
           href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
           class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
         >
-          Account
+          {{ 'sections.v3_navigation.account' | t }}
         </a>
       {%- endif -%}
     </div>
@@ -243,7 +250,7 @@
         <button
           type='button'
           class='text-ink flex h-[44px] w-[32px] items-center justify-center transition-colors duration-150 ease-out'
-          aria-label='Search'
+          aria-label='{{ 'sections.v3_navigation.search' | t | escape }}'
           aria-expanded='false'
           aria-controls='v3-search-drawer-{{ section.id }}'
           data-nav-search-mobile
@@ -307,7 +314,7 @@
       <button
         type='button'
         class='v3-nav__hamburger xs:px-[16px] bg-rest rounded-pill flex h-[32px] items-center justify-center px-[15px] transition-colors duration-150 ease-out'
-        aria-label='Open menu'
+        aria-label='{{ 'sections.v3_navigation.open_menu' | t | escape }}'
         aria-expanded='false'
         aria-controls='v3-mobile-menu-{{ section.id }}'
         data-nav-hamburger
@@ -349,8 +356,16 @@
   logo: section.settings.logo,
   shop_label: section.settings.shop_label,
   studio_label: section.settings.studio_label,
+  shop_menu: section.settings.shop_menu,
+  shop_featured_menu: section.settings.shop_featured_menu,
+  shop_utility_menu: section.settings.shop_utility_menu,
+  studio_menu: section.settings.studio_menu,
+  studio_featured_menu: section.settings.studio_featured_menu,
+  studio_utility_menu: section.settings.studio_utility_menu,
   bag_label: cart_bag_label,
+  show_search: section.settings.show_search,
   show_cart: section.settings.show_cart,
+  show_account: section.settings.show_account,
   section_id: section.id
 -%}
 
@@ -365,8 +380,16 @@
   logo: section.settings.logo,
   shop_label: section.settings.shop_label,
   studio_label: section.settings.studio_label,
+  shop_menu: section.settings.shop_menu,
+  shop_featured_menu: section.settings.shop_featured_menu,
+  shop_utility_menu: section.settings.shop_utility_menu,
+  studio_menu: section.settings.studio_menu,
+  studio_featured_menu: section.settings.studio_featured_menu,
+  studio_utility_menu: section.settings.studio_utility_menu,
   bag_label: cart_bag_label,
+  show_search: section.settings.show_search,
   show_cart: section.settings.show_cart,
+  show_account: section.settings.show_account,
   section_id: section.id
 -%}
 
@@ -4146,16 +4169,48 @@
       "default": "Studio"
     },
     {
+      "type": "header",
+      "content": "Shop menus"
+    },
+    {
       "type": "link_list",
       "id": "shop_menu",
-      "label": "Shop menu",
-      "info": "Links shown when Shop context is active"
+      "label": "Shop main menu",
+      "info": "Reserved for dynamic navigation. Supports up to 8 top-level links and 16 child links per parent."
+    },
+    {
+      "type": "link_list",
+      "id": "shop_featured_menu",
+      "label": "Shop featured menu",
+      "info": "Reserved for dynamic navigation. Use a flat menu with up to 5 links."
+    },
+    {
+      "type": "link_list",
+      "id": "shop_utility_menu",
+      "label": "Shop utility menu",
+      "info": "Reserved for dynamic navigation. Use a flat menu with up to 3 links."
+    },
+    {
+      "type": "header",
+      "content": "Studio menus"
     },
     {
       "type": "link_list",
       "id": "studio_menu",
-      "label": "Studio menu",
-      "info": "Links shown when Studio context is active"
+      "label": "Studio main menu",
+      "info": "Reserved for dynamic navigation. Supports up to 8 top-level links and 16 child links per parent."
+    },
+    {
+      "type": "link_list",
+      "id": "studio_featured_menu",
+      "label": "Studio featured menu",
+      "info": "Reserved for dynamic navigation. Use a flat menu with up to 5 links."
+    },
+    {
+      "type": "link_list",
+      "id": "studio_utility_menu",
+      "label": "Studio utility menu",
+      "info": "Reserved for dynamic navigation. Use a flat menu with up to 3 links."
     },
     {
       "type": "header",
@@ -4188,6 +4243,7 @@
       "type": "checkbox",
       "id": "show_wishlist",
       "label": "Show wishlist",
+      "info": "Reserved for the future wishlist implementation.",
       "default": true
     },
     {
@@ -4195,21 +4251,6 @@
       "id": "show_account",
       "label": "Show account",
       "default": true
-    },
-    {
-      "type": "header",
-      "content": "Behaviour"
-    },
-    {
-      "type": "select",
-      "id": "sticky_type",
-      "label": "Sticky behaviour",
-      "options": [
-        { "value": "none", "label": "None" },
-        { "value": "always", "label": "Always visible" },
-        { "value": "on-scroll-up", "label": "Show on scroll up" }
-      ],
-      "default": "always"
     }
   ],
   "presets": [

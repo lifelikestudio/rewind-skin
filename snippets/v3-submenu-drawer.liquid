@@ -4,15 +4,25 @@
   will be replaced with dynamic link_list loops when the site transitions.
 
   Parameters (passed from section):
-    logo        — image object from section settings
-    shop_label  — text label for Shop toggle
-    studio_label — text label for Studio toggle
-    bag_label   — cart label
-    show_cart   — whether cart entry points are enabled
-    section_id  — parent section id
+    logo                 — image object from section settings
+    shop_label           — text label for Shop toggle
+    studio_label         — text label for Studio toggle
+    shop_menu            — reserved Shop main menu
+    shop_featured_menu   — reserved Shop featured menu
+    shop_utility_menu    — reserved Shop utility menu
+    studio_menu          — reserved Studio main menu
+    studio_featured_menu — reserved Studio featured menu
+    studio_utility_menu  — reserved Studio utility menu
+    bag_label            — cart label
+    show_search          — whether search entry points are enabled
+    show_cart            — whether cart entry points are enabled
+    show_account         — whether account entry points are enabled
+    section_id           — parent section id
 {% endcomment %}
 
 {%- liquid
+  assign shop_context_label = shop_label | default: 'Shop'
+  assign studio_context_label = studio_label | default: 'Studio'
   assign cart_count = cart.item_count
   assign cart_bag_label = bag_label
   if cart_bag_label == blank
@@ -34,7 +44,7 @@
   data-context='shop'
   data-submenu-state='closed'
   aria-hidden='true'
-  aria-label='Sub-navigation'
+  aria-label='{{ 'sections.v3_navigation.submenu' | t | escape }}'
 >
   {%- comment -%} Page overlay {%- endcomment -%}
   <div class='v3-submenu__overlay' data-submenu-overlay></div>
@@ -52,7 +62,7 @@
     class='v3-submenu__drawer'
     role='dialog'
     aria-modal='true'
-    aria-label='Navigation menu'
+    aria-label='{{ 'sections.v3_navigation.navigation_menu' | t | escape }}'
   >
     {%- comment -%} ═══ HEADING ═══ {%- endcomment -%}
     <div class='v3-submenu__heading'>
@@ -99,7 +109,7 @@
         <div
           class='v3-submenu__toggle-group bg-rest rounded-pill'
           role='group'
-          aria-label='Navigation context'
+          aria-label='{{ 'sections.v3_navigation.navigation_context' | t | escape }}'
           data-submenu-toggle-group
         >
           <span
@@ -113,7 +123,7 @@
             data-submenu-toggle='shop'
             aria-pressed='true'
           >
-            {{ shop_label | default: 'Shop' }}
+            {{ shop_context_label }}
           </button>
           <button
             type='button'
@@ -121,7 +131,7 @@
             data-submenu-toggle='studio'
             aria-pressed='false'
           >
-            {{ studio_label | default: 'Studio' }}
+            {{ studio_context_label }}
           </button>
         </div>
 
@@ -130,7 +140,7 @@
           type='button'
           class='v3-submenu__close'
           data-submenu-close
-          aria-label='Close menu'
+          aria-label='{{ 'sections.v3_navigation.close_menu' | t | escape }}'
         >
           {%- render 'v3-icon-close', size: 12, class: 'text-ink' -%}
         </button>
@@ -149,7 +159,7 @@
               class='v3-submenu__subgroup'
               data-l1-group
               role='group'
-              aria-label='Shop categories'
+              aria-label='{{ 'sections.v3_navigation.context_categories' | t: context: shop_context_label | escape }}'
             >
               <button
                 type='button'
@@ -193,13 +203,14 @@
               class='v3-submenu__subgroup'
               data-l1-group
               role='group'
-              aria-label='Shop featured'
+              aria-label='{{ 'sections.v3_navigation.context_featured' | t: context: shop_context_label | escape }}'
             >
               <span
                 class='v3-submenu__subgroup-title text-submenu-caption'
                 aria-hidden='true'
-                >Featured</span
               >
+                {{- 'sections.v3_navigation.featured' | t -}}
+              </span>
               <a
                 href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326'
                 target='_blank'
@@ -236,7 +247,7 @@
               class='v3-submenu__subgroup'
               data-l1-group
               role='group'
-              aria-label='Studio treatments'
+              aria-label='{{ 'sections.v3_navigation.context_treatments' | t: context: studio_context_label | escape }}'
             >
               <button
                 type='button'
@@ -314,13 +325,14 @@
               class='v3-submenu__subgroup'
               data-l1-group
               role='group'
-              aria-label='Studio featured'
+              aria-label='{{ 'sections.v3_navigation.context_featured' | t: context: studio_context_label | escape }}'
             >
               <span
                 class='v3-submenu__subgroup-title text-submenu-caption'
                 aria-hidden='true'
-                >Featured</span
               >
+                {{- 'sections.v3_navigation.featured' | t -}}
+              </span>
               <a
                 href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326'
                 target='_blank'
@@ -693,34 +705,38 @@
         </div>
       </div>
 
-      {%- comment -%} QuickActions {%- endcomment -%}
-      <div class='v3-submenu__quick'>
-        <button
-          type='button'
-          class='v3-submenu__quick-pill'
-          data-submenu-search
-        >
-          <span class='v3-submenu__quick-text text-submenu-caption'>
-            Search rewindskinco.com
-          </span>
-        </button>
-        {%- if show_cart -%}
-          <a
-            href='{{ routes.cart_url }}'
-            class='v3-submenu__quick-pill'
-            data-submenu-bag
-            aria-controls='v3-cart-drawer'
-            aria-expanded='false'
-          >
-            <span
-              class='v3-submenu__quick-text text-submenu-caption'
-              data-cart-quick-label
+      {%- if show_search or show_cart -%}
+        {%- comment -%} QuickActions {%- endcomment -%}
+        <div class='v3-submenu__quick'>
+          {%- if show_search -%}
+            <button
+              type='button'
+              class='v3-submenu__quick-pill'
+              data-submenu-search
             >
-              {{- cart_trigger_label | escape -}}
-            </span>
-          </a>
-        {%- endif -%}
-      </div>
+              <span class='v3-submenu__quick-text text-submenu-caption'>
+                {{ 'sections.v3_navigation.search_site' | t }}
+              </span>
+            </button>
+          {%- endif -%}
+          {%- if show_cart -%}
+            <a
+              href='{{ routes.cart_url }}'
+              class='v3-submenu__quick-pill'
+              data-submenu-bag
+              aria-controls='v3-cart-drawer'
+              aria-expanded='false'
+            >
+              <span
+                class='v3-submenu__quick-text text-submenu-caption'
+                data-cart-quick-label
+              >
+                {{- cart_trigger_label | escape -}}
+              </span>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
 
       {%- comment -%} UtilityLinks {%- endcomment -%}
       <div class='v3-submenu__utility'>
@@ -728,13 +744,16 @@
           class='v3-submenu__utility-links'
           data-submenu-context='shop'
           role='group'
-          aria-label='Shop support'
+          aria-label='{{ 'sections.v3_navigation.context_support' | t: context: shop_context_label | escape }}'
         >
-          <a
-            href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
-            class='v3-submenu__utility-link text-submenu-utility'
-            >Account</a
-          >
+          {%- if show_account -%}
+            <a
+              href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
+              class='v3-submenu__utility-link text-submenu-utility'
+            >
+              {{- 'sections.v3_navigation.account' | t -}}
+            </a>
+          {%- endif -%}
           <a
             href='/pages/shipping-returns'
             class='v3-submenu__utility-link text-submenu-utility'
@@ -745,7 +764,7 @@
           class='v3-submenu__utility-links'
           data-submenu-context='studio'
           role='group'
-          aria-label='Studio support'
+          aria-label='{{ 'sections.v3_navigation.context_support' | t: context: studio_context_label | escape }}'
         >
           <a
             href='https://rewindskinco-book.as.me/schedule/4a0c3baa'

@@ -7,15 +7,25 @@
   Desktop uses side-by-side L2 reveal in v3-submenu-drawer.liquid.
 
   Parameters (passed from section):
-    logo         — image object from section settings
-    shop_label   — text label for Shop toggle
-    studio_label — text label for Studio toggle
-    bag_label    — cart label
-    show_cart    — whether cart entry points are enabled
-    section_id   — parent section id
+    logo                 — image object from section settings
+    shop_label           — text label for Shop toggle
+    studio_label         — text label for Studio toggle
+    shop_menu            — reserved Shop main menu
+    shop_featured_menu   — reserved Shop featured menu
+    shop_utility_menu    — reserved Shop utility menu
+    studio_menu          — reserved Studio main menu
+    studio_featured_menu — reserved Studio featured menu
+    studio_utility_menu  — reserved Studio utility menu
+    bag_label            — cart label
+    show_search          — whether search entry points are enabled
+    show_cart            — whether cart entry points are enabled
+    show_account         — whether account entry points are enabled
+    section_id           — parent section id
 {% endcomment %}
 
 {%- liquid
+  assign shop_context_label = shop_label | default: 'Shop'
+  assign studio_context_label = studio_label | default: 'Studio'
   assign cart_count = cart.item_count
   assign cart_bag_label = bag_label
   if cart_bag_label == blank
@@ -37,7 +47,7 @@
   data-mobile-menu-context='shop'
   data-mobile-menu-state='closed'
   aria-hidden='true'
-  aria-label='Mobile navigation'
+  aria-label='{{ 'sections.v3_navigation.mobile_navigation' | t | escape }}'
 >
   {%- comment -%} Screen-reader announcement for context/level changes {%- endcomment -%}
   <span
@@ -52,7 +62,7 @@
     class='v3-mobile-menu__panel'
     role='dialog'
     aria-modal='true'
-    aria-label='Navigation menu'
+    aria-label='{{ 'sections.v3_navigation.navigation_menu' | t | escape }}'
   >
     {%- comment -%} ═══ HEADING ═══ {%- endcomment -%}
     <div class='v3-mobile-menu__heading'>
@@ -98,7 +108,7 @@
         type='button'
         class='v3-mobile-menu__close'
         data-mobile-menu-close
-        aria-label='Close menu'
+        aria-label='{{ 'sections.v3_navigation.close_menu' | t | escape }}'
       >
         <span class='v3-mobile-menu__close-circle'>
           {%- render 'v3-icon-close',
@@ -113,7 +123,7 @@
       <div
         class='v3-mobile-menu__toggle-group rounded-pill'
         role='group'
-        aria-label='Navigation context'
+        aria-label='{{ 'sections.v3_navigation.navigation_context' | t | escape }}'
         data-mobile-menu-toggle-group
       >
         <span
@@ -127,7 +137,7 @@
           data-mobile-menu-toggle='shop'
           aria-pressed='true'
         >
-          {{ shop_label | default: 'Shop' }}
+          {{ shop_context_label }}
         </button>
         <button
           type='button'
@@ -135,7 +145,7 @@
           data-mobile-menu-toggle='studio'
           aria-pressed='false'
         >
-          {{ studio_label | default: 'Studio' }}
+          {{ studio_context_label }}
         </button>
       </div>
     </div>
@@ -150,7 +160,7 @@
             <div
               class='v3-mobile-menu__subgroup'
               role='group'
-              aria-label='Shop categories'
+              aria-label='{{ 'sections.v3_navigation.context_categories' | t: context: shop_context_label | escape }}'
             >
               <button
                 type='button'
@@ -199,13 +209,14 @@
             <div
               class='v3-mobile-menu__subgroup'
               role='group'
-              aria-label='Shop featured'
+              aria-label='{{ 'sections.v3_navigation.context_featured' | t: context: shop_context_label | escape }}'
             >
               <span
                 class='v3-mobile-menu__subgroup-title text-submenu-caption'
                 aria-hidden='true'
-                >Featured</span
               >
+                {{- 'sections.v3_navigation.featured' | t -}}
+              </span>
               <a
                 href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326'
                 target='_blank'
@@ -241,7 +252,7 @@
             <div
               class='v3-mobile-menu__subgroup'
               role='group'
-              aria-label='Studio treatments'
+              aria-label='{{ 'sections.v3_navigation.context_treatments' | t: context: studio_context_label | escape }}'
             >
               <button
                 type='button'
@@ -336,13 +347,14 @@
             <div
               class='v3-mobile-menu__subgroup'
               role='group'
-              aria-label='Studio featured'
+              aria-label='{{ 'sections.v3_navigation.context_featured' | t: context: studio_context_label | escape }}'
             >
               <span
                 class='v3-mobile-menu__subgroup-title text-submenu-caption'
                 aria-hidden='true'
-                >Featured</span
               >
+                {{- 'sections.v3_navigation.featured' | t -}}
+              </span>
               <a
                 href='https://rewindskinco-book.as.me/schedule/4a0c3baa/appointment/18895326/calendar/3328226?appointmentTypeIds[]=18895326'
                 target='_blank'
@@ -377,7 +389,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Shop'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: shop_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -449,7 +461,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Shop'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: shop_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -546,7 +558,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Studio'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: studio_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -615,7 +627,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Studio'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: studio_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -656,7 +668,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Studio'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: studio_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -690,7 +702,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Studio'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: studio_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -731,7 +743,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Studio'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: studio_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -779,7 +791,7 @@
             type='button'
             class='v3-mobile-menu__back'
             data-mobile-menu-back
-            aria-label='Back to Studio'
+            aria-label='{{ 'sections.v3_navigation.back_to_context' | t: context: studio_context_label | escape }}'
           >
             <span class='v3-mobile-menu__back-chevron'>
               {%- render 'v3-icon-chevron', direction: 'left', size: 7 -%}
@@ -817,38 +829,42 @@
         </div>
       </div>
 
-      {%- comment -%} QuickActions {%- endcomment -%}
-      <div class='v3-mobile-menu__quick'>
-        <button
-          type='button'
-          class='v3-mobile-menu__quick-btn'
-          data-mobile-menu-search
-        >
-          <span class='v3-mobile-menu__quick-pill'>
-            <span class='v3-mobile-menu__quick-text text-submenu-caption'>
-              Search rewindskinco.com
-            </span>
-          </span>
-        </button>
-        {%- if show_cart -%}
-          <a
-            href='{{ routes.cart_url }}'
-            class='v3-mobile-menu__quick-btn'
-            data-mobile-menu-bag
-            aria-controls='v3-cart-drawer'
-            aria-expanded='false'
-          >
-            <span class='v3-mobile-menu__quick-pill'>
-              <span
-                class='v3-mobile-menu__quick-text text-submenu-caption'
-                data-cart-quick-label
-              >
-                {{- cart_trigger_label | escape -}}
+      {%- if show_search or show_cart -%}
+        {%- comment -%} QuickActions {%- endcomment -%}
+        <div class='v3-mobile-menu__quick'>
+          {%- if show_search -%}
+            <button
+              type='button'
+              class='v3-mobile-menu__quick-btn'
+              data-mobile-menu-search
+            >
+              <span class='v3-mobile-menu__quick-pill'>
+                <span class='v3-mobile-menu__quick-text text-submenu-caption'>
+                  {{ 'sections.v3_navigation.search_site' | t }}
+                </span>
               </span>
-            </span>
-          </a>
-        {%- endif -%}
-      </div>
+            </button>
+          {%- endif -%}
+          {%- if show_cart -%}
+            <a
+              href='{{ routes.cart_url }}'
+              class='v3-mobile-menu__quick-btn'
+              data-mobile-menu-bag
+              aria-controls='v3-cart-drawer'
+              aria-expanded='false'
+            >
+              <span class='v3-mobile-menu__quick-pill'>
+                <span
+                  class='v3-mobile-menu__quick-text text-submenu-caption'
+                  data-cart-quick-label
+                >
+                  {{- cart_trigger_label | escape -}}
+                </span>
+              </span>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
     </div>
 
     {%- comment -%} UtilityLinks {%- endcomment -%}
@@ -857,13 +873,16 @@
         class='v3-mobile-menu__utility-links'
         data-mobile-menu-context='shop'
         role='group'
-        aria-label='Shop support'
+        aria-label='{{ 'sections.v3_navigation.context_support' | t: context: shop_context_label | escape }}'
       >
-        <a
-          href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
-          class='v3-mobile-menu__utility-link text-submenu-utility'
-          >Account</a
-        >
+        {%- if show_account -%}
+          <a
+            href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
+            class='v3-mobile-menu__utility-link text-submenu-utility'
+          >
+            {{- 'sections.v3_navigation.account' | t -}}
+          </a>
+        {%- endif -%}
         <a
           href='/pages/shipping-returns'
           class='v3-mobile-menu__utility-link text-submenu-utility'
@@ -874,7 +893,7 @@
         class='v3-mobile-menu__utility-links'
         data-mobile-menu-context='studio'
         role='group'
-        aria-label='Studio support'
+        aria-label='{{ 'sections.v3_navigation.context_support' | t: context: studio_context_label | escape }}'
       >
         <a
           href='https://rewindskinco-book.as.me/schedule/4a0c3baa'
