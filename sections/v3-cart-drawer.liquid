@@ -97,15 +97,17 @@
           <p class='text-cart-callout-title'>
             {{- section.settings.empty_title | escape -}}
           </p>
-          {%- unless customer -%}
-            <p class='text-cart-callout-body'>
+          <p class='text-cart-callout-body'>
+            {%- if customer -%}
+              {{- section.settings.empty_customer_message | escape -}}
+            {%- else -%}
               {{ section.settings.empty_account_prefix | escape }}
               <a href='{{ routes.account_login_url }}'>
                 {{- section.settings.empty_login_label | escape -}}
               </a>
               {{ section.settings.empty_account_suffix | escape }}
-            </p>
-          {%- endunless -%}
+            {%- endif -%}
+          </p>
         </div>
 
         <a
@@ -804,6 +806,12 @@
       "id": "empty_title",
       "label": "Empty message",
       "default": "Your shopping bag is empty."
+    },
+    {
+      "type": "text",
+      "id": "empty_customer_message",
+      "label": "Empty message for logged-in customers",
+      "default": "Nothing here yet. Discover what's new."
     },
     {
       "type": "text",
