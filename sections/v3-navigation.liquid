@@ -152,8 +152,8 @@
       style='padding-right: calc(var(--v3-nav-pr-offset, 0px));'
     >
       {%- if section.settings.show_cart -%}
-        <a
-          href='{{ routes.cart_url }}'
+        <button
+          type='button'
           class='v3-nav__naked-btn rounded-pill text-nav-label font-base text-ink flex h-[30px] items-center px-[14px] tracking-tight transition-colors duration-150 ease-out lg:h-[32px]'
           id='v3-cart-btn'
           aria-label='{{ cart_bag_label | escape }}{% if cart_count > 0 %}, {{ cart_count }} {{ cart_item_label | escape }}{% endif %}'
@@ -172,7 +172,7 @@
           >
             &nbsp;({{ cart_count_desktop }})</span
           >
-        </a>
+        </button>
       {%- endif -%}
 
       {%- if section.settings.show_wishlist -%}

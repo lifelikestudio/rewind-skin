@@ -10,6 +10,10 @@
   assign vendor_title_prefix_size = vendor_title_prefix | size
   assign product_title_prefix = item.product.title | slice: 0, vendor_title_prefix_size
   assign compare_at_price = item.variant.compare_at_price | default: 0
+  assign currency_code = cart.currency.iso_code | downcase
+  assign formatted_final_price = item.final_price | divided_by: 100.0 | round | times: 100 | money_without_trailing_zeros
+  assign formatted_compare_at_price = compare_at_price | divided_by: 100.0 | round | times: 100 | money_without_trailing_zeros
+  assign selling_plan_period = blank
   assign is_on_sale = false
   assign feature_badge = blank
 
@@ -23,6 +27,8 @@
 
   if item.selling_plan_allocation != blank
     assign feature_badge = 'sections.v3_cart.subscription' | t
+    assign selling_plan_period = item.selling_plan_allocation.selling_plan.name
+    assign selling_plan_period = selling_plan_period | remove_first: 'Delivery every ' | remove_first: 'Delivery Every ' | remove_first: 'Deliver every ' | remove_first: 'Deliver Every ' | strip
   elsif is_on_sale
     assign feature_badge = 'sections.v3_cart.sale' | t
   endif
@@ -46,6 +52,7 @@
         item.image
         | image_url: width: 320, height: 320, crop: 'center'
         | image_tag:
+          class: 'v3-cart__item-image-element',
           loading: 'lazy',
           widths: '160, 240, 320',
           sizes: '(min-width: 428px) 173px, 143px',
@@ -72,15 +79,17 @@
         <p class='v3-cart__item-price'>
           {%- if is_on_sale -%}
             <s class='text-cart-price'>
-              {{- compare_at_price | money_with_currency -}}
+              {{- formatted_compare_at_price }}
+              {{ currency_code -}}
             </s>
           {%- endif -%}
           <span class='text-cart-price{% if is_on_sale %} v3-cart__item-sale{% endif %}'>
-            {{- item.final_price | money_with_currency -}}
+            {{- formatted_final_price }}
+            {{ currency_code -}}
           </span>
           {%- if item.selling_plan_allocation != blank -%}
             <span class='v3-cart__item-frequency text-cart-small'>
-              / {{ item.selling_plan_allocation.selling_plan.name | escape -}}
+              /{{ selling_plan_period | escape -}}
             </span>
           {%- endif -%}
         </p>
@@ -147,10 +156,12 @@
 
       <a
         href='{{ item.url_to_remove }}'
-        class='v3-cart__remove text-cart-small'
+        class='v3-cart__remove'
         data-cart-remove
       >
-        <span data-cart-remove-label>{{ 'sections.v3_cart.remove' | t }}</span>
+        <span class='text-cart-small' data-cart-remove-label>
+          {{- 'sections.v3_cart.remove' | t -}}
+        </span>
         <span
           class='v3-cart__line-loader'
           data-cart-remove-loader

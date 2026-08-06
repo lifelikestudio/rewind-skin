@@ -720,8 +720,8 @@
             </button>
           {%- endif -%}
           {%- if show_cart -%}
-            <a
-              href='{{ routes.cart_url }}'
+            <button
+              type='button'
               class='v3-submenu__quick-pill'
               data-submenu-bag
               aria-controls='v3-cart-drawer'
@@ -733,7 +733,7 @@
               >
                 {{- cart_trigger_label | escape -}}
               </span>
-            </a>
+            </button>
           {%- endif -%}
         </div>
       {%- endif -%}

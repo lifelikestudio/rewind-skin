@@ -24,6 +24,8 @@
   --color-overlay-light: rgb(251 250 249 / 50%);
   --color-search-focus: #d8d2d0;
   --color-price-sale: #e7000b;
+  --color-error-bg: #ffe2e2;
+  --color-error: #c10007;
 
   /* Typography */
   --font-family-base:

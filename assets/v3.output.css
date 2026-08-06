@@ -12,6 +12,8 @@
   --color-overlay-light: rgb(251 250 249 / 50%);
   --color-search-focus: #d8d2d0;
   --color-price-sale: #e7000b;
+  --color-error-bg: #ffe2e2;
+  --color-error: #c10007;
   --font-family-base: 'Scto Grotesk A', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   --font-weight-light: 300;
@@ -78,6 +80,8 @@
     --color-overlay-light: var(--color-overlay-light);
     --color-search-focus: var(--color-search-focus);
     --color-price-sale: var(--color-price-sale);
+    --color-error-bg: var(--color-error-bg);
+    --color-error: var(--color-error);
     --font-weight-medium: var(--font-weight-medium);
     --radius-product: var(--radius-product);
     --radius-drawer-compact: var(--radius-drawer-compact);
@@ -238,14 +242,8 @@
   .pointer-events-none {
     pointer-events: none;
   }
-  .invisible {
-    visibility: hidden;
-  }
   .visible {
     visibility: visible;
-  }
-  .visible\! {
-    visibility: visible !important;
   }
   .sr-only {
     position: absolute;
@@ -437,9 +435,6 @@
   }
   .shrink-0 {
     flex-shrink: 0;
-  }
-  .flex-grow {
-    flex-grow: 1;
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
@@ -655,9 +650,6 @@
   .italic {
     font-style: italic;
   }
-  .underline {
-    text-decoration-line: underline;
-  }
   .opacity-0 {
     opacity: 0%;
   }
@@ -671,10 +663,6 @@
   .outline {
     outline-style: var(--tw-outline-style);
     outline-width: 1px;
-  }
-  .invert {
-    --tw-invert: invert(100%);
-    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
@@ -774,16 +762,6 @@
     &::after {
       --tw-content: "";
       content: var(--tw-content);
-    }
-  }
-  .visited\:\!text-inherit {
-    &:visited {
-      color: inherit !important;
-    }
-  }
-  .visited\:text-inherit {
-    &:visited {
-      color: inherit;
     }
   }
   .hover\:\!bg-\[\#D9D9D9\] {

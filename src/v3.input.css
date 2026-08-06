@@ -31,6 +31,8 @@
   --color-overlay-light: var(--color-overlay-light);
   --color-search-focus: var(--color-search-focus);
   --color-price-sale: var(--color-price-sale);
+  --color-error-bg: var(--color-error-bg);
+  --color-error: var(--color-error);
 
   /* Spacing */
   --spacing-1: var(--size-1);

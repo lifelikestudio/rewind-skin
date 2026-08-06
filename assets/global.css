@@ -752,10 +752,6 @@ template {
   }
 }
 
-a:visited {
-  color: var(--white);
-}
-
 .link--main-nav {
   font-weight: var(--regular);
   font-size: 1.4rem;
