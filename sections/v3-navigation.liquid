@@ -1364,6 +1364,11 @@
       }
 
       function setSearchView(view, immediate, onViewChange) {
+        if (searchDrawer.getAttribute('data-search-view') === view) {
+          if (onViewChange) onViewChange();
+          return;
+        }
+
         function applyView() {
           searchDrawer.setAttribute('data-search-view', view);
           if (onViewChange) onViewChange();
@@ -1654,7 +1659,7 @@
         var url = new URL(searchUrl, window.location.origin);
         url.searchParams.set('q', query);
         url.searchParams.set('type', 'product');
-        url.searchParams.set('options[unavailable_products]', 'hide');
+        url.searchParams.set('options[unavailable_products]', 'last');
         url.searchParams.set('options[prefix]', 'last');
         url.searchParams.set('page', String(page));
         url.searchParams.set('section_id', 'v3-search-products');
@@ -1792,10 +1797,15 @@
         var actionableCount = currentResponse
           ? currentResponse.querySelectorAll('[data-search-result-link]').length
           : 0;
+        var suggestionCount = currentResponse
+          ? currentResponse.querySelectorAll('[data-search-suggestion]').length
+          : 0;
+        var totalCount = suggestionCount + actionableCount;
         searchDrawer.toggleAttribute(
           'data-search-has-results',
           actionableCount > 0
         );
+        searchHasRenderedResults = totalCount > 0;
         searchCompletedRequestId = requestId;
         searchCompletedQuery = query;
         searchCompletedHasResults = actionableCount > 0;
@@ -1811,14 +1821,14 @@
           disconnectSearchProductsObserver();
         }
 
-        if (
-          searchProductsCount > 0 &&
-          searchDrawer.getAttribute('data-search-view') === 'no-results'
-        ) {
+        if (totalCount > 0) {
           setSearchView(
             searchProductsClickedSuggestion ? 'clicked' : 'autocomplete'
           );
+        } else {
+          setSearchView('no-results');
         }
+        if (searchStates) searchStates.setAttribute('aria-busy', 'false');
 
         if (searchAnnounce) {
           if (replaceProducts) {
@@ -1882,6 +1892,20 @@
             setSearchProductsBusy(false);
             updateSearchProductsAvailability();
             disconnectSearchProductsObserver();
+            if (searchStates) searchStates.setAttribute('aria-busy', 'false');
+            var retainedResultCount = searchPredictive
+              ? searchPredictive.querySelectorAll(
+                  '[data-search-suggestion], [data-search-result-link]'
+                ).length
+              : 0;
+            searchHasRenderedResults = retainedResultCount > 0;
+            var retainedView = 'no-results';
+            if (retainedResultCount > 0) {
+              retainedView = searchProductsClickedSuggestion
+                ? 'clicked'
+                : 'autocomplete';
+            }
+            setSearchView(retainedView);
             if (searchAnnounce) {
               searchAnnounce.textContent =
                 'More products could not be loaded. Try again.';
@@ -2817,16 +2841,23 @@
               (totalCount === 1 ? 'result' : 'results') +
               ' available';
           }
+        } else if (searchInfiniteProducts) {
+          setSearchView('loading');
+          if (searchAnnounce) {
+            searchAnnounce.textContent = 'Loading product results';
+          }
         } else {
           setSearchView('no-results');
           if (searchAnnounce)
             searchAnnounce.textContent = 'No search results found';
         }
 
-        if (searchStates) searchStates.setAttribute('aria-busy', 'false');
-        searchCompletedRequestId = requestId;
-        searchCompletedQuery = query;
-        searchCompletedHasResults = actionableCount > 0;
+        if (!searchInfiniteProducts) {
+          if (searchStates) searchStates.setAttribute('aria-busy', 'false');
+          searchCompletedRequestId = requestId;
+          searchCompletedQuery = query;
+          searchCompletedHasResults = actionableCount > 0;
+        }
         searchRequest = null;
         if (searchInfiniteProducts) {
           searchProductsClickedSuggestion = clickedSuggestion;
@@ -2855,11 +2886,15 @@
         beginSearchLoading(requestId);
 
         var predictiveUrl = searchDrawer.getAttribute('data-predictive-url');
+        var predictiveResourceTypes = searchInfiniteProducts
+          ? 'query,collection,page'
+          : 'query,product,collection,page';
         var url =
           predictiveUrl +
           '?q=' +
           encodeURIComponent(query) +
-          '&resources[type]=query,product,collection,page' +
+          '&resources[type]=' +
+          predictiveResourceTypes +
           '&resources[limit]=10' +
           '&resources[limit_scope]=each' +
           '&section_id=v3-predictive-search';

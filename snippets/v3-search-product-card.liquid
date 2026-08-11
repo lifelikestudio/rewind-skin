@@ -7,6 +7,7 @@
 
 {%- liquid
   assign feature_badge = blank
+  assign ui_image = product.metafields.custom.canonical_ui_image.value | default: product.featured_image
   assign display_title = product.title
   assign vendor_title_prefix = product.vendor | append: ' - '
   assign vendor_title_prefix_size = vendor_title_prefix | size
@@ -114,7 +115,9 @@
 
   assign display_compare_at_price = display_compare_at_price | strip
 
-  if is_on_sale
+  if product.available == false
+    assign feature_badge = 'products.product.unavailable' | t
+  elsif is_on_sale
     assign feature_badge = 'Sale'
   elsif has_subscription
     assign feature_badge = 'Subscribe'
@@ -131,15 +134,15 @@
   <span
     class='v3-search__product-image'
     data-search-product-image
-    {% if product.featured_image != blank %}
+    {% if ui_image != blank %}
       data-search-image-loading
     {%- else %}
       data-search-image-loaded
     {%- endif %}
   >
-    {%- if product.featured_image != blank -%}
+    {%- if ui_image != blank -%}
       {{
-        product.featured_image
+        ui_image
         | image_url: width: 320, height: 320, crop: 'center'
         | image_tag:
           class: 'v3-search__product-image-element',

@@ -16,6 +16,15 @@
   assign selling_plan_period = blank
   assign is_on_sale = false
   assign feature_badge = blank
+  assign ui_image = item.variant.metafields.custom.variant_ui_image.value
+
+  if ui_image == blank
+    assign ui_image = item.product.metafields.custom.canonical_ui_image.value
+  endif
+
+  if ui_image == blank
+    assign ui_image = item.image
+  endif
 
   if product_title_prefix == vendor_title_prefix
     assign display_title = item.product.title | remove_first: vendor_title_prefix
@@ -47,16 +56,16 @@
     href='{{ item.url }}'
     aria-label='{{ display_title | escape }}'
   >
-    {%- if item.image != blank -%}
+    {%- if ui_image != blank -%}
       {{
-        item.image
+        ui_image
         | image_url: width: 320, height: 320, crop: 'center'
         | image_tag:
           class: 'v3-cart__item-image-element',
           loading: 'lazy',
           widths: '160, 240, 320',
           sizes: '(min-width: 428px) 173px, 143px',
-          alt: item.image.alt
+          alt: ui_image.alt
       }}
     {%- endif -%}
 
