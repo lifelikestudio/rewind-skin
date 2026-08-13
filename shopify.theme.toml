@@ -1,7 +1,12 @@
 [environments.live]
 store = "rewind-skin-co"
-password  = "shptka_995b3145cfe629e49c7ffea3e1dae0c2"
 
-[environments.experiments]
-store = "rewind-skin-v2"
-password = "shptka_409227ed443dec7c40c28c45d75112e3"
+[environments.live-release]
+store = "rewind-skin-co"
+nodelete = true
+ignore = [
+  "config/settings_data.json",
+  "templates/*.json",
+  "templates/customers/*.json",
+  "sections/*.json",
+]
