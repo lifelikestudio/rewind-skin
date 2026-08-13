@@ -10822,6 +10822,8 @@ a.order__info--pill {
 }
 
 .announcement-bar__type {
+  width: 100%;
+  max-width: 800px;
   font-family: var(--font-stack);
   color: var(--black);
   font-weight: 400;
@@ -10833,6 +10835,14 @@ a.order__info--pill {
 
 .announcement-bar__type:visited {
   color: var(--black);
+}
+
+.announcement-bar__type--left {
+  text-align: left;
+}
+
+.announcement-bar__type--right {
+  text-align: right;
 }
 
 /* Between 1312px and 1583px */

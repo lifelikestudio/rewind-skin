@@ -252,65 +252,6 @@
     class='{{ bodyClass }}'
   >
     {% if template contains 'index' or template contains 'product' or template contains 'cart' or template contains 'search' or template contains 'login' or template contains 'register' or template contains 'activate_account' or template contains 'reset_password' or template contains 'account' or template contains 'order' or template contains 'addresses' or template == 'page.our-founder' or template == 'page.terms' or template == 'page.privacy' or template == 'page.shipping-returns' or bodyClass == 'template-' or (template.name == 'collection' and collection.handle == 'mansard' or collection.handle == 'adipeau' or collection.handle == 'future-5-elements' or collection.handle == 'biologique-recherche' or collection.handle == 'the-light-salon' or collection.handle == 'calecim-professional' or collection.handle == 'colorescience' or collection.handle == 'ecotao' or collection.handle == 'elta-md' or collection.handle == 'loeuvre-de-beaute' or collection.handle == 'manta' or collection.handle == 'monika-heiligmann' or collection.handle == 'nemat' or collection.handle == 'nuface-microcurrent' or collection.handle == 'skinhaptics' or collection.handle == 'all' or collection.handle == 'subscribe-save' or collection.handle == 'gifting' or collection.handle == 'bestsellers' or collection.handle == 'sales-offers' or collection.handle == 'face' or collection.handle == 'bath-body-hair') %}
-      <section class='announcement-bar'>
-        <div class='wrapper wrapper--lg announcement-bar__container'>
-          {% comment %}
-            <a
-            class="announcement-bar__type"
-            href="https://app.acuityscheduling.com/catalog.php?owner=18442968&category=PROMO+FACIALS"
-            target="_blank"
-            id="annual-facials-sale"
-            >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
-            >
-          {% endcomment %}
-          {% comment %}
-            <a
-              class="announcement-bar__type"
-              href="/collections/all"
-              id="evergreen-announcement"
-              style="max-width: 800px;">
-              Free Shipping on Orders Over $149 CAD. Start Here.
-            </a>
-          {% endcomment %}
-          {% comment %}
-            <a
-              class="announcement-bar__type"
-              href="/collections/all"
-              id="shipping-delays-announcement"
-              style="max-width: 800px;">
-              Expect shipping delays due to increased holiday volumes and Canada Post strikes. We appreciate your patience.
-            </a>
-          {% endcomment %}
-          {% comment %}
-            <a
-                                          class="announcement-bar__type"
-                                          href="/collections/all?filter.p.vendor=CALECIM+Professional"
-                                          id="evergreen-announcement"
-                                          style="max-width: 800px;">
-                                          CALECIM Professional has arrived. Shop here.
-            </a>
-          {% endcomment %}
-          {% comment %}
-            <a
-              class='announcement-bar__type'
-              href='/collections/subscribe-save'
-              id='evergreen-announcement'
-              style='max-width: 800px;'
-            >
-              Never run out, never pay full price. Subscribe & Save, now live for
-              select brands.
-            </a>
-          {% endcomment %}
-          <span
-            class='announcement-bar__type'
-            id='shipping-delays-announcement'
-            style='max-width: 800px;'
-          >
-            Orders placed this week may take a little longer to reach you. Thank
-            you for your patience.
-          </span>
-        </div>
-      </section>
       {% sections 'header-group' %}
       {% comment %} V3: Old inline header replaced by sections/v3-navigation.liquid via header-group {% endcomment %}
       <div hidden>
@@ -691,65 +632,6 @@
       </header>
       </div>
     {% else %}
-      <section class='announcement-bar'>
-        <div class='wrapper wrapper--lg announcement-bar__container'>
-          {% comment %}
-            <a
-            class="announcement-bar__type"
-            href="https://app.acuityscheduling.com/catalog.php?owner=18442968&category=PROMO+FACIALS"
-            target="_blank"
-            id="annual-facials-sale"
-            >Buy 2 Facials, Get 1 Free. On Now Until September 8th. Book Here.</a
-            >
-          {% endcomment %}
-          {% comment %}
-            <a
-              class="announcement-bar__type"
-              href="/collections/all"
-              id="evergreen-announcement"
-              style="max-width: 800px;">
-              Free Shipping on Orders Over $149 CAD. Start Here.
-            </a>
-          {% endcomment %}
-          {% comment %}
-            <a
-            class="announcement-bar__type"
-            href="/collections/all"
-            id="shipping-delays-announcement"
-            style="max-width: 800px;">
-            Expect shipping delays due to increased holiday volumes and Canada Post strikes. We appreciate your patience.
-            </a>
-          {% endcomment %}
-          {% comment %}
-            <a
-                                          class="announcement-bar__type"
-                                          href="/collections/all?filter.p.vendor=CALECIM+Professional"
-                                          id="evergreen-announcement"
-                                          style="max-width: 800px;">
-                                          CALECIM Professional has arrived. Shop here.
-            </a>
-          {% endcomment %}
-          {% comment %}
-            <a
-              class='announcement-bar__type'
-              href='/collections/subscribe-save'
-              id='evergreen-announcement'
-              style='max-width: 800px;'
-            >
-              Never run out, never pay full price. Subscribe & Save, now live for
-              select brands.
-            </a>
-          {% endcomment %}
-          <span
-            class='announcement-bar__type'
-            id='shipping-delays-announcement'
-            style='max-width: 800px;'
-          >
-            Orders placed this week may take a little longer to reach you. Thank
-            you for your patience.
-          </span>
-        </div>
-      </section>
       {% sections 'header-group' %}
       {% comment %} Keep shared page hero imagery separate from the hidden legacy navigation. {% endcomment %}
       <div class='hero' aria-hidden='true'></div>

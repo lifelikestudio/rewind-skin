@@ -2,6 +2,21 @@
   "name": "t:sections.header.name",
   "type": "header",
   "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement": {
+          "type": "announcement",
+          "settings": {
+            "text": "Orders placed this week may take a little longer to reach you. Thank you for your patience.",
+            "text_alignment": "center",
+            "link": ""
+          }
+        }
+      },
+      "block_order": ["announcement"],
+      "settings": {}
+    },
     "v3-navigation": {
       "type": "v3-navigation",
       "settings": {
@@ -30,5 +45,5 @@
       }
     }
   },
-  "order": ["v3-navigation", "v3-cart-drawer"]
+  "order": ["announcement-bar", "v3-navigation", "v3-cart-drawer"]
 }
