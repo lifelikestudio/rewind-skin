@@ -21,7 +21,6 @@
   assign variant_summary_count = product.variants | size
   assign variant_summary_label = 'variant'
   assign variant_summary = blank
-  assign product_option_count = product.options_with_values | size
   assign sale_variant_count = 0
   assign is_bestseller = false
   assign has_subscription = false
@@ -55,13 +54,11 @@
     endif
   endif
 
-  if product_option_count == 1
-    assign variant_option = product.options_with_values | first
-    unless variant_option.name == 'Title'
-      assign variant_summary_count = variant_option.values | size
-      assign variant_summary_label = variant_option.name | downcase
-    endunless
-  endif
+  assign variant_option = product.options_with_values | first
+  unless variant_option.name == 'Title'
+    assign variant_summary_count = variant_option.values | size
+    assign variant_summary_label = variant_option.name | downcase
+  endunless
 
   if variant_summary_count != 1
     assign variant_summary_label_last_character = variant_summary_label | slice: -1
