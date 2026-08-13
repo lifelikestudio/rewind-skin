@@ -428,7 +428,7 @@
       }
     },
     "announcement-bar": {
-      "name": "Announcement bar",
+      "name": "Announcement Bar",
       "blocks": {
         "announcement": {
           "name": "Announcement",
