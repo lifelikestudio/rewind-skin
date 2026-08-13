@@ -61,10 +61,27 @@
   endunless
 
   if variant_summary_count != 1
+    assign variant_summary_label_size = variant_summary_label | size
     assign variant_summary_label_last_character = variant_summary_label | slice: -1
-    unless variant_summary_label_last_character == 's'
+    assign variant_summary_label_last_two_characters = variant_summary_label | slice: -2, 2
+
+    if variant_summary_label_last_character == 's'
+      assign variant_summary_label = variant_summary_label
+    elsif variant_summary_label_last_two_characters == 'ch' or variant_summary_label_last_two_characters == 'sh'
+      assign variant_summary_label = variant_summary_label | append: 'es'
+    elsif variant_summary_label_last_character == 'x' or variant_summary_label_last_character == 'z'
+      assign variant_summary_label = variant_summary_label | append: 'es'
+    elsif variant_summary_label_last_character == 'y'
+      assign variant_summary_label_penultimate_character = variant_summary_label | slice: -2, 1
+      if 'aeiou' contains variant_summary_label_penultimate_character
+        assign variant_summary_label = variant_summary_label | append: 's'
+      else
+        assign variant_summary_label_stem_size = variant_summary_label_size | minus: 1
+        assign variant_summary_label = variant_summary_label | slice: 0, variant_summary_label_stem_size | append: 'ies'
+      endif
+    else
       assign variant_summary_label = variant_summary_label | append: 's'
-    endunless
+    endif
   endif
 
   if product.variants.size > 1
