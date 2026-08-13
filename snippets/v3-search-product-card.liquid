@@ -93,7 +93,7 @@
   elsif product.variants.size == 1
     unless product.has_only_default_variant
       assign single_variant = product.variants | first
-      assign variant_summary = single_variant.title
+      assign variant_summary = single_variant.title | capitalize
     endunless
   endif
 
