@@ -10957,6 +10957,11 @@ a.order__info--pill {
   row-gap: calc(var(--base-unit) / 2);
 }
 
+.our-founder-main__row--photos img {
+  width: auto;
+  height: 192px;
+}
+
 /* Less than or equal to 671px */
 @media screen and (max-width: 671px) {
   .our-founder-main__row--photos {
