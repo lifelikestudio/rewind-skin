@@ -42,6 +42,62 @@
       ></script>
       <script src='{{ 'customer_area.js' | shopify_asset_url }}' defer></script>
     {% endif %}
+    <script>
+      (() => {
+        const parseVersion = (version) =>
+          version.split('.').map((part) => Number.parseInt(part, 10) || 0);
+        const isAffectedVersion = ([major, minor, build, patch]) =>
+          major === 151 &&
+          (build === 0 || (minor === 0 && build === 7922 && patch <= 138));
+        const enableFix = () => {
+          const root = document.documentElement;
+          const syncDevicePixelRatio = () => {
+            root.style.setProperty(
+              '--chromium-nss-dpr',
+              String(window.devicePixelRatio || 1)
+            );
+          };
+
+          root.dataset.chromiumNssFix = '';
+          syncDevicePixelRatio();
+          window.addEventListener('resize', syncDevicePixelRatio, {
+            passive: true,
+          });
+        };
+        const fallbackMatch = navigator.userAgent.match(
+          /(?:Chrome|Chromium)\/(\d+\.\d+\.\d+\.\d+)/
+        );
+        const applyFallback = () => {
+          if (
+            fallbackMatch &&
+            isAffectedVersion(parseVersion(fallbackMatch[1]))
+          ) {
+            enableFix();
+          }
+        };
+
+        if (!navigator.userAgentData?.getHighEntropyValues) {
+          applyFallback();
+          return;
+        }
+
+        navigator.userAgentData
+          .getHighEntropyValues(['fullVersionList'])
+          .then(({ fullVersionList }) => {
+            const chromium = fullVersionList.find(
+              ({ brand }) => brand === 'Chromium'
+            );
+
+            if (
+              chromium &&
+              isAffectedVersion(parseVersion(chromium.version))
+            ) {
+              enableFix();
+            }
+          })
+          .catch(applyFallback);
+      })();
+    </script>
     {{ 'global.css' | asset_url | stylesheet_tag }}
     {% if template.name == 'collection'
       or template.name == 'index'

@@ -202,7 +202,13 @@ img {
 }
 
 svg:not(:root) {
-  overflow: hidden;
+  overflow: visible;
+}
+
+html[data-chromium-nss-fix] [vector-effect='non-scaling-stroke'] {
+  stroke-width: calc(
+    attr(stroke-width type(<number>), 1) * var(--chromium-nss-dpr)
+  );
 }
 
 button,
