@@ -122,11 +122,8 @@ function createFallbackModalCoordinator() {
     inertRecords = [];
   }
 
-  function containsCookieConsent(element) {
-    return (
-      element.matches('.gt-cookie-dialog') ||
-      element.querySelector('.gt-cookie-dialog') !== null
-    );
+  function isCookieConsentHost(element) {
+    return element.id === 'cookie-widget-app';
   }
 
   function applyIsolation(activeRoot) {
@@ -135,7 +132,7 @@ function createFallbackModalCoordinator() {
 
     while (parent) {
       Array.from(parent.children).forEach((child) => {
-        if (child === branch || containsCookieConsent(child)) return;
+        if (child === branch || isCookieConsentHost(child)) return;
         inertRecords.push({
           element: child,
           wasInert: child.inert || child.hasAttribute('inert'),
