@@ -786,13 +786,20 @@
           inertRecords = [];
         }
 
+        function containsCookieConsent(element) {
+          return (
+            element.matches('.gt-cookie-dialog') ||
+            element.querySelector('.gt-cookie-dialog') !== null
+          );
+        }
+
         function applyIsolation(activeRoot) {
           var branch = activeRoot;
           var parent = branch ? branch.parentElement : null;
 
           while (parent) {
             Array.from(parent.children).forEach(function (child) {
-              if (child === branch) return;
+              if (child === branch || containsCookieConsent(child)) return;
               inertRecords.push({
                 element: child,
                 wasInert: child.inert || child.hasAttribute('inert'),

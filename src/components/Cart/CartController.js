@@ -122,13 +122,20 @@ function createFallbackModalCoordinator() {
     inertRecords = [];
   }
 
+  function containsCookieConsent(element) {
+    return (
+      element.matches('.gt-cookie-dialog') ||
+      element.querySelector('.gt-cookie-dialog') !== null
+    );
+  }
+
   function applyIsolation(activeRoot) {
     let branch = activeRoot;
     let parent = branch?.parentElement;
 
     while (parent) {
       Array.from(parent.children).forEach((child) => {
-        if (child === branch) return;
+        if (child === branch || containsCookieConsent(child)) return;
         inertRecords.push({
           element: child,
           wasInert: child.inert || child.hasAttribute('inert'),
