@@ -88,10 +88,7 @@
               ({ brand }) => brand === 'Chromium'
             );
 
-            if (
-              chromium &&
-              isAffectedVersion(parseVersion(chromium.version))
-            ) {
+            if (chromium && isAffectedVersion(parseVersion(chromium.version))) {
               enableFix();
             }
           })
@@ -222,7 +219,7 @@
       defer
       src='https://cloud.umami.is/script.js'
       data-website-id='460b5c6e-9bcc-447b-b076-d0f35c870d28'
-      data-domains='rewindskinco.com,www.rewindskinco.com,rewindskin.co,www.rewindskin.co'
+      data-domains='rewindskinco.com,www.rewindskinco.com'
       data-do-not-track='true'
     ></script>
     <script>
@@ -311,241 +308,27 @@
       {% sections 'header-group' %}
       {% comment %} V3: Old inline header replaced by sections/v3-navigation.liquid via header-group {% endcomment %}
       <div hidden>
-      <header>
-        <nav class='main-nav'>
-          <div class='main-nav__container wrapper wrapper--lg'>
-            <ul class='main-nav__column main-nav__linklist'>
-              {% assign half_count = linklists['main-menu'].links.size
-                | divided_by: 2
-                | round
-              %}
-              {% for link in linklists['main-menu'].links limit: half_count %}
-                <li class='main-nav__link-item'>
-                  {% if link.url == '#' %}
-                    <p
-                      class='main-nav__link all-caps link--main-nav'
-                      id='{{ link.handle }}-action'
-                    >
-                      {{- link.title -}}
-                    </p>
-                  {% else %}
-                    <a
-                      class='main-nav__link all-caps link--main-nav'
-                      id='{{ link.handle }}-action'
-                      href='{{ link.url }}'
-                    >
-                      {{- link.title -}}
-                    </a>
-                  {% endif %}
-                </li>
-              {% endfor %}
-              <li class='main-nav__trigger'>
-                <button id='mobile-action'>
-                  <span class='all-caps'>Menu</span>
-                </button>
-              </li>
-            </ul>
-            <div class='main-nav__column main-nav__branding'>
-              <a class='svg-container' href='/'>
-                <svg
-                  fill='none'
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 249 19'
-                  class='svg-content'
-                  fill='currentColor'
-                  preserveAspectRatio='xMinYMin meet'
-                  version='1.1'
-                >
-                  <path d="m22.5391 17.6608-.0692.0679h-2.7655l-7.2595-7.3358H2.14329v7.4038H0V.679688h14.0351c1.3827 0 2.6272.067924 3.5952.271698.9679.203774 1.8667.475474 2.5581.950944 1.3136.81509 2.005 1.96981 2.005 3.6 0 1.56226-.6223 2.71698-1.7976 3.53207-1.1754.8151-2.973 1.2906-5.3237 1.3585zM2.14329 2.51365v6.04528H13.4128c1.4519 0 2.5581-.06792 3.3878-.20377.7605-.13585 1.3828-.33962 1.8667-.5434.8988-.47547 1.3137-1.22264 1.3137-2.30943s-.4149-1.83396-1.3137-2.30944c-.4148-.27169-1.037-.40754-1.8667-.54339-.7605-.13585-1.8667-.13585-3.3878-.13585zm46.94271 0H30.1421v5.77358h17.9068v1.83397H30.1421v5.8415H49.086v1.834H27.9297V.679688H49.086zM83.9337.679688l.0691.067924L76.3976 17.7287h-2.0741L68.101 3.32874 61.8786 17.7287h-2.0742L52.1992.747612l.0692-.067924h2.2815L60.7032 15.0797 66.9257.679688h2.3507L75.4297 15.0797 81.6521.679688zM88.082 17.7287V.679688h2.1433V17.7287zM116.361.679688h2.143V17.7287h-2.143L98.7995 3.26082V17.7967h-2.1433V.679688h2.1433L116.361 15.1476zm29.936 2.105662c2.074 1.42641 3.181 3.6 3.181 6.3849 0 2.85285-1.037 4.95845-3.181 6.38495-2.074 1.4264-5.254 2.1735-9.541 2.1735h-11.822V.679688h11.822c4.287 0 7.467.679242 9.541 2.105662m-1.659 11.54715c.899-.5434 1.521-1.2226 1.936-2.1056.415-.8151.622-1.834.622-3.05665 0-1.22264-.207-2.17358-.622-3.0566-.415-.81509-1.037-1.56226-1.936-2.10566s-2.005-.95094-3.388-1.22264-3.111-.40755-5.254-.40755h-8.85v13.4491h8.85c1.866 0 3.526-.1359 4.978-.3397 1.452-.1358 2.696-.5434 3.664-1.1547M174.851 18c-1.037 0-2.144-.0679-3.181-.1358-1.037-.068-2.074-.1359-3.111-.2717-1.037-.1359-1.936-.2717-2.834-.4755-.899-.2038-1.729-.4076-2.42-.6113v-2.0378l.138-.0679c.76.2717 1.659.5434 2.558.7472.899.2037 1.867.4075 2.835.5434.968.1358 2.005.2717 3.042.3396s2.074.1358 3.111.1358c6.153 0 9.195-1.0868 9.195-3.2603 0-.6793-.276-1.1548-.898-1.5623-.623-.4076-1.383-.6792-2.351-.883s-2.074-.3396-3.319-.47549c-1.244-.13585-2.558-.20378-3.802-.33963-1.314-.13585-2.558-.20377-3.803-.40754-1.244-.13585-2.351-.40755-3.319-.74717-.967-.33963-1.797-.8151-2.35-1.35849-.622-.5434-.899-1.29057-.899-2.24151 0-1.56227.968-2.78491 2.835-3.66793C168.144.407547 170.841 0 174.367 0q3.111 0 6.015.407547c1.936.271698 3.664.679243 5.323 1.154713v1.90189l-.138.06793c-.76-.2717-1.59-.47548-2.489-.67925s-1.797-.40755-2.765-.5434c-.968-.13584-1.936-.27169-2.904-.33962-1.245.06793-2.143.06793-3.111.06793-1.314 0-2.489.06792-3.596.20377-1.106.13585-2.005.33962-2.765.61132-.761.2717-1.383.5434-1.798.88302-.414.33962-.622.74717-.622 1.15472 0 .61132.277 1.15471.899 1.49434.622.33962 1.383.61132 2.351.81509q1.452.305655 3.318.40755c1.245.06792 2.558.20377 3.803.2717 1.313.13584 2.558.27169 3.802.40754 1.245.20378 2.351.40755 3.319.74717.968.33963 1.798.8151 2.351 1.42644.622.6113.899 1.3585.899 2.3094 0 1.766-.899 3.1245-2.766 3.9396S178.861 18 174.851 18m26.617-10.66371 12.03 10.32451-.069.0679h-3.042l-10.855-9.30562-5.393 3.19242v6.1132h-2.143V.679688h2.143V9.3061L209.212.679688h3.387l.069.067924zm16.044 10.39241V.679688h2.143V17.7287zM245.856.679688h2.143V17.7287h-2.143L228.225 3.26082V17.7967h-2.143V.679688h2.143L245.786 15.1476V.679688z" fill="currentColor"/>
-                </svg>
-              </a>
-            </div>
-            <ul class='main-nav__column main-nav__linklist'>
-              {% assign half_count = linklists['main-menu'].links.size
-                | divided_by: 2
-                | round
-              %}
-              {% for link in linklists['main-menu'].links offset: half_count %}
-                <li class='main-nav__link-item'>
-                  {% if link.url == '#' and link.title != 'Account' %}
-                    <p
-                      class='main-nav__link all-caps link--main-nav'
-                      id='
-                        {%- if link.title == 'Shopping Bag' -%}
-                          cart-action
-                        {%- else -%}
-                          {{ link.handle }}-action
-                        {%- endif -%}
-                      '
-                    >
-                      {% if link.title == 'Shopping Bag' %}
-                        {{ link.title }}
-                        <span class='cart-action__count'
-                          >({{ cart.item_count }})</span
-                        >
-                      {% else %}
-                        {{ link.title }}
-                      {% endif %}
-                    </p>
-                  {% else %}
-                    <a
-                      class='main-nav__link all-caps link--main-nav'
-                      id='
-                        {%- if link.title == 'Shopping Bag' -%}
-                          cart-action
-                        {%- else -%}
-                          {{ link.handle }}-action
-                        {%- endif -%}
-                      '
-                      href='
-                        {%- if link.title == 'Account' -%}
-                          {% if shop.customer_accounts_enabled %}
-                            {% if customer %}
-                              {{ routes.account_url }}
-                            {% else %}
-                              {{ routes.account_login_url }}
-                            {% endif %}
-                          {% endif %}
-                        {%- else -%}
-                          {{ link.url }}
-                        {%- endif -%}
-                      '
-                    >
-                      {% if link.title == 'Shopping Bag' %}
-                        {{ link.title }}
-                        <span class='cart-action__count'
-                          >({{ cart.item_count }})</span
-                        >
-                      {% else %}
-                        {{ link.title }}
-                      {% endif %}
-                    </a>
-                  {% endif %}
-                </li>
-              {% endfor %}
-              <li class='main-nav__trigger'>
-                <button id='mobile-cart-action'>
-                  <span class='all-caps'>
-                    Bag
-                    <span class='cart-action__count'
-                      >({{ cart.item_count }})</span
-                    >
-                  </span>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        <div class='drawer drawer--menu' id='treatments-menu'>
-          <div class='drawer__header'>
-            <button class='all-caps drawer__header-action menu-back'>
-              Back
-            </button>
-            <h2 class='drawer__top-level-heading'>Treatments</h2>
-            <a
-              href='/pages/skin-treatments/'
-              class='all-caps drawer__header-action'
-              id='treatments-all'
-              >View All</a
-            >
-          </div>
-          <ul class='drawer__container'>
-            {% for link in linklists['main-menu'].links %}
-              {% if link.title == 'Treatments' %}
-                {% for child_link in link.links %}
-                  <li class='drawer__menu'>
-                    <h3 class='all-caps drawer__sub-heading'>
-                      {{ child_link.title }}
-                    </h3>
-                    <ul class='drawer__links-list'>
-                      {% for grandchild_link in child_link.links %}
-                        <li class='all-caps drawer__link'>
-                          <a href='{{ grandchild_link.url }}'>
-                            {{- grandchild_link.title -}}
-                          </a>
-                        </li>
-                      {% endfor %}
-                    </ul>
-                  </li>
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-        <div class='drawer drawer--menu' id='shop-menu'>
-          <div class='drawer__header'>
-            <button class='all-caps drawer__header-action menu-back'>
-              Back
-            </button>
-            <h2 class='drawer__top-level-heading'>Shop</h2>
-            <a
-              href='/collections/all'
-              class='all-caps drawer__header-action'
-              id='shop-all'
-              >Shop All</a
-            >
-          </div>
-          <ul class='drawer__container'>
-            {% for link in linklists['main-menu'].links %}
-              {% if link.title == 'Shop' %}
-                {% for child_link in link.links %}
-                  <li class='drawer__menu'>
-                    <h3 class='all-caps drawer__sub-heading'>
-                      {{ child_link.title }}
-                    </h3>
-                    <ul class='drawer__links-list'>
-                      {% if child_link.title == 'Brands' %}
-                        {% for collection in collections %}
-                          {%- if collection.metafields.custom.parent_collection
-                              == 'brands'
-                          -%}
-                            <li class='all-caps drawer__link'>
-                              <a href='{{ collection.url }}'>
-                                {{- collection.title -}}
-                              </a>
-                            </li>
-                          {%- endif -%}
-                        {% endfor %}
-
-                      {% else %}
-                        {% for grandchild_link in child_link.links %}
-                          <li class='all-caps drawer__link'>
-                            <a href='{{ grandchild_link.url }}'>
-                              {{- grandchild_link.title -}}
-                            </a>
-                          </li>
-                        {% endfor %}
-                      {% endif %}
-                    </ul>
-                  </li>
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-        <div class='drawer drawer--menu' id='mobile-menu'>
-          <div class='drawer__header'>
-            <h2 class='drawer__top-level-heading'>Menu</h2>
-            <button class='all-caps drawer__header-action' id='menu-close'>
-              Close
-            </button>
-          </div>
-          <ul class='drawer__container'>
-            <li class='drawer__menu'>
-              <ul class='drawer__links-list'>
+        <header>
+          <nav class='main-nav'>
+            <div class='main-nav__container wrapper wrapper--lg'>
+              <ul class='main-nav__column main-nav__linklist'>
                 {% assign half_count = linklists['main-menu'].links.size
                   | divided_by: 2
                   | round
                 %}
                 {% for link in linklists['main-menu'].links limit: half_count %}
-                  <li class='all-caps drawer__link'>
+                  <li class='main-nav__link-item'>
                     {% if link.url == '#' %}
-                      <p id='{{ link.handle }}-mobile-action'>
-                        {{ link.title }}
+                      <p
+                        class='main-nav__link all-caps link--main-nav'
+                        id='{{ link.handle }}-action'
+                      >
+                        {{- link.title -}}
                       </p>
                     {% else %}
                       <a
-                        id='{{ link.handle }}-mobile-action'
+                        class='main-nav__link all-caps link--main-nav'
+                        id='{{ link.handle }}-action'
                         href='{{ link.url }}'
                       >
                         {{- link.title -}}
@@ -553,10 +336,28 @@
                     {% endif %}
                   </li>
                 {% endfor %}
+                <li class='main-nav__trigger'>
+                  <button id='mobile-action'>
+                    <span class='all-caps'>Menu</span>
+                  </button>
+                </li>
               </ul>
-            </li>
-            <li class='drawer__menu'>
-              <ul class='drawer__links-list'>
+              <div class='main-nav__column main-nav__branding'>
+                <a class='svg-container' href='/'>
+                  <svg
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 249 19'
+                    class='svg-content'
+                    fill='currentColor'
+                    preserveAspectRatio='xMinYMin meet'
+                    version='1.1'
+                  >
+                    <path d="m22.5391 17.6608-.0692.0679h-2.7655l-7.2595-7.3358H2.14329v7.4038H0V.679688h14.0351c1.3827 0 2.6272.067924 3.5952.271698.9679.203774 1.8667.475474 2.5581.950944 1.3136.81509 2.005 1.96981 2.005 3.6 0 1.56226-.6223 2.71698-1.7976 3.53207-1.1754.8151-2.973 1.2906-5.3237 1.3585zM2.14329 2.51365v6.04528H13.4128c1.4519 0 2.5581-.06792 3.3878-.20377.7605-.13585 1.3828-.33962 1.8667-.5434.8988-.47547 1.3137-1.22264 1.3137-2.30943s-.4149-1.83396-1.3137-2.30944c-.4148-.27169-1.037-.40754-1.8667-.54339-.7605-.13585-1.8667-.13585-3.3878-.13585zm46.94271 0H30.1421v5.77358h17.9068v1.83397H30.1421v5.8415H49.086v1.834H27.9297V.679688H49.086zM83.9337.679688l.0691.067924L76.3976 17.7287h-2.0741L68.101 3.32874 61.8786 17.7287h-2.0742L52.1992.747612l.0692-.067924h2.2815L60.7032 15.0797 66.9257.679688h2.3507L75.4297 15.0797 81.6521.679688zM88.082 17.7287V.679688h2.1433V17.7287zM116.361.679688h2.143V17.7287h-2.143L98.7995 3.26082V17.7967h-2.1433V.679688h2.1433L116.361 15.1476zm29.936 2.105662c2.074 1.42641 3.181 3.6 3.181 6.3849 0 2.85285-1.037 4.95845-3.181 6.38495-2.074 1.4264-5.254 2.1735-9.541 2.1735h-11.822V.679688h11.822c4.287 0 7.467.679242 9.541 2.105662m-1.659 11.54715c.899-.5434 1.521-1.2226 1.936-2.1056.415-.8151.622-1.834.622-3.05665 0-1.22264-.207-2.17358-.622-3.0566-.415-.81509-1.037-1.56226-1.936-2.10566s-2.005-.95094-3.388-1.22264-3.111-.40755-5.254-.40755h-8.85v13.4491h8.85c1.866 0 3.526-.1359 4.978-.3397 1.452-.1358 2.696-.5434 3.664-1.1547M174.851 18c-1.037 0-2.144-.0679-3.181-.1358-1.037-.068-2.074-.1359-3.111-.2717-1.037-.1359-1.936-.2717-2.834-.4755-.899-.2038-1.729-.4076-2.42-.6113v-2.0378l.138-.0679c.76.2717 1.659.5434 2.558.7472.899.2037 1.867.4075 2.835.5434.968.1358 2.005.2717 3.042.3396s2.074.1358 3.111.1358c6.153 0 9.195-1.0868 9.195-3.2603 0-.6793-.276-1.1548-.898-1.5623-.623-.4076-1.383-.6792-2.351-.883s-2.074-.3396-3.319-.47549c-1.244-.13585-2.558-.20378-3.802-.33963-1.314-.13585-2.558-.20377-3.803-.40754-1.244-.13585-2.351-.40755-3.319-.74717-.967-.33963-1.797-.8151-2.35-1.35849-.622-.5434-.899-1.29057-.899-2.24151 0-1.56227.968-2.78491 2.835-3.66793C168.144.407547 170.841 0 174.367 0q3.111 0 6.015.407547c1.936.271698 3.664.679243 5.323 1.154713v1.90189l-.138.06793c-.76-.2717-1.59-.47548-2.489-.67925s-1.797-.40755-2.765-.5434c-.968-.13584-1.936-.27169-2.904-.33962-1.245.06793-2.143.06793-3.111.06793-1.314 0-2.489.06792-3.596.20377-1.106.13585-2.005.33962-2.765.61132-.761.2717-1.383.5434-1.798.88302-.414.33962-.622.74717-.622 1.15472 0 .61132.277 1.15471.899 1.49434.622.33962 1.383.61132 2.351.81509q1.452.305655 3.318.40755c1.245.06792 2.558.20377 3.803.2717 1.313.13584 2.558.27169 3.802.40754 1.245.20378 2.351.40755 3.319.74717.968.33963 1.798.8151 2.351 1.42644.622.6113.899 1.3585.899 2.3094 0 1.766-.899 3.1245-2.766 3.9396S178.861 18 174.851 18m26.617-10.66371 12.03 10.32451-.069.0679h-3.042l-10.855-9.30562-5.393 3.19242v6.1132h-2.143V.679688h2.143V9.3061L209.212.679688h3.387l.069.067924zm16.044 10.39241V.679688h2.143V17.7287zM245.856.679688h2.143V17.7287h-2.143L228.225 3.26082V17.7967h-2.143V.679688h2.143L245.786 15.1476V.679688z" fill="currentColor"/>
+                  </svg>
+                </a>
+              </div>
+              <ul class='main-nav__column main-nav__linklist'>
                 {% assign half_count = linklists['main-menu'].links.size
                   | divided_by: 2
                   | round
@@ -564,369 +365,355 @@
                 {% for link in linklists['main-menu'].links
                   offset: half_count
                 %}
-                  {% unless forloop.last %}
-                    {% comment %} double-check when pushed to theme {% endcomment %}
+                  <li class='main-nav__link-item'>
+                    {% if link.url == '#' and link.title != 'Account' %}
+                      <p
+                        class='main-nav__link all-caps link--main-nav'
+                        id='
+                          {%- if link.title == 'Shopping Bag' -%}
+                            cart-action
+                          {%- else -%}
+                            {{ link.handle }}-action
+                          {%- endif -%}
+                        '
+                      >
+                        {% if link.title == 'Shopping Bag' %}
+                          {{ link.title }}
+                          <span class='cart-action__count'
+                            >({{ cart.item_count }})</span
+                          >
+                        {% else %}
+                          {{ link.title }}
+                        {% endif %}
+                      </p>
+                    {% else %}
+                      <a
+                        class='main-nav__link all-caps link--main-nav'
+                        id='
+                          {%- if link.title == 'Shopping Bag' -%}
+                            cart-action
+                          {%- else -%}
+                            {{ link.handle }}-action
+                          {%- endif -%}
+                        '
+                        href='
+                          {%- if link.title == 'Account' -%}
+                            {% if shop.customer_accounts_enabled %}
+                              {% if customer %}
+                                {{ routes.account_url }}
+                              {% else %}
+                                {{ routes.account_login_url }}
+                              {% endif %}
+                            {% endif %}
+                          {%- else -%}
+                            {{ link.url }}
+                          {%- endif -%}
+                        '
+                      >
+                        {% if link.title == 'Shopping Bag' %}
+                          {{ link.title }}
+                          <span class='cart-action__count'
+                            >({{ cart.item_count }})</span
+                          >
+                        {% else %}
+                          {{ link.title }}
+                        {% endif %}
+                      </a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+                <li class='main-nav__trigger'>
+                  <button id='mobile-cart-action'>
+                    <span class='all-caps'>
+                      Bag
+                      <span class='cart-action__count'
+                        >({{ cart.item_count }})</span
+                      >
+                    </span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <div class='drawer drawer--menu' id='treatments-menu'>
+            <div class='drawer__header'>
+              <button class='all-caps drawer__header-action menu-back'>
+                Back
+              </button>
+              <h2 class='drawer__top-level-heading'>Treatments</h2>
+              <a
+                href='/pages/skin-treatments/'
+                class='all-caps drawer__header-action'
+                id='treatments-all'
+                >View All</a
+              >
+            </div>
+            <ul class='drawer__container'>
+              {% for link in linklists['main-menu'].links %}
+                {% if link.title == 'Treatments' %}
+                  {% for child_link in link.links %}
+                    <li class='drawer__menu'>
+                      <h3 class='all-caps drawer__sub-heading'>
+                        {{ child_link.title }}
+                      </h3>
+                      <ul class='drawer__links-list'>
+                        {% for grandchild_link in child_link.links %}
+                          <li class='all-caps drawer__link'>
+                            <a href='{{ grandchild_link.url }}'>
+                              {{- grandchild_link.title -}}
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </li>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          <div class='drawer drawer--menu' id='shop-menu'>
+            <div class='drawer__header'>
+              <button class='all-caps drawer__header-action menu-back'>
+                Back
+              </button>
+              <h2 class='drawer__top-level-heading'>Shop</h2>
+              <a
+                href='/collections/all'
+                class='all-caps drawer__header-action'
+                id='shop-all'
+                >Shop All</a
+              >
+            </div>
+            <ul class='drawer__container'>
+              {% for link in linklists['main-menu'].links %}
+                {% if link.title == 'Shop' %}
+                  {% for child_link in link.links %}
+                    <li class='drawer__menu'>
+                      <h3 class='all-caps drawer__sub-heading'>
+                        {{ child_link.title }}
+                      </h3>
+                      <ul class='drawer__links-list'>
+                        {% if child_link.title == 'Brands' %}
+                          {% for collection in collections %}
+                            {%- if collection.metafields.custom.parent_collection
+                                == 'brands'
+                            -%}
+                              <li class='all-caps drawer__link'>
+                                <a href='{{ collection.url }}'>
+                                  {{- collection.title -}}
+                                </a>
+                              </li>
+                            {%- endif -%}
+                          {% endfor %}
+
+                        {% else %}
+                          {% for grandchild_link in child_link.links %}
+                            <li class='all-caps drawer__link'>
+                              <a href='{{ grandchild_link.url }}'>
+                                {{- grandchild_link.title -}}
+                              </a>
+                            </li>
+                          {% endfor %}
+                        {% endif %}
+                      </ul>
+                    </li>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          <div class='drawer drawer--menu' id='mobile-menu'>
+            <div class='drawer__header'>
+              <h2 class='drawer__top-level-heading'>Menu</h2>
+              <button class='all-caps drawer__header-action' id='menu-close'>
+                Close
+              </button>
+            </div>
+            <ul class='drawer__container'>
+              <li class='drawer__menu'>
+                <ul class='drawer__links-list'>
+                  {% assign half_count = linklists['main-menu'].links.size
+                    | divided_by: 2
+                    | round
+                  %}
+                  {% for link in linklists['main-menu'].links
+                    limit: half_count
+                  %}
                     <li class='all-caps drawer__link'>
-                      {% if link.title != 'Account' and link.url == '#' %}
+                      {% if link.url == '#' %}
                         <p id='{{ link.handle }}-mobile-action'>
                           {{ link.title }}
                         </p>
                       {% else %}
                         <a
                           id='{{ link.handle }}-mobile-action'
-                          href='
-                            {%- if link.title == 'Account' -%}
-                              {% if shop.customer_accounts_enabled %}
-                                {% if customer %}
-                                  {{ routes.account_url }}
-                                {% else %}
-                                  {{ routes.account_login_url }}
-                                {% endif %}
-                              {% endif %}
-                            {%- else -%}
-                              {{ link.url }}
-                            {%- endif -%}
-                          '
+                          href='{{ link.url }}'
                         >
-                          {{ link.title }}
+                          {{- link.title -}}
                         </a>
                       {% endif %}
                     </li>
-                  {% endunless %}
-                {% endfor %}
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class='drawer drawer--search' id='search-drawer'>
-          <div class='search__container'>
-            <form
-              id='search-in-drawer'
-              class='search__form'
-              action='{{ routes.search_url }}'
-              role='search'
-            >
-              <div class='search__field'>
-                <div class='search__inputs'>
-                  <input
-                    id='search-input-drawer'
-                    type='text'
-                    name='q'
-                    value='{{ search.terms | escape }}'
-                    placeholder='{{ 'general.search.search' | t }}'
-                    class='field__inner'
-                  >
-                  <label for='search-input-drawer' class='visually-hidden'>
-                    {{- 'general.search.search' | t -}}
-                  </label>
-
-                  <input
-                    type='hidden'
-                    name='type'
-                    value='product,page'
-                  >
-                  <input
-                    type='hidden'
-                    name='options[unavailable_products]'
-                    value='show'
-                  >
-                  <input
-                    type='hidden'
-                    name='options[prefix]'
-                    value='last'
-                  >
-                </div>
-                <div class='search__btns'>
-                  <button
-                    id='search-clear-drawer'
-                    type='reset'
-                    aria-label='Clear search term'
-                  >
-                    <svg
-                      fill='none'
-                      viewBox='0 0 10 10'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        d="M1 1L9 9M1 9L9 1"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        vector-effect="non-scaling-stroke"
-                        stroke-width="1"
-                        focusable="false" />
-                    </svg>
-                  </button>
-                  <button
-                    type='submit'
-                    aria-label='{{ 'general.search.search' | t }}'
-                  >
-                    <svg
-                      fill='none'
-                      viewBox='0 0 26 26'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-width=".8"
-                        vector-effect="non-scaling-stroke"
-                        focusable="false" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </form>
-            <button
-              class='all-caps search__close drawer__header-action'
-              id='search-close'
-            >
-              Close
-            </button>
+                  {% endfor %}
+                </ul>
+              </li>
+              <li class='drawer__menu'>
+                <ul class='drawer__links-list'>
+                  {% assign half_count = linklists['main-menu'].links.size
+                    | divided_by: 2
+                    | round
+                  %}
+                  {% for link in linklists['main-menu'].links
+                    offset: half_count
+                  %}
+                    {% unless forloop.last %}
+                      {% comment %} double-check when pushed to theme {% endcomment %}
+                      <li class='all-caps drawer__link'>
+                        {% if link.title != 'Account' and link.url == '#' %}
+                          <p id='{{ link.handle }}-mobile-action'>
+                            {{ link.title }}
+                          </p>
+                        {% else %}
+                          <a
+                            id='{{ link.handle }}-mobile-action'
+                            href='
+                              {%- if link.title == 'Account' -%}
+                                {% if shop.customer_accounts_enabled %}
+                                  {% if customer %}
+                                    {{ routes.account_url }}
+                                  {% else %}
+                                    {{ routes.account_login_url }}
+                                  {% endif %}
+                                {% endif %}
+                              {%- else -%}
+                                {{ link.url }}
+                              {%- endif -%}
+                            '
+                          >
+                            {{ link.title }}
+                          </a>
+                        {% endif %}
+                      </li>
+                    {% endunless %}
+                  {% endfor %}
+                </ul>
+              </li>
+            </ul>
           </div>
-        </div>
-      </header>
+          <div class='drawer drawer--search' id='search-drawer'>
+            <div class='search__container'>
+              <form
+                id='search-in-drawer'
+                class='search__form'
+                action='{{ routes.search_url }}'
+                role='search'
+              >
+                <div class='search__field'>
+                  <div class='search__inputs'>
+                    <input
+                      id='search-input-drawer'
+                      type='text'
+                      name='q'
+                      value='{{ search.terms | escape }}'
+                      placeholder='{{ 'general.search.search' | t }}'
+                      class='field__inner'
+                    >
+                    <label for='search-input-drawer' class='visually-hidden'>
+                      {{- 'general.search.search' | t -}}
+                    </label>
+
+                    <input
+                      type='hidden'
+                      name='type'
+                      value='product,page'
+                    >
+                    <input
+                      type='hidden'
+                      name='options[unavailable_products]'
+                      value='show'
+                    >
+                    <input
+                      type='hidden'
+                      name='options[prefix]'
+                      value='last'
+                    >
+                  </div>
+                  <div class='search__btns'>
+                    <button
+                      id='search-clear-drawer'
+                      type='reset'
+                      aria-label='Clear search term'
+                    >
+                      <svg
+                        fill='none'
+                        viewBox='0 0 10 10'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          d="M1 1L9 9M1 9L9 1"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          vector-effect="non-scaling-stroke"
+                          stroke-width="1"
+                          focusable="false" />
+                      </svg>
+                    </button>
+                    <button
+                      type='submit'
+                      aria-label='{{ 'general.search.search' | t }}'
+                    >
+                      <svg
+                        fill='none'
+                        viewBox='0 0 26 26'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-width=".8"
+                          vector-effect="non-scaling-stroke"
+                          focusable="false" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <button
+                class='all-caps search__close drawer__header-action'
+                id='search-close'
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </header>
       </div>
     {% else %}
       {% sections 'header-group' %}
       {% comment %} Keep shared page hero imagery separate from the hidden legacy navigation. {% endcomment %}
       <div class='hero' aria-hidden='true'></div>
       <div hidden>
-      <header>
-        <nav class='main-nav'>
-          <div class='main-nav__container wrapper wrapper--lg'>
-            <ul class='main-nav__column main-nav__linklist'>
-              {% assign half_count = linklists['main-menu'].links.size
-                | divided_by: 2
-                | round
-              %}
-              {% for link in linklists['main-menu'].links limit: half_count %}
-                <li class='main-nav__link-item'>
-                  {% if link.url == '#' %}
-                    <p
-                      class='main-nav__link all-caps link--main-nav'
-                      id='{{ link.handle }}-action'
-                    >
-                      {{- link.title -}}
-                    </p>
-                  {% else %}
-                    <a
-                      class='main-nav__link all-caps link--main-nav'
-                      id='{{ link.handle }}-action'
-                      href='{{ link.url }}'
-                    >
-                      {{- link.title -}}
-                    </a>
-                  {% endif %}
-                </li>
-              {% endfor %}
-              <li class='main-nav__trigger'>
-                <button id='mobile-action'>
-                  <span class='all-caps'>Menu</span>
-                </button>
-              </li>
-            </ul>
-            <div class='main-nav__column main-nav__branding'>
-              <a class='svg-container' href='/'>
-                <svg
-                  fill='none'
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 249 19'
-                  class='svg-content'
-                  fill='currentColor'
-                  preserveAspectRatio='xMinYMin meet'
-                  version='1.1'
-                >
-                  <path d="m22.5391 17.6608-.0692.0679h-2.7655l-7.2595-7.3358H2.14329v7.4038H0V.679688h14.0351c1.3827 0 2.6272.067924 3.5952.271698.9679.203774 1.8667.475474 2.5581.950944 1.3136.81509 2.005 1.96981 2.005 3.6 0 1.56226-.6223 2.71698-1.7976 3.53207-1.1754.8151-2.973 1.2906-5.3237 1.3585zM2.14329 2.51365v6.04528H13.4128c1.4519 0 2.5581-.06792 3.3878-.20377.7605-.13585 1.3828-.33962 1.8667-.5434.8988-.47547 1.3137-1.22264 1.3137-2.30943s-.4149-1.83396-1.3137-2.30944c-.4148-.27169-1.037-.40754-1.8667-.54339-.7605-.13585-1.8667-.13585-3.3878-.13585zm46.94271 0H30.1421v5.77358h17.9068v1.83397H30.1421v5.8415H49.086v1.834H27.9297V.679688H49.086zM83.9337.679688l.0691.067924L76.3976 17.7287h-2.0741L68.101 3.32874 61.8786 17.7287h-2.0742L52.1992.747612l.0692-.067924h2.2815L60.7032 15.0797 66.9257.679688h2.3507L75.4297 15.0797 81.6521.679688zM88.082 17.7287V.679688h2.1433V17.7287zM116.361.679688h2.143V17.7287h-2.143L98.7995 3.26082V17.7967h-2.1433V.679688h2.1433L116.361 15.1476zm29.936 2.105662c2.074 1.42641 3.181 3.6 3.181 6.3849 0 2.85285-1.037 4.95845-3.181 6.38495-2.074 1.4264-5.254 2.1735-9.541 2.1735h-11.822V.679688h11.822c4.287 0 7.467.679242 9.541 2.105662m-1.659 11.54715c.899-.5434 1.521-1.2226 1.936-2.1056.415-.8151.622-1.834.622-3.05665 0-1.22264-.207-2.17358-.622-3.0566-.415-.81509-1.037-1.56226-1.936-2.10566s-2.005-.95094-3.388-1.22264-3.111-.40755-5.254-.40755h-8.85v13.4491h8.85c1.866 0 3.526-.1359 4.978-.3397 1.452-.1358 2.696-.5434 3.664-1.1547M174.851 18c-1.037 0-2.144-.0679-3.181-.1358-1.037-.068-2.074-.1359-3.111-.2717-1.037-.1359-1.936-.2717-2.834-.4755-.899-.2038-1.729-.4076-2.42-.6113v-2.0378l.138-.0679c.76.2717 1.659.5434 2.558.7472.899.2037 1.867.4075 2.835.5434.968.1358 2.005.2717 3.042.3396s2.074.1358 3.111.1358c6.153 0 9.195-1.0868 9.195-3.2603 0-.6793-.276-1.1548-.898-1.5623-.623-.4076-1.383-.6792-2.351-.883s-2.074-.3396-3.319-.47549c-1.244-.13585-2.558-.20378-3.802-.33963-1.314-.13585-2.558-.20377-3.803-.40754-1.244-.13585-2.351-.40755-3.319-.74717-.967-.33963-1.797-.8151-2.35-1.35849-.622-.5434-.899-1.29057-.899-2.24151 0-1.56227.968-2.78491 2.835-3.66793C168.144.407547 170.841 0 174.367 0q3.111 0 6.015.407547c1.936.271698 3.664.679243 5.323 1.154713v1.90189l-.138.06793c-.76-.2717-1.59-.47548-2.489-.67925s-1.797-.40755-2.765-.5434c-.968-.13584-1.936-.27169-2.904-.33962-1.245.06793-2.143.06793-3.111.06793-1.314 0-2.489.06792-3.596.20377-1.106.13585-2.005.33962-2.765.61132-.761.2717-1.383.5434-1.798.88302-.414.33962-.622.74717-.622 1.15472 0 .61132.277 1.15471.899 1.49434.622.33962 1.383.61132 2.351.81509q1.452.305655 3.318.40755c1.245.06792 2.558.20377 3.803.2717 1.313.13584 2.558.27169 3.802.40754 1.245.20378 2.351.40755 3.319.74717.968.33963 1.798.8151 2.351 1.42644.622.6113.899 1.3585.899 2.3094 0 1.766-.899 3.1245-2.766 3.9396S178.861 18 174.851 18m26.617-10.66371 12.03 10.32451-.069.0679h-3.042l-10.855-9.30562-5.393 3.19242v6.1132h-2.143V.679688h2.143V9.3061L209.212.679688h3.387l.069.067924zm16.044 10.39241V.679688h2.143V17.7287zM245.856.679688h2.143V17.7287h-2.143L228.225 3.26082V17.7967h-2.143V.679688h2.143L245.786 15.1476V.679688z" fill="currentColor"/>
-                </svg>
-              </a>
-            </div>
-            <ul class='main-nav__column main-nav__linklist'>
-              {% assign half_count = linklists['main-menu'].links.size
-                | divided_by: 2
-                | round
-              %}
-              {% for link in linklists['main-menu'].links offset: half_count %}
-                <li class='main-nav__link-item'>
-                  {% if link.url == '#' and link.title != 'Account' %}
-                    <p
-                      class='main-nav__link all-caps link--main-nav'
-                      id='
-                        {%- if link.title == 'Shopping Bag' -%}
-                          cart-action
-                        {%- else -%}
-                          {{ link.handle }}-action
-                        {%- endif -%}
-                      '
-                    >
-                      {% if link.title == 'Shopping Bag' %}
-                        {{ link.title }}
-                        <span class='cart-action__count'
-                          >({{ cart.item_count }})</span
-                        >
-                      {% else %}
-                        {{ link.title }}
-                      {% endif %}
-                    </p>
-                  {% else %}
-                    <a
-                      class='main-nav__link all-caps link--main-nav'
-                      id='
-                        {%- if link.title == 'Shopping Bag' -%}
-                          cart-action
-                        {%- else -%}
-                          {{ link.handle }}-action
-                        {%- endif -%}
-                      '
-                      href='
-                        {%- if link.title == 'Account' -%}
-                          {% if shop.customer_accounts_enabled %}
-                            {% if customer %}
-                              {{ routes.account_url }}
-                            {% else %}
-                              {{ routes.account_login_url }}
-                            {% endif %}
-                          {% endif %}
-                        {%- else -%}
-                          {{ link.url }}
-                        {%- endif -%}
-                      '
-                    >
-                      {% if link.title == 'Shopping Bag' %}
-                        {{ link.title }}
-                        <span class='cart-action__count'
-                          >({{ cart.item_count }})</span
-                        >
-                      {% else %}
-                        {{ link.title }}
-                      {% endif %}
-                    </a>
-                  {% endif %}
-                </li>
-              {% endfor %}
-              <li class='main-nav__trigger'>
-                <button id='mobile-cart-action'>
-                  <span class='all-caps'>
-                    Bag
-                    <span class='cart-action__count'
-                      >({{ cart.item_count }})</span
-                    >
-                  </span>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        <div class='drawer drawer--menu' id='treatments-menu'>
-          <div class='drawer__header'>
-            <button class='all-caps drawer__header-action menu-back'>
-              Back
-            </button>
-            <h2 class='drawer__top-level-heading'>Treatments</h2>
-            <a
-              href='/pages/skin-treatments/'
-              class='all-caps drawer__header-action'
-              id='treatments-all'
-              >View All</a
-            >
-          </div>
-          <ul class='drawer__container'>
-            {% for link in linklists['main-menu'].links %}
-              {% if link.title == 'Treatments' %}
-                {% for child_link in link.links %}
-                  <li class='drawer__menu'>
-                    <h3 class='all-caps drawer__sub-heading'>
-                      {{ child_link.title }}
-                    </h3>
-                    <ul class='drawer__links-list'>
-                      {% for grandchild_link in child_link.links %}
-                        <li class='all-caps drawer__link'>
-                          <a href='{{ grandchild_link.url }}'>
-                            {{- grandchild_link.title -}}
-                          </a>
-                        </li>
-                      {% endfor %}
-                    </ul>
-                  </li>
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-        <div class='drawer drawer--menu' id='shop-menu'>
-          <div class='drawer__header'>
-            <button class='all-caps drawer__header-action menu-back'>
-              Back
-            </button>
-            <h2 class='drawer__top-level-heading'>Shop</h2>
-            <a
-              href='/collections/all'
-              class='all-caps drawer__header-action'
-              id='shop-all'
-              >Shop All</a
-            >
-          </div>
-          <ul class='drawer__container'>
-            {% for link in linklists['main-menu'].links %}
-              {% if link.title == 'Shop' %}
-                {% for child_link in link.links %}
-                  <li class='drawer__menu'>
-                    <h3 class='all-caps drawer__sub-heading'>
-                      {{ child_link.title }}
-                    </h3>
-                    <ul class='drawer__links-list'>
-                      {% if child_link.title == 'Brands' %}
-                        {% for collection in collections %}
-                          {%- if collection.metafields.custom.parent_collection
-                              == 'brands'
-                          -%}
-                            <li class='all-caps drawer__link'>
-                              <a href='{{ collection.url }}'>
-                                {{- collection.title -}}
-                              </a>
-                            </li>
-                          {%- endif -%}
-                        {% endfor %}
-
-                      {% else %}
-                        {% for grandchild_link in child_link.links %}
-                          <li class='all-caps drawer__link'>
-                            <a href='{{ grandchild_link.url }}'>
-                              {{- grandchild_link.title -}}
-                            </a>
-                          </li>
-                        {% endfor %}
-                      {% endif %}
-                    </ul>
-                  </li>
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-        <div class='drawer drawer--menu' id='mobile-menu'>
-          <div class='drawer__header'>
-            <h2 class='drawer__top-level-heading'>Menu</h2>
-            <button class='all-caps drawer__header-action' id='menu-close'>
-              Close
-            </button>
-          </div>
-          <ul class='drawer__container'>
-            <li class='drawer__menu'>
-              <ul class='drawer__links-list'>
+        <header>
+          <nav class='main-nav'>
+            <div class='main-nav__container wrapper wrapper--lg'>
+              <ul class='main-nav__column main-nav__linklist'>
                 {% assign half_count = linklists['main-menu'].links.size
                   | divided_by: 2
                   | round
                 %}
                 {% for link in linklists['main-menu'].links limit: half_count %}
-                  <li class='all-caps drawer__link'>
+                  <li class='main-nav__link-item'>
                     {% if link.url == '#' %}
-                      <p id='{{ link.handle }}-mobile-action'>
-                        {{ link.title }}
+                      <p
+                        class='main-nav__link all-caps link--main-nav'
+                        id='{{ link.handle }}-action'
+                      >
+                        {{- link.title -}}
                       </p>
                     {% else %}
                       <a
-                        id='{{ link.handle }}-mobile-action'
+                        class='main-nav__link all-caps link--main-nav'
+                        id='{{ link.handle }}-action'
                         href='{{ link.url }}'
                       >
                         {{- link.title -}}
@@ -934,10 +721,28 @@
                     {% endif %}
                   </li>
                 {% endfor %}
+                <li class='main-nav__trigger'>
+                  <button id='mobile-action'>
+                    <span class='all-caps'>Menu</span>
+                  </button>
+                </li>
               </ul>
-            </li>
-            <li class='drawer__menu'>
-              <ul class='drawer__links-list'>
+              <div class='main-nav__column main-nav__branding'>
+                <a class='svg-container' href='/'>
+                  <svg
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 249 19'
+                    class='svg-content'
+                    fill='currentColor'
+                    preserveAspectRatio='xMinYMin meet'
+                    version='1.1'
+                  >
+                    <path d="m22.5391 17.6608-.0692.0679h-2.7655l-7.2595-7.3358H2.14329v7.4038H0V.679688h14.0351c1.3827 0 2.6272.067924 3.5952.271698.9679.203774 1.8667.475474 2.5581.950944 1.3136.81509 2.005 1.96981 2.005 3.6 0 1.56226-.6223 2.71698-1.7976 3.53207-1.1754.8151-2.973 1.2906-5.3237 1.3585zM2.14329 2.51365v6.04528H13.4128c1.4519 0 2.5581-.06792 3.3878-.20377.7605-.13585 1.3828-.33962 1.8667-.5434.8988-.47547 1.3137-1.22264 1.3137-2.30943s-.4149-1.83396-1.3137-2.30944c-.4148-.27169-1.037-.40754-1.8667-.54339-.7605-.13585-1.8667-.13585-3.3878-.13585zm46.94271 0H30.1421v5.77358h17.9068v1.83397H30.1421v5.8415H49.086v1.834H27.9297V.679688H49.086zM83.9337.679688l.0691.067924L76.3976 17.7287h-2.0741L68.101 3.32874 61.8786 17.7287h-2.0742L52.1992.747612l.0692-.067924h2.2815L60.7032 15.0797 66.9257.679688h2.3507L75.4297 15.0797 81.6521.679688zM88.082 17.7287V.679688h2.1433V17.7287zM116.361.679688h2.143V17.7287h-2.143L98.7995 3.26082V17.7967h-2.1433V.679688h2.1433L116.361 15.1476zm29.936 2.105662c2.074 1.42641 3.181 3.6 3.181 6.3849 0 2.85285-1.037 4.95845-3.181 6.38495-2.074 1.4264-5.254 2.1735-9.541 2.1735h-11.822V.679688h11.822c4.287 0 7.467.679242 9.541 2.105662m-1.659 11.54715c.899-.5434 1.521-1.2226 1.936-2.1056.415-.8151.622-1.834.622-3.05665 0-1.22264-.207-2.17358-.622-3.0566-.415-.81509-1.037-1.56226-1.936-2.10566s-2.005-.95094-3.388-1.22264-3.111-.40755-5.254-.40755h-8.85v13.4491h8.85c1.866 0 3.526-.1359 4.978-.3397 1.452-.1358 2.696-.5434 3.664-1.1547M174.851 18c-1.037 0-2.144-.0679-3.181-.1358-1.037-.068-2.074-.1359-3.111-.2717-1.037-.1359-1.936-.2717-2.834-.4755-.899-.2038-1.729-.4076-2.42-.6113v-2.0378l.138-.0679c.76.2717 1.659.5434 2.558.7472.899.2037 1.867.4075 2.835.5434.968.1358 2.005.2717 3.042.3396s2.074.1358 3.111.1358c6.153 0 9.195-1.0868 9.195-3.2603 0-.6793-.276-1.1548-.898-1.5623-.623-.4076-1.383-.6792-2.351-.883s-2.074-.3396-3.319-.47549c-1.244-.13585-2.558-.20378-3.802-.33963-1.314-.13585-2.558-.20377-3.803-.40754-1.244-.13585-2.351-.40755-3.319-.74717-.967-.33963-1.797-.8151-2.35-1.35849-.622-.5434-.899-1.29057-.899-2.24151 0-1.56227.968-2.78491 2.835-3.66793C168.144.407547 170.841 0 174.367 0q3.111 0 6.015.407547c1.936.271698 3.664.679243 5.323 1.154713v1.90189l-.138.06793c-.76-.2717-1.59-.47548-2.489-.67925s-1.797-.40755-2.765-.5434c-.968-.13584-1.936-.27169-2.904-.33962-1.245.06793-2.143.06793-3.111.06793-1.314 0-2.489.06792-3.596.20377-1.106.13585-2.005.33962-2.765.61132-.761.2717-1.383.5434-1.798.88302-.414.33962-.622.74717-.622 1.15472 0 .61132.277 1.15471.899 1.49434.622.33962 1.383.61132 2.351.81509q1.452.305655 3.318.40755c1.245.06792 2.558.20377 3.803.2717 1.313.13584 2.558.27169 3.802.40754 1.245.20378 2.351.40755 3.319.74717.968.33963 1.798.8151 2.351 1.42644.622.6113.899 1.3585.899 2.3094 0 1.766-.899 3.1245-2.766 3.9396S178.861 18 174.851 18m26.617-10.66371 12.03 10.32451-.069.0679h-3.042l-10.855-9.30562-5.393 3.19242v6.1132h-2.143V.679688h2.143V9.3061L209.212.679688h3.387l.069.067924zm16.044 10.39241V.679688h2.143V17.7287zM245.856.679688h2.143V17.7287h-2.143L228.225 3.26082V17.7967h-2.143V.679688h2.143L245.786 15.1476V.679688z" fill="currentColor"/>
+                  </svg>
+                </a>
+              </div>
+              <ul class='main-nav__column main-nav__linklist'>
                 {% assign half_count = linklists['main-menu'].links.size
                   | divided_by: 2
                   | round
@@ -945,149 +750,349 @@
                 {% for link in linklists['main-menu'].links
                   offset: half_count
                 %}
-                  {% unless forloop.last %}
+                  <li class='main-nav__link-item'>
+                    {% if link.url == '#' and link.title != 'Account' %}
+                      <p
+                        class='main-nav__link all-caps link--main-nav'
+                        id='
+                          {%- if link.title == 'Shopping Bag' -%}
+                            cart-action
+                          {%- else -%}
+                            {{ link.handle }}-action
+                          {%- endif -%}
+                        '
+                      >
+                        {% if link.title == 'Shopping Bag' %}
+                          {{ link.title }}
+                          <span class='cart-action__count'
+                            >({{ cart.item_count }})</span
+                          >
+                        {% else %}
+                          {{ link.title }}
+                        {% endif %}
+                      </p>
+                    {% else %}
+                      <a
+                        class='main-nav__link all-caps link--main-nav'
+                        id='
+                          {%- if link.title == 'Shopping Bag' -%}
+                            cart-action
+                          {%- else -%}
+                            {{ link.handle }}-action
+                          {%- endif -%}
+                        '
+                        href='
+                          {%- if link.title == 'Account' -%}
+                            {% if shop.customer_accounts_enabled %}
+                              {% if customer %}
+                                {{ routes.account_url }}
+                              {% else %}
+                                {{ routes.account_login_url }}
+                              {% endif %}
+                            {% endif %}
+                          {%- else -%}
+                            {{ link.url }}
+                          {%- endif -%}
+                        '
+                      >
+                        {% if link.title == 'Shopping Bag' %}
+                          {{ link.title }}
+                          <span class='cart-action__count'
+                            >({{ cart.item_count }})</span
+                          >
+                        {% else %}
+                          {{ link.title }}
+                        {% endif %}
+                      </a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+                <li class='main-nav__trigger'>
+                  <button id='mobile-cart-action'>
+                    <span class='all-caps'>
+                      Bag
+                      <span class='cart-action__count'
+                        >({{ cart.item_count }})</span
+                      >
+                    </span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <div class='drawer drawer--menu' id='treatments-menu'>
+            <div class='drawer__header'>
+              <button class='all-caps drawer__header-action menu-back'>
+                Back
+              </button>
+              <h2 class='drawer__top-level-heading'>Treatments</h2>
+              <a
+                href='/pages/skin-treatments/'
+                class='all-caps drawer__header-action'
+                id='treatments-all'
+                >View All</a
+              >
+            </div>
+            <ul class='drawer__container'>
+              {% for link in linklists['main-menu'].links %}
+                {% if link.title == 'Treatments' %}
+                  {% for child_link in link.links %}
+                    <li class='drawer__menu'>
+                      <h3 class='all-caps drawer__sub-heading'>
+                        {{ child_link.title }}
+                      </h3>
+                      <ul class='drawer__links-list'>
+                        {% for grandchild_link in child_link.links %}
+                          <li class='all-caps drawer__link'>
+                            <a href='{{ grandchild_link.url }}'>
+                              {{- grandchild_link.title -}}
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </li>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          <div class='drawer drawer--menu' id='shop-menu'>
+            <div class='drawer__header'>
+              <button class='all-caps drawer__header-action menu-back'>
+                Back
+              </button>
+              <h2 class='drawer__top-level-heading'>Shop</h2>
+              <a
+                href='/collections/all'
+                class='all-caps drawer__header-action'
+                id='shop-all'
+                >Shop All</a
+              >
+            </div>
+            <ul class='drawer__container'>
+              {% for link in linklists['main-menu'].links %}
+                {% if link.title == 'Shop' %}
+                  {% for child_link in link.links %}
+                    <li class='drawer__menu'>
+                      <h3 class='all-caps drawer__sub-heading'>
+                        {{ child_link.title }}
+                      </h3>
+                      <ul class='drawer__links-list'>
+                        {% if child_link.title == 'Brands' %}
+                          {% for collection in collections %}
+                            {%- if collection.metafields.custom.parent_collection
+                                == 'brands'
+                            -%}
+                              <li class='all-caps drawer__link'>
+                                <a href='{{ collection.url }}'>
+                                  {{- collection.title -}}
+                                </a>
+                              </li>
+                            {%- endif -%}
+                          {% endfor %}
+
+                        {% else %}
+                          {% for grandchild_link in child_link.links %}
+                            <li class='all-caps drawer__link'>
+                              <a href='{{ grandchild_link.url }}'>
+                                {{- grandchild_link.title -}}
+                              </a>
+                            </li>
+                          {% endfor %}
+                        {% endif %}
+                      </ul>
+                    </li>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          <div class='drawer drawer--menu' id='mobile-menu'>
+            <div class='drawer__header'>
+              <h2 class='drawer__top-level-heading'>Menu</h2>
+              <button class='all-caps drawer__header-action' id='menu-close'>
+                Close
+              </button>
+            </div>
+            <ul class='drawer__container'>
+              <li class='drawer__menu'>
+                <ul class='drawer__links-list'>
+                  {% assign half_count = linklists['main-menu'].links.size
+                    | divided_by: 2
+                    | round
+                  %}
+                  {% for link in linklists['main-menu'].links
+                    limit: half_count
+                  %}
                     <li class='all-caps drawer__link'>
-                      {% if link.title != 'Account' and link.url == '#' %}
+                      {% if link.url == '#' %}
                         <p id='{{ link.handle }}-mobile-action'>
                           {{ link.title }}
                         </p>
                       {% else %}
                         <a
                           id='{{ link.handle }}-mobile-action'
-                          href='
-                            {%- if link.title == 'Account' -%}
-                              {% if shop.customer_accounts_enabled %}
-                                {% if customer %}
-                                  {{ routes.account_url }}
-                                {% else %}
-                                  {{ routes.account_login_url }}
-                                {% endif %}
-                              {% endif %}
-                            {%- else -%}
-                              {{ link.url }}
-                            {%- endif -%}
-                          '
+                          href='{{ link.url }}'
                         >
-                          {{ link.title }}
+                          {{- link.title -}}
                         </a>
                       {% endif %}
                     </li>
-                  {% endunless %}
-                {% endfor %}
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class='drawer drawer--search' id='search-drawer'>
-          <div class='search__container'>
-            <form
-              id='search-in-drawer'
-              class='search__form'
-              action='{{ routes.search_url }}'
-              role='search'
-            >
-              <div class='search__field'>
-                <div class='search__inputs'>
-                  <input
-                    id='search-input'
-                    type='text'
-                    name='q'
-                    value='{{ search.terms | escape }}'
-                    placeholder='{{ 'general.search.search' | t }}'
-                    class='field__inner'
-                    required
-                  >
-                  <label for='search-input' class='visually-hidden'>
-                    {{- 'general.search.search' | t -}}
-                  </label>
-
-                  <input
-                    type='hidden'
-                    name='type'
-                    value='product,page'
-                  >
-                  <input
-                    type='hidden'
-                    name='options[unavailable_products]'
-                    value='show'
-                  >
-                  <input
-                    type='hidden'
-                    name='options[prefix]'
-                    value='last'
-                  >
-                </div>
-                <div class='search__btns'>
-                  <button
-                    id='search-clear'
-                    type='reset'
-                    aria-label='Clear search term'
-                  >
-                    <svg
-                      fill='none'
-                      viewBox='0 0 10 10'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        d="M1 1L9 9M1 9L9 1"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        vector-effect="non-scaling-stroke"
-                        stroke-width="1"
-                        focusable="false" />
-                    </svg>
-                  </button>
-                  <button
-                    type='submit'
-                    aria-label='{{ 'general.search.search' | t }}'
-                  >
-                    <svg
-                      fill='none'
-                      viewBox='0 0 26 26'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-width=".8"
-                        vector-effect="non-scaling-stroke"
-                        focusable="false" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </form>
-            <button
-              class='all-caps search__close drawer__header-action'
-              id='search-close'
-            >
-              Close
-            </button>
+                  {% endfor %}
+                </ul>
+              </li>
+              <li class='drawer__menu'>
+                <ul class='drawer__links-list'>
+                  {% assign half_count = linklists['main-menu'].links.size
+                    | divided_by: 2
+                    | round
+                  %}
+                  {% for link in linklists['main-menu'].links
+                    offset: half_count
+                  %}
+                    {% unless forloop.last %}
+                      <li class='all-caps drawer__link'>
+                        {% if link.title != 'Account' and link.url == '#' %}
+                          <p id='{{ link.handle }}-mobile-action'>
+                            {{ link.title }}
+                          </p>
+                        {% else %}
+                          <a
+                            id='{{ link.handle }}-mobile-action'
+                            href='
+                              {%- if link.title == 'Account' -%}
+                                {% if shop.customer_accounts_enabled %}
+                                  {% if customer %}
+                                    {{ routes.account_url }}
+                                  {% else %}
+                                    {{ routes.account_login_url }}
+                                  {% endif %}
+                                {% endif %}
+                              {%- else -%}
+                                {{ link.url }}
+                              {%- endif -%}
+                            '
+                          >
+                            {{ link.title }}
+                          </a>
+                        {% endif %}
+                      </li>
+                    {% endunless %}
+                  {% endfor %}
+                </ul>
+              </li>
+            </ul>
           </div>
-        </div>
-        {% comment %}
-          {% if template.name == 'index' %}
-            <div class='wrapper wrapper--md'>
-              <div class='main-lockup main-lockup--home-hero'>
-                <div class='main-lockup__copy' style='max-width: 800px;'>
-                  <h1 class='main-heading main-lockup__heading'>
-                    We’re glad you’re here. So is your skin.
-                  </h1>
-                  <p class='main-body main-lockup__body'>
-                    Experience our range of carefully curated luxury skincare.
-                  </p>
+          <div class='drawer drawer--search' id='search-drawer'>
+            <div class='search__container'>
+              <form
+                id='search-in-drawer'
+                class='search__form'
+                action='{{ routes.search_url }}'
+                role='search'
+              >
+                <div class='search__field'>
+                  <div class='search__inputs'>
+                    <input
+                      id='search-input'
+                      type='text'
+                      name='q'
+                      value='{{ search.terms | escape }}'
+                      placeholder='{{ 'general.search.search' | t }}'
+                      class='field__inner'
+                      required
+                    >
+                    <label for='search-input' class='visually-hidden'>
+                      {{- 'general.search.search' | t -}}
+                    </label>
+
+                    <input
+                      type='hidden'
+                      name='type'
+                      value='product,page'
+                    >
+                    <input
+                      type='hidden'
+                      name='options[unavailable_products]'
+                      value='show'
+                    >
+                    <input
+                      type='hidden'
+                      name='options[prefix]'
+                      value='last'
+                    >
+                  </div>
+                  <div class='search__btns'>
+                    <button
+                      id='search-clear'
+                      type='reset'
+                      aria-label='Clear search term'
+                    >
+                      <svg
+                        fill='none'
+                        viewBox='0 0 10 10'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          d="M1 1L9 9M1 9L9 1"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          vector-effect="non-scaling-stroke"
+                          stroke-width="1"
+                          focusable="false" />
+                      </svg>
+                    </button>
+                    <button
+                      type='submit'
+                      aria-label='{{ 'general.search.search' | t }}'
+                    >
+                      <svg
+                        fill='none'
+                        viewBox='0 0 26 26'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          d="m16.461 16.672c3.5369-3.5371 3.5369-9.2717 0-12.809-3.537-3.537-9.2715-3.537-12.808 0-3.5369 3.537-3.5369 9.2717 0 12.809 3.5369 3.537 9.2714 3.537 12.808 0zm0 0 8.5389 8.5392"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-width=".8"
+                          vector-effect="non-scaling-stroke"
+                          focusable="false" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <a
-                  class='btn btn--primary all-caps main-lockup__btn'
-                  href='/collections/all'
-                  >Shop</a
-                >
-              </div>
+              </form>
+              <button
+                class='all-caps search__close drawer__header-action'
+                id='search-close'
+              >
+                Close
+              </button>
             </div>
-          {% endif %}
-        {% endcomment %}
-      </header>
+          </div>
+          {% comment %}
+            {% if template.name == 'index' %}
+              <div class='wrapper wrapper--md'>
+                <div class='main-lockup main-lockup--home-hero'>
+                  <div class='main-lockup__copy' style='max-width: 800px;'>
+                    <h1 class='main-heading main-lockup__heading'>
+                      We’re glad you’re here. So is your skin.
+                    </h1>
+                    <p class='main-body main-lockup__body'>
+                      Experience our range of carefully curated luxury skincare.
+                    </p>
+                  </div>
+                  <a
+                    class='btn btn--primary all-caps main-lockup__btn'
+                    href='/collections/all'
+                    >Shop</a
+                  >
+                </div>
+              </div>
+            {% endif %}
+          {% endcomment %}
+        </header>
       </div>
     {% endif %}
     {{ content_for_layout }}
