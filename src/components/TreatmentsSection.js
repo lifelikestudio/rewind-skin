@@ -76,6 +76,7 @@ const fetchPages = () => {
         edges {
           node {
             id
+            handle
             title
             body
             metafield(namespace: "custom", key: "treatment_page") {
@@ -196,6 +197,7 @@ function displayPages() {
         } else {
           link = document.createElement('a');
           link.href = page.metafields.booking_link_treatments;
+          link.dataset.rsTreatment = page.handle;
           link.className = 'all-caps btn btn--primary treatment-card__btn';
           link.target = '_blank'; // This line makes the link open in a new window
           btnCta.textContent = 'Book Now';

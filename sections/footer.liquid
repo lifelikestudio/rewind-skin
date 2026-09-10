@@ -3,7 +3,12 @@
     <nav class="main-footer__row-container">
       {% assign footer_menu = linklists.footer %}
       {% for link in footer_menu.links limit: 5 %}
-        <div class="main-footer__linklist">
+        <div
+          class="main-footer__linklist"
+          {% if link.title == 'Connect' %}
+            data-rs-placement="footer-social"
+          {% endif %}
+        >
           <h3 class="all-caps alt-nav-heading">{{ link.title }}</h3>
           {% if link.links.size > 0 %}
             <ul>
@@ -58,7 +63,7 @@
     </div>
   </div>
   <div class="main-footer__row">
-    <nav class="main-footer__row-container wrapper wrapper--lg">
+    <nav class="main-footer__row-container wrapper wrapper--lg" data-rs-placement="footer-legal">
       {% assign footer_menu = linklists.footer %}
       {% assign last_link_list = footer_menu.links.last %}
       <ul>

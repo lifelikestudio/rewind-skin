@@ -669,6 +669,7 @@ const fetchPages = () => {
         edges {
           node {
             id
+            handle
             title
             body
             metafield(namespace: "custom", key: "treatment_page") {
@@ -780,6 +781,7 @@ function displayPages(selectedConcern) {
             link = document.createElement('a');
             link.target = '_blank'; // This line makes the link open in a new window
             link.href = page.metafields.booking_link_treatments;
+            link.dataset.rsTreatment = page.handle;
             link.className = page.metafields.starting_rate_treatments
               ? 'all-caps btn btn--primary treatment-card__btn'
               : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';

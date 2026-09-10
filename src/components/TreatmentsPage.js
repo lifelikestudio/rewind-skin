@@ -195,6 +195,7 @@ const fetchPages = () => {
         edges {
           node {
             id
+            handle
             title
             body
             metafield(namespace: "custom", key: "treatment_page") {
@@ -356,6 +357,8 @@ function displayPages(selectedType) {
           } else {
             link = document.createElement('a');
             link.href = page.metafields.booking_link_treatments;
+            link.dataset.rsTreatment = page.handle;
+            link.dataset.rsCategory = selectedType;
             link.className = page.metafields.starting_rate_treatments
               ? 'all-caps btn btn--primary treatment-card__btn'
               : 'all-caps btn btn--primary treatment-card__btn treatment-card__btn--icon';

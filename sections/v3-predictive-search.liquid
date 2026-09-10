@@ -53,6 +53,7 @@
       <section
         class='v3-search__subgroup'
         data-search-results-group='treatments'
+        data-rs-placement='predictive-search-treatment'
       >
         <h2 class='v3-search__subgroup-title text-search-caption'>
           Treatments
@@ -71,6 +72,7 @@
                 href='{{ treatment_url | escape }}'
                 class='v3-search__result-link text-search-result-link'
                 data-search-result-link
+                data-rs-treatment='{{ page.handle | escape }}'
                 {%- if booking_url != blank %}
                   target='_blank'
                   rel='noopener noreferrer'

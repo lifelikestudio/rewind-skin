@@ -9,6 +9,7 @@ module.exports = (_env, argv = {}) => {
     devtool: isProduction ? false : 'eval',
     entry: {
       global: './src/global.js',
+      'outbound-tracking': './src/outbound-tracking.js',
     },
     output: {
       filename: '[name].js',

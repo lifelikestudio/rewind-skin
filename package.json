@@ -14,7 +14,7 @@
     "build:js": "webpack --mode production",
     "start": "webpack --watch --mode development",
     "build": "npm run build:js && npm run capsize && npm run build:v3",
-    "theme:dev": "shopify theme dev --environment live --theme-editor-sync",
+    "theme:dev": "shopify theme dev --environment=live --error-overlay=silent",
     "theme:release": "shopify theme push --environment live-release"
   },
   "dependencies": {
