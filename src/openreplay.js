@@ -45,6 +45,8 @@ import OpenReplay from '@openreplay/tracker';
   const analyticsAllowed = () =>
     window.Shopify?.customerPrivacy?.analyticsProcessingAllowed?.() === true;
 
+  const searchEvents = new Set(['search-submit', 'search-result-click']);
+
   const isOpenReplayKey = (key) =>
     key.startsWith('__openreplay_') ||
     key.startsWith('__or_') ||
@@ -98,25 +100,20 @@ import OpenReplay from '@openreplay/tracker';
     }
   };
 
-  document.addEventListener('rewind:search-query', (event) => {
+  document.addEventListener('rewind:analytics', (event) => {
     if (!consentAllowed || !tracker.isActive()) return;
 
-    const query = String(event.detail?.query || '')
-      .trim()
-      .replace(/\s+/g, ' ');
-    if (!query) return;
+    const eventName = String(event.detail?.name || '');
+    const properties = event.detail?.properties;
+    if (
+      !searchEvents.has(eventName) ||
+      !properties ||
+      typeof properties !== 'object'
+    ) {
+      return;
+    }
 
-    tracker.track(
-      'search-query',
-      {
-        query,
-        placement: String(event.detail?.placement || 'navigation'),
-        result_count: Number(event.detail?.result_count) || 0,
-        product_count: Number(event.detail?.product_count) || 0,
-        treatment_count: Number(event.detail?.treatment_count) || 0,
-      },
-      { send_immediately: true }
-    );
+    tracker.track(eventName, properties, { send_immediately: true });
   });
 
   document.addEventListener('rewind:analytics-consent', (event) => {

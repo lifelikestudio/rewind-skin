@@ -28,6 +28,13 @@
     bookingManageEvent: 'booking-manage-click',
   };
 
+  const searchEvents = new Set(['search-submit', 'search-result-click']);
+
+  const trackUmami = (eventName, properties) => {
+    if (typeof window.umami?.track !== 'function') return;
+    window.umami.track(eventName, properties);
+  };
+
   const resolvePlacement = (anchor) => {
     const explicit = anchor.closest('[data-rs-placement]');
     if (explicit) return explicit.dataset.rsPlacement;
@@ -69,6 +76,20 @@
     return { eventName, props };
   };
 
+  document.addEventListener('rewind:analytics', (event) => {
+    const eventName = String(event.detail?.name || '');
+    const properties = event.detail?.properties;
+    if (
+      !searchEvents.has(eventName) ||
+      !properties ||
+      typeof properties !== 'object'
+    ) {
+      return;
+    }
+
+    trackUmami(eventName, properties);
+  });
+
   document.addEventListener(
     'click',
     (event) => {
@@ -91,7 +112,7 @@
       const tracked = buildEvent(anchor, url);
       if (!tracked) return;
 
-      window.umami.track(tracked.eventName, tracked.props);
+      trackUmami(tracked.eventName, tracked.props);
     },
     true
   );

@@ -1478,6 +1478,17 @@
         searchAnalyticsLastQuery = '';
       }
 
+      function dispatchSearchAnalytics(eventName, properties) {
+        document.dispatchEvent(
+          new CustomEvent('rewind:analytics', {
+            detail: {
+              name: eventName,
+              properties: properties,
+            },
+          })
+        );
+      }
+
       function publishSettledSearch(force) {
         clearSearchAnalyticsTimer();
 
@@ -1520,18 +1531,16 @@
           ? Number(response.getAttribute('data-search-treatment-count')) || 0
           : 0;
 
-        document.dispatchEvent(
-          new CustomEvent('rewind:search-query', {
-            detail: {
-              query: query,
-              placement:
-                searchDrawer.getAttribute('data-search-origin') || 'navigation',
-              result_count: suggestionCount + actionableCount,
-              product_count: searchProductsCount,
-              treatment_count: treatmentCount,
-            },
-          })
-        );
+        dispatchSearchAnalytics('search-submit', {
+          query: query,
+          placement:
+            searchDrawer.getAttribute('data-search-origin') || 'navigation',
+          result_count: suggestionCount + actionableCount,
+          actionable_count: actionableCount,
+          has_results: actionableCount > 0,
+          product_count: searchProductsCount,
+          treatment_count: treatmentCount,
+        });
 
         searchAnalyticsLastQuery = normalizedQuery;
         searchAnalyticsPendingQuery = '';
@@ -1554,6 +1563,44 @@
           searchAnalyticsTimer = null;
           publishSettledSearch(false);
         }, searchAnalyticsDelay);
+      }
+
+      function publishSearchResultClick(result) {
+        if (!result || !searchInput) return;
+
+        var query = String(searchInput.value || '')
+          .trim()
+          .replace(/\s+/g, ' ');
+        if (!query) return;
+
+        var resultGroup = result.closest('[data-search-results-group]');
+        if (!resultGroup) return;
+
+        var groupType = resultGroup.getAttribute('data-search-results-group');
+        var resultTypes = {
+          products: 'product',
+          treatments: 'treatment',
+          collections: 'collection',
+          suggestions: 'suggestion',
+        };
+        var resultType = resultTypes[groupType];
+        if (!resultType) return;
+
+        var resultSelector =
+          resultType === 'suggestion'
+            ? '[data-search-suggestion]'
+            : '[data-search-result-link]';
+        var position =
+          Array.from(resultGroup.querySelectorAll(resultSelector)).indexOf(
+            result
+          ) + 1;
+        if (position < 1) return;
+
+        dispatchSearchAnalytics('search-result-click', {
+          query: query,
+          position: position,
+          result_type: resultType,
+        });
       }
 
       var recentSearchStorageKey = 'rewind:v3:recent-searches';
@@ -3119,6 +3166,7 @@
       }
       if (searchForm) {
         searchForm.addEventListener('submit', function (event) {
+          publishSettledSearch(true);
           if (searchLoadingPreview) {
             event.preventDefault();
             return;
@@ -3155,6 +3203,8 @@
       searchDrawer.addEventListener('click', function (event) {
         var suggestion = event.target.closest('[data-search-suggestion]');
         if (suggestion) {
+          publishSettledSearch(true);
+          publishSearchResultClick(suggestion);
           var value =
             suggestion.getAttribute('data-search-suggestion-value') || '';
           searchInput.value = value;
@@ -3168,6 +3218,7 @@
         var resultLink = event.target.closest('[data-search-result-link]');
         if (resultLink) {
           publishSettledSearch(true);
+          publishSearchResultClick(resultLink);
           recordRecentSearch(searchInput ? searchInput.value : '');
         }
         if (!resultLink) return;
