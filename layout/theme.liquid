@@ -223,6 +223,24 @@
       data-do-not-track='true'
     ></script>
     <script src='{{ 'outbound-tracking.js' | asset_url }}' defer></script>
+    {%- liquid
+      assign openreplay_enabled = false
+
+      if request.host == 'rewindskinco.com' or request.host == 'www.rewindskinco.com'
+        assign openreplay_enabled = true
+      endif
+
+      if request.design_mode or request.visual_preview_mode or template contains 'customers'
+        assign openreplay_enabled = false
+      endif
+    -%}
+    {%- if openreplay_enabled -%}
+      <script
+        src='{{ 'openreplay-loader.js' | asset_url }}'
+        data-openreplay-tracker-src='{{ 'openreplay.js' | asset_url }}'
+        defer
+      ></script>
+    {%- endif -%}
     <script>
       (function (h, o, t, j, a, r) {
         h.hj =

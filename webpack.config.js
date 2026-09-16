@@ -9,6 +9,8 @@ module.exports = (_env, argv = {}) => {
     devtool: isProduction ? false : 'eval',
     entry: {
       global: './src/global.js',
+      'openreplay-loader': './src/openreplay-loader.js',
+      openreplay: './src/openreplay.js',
       'outbound-tracking': './src/outbound-tracking.js',
     },
     output: {

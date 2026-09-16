@@ -20,6 +20,7 @@
   "dependencies": {
     "@capsizecss/core": "^4.1.2",
     "@capsizecss/metrics": "^3.5.0",
+    "@openreplay/tracker": "^18.1.6",
     "@tailwindcss/cli": "^4.1.12",
     "@typeform/embed": "^4.3.0",
     "axios": "^1.5.0",
