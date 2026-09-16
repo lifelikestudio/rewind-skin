@@ -98,6 +98,27 @@ import OpenReplay from '@openreplay/tracker';
     }
   };
 
+  document.addEventListener('rewind:search-query', (event) => {
+    if (!consentAllowed || !tracker.isActive()) return;
+
+    const query = String(event.detail?.query || '')
+      .trim()
+      .replace(/\s+/g, ' ');
+    if (!query) return;
+
+    tracker.track(
+      'search-query',
+      {
+        query,
+        placement: String(event.detail?.placement || 'navigation'),
+        result_count: Number(event.detail?.result_count) || 0,
+        product_count: Number(event.detail?.product_count) || 0,
+        treatment_count: Number(event.detail?.treatment_count) || 0,
+      },
+      { send_immediately: true }
+    );
+  });
+
   document.addEventListener('rewind:analytics-consent', (event) => {
     syncConsent(event.detail?.allowed === true);
   });

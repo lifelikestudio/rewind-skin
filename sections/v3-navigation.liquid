@@ -1096,6 +1096,11 @@
       var searchCloseTimer = null;
       var searchDebounceTimer = null;
       var searchLoadingTimer = null;
+      var searchAnalyticsTimer = null;
+      var searchAnalyticsLastInputAt = 0;
+      var searchAnalyticsPendingQuery = '';
+      var searchAnalyticsLastQuery = '';
+      var searchAnalyticsDelay = 750;
       var searchRequest = null;
       var searchRequestSequence = 0;
       var searchCompletedRequestId = 0;
@@ -1460,6 +1465,97 @@
           .toLocaleLowerCase();
       }
 
+      function clearSearchAnalyticsTimer() {
+        if (!searchAnalyticsTimer) return;
+        clearTimeout(searchAnalyticsTimer);
+        searchAnalyticsTimer = null;
+      }
+
+      function resetSearchAnalytics() {
+        clearSearchAnalyticsTimer();
+        searchAnalyticsLastInputAt = 0;
+        searchAnalyticsPendingQuery = '';
+        searchAnalyticsLastQuery = '';
+      }
+
+      function publishSettledSearch(force) {
+        clearSearchAnalyticsTimer();
+
+        var query = String(searchAnalyticsPendingQuery || '')
+          .trim()
+          .replace(/\s+/g, ' ');
+        var normalizedQuery = normalizeSearchText(query);
+        if (!normalizedQuery || normalizedQuery === searchAnalyticsLastQuery)
+          return;
+        if (
+          normalizeSearchText(searchInput ? searchInput.value : '') !==
+          normalizedQuery
+        )
+          return;
+        if (
+          searchCompletedRequestId !== searchRequestSequence ||
+          normalizeSearchText(searchCompletedQuery) !== normalizedQuery
+        )
+          return;
+
+        var elapsed = Date.now() - searchAnalyticsLastInputAt;
+        if (!force && elapsed < searchAnalyticsDelay) {
+          searchAnalyticsTimer = setTimeout(function () {
+            searchAnalyticsTimer = null;
+            publishSettledSearch(false);
+          }, searchAnalyticsDelay - elapsed);
+          return;
+        }
+
+        var response = searchPredictive
+          ? searchPredictive.querySelector('[data-search-response]')
+          : null;
+        var suggestionCount = response
+          ? response.querySelectorAll('[data-search-suggestion]').length
+          : 0;
+        var actionableCount = response
+          ? response.querySelectorAll('[data-search-result-link]').length
+          : 0;
+        var treatmentCount = response
+          ? Number(response.getAttribute('data-search-treatment-count')) || 0
+          : 0;
+
+        document.dispatchEvent(
+          new CustomEvent('rewind:search-query', {
+            detail: {
+              query: query,
+              placement:
+                searchDrawer.getAttribute('data-search-origin') || 'navigation',
+              result_count: suggestionCount + actionableCount,
+              product_count: searchProductsCount,
+              treatment_count: treatmentCount,
+            },
+          })
+        );
+
+        searchAnalyticsLastQuery = normalizedQuery;
+        searchAnalyticsPendingQuery = '';
+      }
+
+      function scheduleSettledSearch() {
+        clearSearchAnalyticsTimer();
+
+        var query = searchInput ? searchInput.value : '';
+        var normalizedQuery = normalizeSearchText(query);
+        if (!normalizedQuery) {
+          searchAnalyticsPendingQuery = '';
+          searchAnalyticsLastQuery = '';
+          return;
+        }
+
+        searchAnalyticsPendingQuery = query;
+        searchAnalyticsLastInputAt = Date.now();
+        searchAnalyticsTimer = setTimeout(function () {
+          searchAnalyticsTimer = null;
+          publishSettledSearch(false);
+        }, searchAnalyticsDelay);
+      }
+
       var recentSearchStorageKey = 'rewind:v3:recent-searches';
 
       function readRecentSearches() {
@@ -1813,6 +1909,7 @@
         searchCompletedRequestId = requestId;
         searchCompletedQuery = query;
         searchCompletedHasResults = actionableCount > 0;
+        publishSettledSearch(false);
 
         var footerWasVisible =
           searchFooter &&
@@ -2526,6 +2623,7 @@
           clearTimeout(searchCloseTimer);
           searchCloseTimer = null;
         }
+        resetSearchAnalytics();
         clearSearchOrigin();
         if (searchScroll) {
           searchScroll.scrollTop = 0;
@@ -2607,6 +2705,7 @@
         discardSearchTransfer();
         stopSearchReveal();
         if (searchCloseTimer) return;
+        publishSettledSearch(true);
         recordCompletedSearch();
         resetSearchProducts();
         searchDrawer.setAttribute('data-search-state', 'closing');
@@ -2629,6 +2728,7 @@
             updateSearchQueryState();
             resetSearchResults();
           }
+          resetSearchAnalytics();
         }, 280);
 
         if (restoreFocus !== false && searchOpenTrigger) {
@@ -2642,6 +2742,7 @@
         if (!origin) return;
 
         if (searchTransferTimeline) {
+          publishSettledSearch(true);
           recordCompletedSearch();
           if (origin === 'mobile-menu') {
             stopSearchReveal();
@@ -2861,6 +2962,7 @@
           searchCompletedRequestId = requestId;
           searchCompletedQuery = query;
           searchCompletedHasResults = actionableCount > 0;
+          publishSettledSearch(false);
         }
         searchRequest = null;
         if (searchInfiniteProducts) {
@@ -2992,6 +3094,7 @@
       if (searchClear) {
         searchClear.addEventListener('click', function () {
           if (searchInput) searchInput.value = '';
+          resetSearchAnalytics();
           updateSearchQueryState();
           resetSearchResults(true);
           if (searchInput) searchInput.focus();
@@ -3011,6 +3114,7 @@
       if (searchInput) {
         searchInput.addEventListener('input', function () {
           scheduleSearch(false);
+          scheduleSettledSearch();
         });
       }
       if (searchForm) {
@@ -3043,6 +3147,7 @@
       }
       if (searchViewAll) {
         searchViewAll.addEventListener('click', function () {
+          publishSettledSearch(true);
           recordCompletedSearch();
         });
       }
@@ -3055,12 +3160,14 @@
           searchInput.value = value;
           updateSearchQueryState();
           scheduleSearch(true);
+          scheduleSettledSearch();
           searchInput.focus();
           return;
         }
 
         var resultLink = event.target.closest('[data-search-result-link]');
         if (resultLink) {
+          publishSettledSearch(true);
           recordRecentSearch(searchInput ? searchInput.value : '');
         }
         if (!resultLink) return;
