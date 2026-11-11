@@ -344,7 +344,7 @@
                 {%- when 'list' -%}
                   <ul class='drawer__links-list'>
                     {%- for filter_value in filter.values -%}
-                      {%- unless filter_value.label | downcase == 'canada_only' -%}
+                      {%- unless filter_value.label -%}
                         <li class='all-caps drawer__link'>
                           <label for='Filter-mobile-{{ filter.param_name }}-{{ forloop.index }}'>
                             <input
@@ -939,3 +939,13 @@
 {% section 'skin-analysis' %}
 {% section 'treatments' %}
 {% section 'opt-in' %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- unless filter_value.label | downcase == 'canada_only' -%}"
+  to: "{%- unless filter_value.label -%}"
+  position: 13672..13705
+{% endcomment %}
