@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "t:sections.header.name",
   "type": "header",
@@ -8,27 +17,46 @@
         "announcement": {
           "type": "announcement",
           "settings": {
-            "text": "Orders placed this week may take a little longer to reach you. Thank you for your patience.",
+            "text": "Never run out, never pay full price. Subscribe & Save with select brands.",
             "text_alignment": "center",
-            "link": ""
+            "link": "shopify://collections/subscribe-save"
+          }
+        },
+        "bfcm_2026": {
+          "type": "announcement",
+          "settings": {
+            "text": "Black Friday: 15% off the shop, plus gifts with purchase. Ends Monday at 11:59pm.",
+            "text_alignment": "center",
+            "link": "shopify://collections/all",
+            "show_from": "2026-11-27 09:00",
+            "show_until": "2026-12-01 00:00",
+            "replace_others": true
           }
         }
       },
-      "block_order": ["announcement"],
+      "block_order": [
+        "bfcm_2026",
+        "announcement"
+      ],
       "settings": {}
     },
     "v3-navigation": {
       "type": "v3-navigation",
       "settings": {
-        "show_search": true,
-        "show_cart": true,
-        "show_wishlist": false,
-        "show_account": true,
-        "search_popular_terms": "Future 5 Elements, Serums, Facials, Mansard",
-        "search_popular_collection": "bestsellers",
         "shop_label": "Shop",
         "studio_label": "Studio",
-        "sticky_type": "always"
+        "shop_menu": "",
+        "shop_featured_menu": "",
+        "shop_utility_menu": "",
+        "studio_menu": "",
+        "studio_featured_menu": "",
+        "studio_utility_menu": "",
+        "show_search": true,
+        "search_popular_terms": "Future 5 Elements, Serums, Facials, Mansard",
+        "search_popular_collection": "bestsellers",
+        "show_cart": true,
+        "show_wishlist": false,
+        "show_account": true
       }
     },
     "v3-cart-drawer": {
@@ -36,14 +64,20 @@
       "settings": {
         "bag_label": "Bag",
         "empty_title": "Your shopping bag is empty.",
+        "empty_customer_message": "Nothing here yet. Discover what's new.",
         "empty_account_prefix": "Already have an account?",
         "empty_login_label": "Log in",
         "empty_account_suffix": "to checkout faster.",
         "start_shopping_label": "Start shopping",
+        "start_shopping_link": "",
         "shipping_note": "Taxes and shipping calculated at checkout.",
         "checkout_label": "Checkout"
       }
     }
   },
-  "order": ["announcement-bar", "v3-navigation", "v3-cart-drawer"]
+  "order": [
+    "announcement-bar",
+    "v3-navigation",
+    "v3-cart-drawer"
+  ]
 }

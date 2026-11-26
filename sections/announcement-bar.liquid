@@ -1,7 +1,62 @@
+{% comment %}
+  Announcement bar
+
+  Blocks can be scheduled with "Show from" / "Show until" (store time,
+  YYYY-MM-DD HH:MM). Either can be left blank. While a scheduled block with
+  "Replace other announcements" is showing, unscheduled blocks are hidden,
+  and they return once it ends.
+{% endcomment %}
+
+{%- assign current_time = 'now' | date: '%s' | plus: 0 -%}
+{%- assign store_offset = 'now' | date: '%z' -%}
+{%- assign visible_ids = '' -%}
+{%- assign takeover_active = false -%}
+
 {%- for block in section.blocks -%}
+  {%- assign is_scheduled = false -%}
+  {%- assign is_live = true -%}
+
+  {%- if block.settings.show_from != blank -%}
+    {%- assign is_scheduled = true -%}
+    {%- assign show_from = block.settings.show_from | append: ' ' | append: store_offset | date: '%s' | plus: 0 -%}
+    {%- if current_time < show_from -%}
+      {%- assign is_live = false -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if block.settings.show_until != blank -%}
+    {%- assign is_scheduled = true -%}
+    {%- assign show_until = block.settings.show_until | append: ' ' | append: store_offset | date: '%s' | plus: 0 -%}
+    {%- if current_time >= show_until -%}
+      {%- assign is_live = false -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if is_live -%}
+    {%- if is_scheduled -%}
+      {%- if block.settings.replace_others -%}
+        {%- assign takeover_active = true -%}
+      {%- endif -%}
+      {%- assign visible_ids = visible_ids | append: '|scheduled:' | append: block.id -%}
+    {%- else -%}
+      {%- assign visible_ids = visible_ids | append: '|default:' | append: block.id -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- for block in section.blocks -%}
+  {%- assign scheduled_key = '|scheduled:' | append: block.id -%}
+  {%- assign default_key = '|default:' | append: block.id -%}
+  {%- assign show_block = false -%}
+  {%- if visible_ids contains scheduled_key -%}
+    {%- assign show_block = true -%}
+  {%- elsif visible_ids contains default_key and takeover_active == false -%}
+    {%- assign show_block = true -%}
+  {%- endif -%}
+
   {%- case block.type -%}
     {%- when 'announcement' -%}
-      {%- if block.settings.text != blank -%}
+      {%- if show_block and block.settings.text != blank -%}
         <section
           class="announcement-bar"
           role="region"
@@ -67,6 +122,33 @@
           "type": "url",
           "id": "link",
           "label": "t:sections.announcement-bar.blocks.announcement.settings.link.label"
+        },
+        {
+          "type": "header",
+          "content": "Schedule"
+        },
+        {
+          "type": "paragraph",
+          "content": "Optional. Use store time in the format YYYY-MM-DD HH:MM (24-hour), e.g. 2026-11-27 09:00. Leave both blank to always show."
+        },
+        {
+          "type": "text",
+          "id": "show_from",
+          "label": "Show from",
+          "placeholder": "2026-11-27 09:00"
+        },
+        {
+          "type": "text",
+          "id": "show_until",
+          "label": "Show until",
+          "placeholder": "2026-12-01 00:00"
+        },
+        {
+          "type": "checkbox",
+          "id": "replace_others",
+          "label": "Replace other announcements while showing",
+          "info": "Hides unscheduled announcements during this block's dates. They come back automatically afterwards.",
+          "default": true
         }
       ]
     }

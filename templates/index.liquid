@@ -68,19 +68,31 @@
     class='absolute inset-[0] z-0 h-full w-full object-cover object-bottom'
   >
   <div class='gap-x-home-hero-lock-up-col-gap gap-y-home-hero-lock-up-row-gap z-10 flex w-full flex-col items-start sm:w-3/4 md:w-1/2 xl:w-2/5'>
-    {% comment %} BFCM {% endcomment %}
-    {% assign cutoff_date = '2025-12-02 00:00:00' | date: '%s' %}
-    {% assign current_time = 'now' | date: '%s' %}
+    {% comment %}
+      BFCM 2026, Eastern time (EST, -0500)
+      - Sale opens to the public: Fri Nov 27, 9:00am
+      - Last 24 hours: Mon Nov 30, 12:00am
+      - Sale ends, evergreen returns: Tue Dec 1, 12:00am
+    {% endcomment %}
+    {% assign bfcm_start = '2026-11-27 09:00:00 -0500' | date: '%s' | plus: 0 %}
+    {% assign bfcm_final_day = '2026-11-30 00:00:00 -0500' | date: '%s' | plus: 0 %}
+    {% assign bfcm_end = '2026-12-01 00:00:00 -0500' | date: '%s' | plus: 0 %}
+    {% assign current_time = 'now' | date: '%s' | plus: 0 %}
 
-    {% if current_time < cutoff_date %}
+    {% if current_time >= bfcm_start and current_time < bfcm_end %}
       <h2 class='text-text-primary text-body-xl-home-hero text-left'>
-        The countdown starts now. Our annual Black Friday Cyber Monday event
-        ends at midnight. Save 15% on a curated edit of favourites — a chance to
-        replenish, explore, or finally indulge.
+        {% if current_time >= bfcm_final_day %}
+          Our Black Friday sale ends tonight at 11:59pm. There's still time
+          for 15% off the shop, plus gifts while quantities last.
+        {% else %}
+          Black Friday at Rewind Skin. 15% off the shop, plus gifts with
+          purchase and offers on Calecim, through Monday, November 30th, at
+          11:59pm.
+        {% endif %}
       </h2>
       <a
         class='text-text-btn-label !bg-surface-secondary p-home-hero-btn-padding text-label-xl-home-hero-btn block shrink-0 rounded-full text-center'
-        href='{{ routes.collections_url }}/sales-offers'
+        href='{{ routes.collections_url }}/all'
         >Shop</a
       >
     {% else %}
