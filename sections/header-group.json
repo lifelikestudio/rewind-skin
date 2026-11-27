@@ -25,7 +25,7 @@
         "bfcm_2026": {
           "type": "announcement",
           "settings": {
-            "text": "Black Friday: 15% off the shop, plus gifts with purchase. Ends Monday at 11:59pm.",
+            "text": "Black Friday: 15% off the shop, plus gifts with purchase, through Monday at 11:59pm. Discounts apply at checkout; we add qualifying gifts to your package.",
             "text_alignment": "center",
             "link": "shopify://collections/all",
             "show_from": "2026-11-27 09:00",
